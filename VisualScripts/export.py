@@ -68,7 +68,7 @@ def get_2d_bbox(on_plane_xy):
     min_x, min_y = np.amin(on_plane_xy, axis=0)
     return [min_x, max_x, min_y, max_y]
 
-def get_plane_mesh(M, xxyy, camera_normal, idx):
+def get_plane_mesh(M, xxyy, camera_normal, instance_idx):
     min_x, max_x, min_y, max_y = xxyy
     inv_M = np.linalg.inv(M)
     p1 = np.matmul(inv_M, np.array([min_x, min_y, 0, 1]).T)[:3]
@@ -78,7 +78,7 @@ def get_plane_mesh(M, xxyy, camera_normal, idx):
     mirror_plane = o3d.geometry.TriangleMesh()
     mirror_plane.vertices = o3d.utility.Vector3dVector(np.array([p1, p2, p3, p4]))
     mirror_plane.triangles= o3d.utility.Vector3iVector(np.array([[0,1,2],[2,1,3]]))    
-    mirror_plane.paint_uniform_color([0.08*idx, 0.08*idx, 1])
+    mirror_plane.paint_uniform_color([0.08*instance_idx, 0.08*instance_idx, 1])
     mirror_plane.compute_triangle_normals()
     plane_normal = np.asarray(mirror_plane.triangle_normals)[0]
     # check if it is visible from the camera view
@@ -150,7 +150,6 @@ def export_from_rgbd(f, color_img_path, mask_path, sens_depth_img_path, img_info
             
     mirror_sens_pcd = get_pcd(mirror_sens_xyz, mirror_sens_colors)
     rest_pcd = get_pcd(rest_xyz, rest_colors)
-    o3d.visualization.draw_geometries([rest_pcd, mirror_sens_pcd, mirror_plane_mesh])
     return mirror_sens_pcd, rest_pcd, mirror_plane_mesh
 
 if __name__ == "__main__":   
