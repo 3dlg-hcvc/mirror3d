@@ -85,7 +85,6 @@ if __name__ == "__main__":
             mirror_ref_pcd = read_pcd_from_path(os.path.join(ply_folder, "mirror_ref_pcd.ply"))
             mirror_sens_pcd = read_pcd_from_path(os.path.join(ply_folder, "mirror_sens_pcd.ply"))
             mirror_mesh = read_mesh_from_path(os.path.join(ply_folder,"mirror_mesh.ply"))
-            o3d.visualization.draw_geometries([rest_pcd])
             o3d.visualization.draw_geometries([rest_pcd, mirror_sens_pcd, mirror_mesh, mirror_ref_pcd])
 
     if args.mode == "screenshot":
