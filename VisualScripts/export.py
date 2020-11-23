@@ -231,4 +231,8 @@ if __name__ == "__main__":
         output_name = ["mirror_ref_pcd.ply", "mirror_sens_pcd.ply", "rest_pcd.ply", "mirror_mesh.ply"]
         for idx, file_name in enumerate(output_name):
             save_path = os.path.join(save_folder,file_name)
-            o3d.io.write_point_cloud(save_path, outputs[idx])
+            if idx!=3:
+                o3d.io.write_point_cloud(save_path, outputs[idx])
+            else:
+                o3d.io.write_triangle_mesh(save_path, outputs[idx])
+
