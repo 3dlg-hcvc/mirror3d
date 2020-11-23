@@ -64,6 +64,7 @@ def save_view_by_json(pcd, json_file_path, save_folder):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Get Setting')
+    parser.add_argument('--dataset', default="", type=str)
     parser.add_argument('--color_img_folder', default="", type=str)
     parser.add_argument('--mask_img_folder', default="", type=str)
     parser.add_argument('--ply_folder', default="", type=str)
@@ -79,10 +80,13 @@ if __name__ == "__main__":
             if key.startswith('.'):
                 continue
             ply_folder = os.path.join(args.ply_folder, key)
+            print(ply_folder)
             rest_pcd = read_pcd_from_path(os.path.join(ply_folder, "rest_pcd.ply"))
+            mirror_ref_pcd = read_pcd_from_path(os.path.join(ply_folder, "mirror_ref_pcd.ply"))
             mirror_sens_pcd = read_pcd_from_path(os.path.join(ply_folder, "mirror_sens_pcd.ply"))
             mirror_mesh = read_mesh_from_path(os.path.join(ply_folder,"mirror_mesh.ply"))
-            o3d.visualization.draw_geometries([rest_pcd, mirror_sens_pcd, mirror_mesh])
+            o3d.visualization.draw_geometries([rest_pcd])
+            o3d.visualization.draw_geometries([rest_pcd, mirror_sens_pcd, mirror_mesh, mirror_ref_pcd])
 
     if args.mode == "screenshot":
         for key in os.listdir(args.ply_folder):
@@ -100,7 +104,10 @@ if __name__ == "__main__":
         os.makedirs(args.save_folder, exist_ok=True)
         for mask_key in os.listdir(args.mask_img_folder):            
             mask_img_path = os.path.join(args.mask_img_folder, mask_key)
-            color_img_path = os.path.join(args.color_img_folder, mask_key.replace(".png",".jpg"))
+            if args.dataset == "m3d":
+                color_img_path = os.path.join(args.color_img_folder, mask_key.replace(".png",".jpg"))
+            else:
+                color_img_path = os.path.join(args.color_img_folder, mask_key)
             save_path = os.path.join(args.save_folder, mask_key)
             export_transparent_mask(mask_img_path, save_path)
 

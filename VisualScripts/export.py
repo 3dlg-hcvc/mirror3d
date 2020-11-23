@@ -10,6 +10,7 @@ from tqdm import tqdm
 from operator import add
 import argparse
 import multiprocessing
+import math
 
 
 def read_json(json_path):
@@ -91,8 +92,14 @@ def get_pcd(xyz, colors):
     pcd.points = o3d.utility.Vector3dVector(np.stack(xyz,axis=0))
     pcd.colors = o3d.utility.Vector3dVector(np.stack(colors,axis=0))
     return pcd
-    
-def export_from_rgbd(f, color_img_path, mask_path, sens_depth_img_path, img_info_path):
+
+def get_point_plane_distance(xyz, plane_param):
+    x, y, z = xyz
+    a, b, c, d = plane_param
+    d = abs(a*x+b*y+c*z+d) / math.sqrt(a**2+b**2+c**2)
+    return d
+
+def export_from_rgbd(f, color_img_path, mask_path, sens_depth_img_path, img_info_path, shift, args):
     print("color path: "+color_img_path)
     print("sensor depth path: "+sens_depth_img_path)
     print("mask path: "+mask_path)
@@ -104,8 +111,8 @@ def export_from_rgbd(f, color_img_path, mask_path, sens_depth_img_path, img_info
     color_img = color_img/255
 
     h, w = sens_d.shape
-    mirror_sens_colors, rest_colors = [], []
-    mirror_sens_xyz, rest_xyz = [], []
+    mirror_ref_colors, mirror_sens_colors, rest_colors = [], [], []
+    mirror_ref_xyz, mirror_sens_xyz, rest_xyz = [], [], []
     mirror_plane_mesh = []
 
     # Draw pcd and mesh mask by mask
@@ -119,42 +126,71 @@ def export_from_rgbd(f, color_img_path, mask_path, sens_depth_img_path, img_info
 
         current_instance_mask = cv2.imread(mask_path, cv2.IMREAD_GRAYSCALE)
         current_instance_mask[current_instance_mask!= instance_index] = 0
-        if current_instance_mask is not None and len(current_instance_mask.shape)>2:
-            current_instance_mask = cv2.cvtColor(current_instance_mask, cv2.COLOR_BGR2GRAY)
+        mirror_border_mask = cv2.dilate(current_instance_mask, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (60,60))) - current_instance_mask
 
         for y in range(h):
             for x in range(w):
                 if  current_instance_mask[y][x] > 0:                    
-                    sens_color = list( map(add, [0.5,0,0], map(lambda x: x * 0.5, color_img[y][x])) )
-                    mirror_sens_colors.append(sens_color)
+                    mirror_color = color_img[y][x]
+                    mirror_sens_colors.append(mirror_color)
                     mirror_sens_xyz.append([(x - w/2) * (sens_d[y][x]/f),(y - h/2) * (sens_d[y][x]/f),sens_d[y][x]])
                     # Project 3d points on the mirror plane
                     proj_xyz = get_project_coord([(x - w/2), (y - h/2), f], plane_param)        
+                    mirror_ref_xyz.append(proj_xyz)
+                    mirror_ref_colors.append(mirror_color)
                     # Save the 2d coordinates on the plane    
                     on_plane_xy.append(np.matmul(M, np.transpose(np.append(proj_xyz,1)))[:2])
-        
+                elif mirror_border_mask[y][x] > 0:
+                    clamp_xyz = get_project_coord([(x - w/2), (y - h/2), f], plane_param)                    
+                    
+                    # ScanNet has 0 depth value on the image border, should be ignored
+                    if sens_d[y][x]!=0:  
+                        # Refined mask should preserve the occlusion 
+                        if args.is_refined:                        
+                            rest_colors.append(color_img[y][x])
+                            # Check if it is within 20cm from the front of mirror
+                            if get_point_plane_distance(clamp_xyz, plane_param) < 200*shift:
+                                rest_xyz.append(clamp_xyz)
+                            else:
+                                rest_xyz.append([(x - w/2) * (sens_d[y][x]/f),(y - h/2) * (sens_d[y][x]/f),sens_d[y][x]])
+                        else:
+                            rest_colors.append(color_img[y][x])
+                            rest_xyz.append(clamp_xyz)
+
+        # Accumulatively collect each plane mesh, idx is to paint different instance differently
         on_plane_xy = np.asarray(on_plane_xy)
         xxyy = get_2d_bbox(on_plane_xy)
         if mirror_plane_mesh == []:
             mirror_plane_mesh = get_plane_mesh(M, xxyy, np.array([0,0,f]), idx)
         else:
             mirror_plane_mesh += get_plane_mesh(M, xxyy, np.array([0,0,f]), idx)
+    
+    mask[mask!=0] = 1
+    mirror_border_mask = cv2.dilate(mask, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (60,60))) - mask
 
     # Create non-mirror region point cloud    
     for y in range(h):
         for x in range(w):
-            if mask[y][x] == 0:
+            # Avoid adding clamped points again
+            if mirror_border_mask[y][x] > 0:
+                continue
+            elif mask[y][x] == 0:
                 xyz = [(x - w/2) * (sens_d[y][x]/f),(y - h/2) * (sens_d[y][x]/f),sens_d[y][x]]
                 rest_colors.append(color_img[y][x])
                 rest_xyz.append(xyz)        
-            
+
+    # Generate point cloud
     mirror_sens_pcd = get_pcd(mirror_sens_xyz, mirror_sens_colors)
+    mirror_ref_pcd = get_pcd(mirror_ref_xyz, mirror_ref_colors)
     rest_pcd = get_pcd(rest_xyz, rest_colors)
-    return mirror_sens_pcd, rest_pcd, mirror_plane_mesh
+
+    return mirror_ref_pcd, mirror_sens_pcd, rest_pcd, mirror_plane_mesh
 
 if __name__ == "__main__":   
     parser = argparse.ArgumentParser(description='Get Setting')
     parser.add_argument('--f', default=1076, type=int)
+    parser.add_argument('--dataset', default="", type=str)
+    parser.add_argument('--is_refined', type=bool)
     parser.add_argument('--color_img_folder', default="", type=str)
     parser.add_argument('--mask_img_folder', default="", type=str)
     parser.add_argument('--sens_depth_img_folder', default="", type=str)
@@ -164,25 +200,35 @@ if __name__ == "__main__":
 
     # pool = multiprocessing.Pool(processes=16) 
     for mask_key in os.listdir(args.mask_img_folder):
+        if mask_key.startswith('.'):
+            continue
         # Load image paths
         mask_img_path = os.path.join(args.mask_img_folder, mask_key)
-        color_img_path = os.path.join(args.color_img_folder, mask_key.replace(".png",".jpg"))
-        if len(mask_key.split("_"))<3:
-            continue
-        depth_key = "{}_{}_{}".format(mask_key.split("_")[0], mask_key.split("_")[1].replace("i","d"), mask_key.split("_")[2])
-        sens_depth_img_path = os.path.join(args.sens_depth_img_folder, depth_key)
         img_info_path = os.path.join(args.img_info_folder,  mask_key.replace(".png",".json"))        
+
+        # Matterport3D has a different id patterns for color and depth image
+        if args.dataset == "m3d":
+            color_img_path = os.path.join(args.color_img_folder, mask_key.replace(".png",".jpg"))
+            depth_key = "{}_{}_{}".format(mask_key.split("_")[0], mask_key.split("_")[1].replace("i","d"), mask_key.split("_")[2])
+            sens_depth_img_path = os.path.join(args.sens_depth_img_folder, depth_key)
+        else:
+            color_img_path = os.path.join(args.color_img_folder, mask_key)
+            sens_depth_img_path  = os.path.join(args.sens_depth_img_folder, mask_key)        
         
+        if args.dataset == "scannet" or args.dataset == "nyu":
+            shift = 1
+        elif args.dataset == "m3d":
+            shift = 4
+
         # Export pcd and mesh
-        mirror_sens_pcd, rest_pcd, mirror_plane_mesh = export_from_rgbd(args.f, color_img_path, mask_img_path, sens_depth_img_path, img_info_path)
+        outputs = export_from_rgbd(args.f, color_img_path, mask_img_path, sens_depth_img_path, img_info_path, shift, args)
         
-        # Save pcd and mesh
+        # Make directories
         save_folder = os.path.join(args.export_folder, mask_key.split(".")[0])
         os.makedirs(save_folder, exist_ok=True)
-        rest_pcd_save_path = os.path.join(save_folder, "rest_pcd.ply")
-        mirror_sens_pcd_save_path = os.path.join(save_folder, "mirror_sens_pcd.ply")
-        mesh_save_path = os.path.join(save_folder, "mirror_mesh.ply")
-        o3d.io.write_point_cloud(rest_pcd_save_path, rest_pcd)
-        o3d.io.write_point_cloud(mirror_sens_pcd_save_path, mirror_sens_pcd)
-        o3d.io.write_triangle_mesh(mesh_save_path, mirror_plane_mesh)
-
+        
+        # Write files
+        output_name = ["mirror_ref_pcd.ply", "mirror_sens_pcd.ply", "rest_pcd.ply", "mirror_mesh.ply"]
+        for idx, file_name in enumerate(output_name):
+            save_path = os.path.join(save_folder,file_name)
+            o3d.io.write_point_cloud(save_path, outputs[idx])
