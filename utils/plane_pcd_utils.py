@@ -848,8 +848,6 @@ def refine_depth_with_plane_parameter_mask(plane_parameter, mirror_mask, depth_t
     return depth_to_refine
 
 
-
-
 # ---------------------------------------------------------------------------- #
 #                          clamp data based on 3d bbox                         #
 # ---------------------------------------------------------------------------- #
