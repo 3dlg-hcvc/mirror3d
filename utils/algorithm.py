@@ -150,7 +150,6 @@ def point_2_line_seg_in_3d(point, line_p1, line_p2):
     c = np.cross(point - line_p1, d)
     return np.hypot(h, np.linalg.norm(c))
 
-
 # ---------------------------------------------------------------------------- #
 #             get the cloest point to target_point from points_list            #
 # ---------------------------------------------------------------------------- #

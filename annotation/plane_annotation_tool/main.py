@@ -15,6 +15,7 @@ import shutil
 
 if __name__ == "__main__":
 
+
     # TODO add option here
 
     parser = argparse.ArgumentParser(description='Get Setting :D')

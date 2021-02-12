@@ -101,7 +101,6 @@ class Plane_annotation_tool():
                     file.write(sample_raw_name)
                     file.write("\n")
     
-
     def check_file(self):
         """Check whether files under self.data_main_folder are valid"""
 
@@ -247,7 +246,7 @@ class Plane_annotation_tool():
             if not option_list.is_input_key_valid(input_option, annotated_paths):
                 print("invalid input, please input again :D")
                 continue
-
+            
             if input_option == "t":
                 correct_list.append(current_pcd_path)
                 self.save_progress(error_list, correct_list)
