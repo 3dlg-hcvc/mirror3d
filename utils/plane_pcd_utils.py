@@ -149,19 +149,7 @@ def get_colored_pcd(f=538, depth_img_path="", color_img_path="", mirror_mask=Non
     pcd.colors = o3d.utility.Vector3dVector(np.stack(colors,axis=0))
     return pcd
 
-# ---------------------------------------------------------------------------- #
-#             get the cloest point to target_point from points_list            #
-# ---------------------------------------------------------------------------- #
-def get_paired_point(points_list, target_point):
 
-    dis = np.linalg.norm(np.array(target_point)-np.array(points_list[0]))
-    cloest_point = points_list[0]
-    for item in points_list:
-        current_dis = np.linalg.norm(np.array(target_point)-np.array(item))
-        if current_dis <= dis:
-            dis = current_dis
-            cloest_point = item
-    return cloest_point
 
 # ---------------------------------------------------------------------------- #
 #                    get_mirror_init_plane based on 3 points                   #

@@ -126,6 +126,7 @@ def get_IOU(pred_mask, GT_mask):
 #                     get point to rectangle distance in 3d                    #
 # ---------------------------------------------------------------------------- #
 def point_2_regBorder_in_3d(point, rectangle):
+    point = np.array(point)
     p1, p2, p3, p4 = sorted_rect(rectangle)
     return min(point_2_line_seg_in_3d(point, p1, p2), point_2_line_seg_in_3d(point, p2, p3), point_2_line_seg_in_3d(point, p3, p4), point_2_line_seg_in_3d(point, p4, p1))
 
@@ -149,12 +150,31 @@ def point_2_line_seg_in_3d(point, line_p1, line_p2):
     c = np.cross(point - line_p1, d)
     return np.hypot(h, np.linalg.norm(c))
 
+
+# ---------------------------------------------------------------------------- #
+#             get the cloest point to target_point from points_list            #
+# ---------------------------------------------------------------------------- #
+def get_paired_point(points_list, target_point):
+
+    dis = np.linalg.norm(np.array(target_point)-np.array(points_list[0]))
+    cloest_point = points_list[0]
+    for item in points_list:
+        current_dis = np.linalg.norm(np.array(target_point)-np.array(item))
+        if current_dis <= dis:
+            dis = current_dis
+            cloest_point = item
+    return cloest_point
+
 # ---------------------------------------------------------------------------- #
 #             returns vec in clockwise order, starting with topleft            #
 # ---------------------------------------------------------------------------- #
 def sorted_rect(vec):
-    normd = vec - np.average(vec,axis=0) # vertices relative to centroid
-    tl_idx = np.argmax(np.dot(normd,np.array([-1,-1]))) #index of top left vertex
-    clockwise = np.cross(vec[(tl_idx+1) % 4] - vec[tl_idx],
-                         vec[tl_idx] - vec[tl_idx-1]) > 0
-    return np.roll(vec,-tl_idx,axis=0) if clockwise else np.roll(vec,-1-tl_idx,axis=0)[::-1]
+    point_list = vec.copy()
+    p2 = point_list[0]
+    p1 = get_paired_point(point_list[1:], p2)
+    point_list.remove(p1)
+    point_list.remove(p2)
+    p3 = get_paired_point(point_list, p2)
+    point_list.remove(p3)
+    p4 = point_list[0]
+    return [np.array(p1), np.array(p2), np.array(p3), np.array(p4)]
