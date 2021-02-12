@@ -336,7 +336,7 @@ class Plane_annotation_tool():
 
 
     def get_progress(self):
-         """Get annotation progress"""
+        """Get annotation progress"""
         pcd_path_list = []
         pcd_save_folder = os.path.join(self.anno_output_folder, "anno_pcd")
         for pcd_name in os.listdir(pcd_save_folder):
@@ -456,7 +456,7 @@ if __name__ == "__main__":
     parser.add_argument('--multi_processing', help='do multi-process or not',action='store_true')
     args = parser.parse_args()
     
-    plane_anno_tool = Plane_annotation_tool(args.data_main_folder, args.index, False)
-    plane_anno_tool.anno_env_setup()
-    # plane_anno_tool = Data_post_processing(args.data_main_folder, args.index, False)
-    # plane_anno_tool.data_clamping()
+    # plane_anno_tool = Plane_annotation_tool(args.data_main_folder, args.index, False)
+    # plane_anno_tool.anno_env_setup()
+    plane_anno_tool = Data_post_processing(args.data_main_folder, args.index, False)
+    plane_anno_tool.data_clamping()
