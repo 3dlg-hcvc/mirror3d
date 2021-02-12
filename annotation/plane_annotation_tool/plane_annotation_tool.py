@@ -414,18 +414,3 @@ class Data_post_processing(Plane_annotation_tool):
                 cv2.imwrite(hole_refined_depth_path, clamp_pcd_by_bbox(mirror_bbox=mirror_bbox, depth_img_path=hole_refined_depth_path, f=self.f, mirror_border_mask=mirror_border_mask ,plane_parameter=one_info[1]["plane_parameter"], expand_range = self.expand_range))
                 print("update depth {}".format(hole_refined_depth_path))
 
-
-if __name__ == "__main__":
-
-    parser = argparse.ArgumentParser(description='Get Setting :D')
-    parser.add_argument(
-        '--data_main_folder', default="/Users/tanjiaqi/Desktop/SFU/mirror3D/test")
-    parser.add_argument(
-        '--index', default=0, type=int, help="process index")
-    parser.add_argument('--multi_processing', help='do multi-process or not',action='store_true')
-    args = parser.parse_args()
-    
-    # plane_anno_tool = Plane_annotation_tool(args.data_main_folder, args.index, False)
-    # plane_anno_tool.anno_update_depth_from_imgInfo()
-    plane_anno_tool = Data_post_processing(args.data_main_folder, args.index, False)
-    plane_anno_tool.data_clamping()
