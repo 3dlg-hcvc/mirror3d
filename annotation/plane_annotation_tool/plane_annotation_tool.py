@@ -13,10 +13,14 @@ import shutil
 
 
 
-# ---------------------------------------------------------------------------- #
-#                     class Option to print the option list                    #
-# ---------------------------------------------------------------------------- #
+
 class Option():
+    """
+    The Option class currently does the following:
+    1. add_option
+    2. print_option
+    3. check input_option correctness
+    """
     def __init__(self):
         self.option_fun = dict()
     
@@ -43,16 +47,30 @@ class Option():
             except:
                 is_valid = False
         return is_valid
-    
-# ---------------------------------------------------------------------------- #
-#           Plane annotation tool                                              # 
-#           (1) anno_env_setup                                                 #
-#           (2) anno_plane_update_imgInfo                                      #
-#           (3) anno_update_depth_from_imgInfo                                 #
-# ---------------------------------------------------------------------------- #
+
+
+
 class Plane_annotation_tool():
-    
+    """
+    The Plane_annotation_tool class currently does the following:
+    1. anno_env_setup          
+    2. anno_plane_update_imgInfo                       
+    3. anno_update_depth_from_imgInfo          
+    """
     def __init__(self, data_main_folder=None, process_index=0, multi_processing=False, border_width=50, f=519, anno_output_folder=None):
+        """
+        Initilization
+
+        Args:
+            data_main_folder : Folder raw, hole_raw_depth/ mesh_raw_depth, instance_mask saved folder.
+            anno_output_folder(optional) : Inital pcd, img_info, border_vis saved forder (default : data_main_folder).
+            process_index : The process index of multi_processing.
+            multi_processing : Use multi_processing or not (bool).
+            border_width : Half of mirror 2D border width (half of cv2.dilate kernel size; 
+                           default kernel anchor is at the center); default : 50 --> actualy border width = 25.
+            f : Camera focal length of current input data.
+        """
+
         self.data_main_folder = data_main_folder
         assert os.path.exists(data_main_folder), "please input a valid folder path"
         self.process_index = process_index
@@ -72,8 +90,9 @@ class Plane_annotation_tool():
             self.anno_output_folder = data_main_folder
             print("########## NOTE output saved to {}, this may overwrite your current information ############".format(self.anno_output_folder))
 
-    # ------------------------------ save error path ----------------------------- #
     def save_error_raw_name(self, sample_raw_name):
+        """Save error path"""
+
         error_img_list = []
         if os.path.exists(self.error_info_path):
             error_img_list = read_txt(self.error_info_path)
@@ -82,10 +101,10 @@ class Plane_annotation_tool():
                     file.write(sample_raw_name)
                     file.write("\n")
     
-    # ---------------------------------------------------------------------------- #
-    #           check whether files under self.data_main_folder are valid          #
-    # ---------------------------------------------------------------------------- #
+
     def check_file(self):
+        """Check whether files under self.data_main_folder are valid"""
+
         data_correct = True
         raw_foler = os.path.join(self.data_main_folder, "raw")
 
@@ -114,10 +133,16 @@ class Plane_annotation_tool():
         assert data_correct, "sth wrong with data, please check data first"
 
     
-    # ---------------------------------------------------------------------------- #
-    #     generate pcd for annotation and initlize plane parameter using ransac    #
-    # ---------------------------------------------------------------------------- #
+
     def anno_env_setup(self):
+        """
+        Generate pcd for annotation and initlize plane parameter using ransac
+        
+        Output:
+            pcd : .ply file (per instance).
+            img_info : .json file (per image); save mirror instances' parameter. 
+            border_vis : .png file (per instance).
+        """
         import open3d as o3d
         pcd_save_folder = os.path.join(self.anno_output_folder, "anno_pcd")
         os.makedirs(pcd_save_folder, exist_ok=True)
@@ -128,7 +153,7 @@ class Plane_annotation_tool():
 
         for color_img_path in self.color_img_list:
 
-            # --------------------------------- path init -------------------------------- #
+            # Get paths
             smaple_name = os.path.split(color_img_path)[1].split(".")[0] 
             mask_img_path = color_img_path.replace("raw","instance_mask")
             if self.is_matterport3d:
@@ -137,7 +162,7 @@ class Plane_annotation_tool():
                 depth_img_path = color_img_path.replace("raw","hole_raw_depth")
             mask = cv2.imread(mask_img_path)
 
-            # -------------- get pcd and masked RGB image for each instance -------------- #
+            #  Get pcd and masked RGB image for each instance
             for instance_index in np.unique(np.reshape(mask,(-1,3)), axis = 0):
                 if sum(instance_index) == 0: # background
                     continue
@@ -154,13 +179,13 @@ class Plane_annotation_tool():
                 binary_instance_mask = get_grayscale_instanceMask(mask, instance_index)
                 mirror_border_mask = cv2.dilate(binary_instance_mask, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (self.border_width,self.border_width))) - binary_instance_mask
 
-                # ------------------- save image with masked mirror boreder ------------------ #
+                #  Save image with masked mirror boreder 
                 border_mask_vis_image = visulize_mask_one_image(color_img_path, mirror_border_mask)
                 border_mask_vis_save_path = os.path.join(mirror_border_vis_save_folder, "{}.jpg".format(instance_tag)) 
                 plt.imsave(border_mask_vis_save_path, border_mask_vis_image)
                 print("border_mask_vis_save_path : ", os.path.abspath(border_mask_vis_save_path))
 
-                # ---------------- get pcd with refined mirror depth by ransac --------------- #
+                #  Get pcd with refined mirror depth by ransac 
                 pcd, plane_parameter = refine_pcd_by_mirror_border(binary_instance_mask, mirror_border_mask, depth_img_path, color_img_path, self.f)
                 one_plane_para_save_path = os.path.join(plane_parameter_save_folder, "{}.json".format(smaple_name))
                 save_plane_parameter_2_json(plane_parameter, one_plane_para_save_path, instance_index)
@@ -169,12 +194,13 @@ class Plane_annotation_tool():
                 o3d.io.write_point_cloud(pcd_save_path, pcd)
                 print("point cloud saved  to :", os.path.abspath(pcd_save_path))
 
-                    
-    # ---------------------------------------------------------------------------- #
-    #       check whether mirror plane is correct (verification & adjustment)      #
-    # ---------------------------------------------------------------------------- #
-    # ----------------------- requirement : open3d 0.10.0 + ---------------------- #
+
     def anno_plane_update_imgInfo(self):
+        """
+        Check whether mirror plane is correct (verification & adjustment)
+
+        Requirement : open3d 0.10.0 +
+        """
         import open3d as o3d
         anotation_progress_save_folder = os.path.join(self.anno_output_folder, "anno_progress")
         os.makedirs(anotation_progress_save_folder, exist_ok=True)
@@ -207,8 +233,6 @@ class Plane_annotation_tool():
             mirror_bbox = o3d.geometry.OrientedBoundingBox.create_from_points(o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0)))
             mirror_plane = get_mirror_init_plane_from_mirrorbbox(plane_parameter, mirror_bbox)
             o3d.visualization.draw_geometries([pcd, mirror_plane])
-
-
 
             option_list = Option()
             option_list.add_option("t", "TRUE : initial plane parameter is correct")
@@ -262,10 +286,14 @@ class Plane_annotation_tool():
                 self.save_progress(error_list, correct_list)
                 annotated_paths, path_to_annotate , error_list, correct_list = self.get_progress()
     
-    # ----------------------------------------------------------------------------------------------------------- #
-    # After plane annotation, update hole_raw_depth / mesh_raw_depth to hole_refined_depth / mesh_refined_depth   #
-    # ----------------------------------------------------------------------------------------------------------- #
+
     def anno_update_depth_from_imgInfo(self):
+        """
+        After plane annotation, update "hole_raw_depth/mesh_raw_depth" to "hole_refined_depth/mesh_refined_depth"
+
+        Output:
+            Refined depth saved to hole_refined_depth or mesh_refined_depth (Matterport3d only).
+        """
         raw_image_save_folder = os.path.join(self.data_main_folder, "raw")
         img_info_save_folder = os.path.join(self.anno_output_folder, "img_info")
         for color_img_path in self.color_img_list:
@@ -280,9 +308,10 @@ class Plane_annotation_tool():
                 mask = cv2.imread(mask_img_path)
                 binary_instance_mask = get_grayscale_instanceMask(mask, instance_index)
                 plane_parameter = one_info[1]["plane_parameter"]
+
+                # Refine mesh raw depth (only Matterport3d have mesh raw depth)
                 if self.is_matterport3d:
                     depth_file_name = "{}.png".format(rreplace(smaple_name,"i","d"))
-                    # refine mesh raw depth (only Matterport3d have mesh raw depth)
                     mesh_raw_depth_path = os.path.join(self.data_main_folder, "mesh_raw_depth",depth_file_name)
                     mesh_refined_depth_path = os.path.join(self.data_main_folder, "mesh_refined_depth",depth_file_name)
                     os.makedirs(os.path.split(mesh_refined_depth_path)[0], exist_ok=True)
@@ -290,27 +319,24 @@ class Plane_annotation_tool():
                     print("update depth {} {}".format(mesh_refined_depth_path))
                 else:
                     depth_file_name = "{}.png".format(smaple_name)
-                # refine hole raw depth
+                # Refine hole raw depth
                 hole_raw_depth_path = os.path.join(self.data_main_folder, "hole_raw_depth",depth_file_name)
                 hole_refined_depth_path = os.path.join(self.data_main_folder, "hole_refined_depth",depth_file_name)
                 os.makedirs(os.path.split(hole_refined_depth_path)[0], exist_ok=True)
                 cv2.imwrite(hole_refined_depth_path, refine_depth_with_plane_parameter_mask(plane_parameter, binary_instance_mask, cv2.imread(hole_raw_depth_path,cv2.IMREAD_ANYDEPTH),self.f))
                 print("update depth {}".format(hole_refined_depth_path))
 
-    # ---------------------------------------------------------------------------- #
-    #                           save annotation progress                           #
-    # ---------------------------------------------------------------------------- #
     def save_progress(self, error_list, correct_list):
+        """Save annotation progress"""
         anotation_progress_save_folder = os.path.join(self.anno_output_folder, "anno_progress")
         error_txt_path = os.path.join(anotation_progress_save_folder, "error_list.txt")
         correct_txt_path = os.path.join(anotation_progress_save_folder, "correct_list.txt")
         save_txt(error_txt_path, error_list)
         save_txt(correct_txt_path, correct_list)
 
-    # ---------------------------------------------------------------------------- #
-    #                            get annotation progress                           #
-    # ---------------------------------------------------------------------------- #
+
     def get_progress(self):
+         """Get annotation progress"""
         pcd_path_list = []
         pcd_save_folder = os.path.join(self.anno_output_folder, "anno_pcd")
         for pcd_name in os.listdir(pcd_save_folder):
@@ -368,11 +394,14 @@ class Data_post_processing(Plane_annotation_tool):
             print("########## NOTE output saved to {}, this may overwrite your current information ############".format(self.anno_output_folder))
         self.expand_range = expand_range
 
-    # ---------------------------------------------------------------------------- #
-    #                          clamp data based on 3D bbox                         #
-    #           all data should be saved in self.data_main_folder                  #
-    # ---------------------------------------------------------------------------- #
+
     def data_clamping(self):
+        """
+        Clamp data based on 3D bbox
+
+        Output:
+            Clamped depth : saved to hole_refined_depth or mesh_refined depth under self.data_main_folder
+        """
         import open3d as o3d
         raw_image_save_folder = os.path.join(self.data_main_folder, "raw")
         img_info_save_folder = os.path.join(self.data_main_folder, "img_info")
@@ -385,7 +414,7 @@ class Data_post_processing(Plane_annotation_tool):
                 instance_index_str = one_info[0].split("_")
                 instance_index_tuple = [int(i) for i in instance_index_str]
 
-                # get mask_img_path, depth_img_path, color_img_path
+                # Get mask_img_path, depth_img_path, color_img_path
                 mask_img_path = os.path.join(self.data_main_folder, "instance_mask","{}.png".format(img_name))
                 if self.is_matterport3d:
                     depth_img_path = os.path.join(self.data_main_folder, "mesh_raw_depth","{}.png".format(rreplace(img_name, "i", "d")))
@@ -394,23 +423,40 @@ class Data_post_processing(Plane_annotation_tool):
                 depth_file_name = depth_img_path.split("/")[-1]
                 color_img_path = os.path.join(self.data_main_folder, "raw","{}.png".format(img_name))
                 
-                # get mirror_border_mask
+                # Get mirror_border_mask
                 instance_mask = get_grayscale_instanceMask(cv2.imread(mask_img_path), instance_index_tuple)
                 mirror_border_mask = cv2.dilate(instance_mask, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (self.border_width,self.border_width))) - instance_mask
-                # get mirror_bbox
+                # Get mirror_bbox
                 mirror_points = get_points_in_mask(f=self.f, depth_img_path=depth_img_path, color_img_path=color_img_path, mirror_mask=instance_mask)
                 mirror_pcd = o3d.geometry.PointCloud()
                 mirror_pcd.points = o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0))
                 mirror_bbox = o3d.geometry.OrientedBoundingBox.create_from_points(o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0)))
                  
                 if self.is_matterport3d:
-                    # refine mesh raw depth (only Matterport3d have mesh raw depth)
+                    # Refine mesh raw depth (only Matterport3d have mesh raw depth)
                     mesh_refined_depth_path = os.path.join(self.data_main_folder, "mesh_refined_depth", depth_file_name)
                     cv2.imwrite(mesh_refined_depth_path, clamp_pcd_by_bbox(mirror_bbox=mirror_bbox, depth_img_path=mesh_refined_depth_path, f=self.f, mirror_border_mask=mirror_border_mask , plane_parameter=one_info[1]["plane_parameter"], expand_range = self.expand_range))
                     print("update depth {} {}".format(mesh_refined_depth_path))
 
-                # refine hole raw depth
+                # Refine hole raw depth
                 hole_refined_depth_path = os.path.join(self.data_main_folder, "hole_refined_depth", depth_file_name)
                 cv2.imwrite(hole_refined_depth_path, clamp_pcd_by_bbox(mirror_bbox=mirror_bbox, depth_img_path=hole_refined_depth_path, f=self.f, mirror_border_mask=mirror_border_mask ,plane_parameter=one_info[1]["plane_parameter"], expand_range = self.expand_range))
                 print("update depth {}".format(hole_refined_depth_path))
 
+
+
+
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(description='Get Setting :D')
+    parser.add_argument(
+        '--data_main_folder', default="/Users/tanjiaqi/Desktop/SFU/mirror3D/test")
+    parser.add_argument(
+        '--index', default=0, type=int, help="process index")
+    parser.add_argument('--multi_processing', help='do multi-process or not',action='store_true')
+    args = parser.parse_args()
+    
+    plane_anno_tool = Plane_annotation_tool(args.data_main_folder, args.index, False)
+    plane_anno_tool.anno_env_setup()
+    # plane_anno_tool = Data_post_processing(args.data_main_folder, args.index, False)
+    # plane_anno_tool.data_clamping()
