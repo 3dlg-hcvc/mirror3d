@@ -1,3 +1,0 @@
-opencv-python
-scikit-image
-open3d
