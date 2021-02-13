@@ -363,6 +363,9 @@ def get_points_in_mask(f, depth_img_path, color_img_path, mirror_mask=None, poin
                     return xyz
     return xyz
 
+
+
+
 # ---------------------------------------------------------------------------- #
 #                               get_pcd_from_rgbd                              #
 # ---------------------------------------------------------------------------- #
@@ -851,7 +854,7 @@ def refine_depth_with_plane_parameter_mask(plane_parameter, mirror_mask, depth_t
 # ---------------------------------------------------------------------------- #
 #                          clamp data based on 3d bbox                         #
 # ---------------------------------------------------------------------------- #
-def clamp_pcd_by_bbox(mirror_bbox, depth_img_path, f, mirror_border_mask,plane_parameter, expand_range = 100):
+def clamp_pcd_by_bbox(mirror_bbox, depth_img_path, f, mirror_border_mask,plane_parameter, expand_range = 100, clamp_dis=100):
 
     mirror_bbox_points = np.array(mirror_bbox.get_box_points()).tolist()
 
@@ -865,7 +868,7 @@ def clamp_pcd_by_bbox(mirror_bbox, depth_img_path, f, mirror_border_mask,plane_p
     mirror_bbox_points.remove(p3)
     mirror_bbox_points.remove(get_paired_point(mirror_bbox_points, p3))
     p4 = mirror_bbox_points[0]
-    rectangle = [p1, p2, p3, p4]
+    mirror_recrangle = [p1, p2, p3, p4]
 
     if mirror_border_mask is not None and len(mirror_border_mask.shape)>2:
         mirror_border_mask = cv2.cvtColor(mirror_border_mask, cv2.COLOR_BGR2GRAY)
@@ -880,21 +883,23 @@ def clamp_pcd_by_bbox(mirror_bbox, depth_img_path, f, mirror_border_mask,plane_p
     for y in range(h):
         for x in range(w):
             if mirror_border_mask[y][x] > 0:
-                point = [(x - w/2) * (depth_to_refine[y][x]/f),(y - h/2) * (depth_to_refine[y][x]/f),depth_to_refine[y][x]]
-                if point_2_regBorder_in_3d(point, rectangle) <= expand_range:
-                    n = np.array([a, b, c])
-                    V0 = np.array([0, 0, -d/c])
-                    P0 = np.array([0,0,0])
-                    P1 = np.array([(x - w/2), (y - h/2), f ])
+                ori_point = [(x - w/2) * (depth_to_refine[y][x]/f),(y - h/2) * (depth_to_refine[y][x]/f),depth_to_refine[y][x]]
+                n = np.array([a, b, c])
+                V0 = np.array([0, 0, -d/c])
+                P0 = np.array([0,0,0])
+                P1 = np.array([(x - w/2), (y - h/2), f ])
 
-                    j = P0 - V0
-                    u = P1-P0
-                    N = -np.dot(n,j)
-                    D = np.dot(n,u)
-                    sI = N / D
-                    I = P0+ sI*u
+                j = P0 - V0
+                u = P1-P0
+                N = -np.dot(n,j)
+                D = np.dot(n,u)
+                sI = N / D
+                I = P0+ sI*u
+                expand_point_on_plane = I[2]
+                if point_2_regBorder_in_3d(expand_point_on_plane, mirror_recrangle) <= expand_range:
+                    if np.linalg.norm(np.array(expand_point_on_plane)-np.array(ori_point[0])) >= clamp_dis:
 
-                    depth_to_refine[y,x] = I[2]
+                        depth_to_refine[y,x] = I[2]
     
     return depth_to_refine
 

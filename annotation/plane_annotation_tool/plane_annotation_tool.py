@@ -151,7 +151,6 @@ class Plane_annotation_tool():
         os.makedirs(plane_parameter_save_folder, exist_ok=True)
 
         for color_img_path in self.color_img_list:
-
             # Get paths
             smaple_name = os.path.split(color_img_path)[1].split(".")[0] 
             mask_img_path = color_img_path.replace("raw","instance_mask")
@@ -372,7 +371,20 @@ class Plane_annotation_tool():
 class Data_post_processing(Plane_annotation_tool):
 
 
-    def __init__(self, data_main_folder=None, process_index=0, multi_processing=False, border_width=50, f=519, anno_output_folder=None, expand_range=100):
+    def __init__(self, data_main_folder=None, process_index=0, multi_processing=False, border_width=50, f=519, anno_output_folder=None, expand_range=100, clamp_dis = 100):
+        """
+        Initilization
+
+        Args:
+            data_main_folder : Folder raw, hole_raw_depth/ mesh_raw_depth, instance_mask saved folder.
+            anno_output_folder(optional) : Inital pcd, img_info, border_vis saved forder (default : data_main_folder).
+            process_index : The process index of multi_processing.
+            multi_processing : Use multi_processing or not (bool).
+            border_width : Half of mirror 2D border width (half of cv2.dilate kernel size; 
+                           default kernel anchor is at the center); default : 50 --> actualy border width = 25.
+            f : Camera focal length of current input data.
+            expand_range : Data clamping 3D bbox expanded step size.
+        """
         self.data_main_folder = data_main_folder
         assert os.path.exists(data_main_folder), "please input a valid folder path"
         self.process_index = process_index
@@ -392,6 +404,7 @@ class Data_post_processing(Plane_annotation_tool):
             self.anno_output_folder = data_main_folder
             print("########## NOTE output saved to {}, this may overwrite your current information ############".format(self.anno_output_folder))
         self.expand_range = expand_range
+        self.clamp_dis = clamp_dis
 
 
     def data_clamping(self):
@@ -434,12 +447,12 @@ class Data_post_processing(Plane_annotation_tool):
                 if self.is_matterport3d:
                     # Refine mesh raw depth (only Matterport3d have mesh raw depth)
                     mesh_refined_depth_path = os.path.join(self.data_main_folder, "mesh_refined_depth", depth_file_name)
-                    cv2.imwrite(mesh_refined_depth_path, clamp_pcd_by_bbox(mirror_bbox=mirror_bbox, depth_img_path=mesh_refined_depth_path, f=self.f, mirror_border_mask=mirror_border_mask , plane_parameter=one_info[1]["plane_parameter"], expand_range = self.expand_range))
+                    cv2.imwrite(mesh_refined_depth_path, clamp_pcd_by_bbox(mirror_bbox=mirror_bbox, depth_img_path=mesh_refined_depth_path, f=self.f, mirror_border_mask=mirror_border_mask , plane_parameter=one_info[1]["plane_parameter"], expand_range = self.expand_range, clamp_dis = self.clamp_dis))
                     print("update depth {} {}".format(mesh_refined_depth_path))
 
                 # Refine hole raw depth
                 hole_refined_depth_path = os.path.join(self.data_main_folder, "hole_refined_depth", depth_file_name)
-                cv2.imwrite(hole_refined_depth_path, clamp_pcd_by_bbox(mirror_bbox=mirror_bbox, depth_img_path=hole_refined_depth_path, f=self.f, mirror_border_mask=mirror_border_mask ,plane_parameter=one_info[1]["plane_parameter"], expand_range = self.expand_range))
+                cv2.imwrite(hole_refined_depth_path, clamp_pcd_by_bbox(mirror_bbox=mirror_bbox, depth_img_path=hole_refined_depth_path, f=self.f, mirror_border_mask=mirror_border_mask ,plane_parameter=one_info[1]["plane_parameter"], expand_range = self.expand_range, clamp_dis = self.clamp_dis))
                 print("update depth {}".format(hole_refined_depth_path))
 
 
@@ -456,6 +469,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     # plane_anno_tool = Plane_annotation_tool(args.data_main_folder, args.index, False)
-    # plane_anno_tool.anno_env_setup()
+    # plane_anno_tool.anno_update_depth_from_imgInfo()
     plane_anno_tool = Data_post_processing(args.data_main_folder, args.index, False)
     plane_anno_tool.data_clamping()
