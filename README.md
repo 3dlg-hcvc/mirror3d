@@ -67,6 +67,7 @@ python Mirror3D/annotation/plane_annotation_tool/plane_annotation_tool.py --stag
 ```python
 python Mirror3D/visualization/dataset_visualization.py --stage all --data_main_folder [dataset main folder] --process_index [the process index during multi-processing]  --multi_processing --overwrite --f [focal length of the dataset] --output_folder [output point cloud/ mesh plane/ screenshot/ video saved folder] --view_mode [topdown/ front]
 ```
+- 
 	- `--stage 1`: Generate point cloud and mesh plane for visualization
 
 	- `--stage 2`: Generate screenshot for "point cloud + mesh plane" under "topdown + front" view
