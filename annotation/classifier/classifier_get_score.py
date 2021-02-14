@@ -33,7 +33,7 @@ if __name__ == "__main__":
     # # parser.add_argument('--num_classes', default=2, type=int, help='num_classes to classify')
     parser.add_argument('--batch_size', default=16, type=int)
     # TODO retrain
-    parser.add_argument('--img_list_to_test',  default="/local-scratch/share_data/scannet_extracted/info/scannet_frames_25k.txt", type=str)
+    parser.add_argument('--unsort_img_list',  default="/local-scratch/share_data/scannet_extracted/info/scannet_frames_25k.txt", type=str)
     # TODO retrain
     parser.add_argument('--resume_path',  default="/project/3dlg-hcvc/jiaqit/output/classifier/checkpoint/epoch_20_checkpoint.pth.tar", type=str) # /local-scratch/jiaqit/exp/chris_planercnn/examples/log/retrain_7_2020_08_07-16_45_00_log/checkpoint.pth.tar
     # TODO retrain
@@ -73,7 +73,7 @@ if __name__ == "__main__":
 
 
     train_sampler = None
-    val_dataset = Dataset_to_label(args.img_list_to_test,transform) 
+    val_dataset = Dataset_to_label(args.unsort_img_list,transform) 
     val_loader = torch.utils.data.DataLoader(
             val_dataset, batch_size=args.batch_size, shuffle=True, 
             num_workers=1, pin_memory=True, sampler=train_sampler)
