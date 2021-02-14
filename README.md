@@ -28,10 +28,35 @@ python Mirror3D/annotation/classifier/classifier_train.py --unsort_img_list [img
 
 ```
 
-- Use ** to manully annoatate mirror images
+- Use ** to manully annoatate mirror images （TODO）
 
 
 ### Plane annoatation
 
+```python
+python Mirror3D/annotation/plane_annotation_tool/plane_annotation_tool.py --stage [all / 1 ~ 6] --data_main_folder [dataset main folder] --process_index [the process index during multi-processing] --border_width [mirror border width] --f [focal length of the dataset] --anno_output_folder [annotation result output folder]
+```
+
+- `--stage 1` : Set up annotation environment 
+
+- `--stage 2` : Manully annotate the mirror plane
+
+- `--stage 3` : Update raw depth
+
+- `--stage 4` : Clamp depth data (clamp outlier around the mirror instance)
+
+- Other post processing function 
+	- `--stage 5` update img_info based on refined depth
+
+- `--stage all` : Run stage 1 ~ 4 together
+
+- Note : 
+	- Only changing the ratio of w:h (and don’t change f)  will change the point cloud’s shape
+	- Only changing the depth_shift (all depth change in the same way) OR changing img_shape but keep w:h will not change the shape of the point cloud (but the point cloud would be small / larger / closer / further)
+	- During training: If the image is changed by ration r (w:h ratio doesn’t change), f should also change by ratio r
+
+
 
 ### Verification
+
+(TODO)
