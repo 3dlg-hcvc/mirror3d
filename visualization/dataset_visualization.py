@@ -107,7 +107,7 @@ class Dataset_visulization(Plane_annotation_tool):
                 mirror_pcd = o3d.geometry.PointCloud()
                 mirror_pcd.points = o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0))
                 mirror_bbox = o3d.geometry.OrientedBoundingBox.create_from_points(o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0)))
-                mirror_plane = get_mirror_init_plane_from_mirrorbbox(plane_parameter, mirror_bbox)
+                mirror_plane = get_mirror_init_plane_from_mirrorbbox(plane_parameter["plane_parameter"], mirror_bbox)
 
                 pcd_save_path = os.path.join(pcd_save_folder,  "{}.ply".format(instance_tag))
                 o3d.io.write_point_cloud(pcd_save_path, pcd)

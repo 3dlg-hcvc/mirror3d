@@ -32,9 +32,7 @@ model_names = sorted(name for name in models.__dict__
 
 parser = argparse.ArgumentParser(description='PyTorch ImageNet Training')
 # TODO
-parser.add_argument('--model_name', default="debug", type=str)
-# TODO
-parser.add_argument('--data_len', default=500, type=int) 
+parser.add_argument('--model_name', default="classidier", type=str)
 # TODO
 parser.add_argument('-b', '--batch_size', default=4, type=int,
                     metavar='N',
@@ -274,7 +272,7 @@ def main_worker(gpu, ngpus_per_node, args):
         batch_size=args.batch_size, shuffle=False,
         num_workers=args.workers, pin_memory=True)
 
-    print("data len : ",args.data_len , "train_loader len :", len(train_loader))
+    print("train_loader len :", len(train_loader))
     if args.evaluate:
         val_acc, val_f_measure_0_3, val_f_measure_1, val_recall, val_precision = validate(val_loader, model, criterion, args) 
         print("validate : val_acc {} val_f_measure_0_3 {} val_f_measure_1 {} val_recall {} val_precision {}".format(val_acc, val_f_measure_0_3, val_f_measure_1, val_recall, val_precision))
