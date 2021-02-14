@@ -63,4 +63,21 @@ python Mirror3D/annotation/plane_annotation_tool/plane_annotation_tool.py --stag
 
 ### Verification
 
-(TODO)
+- STEP 1: Generate video for vrification 
+```python
+python Mirror3D/visualization/dataset_visualization.py --stage all --data_main_folder [dataset main folder] --process_index [the process index during multi-processing]  --multi_processing --overwrite --f [focal length of the dataset] --output_folder [output point cloud/ mesh plane/ screenshot/ video saved folder] --view_mode [topdown/ front]
+```
+	- `--stage 1`: Generate point cloud and mesh plane for visualization
+
+	- `--stage 2`: Generate screenshot for "point cloud + mesh plane" under "topdown + front" view
+
+	- `--stage 3`: Generate screenshot for "point cloud + mesh plane" under specific view
+	- `--stage 4`: Generate videos under "topdown + front" view
+	- `--stage 5`: Generate videos under specific view
+	- `--stage all`: run stage 1, 2, 4 together
+
+- STEP 2: Launch webpage to view the videos
+
+	Annotators should manully note down the error sample's path to a [error_sample].txt
+
+- STEP 3: Copy out the error sample's data to another folder for reannotation
