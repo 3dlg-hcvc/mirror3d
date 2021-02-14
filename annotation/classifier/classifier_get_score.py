@@ -1,41 +1,17 @@
 import argparse
 import os
-import random
-import shutil
-import time
-import warnings
-import matplotlib.pyplot as plt
-import sys
 import torch
 import torch.nn as nn
-import torch.nn.parallel
 import torch.backends.cudnn as cudnn
-import torch.distributed as dist
 import torch.optim
-import torch.multiprocessing as mp
 import torch.utils.data
 import torch.utils.data.distributed
 import torchvision.transforms as transforms
-import torchvision.datasets as datasets
 from mirror3d_resnet import resnet50
-from PIL import Image
-import random
-from tensorboardX import SummaryWriter
-import numpy as np
 from classifier_Dataset import *
-import operator
-
-import datetime as d
-from tqdm import tqdm
-import math
-from PIL import Image
-import matplotlib.pyplot as plt
-import time
-import json
-
+from utils.general_utlis import *
 
 def eval_get_score(args, val_loader, criterion, model):
-    # TODO append image_list and score to txt (sort the score as well)
     img_score = dict()
     for i, (img_path_list, images, _) in enumerate(tqdm(val_loader)):
         
@@ -49,16 +25,6 @@ def eval_get_score(args, val_loader, criterion, model):
     img_score = dict(sorted(img_score.items(), key=operator.itemgetter(1),reverse=True))
     json_save_path = os.path.join(args.output_save_folder, "imgPath_score_" + time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())  + ".json")
     save_json(json_save_path,img_score)
-
-
-def save_json(save_path,data):
-    out_json = json.dumps(data, sort_keys=False, indent=4, separators=(',', ':'),
-                          ensure_ascii=False)
-    with open(save_path, "w") as fo:
-        fo.write(out_json)
-        fo.close()
-        print("json file saved to : ",save_path )
-
 
 
 if __name__ == "__main__":
@@ -83,7 +49,6 @@ if __name__ == "__main__":
         if name.islower() and not name.startswith("__")
         and callable(models.__dict__[name]))
 
-    # TODO change num_classes
     model = resnet50()
     model.eval()
     model.cuda()

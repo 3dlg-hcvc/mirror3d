@@ -17,7 +17,6 @@ import torch.multiprocessing as mp
 import torch.utils.data
 import torch.utils.data.distributed
 import torchvision.transforms as transforms
-import torchvision.datasets as datasets
 from mirror3d_resnet import resnet50
 from PIL import Image
 import random

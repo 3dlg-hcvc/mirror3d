@@ -15,7 +15,8 @@ from annotation.plane_annotation_tool.plane_annotation_tool import *
 
 class Dataset_visulization(Plane_annotation_tool):
 
-    def __init__(self, data_main_folder=None, process_index=0, multi_processing=False, f=519, output_folder=None, overwrite=True, window_w=800, window_h=800):
+    def __init__(self, data_main_folder=None, process_index=0, multi_processing=False, 
+                f=519, output_folder=None, overwrite=True, window_w=800, window_h=800, view_mode="topdown"):
         """
         Initilization
 
@@ -36,6 +37,7 @@ class Dataset_visulization(Plane_annotation_tool):
         self.overwrite = overwrite
         self.window_w = window_w
         self.window_h = window_h
+        self.view_mode = view_mode
         
         if "m3d" not in self.data_main_folder:
             self.is_matterport3d = False
@@ -83,7 +85,6 @@ class Dataset_visulization(Plane_annotation_tool):
             mask_img_path = color_img_path.replace("raw","instance_mask")
             mask = cv2.imread(mask_img_path)
             img_info_path = color_img_path.replace("raw","img_info").replace("png","json")
-
             one_img_info = read_json(img_info_path)
             
             #  Get pcd and masked RGB image for each instance
@@ -95,8 +96,6 @@ class Dataset_visulization(Plane_annotation_tool):
                 for i in instance_index:
                     instance_tag += "_{}".format(i)
                 instance_tag = color_img_path.split("/")[-1] + instance_tag
-                
-
                 binary_instance_mask = get_grayscale_instanceMask(mask, instance_index)
                 plane_parameter = one_img_info[instance_tag.split("_idx_")[1]]
 
@@ -117,7 +116,6 @@ class Dataset_visulization(Plane_annotation_tool):
                 mesh_save_path = os.path.join(mesh_save_folder,  "{}.ply".format(instance_tag))
                 o3d.io.write_triangle_mesh(mesh_save_path, mirror_plane)
                 print("mirror plane (mesh) saved  to :", os.path.abspath(mesh_save_path))
-                
 
         if self.is_matterport3d:
                 depth_img_path = rreplace(color_img_path.replace("raw","hole_refined_depth"), "i", "d")
@@ -137,17 +135,22 @@ class Dataset_visulization(Plane_annotation_tool):
 
     
     def generate_screenshot_for_pcdMesh():
-        pass
+        """
+        Call function self.generate_screenshot_for_pcdMesh_oneSample 
+            to generate screenshot for all sample under ply_folder
+        """
+        for color_img_path in self.color_img_list:
+            self.generate_pcdMesh_for_one_GTsample(color_img_path)
     
-    def generate_screenshot_for_pcdMesh_oneSample(color_img_path,view_mode):
+    def generate_screenshot_for_pcdMesh_oneSample(color_img_path):
         """
         Generate "pcd + mesh"'s screenshot for one sample
 
         Args:
-            view_mode : str; "topdow" / "front".
+            self.view_mode : str; "topdow" / "front".
 
         Output:
-            screenshots saved to : os.path.join(ply_folder, "screenshot_{}".format(view_mode))
+            screenshots saved to : os.path.join(ply_folder, "screenshot_{}".format(self.view_mode))
         """
 
         import open3d as o3d
@@ -176,10 +179,10 @@ class Dataset_visulization(Plane_annotation_tool):
                     pcd = o3d.io.read_point_cloud(pcd_path)
                     mirror_plane = o3d.io.read_triangle_mesh(mesh_path)
 
-                    self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(view_mode))
+                    self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode))
                     os.makedirs(self.screenshot_output_folder, exist_ok=True)
 
-                    if view_mode == "topdpwn":
+                    if self.view_mode == "topdpwn":
                         # Get mirror plane's center coordinate 
                         h, w = instance_mask.shape
                         py = np.where(instance_mask)[0].mean()
@@ -219,7 +222,7 @@ class Dataset_visulization(Plane_annotation_tool):
 
         Output:
             Screenshots : Saved under output folder (self.screenshot_output_folder);
-                          self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(view_mode)).
+                          self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode)).
         """
         pcd.translate(-np.array(plane.vertices).mean(0), relative=True)
         plane.translate(-np.array(plane.vertices).mean(0), relative=True)
@@ -263,7 +266,7 @@ class Dataset_visulization(Plane_annotation_tool):
 
         Output:
             Screenshots : Saved under output folder (self.screenshot_output_folder);
-                          self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(view_mode)).
+                          self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode)).
         """
         index = 0
         vis = o3d.visualization.Visualizer()
@@ -287,31 +290,30 @@ class Dataset_visulization(Plane_annotation_tool):
                 vis.destroy_window()
                 break
 
+    def generate_one_video_ffmpeg(self, color_img_path):
+        img_info = color_img_path.replace("raw", "img_info").replace("png", "json")
+        mirror_info = read_json(img_info)
 
-    
-
-    def generate_one_video_ffmpeg(self, one_img_info_path):
-        mirror_info = read_json(one_img_info_path)
-        for item in mirror_info.items():
-            id = item[0]
-            try:
-                one_screenshot_output_folder = self.screenshot_output_folder + "_" + str(id)
-                start_time = time.time()
-                one_video_save_path = one_screenshot_output_folder.replace("screenshot","video") + ".mp4"
-                one_video_save_folder = os.path.split(one_video_save_path)[0]
-                os.makedirs(one_video_save_folder, exist_ok=True)
-                if os.path.exists(one_video_save_path):
-                    if not self.overwrite:
-                        print("{} video exists!".format(one_video_save_path))
-                        continue
-                    else:
-                        os.remove(one_video_save_path)
-                command = "ffmpeg -f image2 -i " + one_screenshot_output_folder + "/%05d.png " + one_video_save_path
-                os.system(command)
-                print("video saved to {}, used time :{}".format(one_video_save_path, time.time() - start_time))
-                start_time = time.time()
-            except:
-                self.note_error(one_img_info_path.replace(self.data_folder_path,""))
+        # for item in mirror_info.items():
+        #     id = item[0]
+        #     try:
+        #         one_screenshot_output_folder = self.screenshot_output_folder + "_" + str(id)
+        #         start_time = time.time()
+        #         one_video_save_path = one_screenshot_output_folder.replace("screenshot","video") + ".mp4"
+        #         one_video_save_folder = os.path.split(one_video_save_path)[0]
+        #         os.makedirs(one_video_save_folder, exist_ok=True)
+        #         if os.path.exists(one_video_save_path):
+        #             if not self.overwrite:
+        #                 print("{} video exists!".format(one_video_save_path))
+        #                 continue
+        #             else:
+        #                 os.remove(one_video_save_path)
+        #         command = "ffmpeg -f image2 -i " + one_screenshot_output_folder + "/%05d.png " + one_video_save_path
+        #         os.system(command)
+        #         print("video saved to {}, used time :{}".format(one_video_save_path, time.time() - start_time))
+        #         start_time = time.time()
+        #     except:
+        #         self.note_error(img_info.replace(self.data_folder_path,""))
 
     
 if __name__ == "__main__":
