@@ -61,16 +61,17 @@ python Mirror3D/annotation/plane_annotation_tool/plane_annotation_tool.py --stag
 
 - Note : 
 	- Only changing the ratio of w:h (and don't change f)  will change the point cloud's shape
-	- Only changing the depth image OR resizing the image but keep the w:h ratio will not change the shape of the point cloud (but the point cloud would be closer / further/ small / larger )
+	- Only changing the depth image OR resizing the image but keep the w:h ratio will not change the shape of the point cloud (but the point cloud would be closer / further/ smaller / larger )
 	- During training: If the image is resized by ratio x (w:h ratio doesn't change), f should also multiply ratio x
 
 
 ### Verification
 
-- STEP 1: Generate video for vrification 
+- STEP 1: Generate video for verification 
 ```python
 python Mirror3D/visualization/dataset_visualization.py --stage all --data_main_folder [dataset main folder] --process_index [the process index during multi-processing]  --multi_processing --overwrite --f [focal length of the dataset] --output_folder [output point cloud/ mesh plane/ screenshot/ video saved folder] --view_mode [topdown/ front]
 ```
+- 
 	- `--stage 1`: Generate point cloud and mesh plane for visualization
 
 	- `--stage 2`: Generate screenshot for "point cloud + mesh plane" under "topdown + front" view
