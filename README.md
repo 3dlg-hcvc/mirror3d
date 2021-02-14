@@ -36,6 +36,10 @@ python Mirror3D/annotation/classifier/classification_tool.py --folder [folder co
 
 ```
 
+### Mirror mask annotation 
+
+We use [cvat]() to annotate mirror mask manully.
+
 ### Plane annoatation
 
 ```python
