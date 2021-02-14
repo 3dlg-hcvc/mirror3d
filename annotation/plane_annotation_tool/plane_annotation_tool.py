@@ -84,7 +84,8 @@ class Plane_annotation_tool():
         self.color_img_list = [os.path.join(data_main_folder, "raw", i) for i in os.listdir(os.path.join(data_main_folder, "raw"))]
         if multi_processing:
             self.color_img_list = self.color_img_list[process_index:process_index+1]
-        self.border_width = border_width
+        # Because we use "cv2.getStructuringElement(cv2.MORPH_ELLIPSE ***" and the anchor of the element is at the center, so actual width is half of self.border_width
+        self.border_width = border_width * 2 
         self.f = f
         if anno_output_folder == None or not os.path.exists(anno_output_folder):
             self.anno_output_folder = data_main_folder
@@ -503,13 +504,45 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
+        '--stage', default="all")
+    parser.add_argument(
         '--data_main_folder', default="/Users/tanjiaqi/Desktop/SFU/mirror3D/test")
     parser.add_argument(
-        '--index', default=0, type=int, help="process index")
+        '--process_index', default=0, type=int, help="process index")
     parser.add_argument('--multi_processing', help='do multi-process or not',action='store_true')
+    parser.add_argument(
+        '--border_width', default=25, type=int, help="border_width")
+    parser.add_argument(
+        '--f', default=519, type=int, help="camera focal length")
+    parser.add_argument(
+        '--expand_range', default=100, type=int, help="expand the mirror instance bbox by expand_range; unit : cm")
+    parser.add_argument(
+        '--clamp_dis', default=100, type=int, help="outliers threshold")
+    parser.add_argument(
+        '--anno_output_folder', default="./anno_output")
     args = parser.parse_args()
-    
-    # plane_anno_tool = Plane_annotation_tool(args.data_main_folder, args.index, False)
-    # plane_anno_tool.anno_update_depth_from_imgInfo()
-    plane_anno_tool = Data_post_processing(args.data_main_folder, args.index, False)
-    plane_anno_tool.data_clamping()
+
+
+    # data_main_folder=None, process_index=0, multi_processing=False, border_width=50, f=519, anno_output_folder=None
+    if stage == "1":
+        plane_anno_tool = Plane_annotation_tool(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
+        plane_anno_tool.anno_env_setup()
+    elif stage == "2":
+        plane_anno_tool = Plane_annotation_tool(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
+        plane_anno_tool.anno_plane_update_imgInfo()
+    elif stage == "3":
+        plane_anno_tool = Plane_annotation_tool(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
+        plane_anno_tool.anno_update_depth_from_imgInfo()
+    elif stage == "4": 
+        plane_anno_tool = Data_post_processing(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder, expand_range=args.expand_range, clamp_dis=args.clamp_dis)
+        plane_anno_tool.data_clamping()
+    elif stage == "all":
+        plane_anno_tool = Plane_annotation_tool(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
+        plane_anno_tool.anno_env_setup()
+        plane_anno_tool.anno_plane_update_imgInfo()
+        plane_anno_tool.anno_update_depth_from_imgInfo()
+        plane_anno_tool = Data_post_processing(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder, expand_range=args.expand_range, clamp_dis=args.clamp_dis)
+        plane_anno_tool.data_clamping()
+    elif stage == "5":
+        plane_anno_tool = Plane_annotation_tool(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
+        plane_anno_tool.update_imgInfo_based_on_depth()
