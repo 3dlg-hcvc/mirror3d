@@ -91,7 +91,12 @@ class Plane_annotation_tool():
             print("########## NOTE output saved to {}, this may overwrite your current information ############".format(self.anno_output_folder))
 
     def save_error_raw_name(self, sample_raw_name):
-        """Save error path"""
+        """
+        Save error path
+         
+        Args : 
+            sample_raw_name : color image name
+        """
 
         error_img_list = []
         if os.path.exists(self.error_info_path):
