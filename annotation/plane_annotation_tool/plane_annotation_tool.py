@@ -460,8 +460,44 @@ class Data_post_processing(Plane_annotation_tool):
                 cv2.imwrite(hole_refined_depth_path, clamp_pcd_by_bbox(mirror_bbox=mirror_bbox, depth_img_path=hole_refined_depth_path, f=self.f, mirror_border_mask=mirror_border_mask ,plane_parameter=one_info[1]["plane_parameter"], expand_range = self.expand_range, clamp_dis = self.clamp_dis))
                 print("update depth {}".format(hole_refined_depth_path))
 
+    def update_imgInfo_based_on_depth():
+        """
+        Updata img_info based on refined depth
 
+        Output:
+            updated img_info : (1) Matterport3d's img_info are updated based on mesh_refined_depth
+                               (2) Other datasets img_info are updated based on hole_refined_depth
+        """
+        for color_img_path in self.color_img_list:
+            img_name = os.path.split(color_img_path)[1]
+            if self.is_matterport3d:
+                depth_img_path = os.path.join(self.data_main_folder, "mesh_refined_depth","{}.png".format(rreplace(img_name, "i", "d")))
+            else:
+                depth_img_path = os.path.join(self.data_main_folder, "hole_refined_depth","{}.png".format(img_name))
+            mask_img_path = color_img_path.replace("raw", "instance_mask")
+            img_info_path = color_img_path.replace("raw", "img_info")
+            smaple_name = os.path.split(color_img_path)[1].split(".")[0] 
 
+            mask = cv2.imread(mask_img_path)
+
+            #  Get plane parameter for each instance (based on refined depth)
+            for instance_index in np.unique(np.reshape(mask,(-1,3)), axis = 0):
+                if sum(instance_index) == 0: # background
+                    continue
+                
+                instance_tag = "_idx"
+                for i in instance_index:
+                    instance_tag += "_{}".format(i)
+                instance_tag = smaple_name + instance_tag
+                pcd_save_path = os.path.join(pcd_save_folder,  "{}.ply".format(instance_tag))
+                if os.path.isfile(pcd_save_path):
+                    print(pcd_save_path , "exist! continue")
+                    continue
+
+                binary_instance_mask = get_grayscale_instanceMask(mask, instance_index)
+                plane_parameter = get_mirror_parameter_from_xyzs_by_ransac(get_points_in_mask(self.f, depth_img_path, color_img_path, mirror_mask=None))
+                save_plane_parameter_2_json(plane_parameter, img_info_path, instance_index)
+                print("updated plane_parameter in {}".format(img_info_path))
 
 if __name__ == "__main__":
 
