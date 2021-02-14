@@ -10,21 +10,61 @@ from utils.general_utlis import *
 from utils.plane_pcd_utils import *
 import json
 import shutil
-from dataset_visualization import *
+from annotation.plane_annotation_tool.plane_annotation_tool import *
  
 
-class Result_visulization(Dataset_visulization):
+class Dataset_visulization(Plane_annotation_tool):
 
-    def generate_pcd_for_whole_dataset(self):
+    def __init__(self, data_main_folder=None, process_index=0, multi_processing=False, 
+                f=519, output_folder=None, overwrite=True, window_w=800, window_h=800, view_mode="topdown"):
         """
-        Call function self.generate_pcd_for_one_GTsample 
+        Initilization
+
+        Args:
+            data_main_folder : Folder raw, hole_raw_depth/ mesh_raw_depth, instance_mask saved folder.
+            output_folder(optional) : Inital pcd, img_info, border_vis saved forder (default : data_main_folder).
+            process_index : The process index of multi_processing.
+            multi_processing : Use multi_processing or not (bool).
+            border_width : Half of mirror 2D border width (half of cv2.dilate kernel size; 
+                           default kernel anchor is at the center); default : 50 --> actualy border width = 25.
+            f : Camera focal length of current input data.
+        """
+
+        self.data_main_folder = data_main_folder
+        assert os.path.exists(data_main_folder), "please input a valid folder path"
+        self.process_index = process_index
+        self.multi_processing = multi_processing
+        self.overwrite = overwrite
+        self.window_w = window_w
+        self.window_h = window_h
+        self.view_mode = view_mode
+        
+        if "m3d" not in self.data_main_folder:
+            self.is_matterport3d = False
+        else:
+            self.is_matterport3d = True
+        self.color_img_list = [os.path.join(self.data_main_folder, "raw", i) for i in os.listdir(os.path.join(self.data_main_folder, "raw"))]
+        if multi_processing:
+            self.color_img_list = self.color_img_list[process_index:process_index+1]
+        self.f = f
+        if output_folder == None or not os.path.exists(output_folder):
+            self.output_folder = self.data_main_folder
+            print("########## NOTE output saved to {}, this may overwrite your current information ############".format(self.output_folder))
+        else:
+            self.output_folder = output_folder
+        self.error_info_path = os.path.join(self.output_folder, "error_img_list.txt")
+    
+
+    def generate_pcdMesh_for_whole_dataset(self):
+        """
+        Call function self.generate_pcdMesh_for_one_GTsample 
             to generate mesh.ply and pcd.ply for all sample under self.data_main_folders
         """
         for one_color_img_path in self.color_img_list:
-            self.generate_pcd_for_one_GTsample(one_color_img_path)
+            self.generate_pcdMesh_for_one_GTsample(one_color_img_path)
 
 
-    def generate_pcd_for_one_GTsample(self, color_img_path):
+    def generate_pcdMesh_for_one_GTsample(self, color_img_path):
         """
         Generate "point cloud" + "mesh plane" for specific sample
 
@@ -95,15 +135,15 @@ class Result_visulization(Dataset_visulization):
             generate_and_save_ply(depth_img_path, ply_save_folder)
 
     
-    def generate_screenshot_for_pcd(self):
+    def generate_screenshot_for_pcdMesh(self):
         """
-        Call function self.generate_screenshot_for_pcd_oneSample 
+        Call function self.generate_screenshot_for_pcdMesh_oneSample 
             to generate screenshot for all sample under ply_folder
         """
         for color_img_path in self.color_img_list:
-            self.generate_screenshot_for_pcd_oneSample(color_img_path)
+            self.generate_screenshot_for_pcdMesh_oneSample(color_img_path)
     
-    def generate_screenshot_for_pcd_oneSample(self, color_img_path):
+    def generate_screenshot_for_pcdMesh_oneSample(self, color_img_path):
         """
         Generate "pcd + mesh"'s screenshot for one sample
 
@@ -151,9 +191,9 @@ class Result_visulization(Dataset_visulization):
                     z0 = depth_map[int(py)][int(px)]
                     x0 = (px - w/2) * (z0/ self.f)
                     y0 = (py- h/2) * (z0/ self.f)
-                    self.rotate_pcd_topdown(pcd, mirror_plane, x0, y0, z0)
+                    self.rotate_pcdMesh_topdown(pcd, mirror_plane, x0, y0, z0)
                 else:
-                    self.rotate_pcd_front(pcd, mirror_plane)
+                    self.rotate_pcdMesh_front(pcd, mirror_plane)
                 # except:
                 #     self.save_error_raw_name(color_img_path.split("/")[-1])
 
@@ -172,7 +212,7 @@ class Result_visulization(Dataset_visulization):
             generate_screenshot(depth_img_path)
 
 
-    def rotate_pcd_topdown(self, pcd, plane, x0, y0, z0):
+    def rotate_pcdMesh_topdown(self, pcd, plane, x0, y0, z0):
         """
         Rotate the "pcd + mesh" by topdown view
 
@@ -219,7 +259,7 @@ class Result_visulization(Dataset_visulization):
     def set_view_mode(self, view_mode):
         self.view_mode = view_mode
 
-    def rotate_pcd_front(self, pcd, plane):
+    def rotate_pcdMesh_front(self, pcd, plane):
         """
         Rotate the "pcd + mesh" by front view
 
@@ -337,32 +377,34 @@ if __name__ == "__main__":
         '--view_mode', default="topdown", help="object view angle : (1) topdown (2) front")
     args = parser.parse_args()
 
-    vis_tool = Result_visulization(data_main_folder=args.data_main_folder, process_index=args.process_index, \
+    vis_tool = Dataset_visulization(data_main_folder=args.data_main_folder, process_index=args.process_index, \
                                     multi_processing=args.multi_processing, f=args.f, \
                                     output_folder=args.output_folder, overwrite=args.overwrite, \
                                     window_w=args.window_w, window_h=args.window_h, view_mode=args.view_mode)
     if args.stage == "1":
-        vis_tool.generate_pcd_for_whole_dataset()
+        vis_tool.generate_pcdMesh_for_whole_dataset()
     elif args.stage == "2":
         vis_tool.set_view_mode("topdown")
-        vis_tool.generate_screenshot_for_pcd()
+        vis_tool.generate_screenshot_for_pcdMesh()
         vis_tool.set_view_mode("front")
-        vis_tool.generate_screenshot_for_pcd()
+        vis_tool.generate_screenshot_for_pcdMesh()
     elif args.stage == "3":
-        vis_tool.generate_screenshot_for_pcd()
+        vis_tool.generate_screenshot_for_pcdMesh()
     elif args.stage == "4":
         vis_tool.set_view_mode("topdown")
         vis_tool.generate_video_for_all()
         vis_tool.set_view_mode("front")
         vis_tool.generate_video_for_all()
+    elif args.stage == "5":
+        vis_tool.generate_video_for_all()
     elif args.stage == "all":
-        # Generate pcd for visualization
-        vis_tool.generate_pcd_for_whole_dataset()
+        # Generate pcdMesh for visualization
+        vis_tool.generate_pcdMesh_for_whole_dataset()
         # Generate screenshot for visualization
         vis_tool.set_view_mode("topdown")
-        vis_tool.generate_screenshot_for_pcd()
+        vis_tool.generate_screenshot_for_pcdMesh()
         vis_tool.set_view_mode("front")
-        vis_tool.generate_screenshot_for_pcd()
+        vis_tool.generate_screenshot_for_pcdMesh()
         # Generate video for visualization
         vis_tool.set_view_mode("topdown")
         vis_tool.generate_video_for_all()
