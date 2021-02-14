@@ -390,7 +390,7 @@ if __name__ == "__main__":
     # Make input arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', '--folder', help='Input folder where the *tif images should be', required=True)
-    parser.add_argument('-j', '--json_file_names', help='Json file consist of input file names', required=True)
+    parser.add_argument('-j', '--json_file_path', help='Json file consist of input file names', required=True)
     parser.add_argument('-l', '--labels', nargs='+', help='Possible labels in the images', required=True)
     parser.add_argument('-e', '--exclusion', help='Exclusion file', required=False)
     parser.add_argument('-o', '--output_file_path', help='Output file name', required=True)
@@ -399,7 +399,7 @@ if __name__ == "__main__":
     # grab input arguments from args structure
     input_folder = args.folder
     labels = args.labels
-    json_file_name = args.json_file_names
+    json_file_path = args.json_file_path
     output_file_names_path = args.output_file_path
 
     # Exception files
@@ -412,20 +412,8 @@ if __name__ == "__main__":
     for label in labels:
         make_folder(os.path.join("output", label))
 
-    # Put all image file paths into a list
-    # paths = []
-#     for file in os.listdir(input_folder):
-#         if file.endswith(".tif") or file.endswith(".tiff"):
-
-#             path = os.path.join(input_folder, file)
-#             paths.append(path).
-
-    # added in version 2
-    # file_names = [fn for fn in sorted(os.listdir(input_folder))
-    #               if any(fn.endswith(ext) for ext in file_extensions)]
-
     # Read file names from json
-    with open(json_file_name, 'r') as j:
+    with open(json_file_path, 'r') as j:
         file_names = json.loads(j.read())
 
     # Sort by score

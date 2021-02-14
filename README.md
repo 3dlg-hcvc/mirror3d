@@ -13,7 +13,7 @@ export PYTHONPATH=[Mirror3D repository absolute path]
 
 ### Classification
 
-- Train a classifier 
+- STEP 1 : Train a classifier 
 
 ```python
 python Mirror3D/annotation/classifier/classifier_train.py --log_directory [checkpoint and .log file saved directory] --train_pos_list [training positive_sample_path.txt] --train_neg_list [training negative_sample_path.txt] --val_pos_list [validation positive_sample_path.txt] --val_neg_list [validation negative_sample_path.txt]
@@ -21,15 +21,20 @@ python Mirror3D/annotation/classifier/classifier_train.py --log_directory [check
 ```
 Pretrained classifier's checkpoint can be found on [google drive](https://www.example.com)
 
-- Get sorted img_list with score 
+- STEP 2 : Get sorted img_list with score 
 
 ```python
 python Mirror3D/annotation/classifier/classifier_train.py --unsort_img_list [img_path_to_be_sorted.txt] --resume_path [classifier_checkpoint_path] --output_save_folder [output_folder_path to save the output txt]
 
 ```
 
-- Use ** to manully annoatate mirror images （TODO）
+- STEP 3 : Use `Mirror3D/annotation/classifier/classification_tool.py` to manully annoatate mirror images
 
+
+```python
+python Mirror3D/annotation/classifier/classification_tool.py --folder [folder contains images] --json_file_path [json file output by STEP 2] --labels [label you want to have for the input images, e.g. "mirror", "no mirror"] --exclusion [path list .txt which you want to exclude]  --output_file_path [.txt file path to store the annotation result]
+
+```
 
 ### Plane annoatation
 
