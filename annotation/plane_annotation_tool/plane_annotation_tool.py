@@ -90,6 +90,8 @@ class Plane_annotation_tool():
         if anno_output_folder == None or not os.path.exists(anno_output_folder):
             self.anno_output_folder = data_main_folder
             print("########## NOTE output saved to {}, this may overwrite your current information ############".format(self.anno_output_folder))
+        else:
+            self.anno_output_folder = anno_output_folder
 
     def save_error_raw_name(self, sample_raw_name):
         """

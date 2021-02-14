@@ -50,6 +50,8 @@ class Dataset_visulization(Plane_annotation_tool):
         if output_folder == None or not os.path.exists(output_folder):
             self.output_folder = self.data_main_folder
             print("########## NOTE output saved to {}, this may overwrite your current information ############".format(self.output_folder))
+        else:
+            self.output_folder = output_folder
         self.error_info_path = os.path.join(self.output_folder, "error_img_list.txt")
     
 
@@ -74,7 +76,6 @@ class Dataset_visulization(Plane_annotation_tool):
         """
 
         import open3d as o3d
-
         # Pack as a function to better support Matterport3d ply generation
         def generate_and_save_ply(depth_img_path, ply_save_folder):
             pcd_save_folder = os.path.join(ply_save_folder, "pcd")
@@ -95,7 +96,7 @@ class Dataset_visulization(Plane_annotation_tool):
                 instance_tag = "_idx"
                 for i in instance_index:
                     instance_tag += "_{}".format(i)
-                instance_tag = color_img_path.split("/")[-1] + instance_tag
+                instance_tag = color_img_path.split("/")[-1].split(".")[0] + instance_tag
                 binary_instance_mask = get_grayscale_instanceMask(mask, instance_index)
                 plane_parameter = one_img_info[instance_tag.split("_idx_")[1]]
 
@@ -134,15 +135,15 @@ class Dataset_visulization(Plane_annotation_tool):
             generate_and_save_ply(depth_img_path, ply_save_folder)
 
     
-    def generate_screenshot_for_pcdMesh():
+    def generate_screenshot_for_pcdMesh(self):
         """
         Call function self.generate_screenshot_for_pcdMesh_oneSample 
             to generate screenshot for all sample under ply_folder
         """
         for color_img_path in self.color_img_list:
-            self.generate_pcdMesh_for_one_GTsample(color_img_path)
+            self.generate_screenshot_for_pcdMesh_oneSample(color_img_path)
     
-    def generate_screenshot_for_pcdMesh_oneSample(color_img_path):
+    def generate_screenshot_for_pcdMesh_oneSample(self, color_img_path):
         """
         Generate "pcd + mesh"'s screenshot for one sample
 
@@ -158,55 +159,55 @@ class Dataset_visulization(Plane_annotation_tool):
             # Pack as a function to better support Matterport3d ply generation
             pcd_folder = os.path.join(ply_folder, "pcd")
             mesh_folder = os.path.join(ply_folder, "mesh")
-            mirror_info = read_json(img_info_path.replace("raw","img_info"))
-            mask_path = img_info_path.replace("raw","instance_mask")
+            mirror_info = read_json(color_img_path.replace("raw","img_info").replace(".png",".json"))
+            mask_path = color_img_path.replace("raw","instance_mask")
 
-            mirror_mask = cv2.imread(mask_path, cv2.IMREAD_ANYDEPTH)
+            mirror_mask = cv2.imread(mask_path)
             if len(mirror_info) != (np.unique(mirror_mask).shape[0] - 1):
                 self.save_error_raw_name(color_img_path.split(color_img_path.split("/")[-1]))
 
-            for instance_index in np.unique(np.reshape(mask,(-1,3)), axis = 0):
+            for instance_index in np.unique(np.reshape(mirror_mask,(-1,3)), axis = 0):
                 if sum(instance_index) == 0: # background
                     continue
-                try:
-                    instance_tag = "_idx"
-                    for i in instance_index:
-                        instance_tag += "_{}".format(i)
-                    instance_tag = color_img_path.split("/")[-1] + instance_tag
+                # try:
+                instance_tag = "_idx"
+                for i in instance_index:
+                    instance_tag += "_{}".format(i)
+                instance_tag = color_img_path.split("/")[-1].split(".")[0] + instance_tag
 
-                    pcd_path = os.path.join(pcd_folder,  "{}.ply".format(instance_tag))
-                    mesh_path = os.path.join(mesh_folder,  "{}.ply".format(instance_tag))
-                    pcd = o3d.io.read_point_cloud(pcd_path)
-                    mirror_plane = o3d.io.read_triangle_mesh(mesh_path)
+                pcd_path = os.path.join(pcd_folder,  "{}.ply".format(instance_tag))
+                mesh_path = os.path.join(mesh_folder,  "{}.ply".format(instance_tag))
+                pcd = o3d.io.read_point_cloud(pcd_path)
+                mirror_plane = o3d.io.read_triangle_mesh(mesh_path)
 
-                    self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode))
-                    os.makedirs(self.screenshot_output_folder, exist_ok=True)
+                self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode), instance_tag)
+                os.makedirs(self.screenshot_output_folder, exist_ok=True)
 
-                    if self.view_mode == "topdpwn":
-                        # Get mirror plane's center coordinate 
-                        h, w = instance_mask.shape
-                        py = np.where(instance_mask)[0].mean()
-                        px = np.where(instance_mask)[1].mean()
-                        z0 = depth_map[int(py)][int(px)]
-                        x0 = (px - w/2) * (z0/ self.f)
-                        y0 = (py- h/2) * (z0/ self.f)
-                        self.rotate_pcdMesh_topdown(pcd, plane, x0, y0, z0)
-                    else:
-                        self.rotate_pcdMesh_front(pcd, plane)
-                except:
-                    self.save_error_raw_name(color_img_path.split(color_img_path.split("/")[-1]))
+                if self.view_mode == "topdpwn":
+                    # Get mirror plane's center coordinate 
+                    h, w = instance_mask.shape
+                    py = np.where(instance_mask)[0].mean()
+                    px = np.where(instance_mask)[1].mean()
+                    z0 = depth_map[int(py)][int(px)]
+                    x0 = (px - w/2) * (z0/ self.f)
+                    y0 = (py- h/2) * (z0/ self.f)
+                    self.rotate_pcdMesh_topdown(pcd, mirror_plane, x0, y0, z0)
+                else:
+                    self.rotate_pcdMesh_front(pcd, mirror_plane)
+                # except:
+                #     self.save_error_raw_name(color_img_path.split("/")[-1])
 
         if color_img_path.find("m3d") > 0:
-            depth_img_path = rreplace(img_info_path.replace("raw","hole_refined_depth").replace("json","png"),"i","d")
+            depth_img_path = rreplace(color_img_path.replace("raw","hole_refined_depth").replace("json","png"),"i","d")
             ply_folder = os.path.join(self.output_folder, "hole_refined_ply")
             generate_screenshot(depth_img_path)
 
-            depth_img_path = rreplace(img_info_path.replace("raw","mesh_refined_depth").replace("json","png"),"i","d")
+            depth_img_path = rreplace(color_img_path.replace("raw","mesh_refined_depth").replace("json","png"),"i","d")
             ply_folder = os.path.join(self.output_folder, "mesh_refined_ply")
             generate_screenshot(depth_img_path)
             
         else:
-            depth_img_path = img_info_path.replace("img_info","hole_refined_depth").replace("json","png")
+            depth_img_path = color_img_path.replace("raw","hole_refined_depth")
             ply_folder = os.path.join(self.output_folder, "hole_refined_ply")
             generate_screenshot(depth_img_path)
 
@@ -255,6 +256,8 @@ class Dataset_visulization(Plane_annotation_tool):
         vis.add_geometry(plane)
         vis.run()
 
+    def set_view_mode(self, view_mode):
+        self.view_mode = view_mode
 
     def rotate_pcdMesh_front(self, pcd, plane):
         """
@@ -266,8 +269,9 @@ class Dataset_visulization(Plane_annotation_tool):
 
         Output:
             Screenshots : Saved under output folder (self.screenshot_output_folder);
-                          self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode)).
+                          self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode), instance_tag)
         """
+        import open3d as o3d
         index = 0
         vis = o3d.visualization.Visualizer()
         vis.create_window(width=self.window_w,height=self.window_h)
@@ -290,44 +294,117 @@ class Dataset_visulization(Plane_annotation_tool):
                 vis.destroy_window()
                 break
 
-    def generate_one_video_ffmpeg(self, color_img_path):
-        img_info = color_img_path.replace("raw", "img_info").replace("png", "json")
-        mirror_info = read_json(img_info)
+    def generate_video_for_all(self):
+        """
+        Call function self.generate_one_video_ffmpeg 
+            to generate video for all sample under ply_folder/screenshot_[view_mode]
+        """
+        for color_img_path in self.color_img_list:
+            self.generate_one_video_ffmpeg(color_img_path)
 
-        # for item in mirror_info.items():
-        #     id = item[0]
-        #     try:
-        #         one_screenshot_output_folder = self.screenshot_output_folder + "_" + str(id)
-        #         start_time = time.time()
-        #         one_video_save_path = one_screenshot_output_folder.replace("screenshot","video") + ".mp4"
-        #         one_video_save_folder = os.path.split(one_video_save_path)[0]
-        #         os.makedirs(one_video_save_folder, exist_ok=True)
-        #         if os.path.exists(one_video_save_path):
-        #             if not self.overwrite:
-        #                 print("{} video exists!".format(one_video_save_path))
-        #                 continue
-        #             else:
-        #                 os.remove(one_video_save_path)
-        #         command = "ffmpeg -f image2 -i " + one_screenshot_output_folder + "/%05d.png " + one_video_save_path
-        #         os.system(command)
-        #         print("video saved to {}, used time :{}".format(one_video_save_path, time.time() - start_time))
-        #         start_time = time.time()
-        #     except:
-        #         self.note_error(img_info.replace(self.data_folder_path,""))
+    def generate_one_video_ffmpeg(self, color_img_path):
+        """
+        Generate video for one sample 
+
+        Args: 
+            color_img_path : the color image path of the sample
+        
+        Output: 
+            .mp4 under video_saved_folder
+        """
+        def generate_video_to_call(ply_folder):
+            # Pack as a function to better support Matterport3d ply generation
+            video_saved_folder = os.path.join(ply_folder, "video_{}".format(self.view_mode))
+            os.makedirs(video_saved_folder, exist_ok=True)
+            img_info = color_img_path.replace("raw", "img_info").replace("png", "json")
+            mirror_info = read_json(img_info)
+
+            for item in mirror_info.items():
+                id = item[0]
+                instance_tag = color_img_path.split("/")[-1].split(".")[0] + "_idx_" + id
+                one_screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode), instance_tag)
+                one_video_save_path = os.path.join(video_saved_folder, "{}.mp4".format(instance_tag))
+                if not os.path.exists(one_screenshot_output_folder):
+                    print("{} path not exists!")
+                    return
+                try:
+                    start_time = time.time()
+                    if os.path.exists(one_video_save_path):
+                        if not self.overwrite:
+                            print("{} video exists!".format(one_video_save_path))
+                            continue
+                        else:
+                            os.remove(one_video_save_path)
+                    command = "ffmpeg -f image2 -i " + one_screenshot_output_folder + "/%05d.png " + one_video_save_path
+                    os.system(command)
+                    print("video saved to {}, used time :{}".format(one_video_save_path, time.time() - start_time))
+                    start_time = time.time()
+                except:
+                    self.save_error_raw_name(color_img_path.split(color_img_path.split("/")[-1]))
+
+        if color_img_path.find("m3d") > 0:
+            ply_folder = os.path.join(self.output_folder, "hole_refined_ply")
+            generate_video_to_call(ply_folder)
+            ply_folder = os.path.join(self.output_folder, "mesh_refined_ply")
+            generate_video_to_call(ply_folder)
+        else:
+            ply_folder = os.path.join(self.output_folder, "hole_refined_ply")
+            generate_video_to_call(ply_folder)
+        
+
 
     
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
+        '--stage', default="4")
+    parser.add_argument(
         '--data_main_folder', default="/Users/tanjiaqi/Desktop/SFU/mirror3D/test")
     parser.add_argument(
-        '--index', default=0, type=int, help="process index")
+        '--process_index', default=0, type=int, help="process index")
     parser.add_argument('--multi_processing', help='do multi-process or not',action='store_true')
+    parser.add_argument('--overwrite', help='overwrite files under --output_folder or not',action='store_true')
+    parser.add_argument(
+        '--f', default=519, type=int, help="camera focal length")
+    parser.add_argument(
+        '--window_w', default=800, type=int, help="width of the visilization window")
+    parser.add_argument(
+        '--window_h', default=800, type=int, help="height of the visilization window")
+    parser.add_argument(
+        '--output_folder', default="/Users/tanjiaqi/Desktop/SFU/mirror3D/test")
+    parser.add_argument(
+        '--view_mode', default="topdown", help="object view angle : (1) topdown (2) front")
     args = parser.parse_args()
-    
-    # plane_anno_tool = Plane_annotation_tool(args.data_main_folder, args.index, False)
-    # plane_anno_tool.anno_update_depth_from_imgInfo()
-    plane_anno_tool = Dataset_visulization(args.data_main_folder, args.index, False)
-    plane_anno_tool.generate_pcdMesh_for_whole_dataset()
-    # plane_anno_tool.generate_pcdMesh_for_whole_dataset("/Users/tanjiaqi/Desktop/SFU/mirror3D/test/raw/150.png")
+
+    vis_tool = Dataset_visulization(data_main_folder=args.data_main_folder, process_index=args.process_index, \
+                                    multi_processing=args.multi_processing, f=args.f, \
+                                    output_folder=args.output_folder, overwrite=args.overwrite, \
+                                    window_w=args.window_w, window_h=args.window_h, view_mode=args.view_mode)
+    if args.stage == "1":
+        vis_tool.generate_pcdMesh_for_whole_dataset()
+    elif args.stage == "2":
+        vis_tool.set_view_mode("topdown")
+        vis_tool.generate_screenshot_for_pcdMesh()
+        vis_tool.set_view_mode("front")
+        vis_tool.generate_screenshot_for_pcdMesh()
+    elif args.stage == "3":
+        vis_tool.generate_screenshot_for_pcdMesh()
+    elif args.stage == "4":
+        vis_tool.set_view_mode("topdown")
+        vis_tool.generate_video_for_all()
+        vis_tool.set_view_mode("front")
+        vis_tool.generate_video_for_all()
+    elif args.stage == "all":
+        # Generate pcdMesh for visualization
+        vis_tool.generate_pcdMesh_for_whole_dataset()
+        # Generate screenshot for visualization
+        vis_tool.set_view_mode("topdown")
+        vis_tool.generate_screenshot_for_pcdMesh()
+        vis_tool.set_view_mode("front")
+        vis_tool.generate_screenshot_for_pcdMesh()
+        # Generate video for visualization
+        vis_tool.set_view_mode("topdown")
+        vis_tool.generate_video_for_all()
+        vis_tool.set_view_mode("front")
+        vis_tool.generate_video_for_all()
