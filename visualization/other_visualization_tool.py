@@ -1,8 +1,8 @@
 import open3d as o3d
 import os
 import numpy as np
-
-
+from utils.plane_pcd_utils import *
+import cv2
 
 # ---------------------------------------------------------------------------- #
 #                function to iteratively visualize a point cloud               #
@@ -23,11 +23,20 @@ def visualize_single_image():
         print("Z max {:.2f} Z min {:.2f} Z gap {:.2f}".format(Z.max(), Z.min(), Z.max()-Z.min()))
 
         o3d.visualization.draw_geometries([pcd])
-        
+
+
+def vislize_pcd_from_rgbd(depth_img_path, color_img_path, f):
+    pcd = get_pcd_from_rgbd(f, depth_img_path, color_img_path)
+    o3d.visualization.draw_geometries([pcd])
+
         
 
 
 if __name__ == "__main__":
     
-    visualize_single_image()
+    # visualize_single_image()
+    depth_img_path = "/Users/tanjiaqi/Desktop/SFU/mirror3D/test2/hole_refined_depth/712.png"
+    f = 519
+    color_img_path = "/Users/tanjiaqi/Desktop/SFU/mirror3D/test2/raw/712.png"
+    vislize_pcd_from_rgbd(depth_img_path, color_img_path, f)
     

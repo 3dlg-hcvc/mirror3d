@@ -321,6 +321,7 @@ class Dataset_visulization(Plane_annotation_tool):
         Generate html to show video; all views for one sample is shown in one line;
         """
         # Embed one video
+        # TODO refine this fucntion after getting the predicted result 
         def video_embed(soup, one_video_div, view_link):
             front_video = soup.new_tag("video")
             front_video["class"] = "lazy-video"
@@ -335,63 +336,17 @@ class Dataset_visulization(Plane_annotation_tool):
             new_link["type"] = "video/mp4"
             front_video.append(new_link)
 
-        # Get video folder name (e.g. video_front; video_topdown)
-        video_folder_list = []
-        for item in os.listdir(self.data_main_folder):
-            if item.count('video', 0, len(item)) > 0 :
-                video_folder_list.append(item)
 
-        one_video_folder_name = video_folder_list[0]
-        one_video_folder_path = os.path.join(self.data_main_folder, one_video_folder_name)
-        video_path_list = os.listdir(one_video_folder_path)
-        videoSubset_list = [video_path_list[x:x+self.video_num_per_page] for x in range(0, len(video_path_list), self.video_num_per_page)]
-        for html_index, one_videoSubset in enumerate(videoSubset_list):
-
-            with open(self.template_path) as inf:
-                txt = inf.read()
-                soup = bs4.BeautifulSoup(txt, features="html.parser")
-
-            for one_video_name in one_videoSubset:
-            # Get video path for one instance (all put in one line)
-                one_line_video = [os.path.join(self.data_main_folder, i, one_video_name) for i in video_folder_list]
-                sample_color_img_name = "{}.png".format(one_video_name.split("_idx_")[0])
-
-                new_div = soup.new_tag("div")
-                new_div['class'] = "one_instance_video"
-                soup.body.append(new_div)
-
-                new_sub_text_div = soup.new_tag("div")
-                new_sub_text_div["class"] = "text"
-                new_div.append(new_sub_text_div)
-
-                new_text = soup.new_tag("b")
-                new_text.string = sample_color_img_name
-                new_sub_text_div.append(new_text)
-
-                # Append on video div to one_line_video div
-                for one_video_path in one_line_video:
-                    one_video_div = soup.new_tag("div")
-                    one_video_div["class"] = "video"
-                    new_div.append(one_video_div)
-
-                    front_video = soup.new_tag("video")
-                    front_video["class"] = "lazy-video"
-                    front_video["controls"] = "True"
-                    front_video["autoplay"] = "True"
-                    front_video["muted"] = "True"
-                    front_video["loop"] = "True"
-                    front_video["src"] = ""
-                    
-                    new_link = soup.new_tag("source")
-                    new_link["data-src"] = one_video_path
-                    new_link["type"] = "video/mp4"
-                    front_video.append(new_link)
-                    one_video_div.append(front_video)
-            
-            html_path = os.path.join(self.output_folder, "{}.html".format(html_index))
-            save_html(html_path, soup)
-
-        
+            one_method_tag = os.listdir(self.data_main_folder)[0]
+            topdown_video_folder = os.path.join(self.data_main_folder, one_method_tag, "video_topdown")
+            front_video_folder = os.path.join(self.data_main_folder, one_method_tag, "video_front")
+            if os.path.exists(topdown_video_folder):
+                one_line_topdown_video = []
+                for one_method_tag in os.listdir(self.data_main_folder):
+                    for one_video_name in os.listdir(topdown_video_folder):
+                        one_topdown_video_path = os.path.join(topdown_video_folder, one_video_name)
+                        if os.path.exists(one_topdown_video_path):
+                            one_line_topdown_video.append(one_topdown_video_path)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Get Setting :D')
