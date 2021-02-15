@@ -6,7 +6,6 @@ python 3.7.4
 
 ```shell
 export PYTHONPATH=[Mirror3D repository absolute path]
-
 ```
 
 ## Annotation Tool
@@ -17,7 +16,6 @@ export PYTHONPATH=[Mirror3D repository absolute path]
 
 	```python
 	python Mirror3D/annotation/classifier/classifier_train.py --log_directory [checkpoint and .log file saved directory] --train_pos_list [training positive_sample_path.txt] --train_neg_list [training negative_sample_path.txt] --val_pos_list [validation positive_sample_path.txt] --val_neg_list [validation negative_sample_path.txt]
-	
 	```
 Pretrained classifier's checkpoint can be found on [google drive](https://www.example.com)
 
@@ -25,7 +23,6 @@ Pretrained classifier's checkpoint can be found on [google drive](https://www.ex
 
 	```python
 	python Mirror3D/annotation/classifier/classifier_train.py --unsort_img_list [img_path_to_be_sorted.txt] --resume_path [classifier_checkpoint_path] --output_save_folder [output_folder_path to save the output txt]
-	
 	```
 
 - STEP 3: Use `Mirror3D/annotation/classifier/classification_tool.py` to manually annotate mirror images
@@ -33,7 +30,6 @@ Pretrained classifier's checkpoint can be found on [google drive](https://www.ex
 
 	```python
 	python Mirror3D/annotation/classifier/classification_tool.py --folder [folder contains images] --json_file_path [json file output by STEP 2] --labels [label you want to have for the input images, e.g. "mirror", "no mirror"] --exclusion [path list .txt which you want to exclude]  --output_file_path [.txt file path to store the annotation result]
-	
 	```
 
 ### Mirror mask annotation 
@@ -84,7 +80,6 @@ python Mirror3D/annotation/plane_annotation_tool/plane_annotation_tool.py --stag
 	
 	```python 
 	Mirror3D/annotation/verification/verification.py --stage 1 --data_main_folder [folder that contains "video_front, video_topdown .. etc" folders] --output_folder [.html files output folder] --video_num_per_page [int: how many video to display in one .html]
-		
 	```
 
 	Annotators should manully note down the error sample's path to a [error_sample].txt
@@ -92,5 +87,5 @@ python Mirror3D/annotation/plane_annotation_tool/plane_annotation_tool.py --stag
 - STEP 3: Copy out the error sample's data to another folder for reannotation
 
 	```python 
-	Mirror3D/annotation/verification/verification.py --stage 2 --data_main_folder [dataset main folder] --output_folder [folder to save the copy of data] --error_list [.txt that contains the error samples' name]		
+	Mirror3D/annotation/verification/verification.py --stage 2 --data_main_folder [dataset main folder] --output_folder [folder to save the copy of data] --error_list [.txt that contains the error samples' name]
 	```
