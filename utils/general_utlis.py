@@ -8,7 +8,7 @@ import numpy as np
 import cv2
 import pdb
 import math
-
+from PIL import Image
 
 def save_html(save_path, content):
     with open(save_path, "w") as outf:
@@ -63,5 +63,30 @@ def rreplace(s, old, new):
     li = s.rsplit(old, 1)
     return new.join(li)
 
-if __name__ == "__main__":
-    pass
+
+def get_compose_image(output_save_path, img_list, mini_img_w=320, mini_img_h=240, mini_image_per_row=9):
+    """
+    Args:
+        img_list : Image Array
+        output_save_path : composed image saved path
+    """
+
+    def add_margin(pil_img, top, right, bottom, left, color):
+        width, height = pil_img.size
+        new_width = width + right + left
+        new_height = height + top + bottom
+        result = Image.new(pil_img.mode, (new_width, new_height), color)
+        result.paste(pil_img, (left, top))
+        return result
+
+    image_col = math.ceil(len(img_list)/mini_image_per_row) 
+    to_image = Image.new('RGB', (mini_image_per_row * mini_img_w, image_col * mini_img_h)) 
+
+    for y in range(1, image_col + 1):
+        for x in range(1, mini_image_per_row + 1):
+            img_index = mini_image_per_row * (y - 1) + x - 1
+            from_image = img_list[img_index].resize((mini_img_w, mini_img_h),Image.ANTIALIAS)
+            from_image = add_margin(from_image, 20,20,20,20,(255,255,255))
+            to_image.paste(from_image, ((x - 1) * mini_img_w, (y - 1) * mini_img_h))
+    to_image.save(output_save_path) 
+    print("image saved to :", output_save_path)

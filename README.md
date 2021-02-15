@@ -17,7 +17,7 @@ export PYTHONPATH=[Mirror3D repository absolute path]
 	```python
 	python Mirror3D/annotation/classifier/classifier_train.py --log_directory [checkpoint and .log file saved directory] --train_pos_list [training positive_sample_path.txt] --train_neg_list [training negative_sample_path.txt] --val_pos_list [validation positive_sample_path.txt] --val_neg_list [validation negative_sample_path.txt]
 	```
-Pretrained classifier's checkpoint can be found on [google drive](https://www.example.com)
+Reference pretrained classifier's checkpoint can be found on [checkpoint.pth.tar](http://aspis.cmpt.sfu.ca/projects/mirrors/checkpoint/classifier_checkpoint/checkpoint.pth.tar)
 
 - STEP 2: Get sorted img_list with scores
 

@@ -184,14 +184,7 @@ class Dataset_visulization(Plane_annotation_tool):
                     os.makedirs(self.screenshot_output_folder, exist_ok=True)
 
                     if self.view_mode == "topdown":
-                        # Get mirror plane's center coordinate 
-                        h, w = instance_mask.shape
-                        py = np.where(instance_mask)[0].mean()
-                        px = np.where(instance_mask)[1].mean()
-                        z0 = depth_map[int(py)][int(px)]
-                        x0 = (px - w/2) * (z0/ self.f)
-                        y0 = (py- h/2) * (z0/ self.f)
-                        self.rotate_pcdMesh_topdown(pcd, mirror_plane, x0, y0, z0)
+                        self.rotate_pcdMesh_topdown(pcd, mirror_plane)
                     else:
                         self.rotate_pcdMesh_front(pcd, mirror_plane)
                 except:
@@ -212,15 +205,13 @@ class Dataset_visulization(Plane_annotation_tool):
             generate_screenshot(depth_img_path)
 
 
-    def rotate_pcdMesh_topdown(self, pcd, plane, x0, y0, z0):
+    def rotate_pcdMesh_topdown(self, pcd, plane):
         """
         Rotate the "pcd + mesh" by topdown view
 
         Args:
             pcd : Input point cloud.
             plane : Input mesh plane.
-            x0, y0, z0 : Input mesh plane center coordinate.
-
         Output:
             Screenshots : Saved under output folder (self.screenshot_output_folder);
                           self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode)).
@@ -257,6 +248,7 @@ class Dataset_visulization(Plane_annotation_tool):
         vis.run()
 
     def set_view_mode(self, view_mode):
+        """Function to save the view mode"""
         self.view_mode = view_mode
 
     def rotate_pcdMesh_front(self, pcd, plane):
