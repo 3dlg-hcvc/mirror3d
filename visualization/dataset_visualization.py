@@ -169,33 +169,33 @@ class Dataset_visulization(Plane_annotation_tool):
             for instance_index in np.unique(np.reshape(mirror_mask,(-1,3)), axis = 0):
                 if sum(instance_index) == 0: # background
                     continue
-                # try:
-                instance_tag = "_idx"
-                for i in instance_index:
-                    instance_tag += "_{}".format(i)
-                instance_tag = color_img_path.split("/")[-1].split(".")[0] + instance_tag
+                try:
+                    instance_tag = "_idx"
+                    for i in instance_index:
+                        instance_tag += "_{}".format(i)
+                    instance_tag = color_img_path.split("/")[-1].split(".")[0] + instance_tag
 
-                pcd_path = os.path.join(pcd_folder,  "{}.ply".format(instance_tag))
-                mesh_path = os.path.join(mesh_folder,  "{}.ply".format(instance_tag))
-                pcd = o3d.io.read_point_cloud(pcd_path)
-                mirror_plane = o3d.io.read_triangle_mesh(mesh_path)
+                    pcd_path = os.path.join(pcd_folder,  "{}.ply".format(instance_tag))
+                    mesh_path = os.path.join(mesh_folder,  "{}.ply".format(instance_tag))
+                    pcd = o3d.io.read_point_cloud(pcd_path)
+                    mirror_plane = o3d.io.read_triangle_mesh(mesh_path)
 
-                self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode), instance_tag)
-                os.makedirs(self.screenshot_output_folder, exist_ok=True)
+                    self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode), instance_tag)
+                    os.makedirs(self.screenshot_output_folder, exist_ok=True)
 
-                if self.view_mode == "topdpwn":
-                    # Get mirror plane's center coordinate 
-                    h, w = instance_mask.shape
-                    py = np.where(instance_mask)[0].mean()
-                    px = np.where(instance_mask)[1].mean()
-                    z0 = depth_map[int(py)][int(px)]
-                    x0 = (px - w/2) * (z0/ self.f)
-                    y0 = (py- h/2) * (z0/ self.f)
-                    self.rotate_pcdMesh_topdown(pcd, mirror_plane, x0, y0, z0)
-                else:
-                    self.rotate_pcdMesh_front(pcd, mirror_plane)
-                # except:
-                #     self.save_error_raw_name(color_img_path.split("/")[-1])
+                    if self.view_mode == "topdown":
+                        # Get mirror plane's center coordinate 
+                        h, w = instance_mask.shape
+                        py = np.where(instance_mask)[0].mean()
+                        px = np.where(instance_mask)[1].mean()
+                        z0 = depth_map[int(py)][int(px)]
+                        x0 = (px - w/2) * (z0/ self.f)
+                        y0 = (py- h/2) * (z0/ self.f)
+                        self.rotate_pcdMesh_topdown(pcd, mirror_plane, x0, y0, z0)
+                    else:
+                        self.rotate_pcdMesh_front(pcd, mirror_plane)
+                except:
+                    self.save_error_raw_name(color_img_path.split("/")[-1])
 
         if color_img_path.find("m3d") > 0:
             depth_img_path = rreplace(color_img_path.replace("raw","hole_refined_depth").replace("json","png"),"i","d")
