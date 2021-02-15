@@ -86,7 +86,7 @@ class Verification():
                 sample_color_img_name = "{}.png".format(one_video_name.split("_idx_")[0])
 
                 new_div = soup.new_tag("div")
-                new_div['id'] = "one_instance_video"
+                new_div['class'] = "one_instance_video"
                 soup.body.append(new_div)
 
                 new_sub_text_div = soup.new_tag("div")
