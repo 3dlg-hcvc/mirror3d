@@ -10,6 +10,11 @@ import pdb
 import math
 
 
+def save_html(save_path, content):
+    with open(save_path, "w") as outf:
+        outf.write(str(content))
+    print("html saved to {}".format(save_path))
+
 def save_plane_parameter_2_json(plane_parameter, one_plane_para_save_path, instance_index):
     sample_id = "{}_{}_{}".format(instance_index[0], instance_index[1], instance_index[2])
     if os.path.exists(one_plane_para_save_path):
