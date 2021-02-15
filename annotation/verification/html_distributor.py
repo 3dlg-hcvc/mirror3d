@@ -16,6 +16,7 @@ def video_embed(soup, new_sub_div, view_link):
     new_link["data-src"] = view_link
     new_link["type"] = "video/mp4"
     front_video.append(new_link)
+    
 def insert_html_pattern(soup, video_id, front_mesh_link, front_point_link, top_point_link):
     new_div = soup.new_tag("div")
     new_div['id'] = "videoal"
@@ -84,21 +85,21 @@ def export_html(template_path, save_path, video_folder, video_file_list):
 if __name__ == "__main__":
     # link_list = read_txt()
     parser = argparse.ArgumentParser(description='Get Setting')
-    parser.add_argument('--dataset', default="", type=str)
+    parser.add_argument('--dataset_folder_path', default="", type=str)
     parser.add_argument('--disp', default="", type=str)
     parser.add_argument('--mesh_topdown', default=False, action='store_true', help='Bool type')
     parser.add_argument('--page_len', default=20, type=int)
 
     args = parser.parse_args()
 
-    video_folder = "../../verification/video/{}".format(args.dataset)
+    video_folder = "../../verification/video/{}".format(args.dataset_folder_path)
     if args.mesh_topdown == True:
         front_mesh_folder = os.path.join(video_folder, "video_meshplane_topdown")
     else:
         front_mesh_folder = os.path.join(video_folder, "video_meshplane_front")
 
 
-    html_folder = "../../verification/html/{}".format(args.dataset)
+    html_folder = "../../verification/html/{}".format(args.dataset_folder_path)
     os.makedirs(html_folder, exist_ok=True)
     
     if args.disp == "err":
