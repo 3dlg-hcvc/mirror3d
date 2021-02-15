@@ -249,6 +249,15 @@ class Dataset_visulization(Plane_annotation_tool):
         except:
             self.save_error_raw_name(color_img_path.split(color_img_path.split("/")[-1]))
 
+    def gen_GT_errorMap_pred_topdownScreenshot_all(self):
+        """
+        Call function self.gen_GT_errorMap_pred_topdownScreenshot_one_sample 
+            to generate colored GT depth map, colored predict depth map, 
+            colored error map, topdown screenshot for all predicted sample
+        """
+        for color_img_path in self.color_img_list:
+            self.gen_GT_errorMap_pred_topdownScreenshot_one_sample(color_img_path)
+
 
     def gen_GT_errorMap_pred_topdownScreenshot_one_sample(self, color_img_path):
         """
@@ -286,11 +295,103 @@ class Dataset_visulization(Plane_annotation_tool):
         pred_depth = cv2.imread(pred_depth_img_path, cv2.IMREAD_ANYDEPTH)
         rmse = (gt_depth - pred_depth) ** 2
 
-        
-        
-        
+        colored_img_save_folder = os.path.join(self.output_folder, self.method_tag, "colored_GT_errorMap_pred_topdownScreenshot")
+        colored_GT_depth_save_folder = os.path.join(colored_img_save_folder, "colored_GT_depth")
+        colored_pred_depth_save_folder = os.path.join(colored_img_save_folder, "colored_pred_depth")
+        colored_RMSE_map_save_folder = os.path.join(colored_img_save_folder, "colored_RMSE_map")
+        screenshot_save_folder = os.path.join(colored_img_save_folder, "screenshot")
 
+        os.makedirs(colored_GT_depth_save_folder, exist_ok=True)
+        os.makedirs(colored_pred_depth_save_folder, exist_ok=True)
+        os.makedirs(colored_RMSE_map_save_folder, exist_ok=True)
+        os.makedirs(screenshot_save_folder, exist_ok=True)
 
+        colored_GT_depth_save_path = os.path.join(colored_GT_depth_save_folder, sample_name)
+        colored_pred_depth_save_path = os.path.join(colored_pred_depth_save_folder, gt_depth_img_path.split("/")[-1])
+        colored_RMSE_map_save_path = os.path.join(colored_RMSE_map_save_folder, gt_depth_img_path.split("/")[-1])
+        screenshot_save_path = os.path.join(screenshot_save_folder, sample_name)
+
+        save_heatmap_no_border(gt_depth, colored_GT_depth_save_path)
+        save_heatmap_no_border(pred_depth, colored_pred_depth_save_path)
+        save_heatmap_no_border(rmse, colored_RMSE_map_save_path)
+        shutil.copy(topdown_screenshot_path, screenshot_save_path)
+
+    def generate_html(self):
+        """
+        Generate html to show video; all views for one sample is shown in one line;
+        """
+        # Embed one video
+        def video_embed(soup, one_video_div, view_link):
+            front_video = soup.new_tag("video")
+            front_video["class"] = "lazy-video"
+            front_video["controls"] = "True"
+            front_video["autoplay"] = "True"
+            front_video["muted"] = "True"
+            front_video["loop"] = "True"
+            front_video["src"] = ""
+            one_video_div.append(front_video)
+            new_link = soup.new_tag("source")
+            new_link["data-src"] = view_link
+            new_link["type"] = "video/mp4"
+            front_video.append(new_link)
+
+        # Get video folder name (e.g. video_front; video_topdown)
+        video_folder_list = []
+        for item in os.listdir(self.data_main_folder):
+            if item.count('video', 0, len(item)) > 0 :
+                video_folder_list.append(item)
+
+        one_video_folder_name = video_folder_list[0]
+        one_video_folder_path = os.path.join(self.data_main_folder, one_video_folder_name)
+        video_path_list = os.listdir(one_video_folder_path)
+        videoSubset_list = [video_path_list[x:x+self.video_num_per_page] for x in range(0, len(video_path_list), self.video_num_per_page)]
+        for html_index, one_videoSubset in enumerate(videoSubset_list):
+
+            with open(self.template_path) as inf:
+                txt = inf.read()
+                soup = bs4.BeautifulSoup(txt, features="html.parser")
+
+            for one_video_name in one_videoSubset:
+            # Get video path for one instance (all put in one line)
+                one_line_video = [os.path.join(self.data_main_folder, i, one_video_name) for i in video_folder_list]
+                sample_color_img_name = "{}.png".format(one_video_name.split("_idx_")[0])
+
+                new_div = soup.new_tag("div")
+                new_div['class'] = "one_instance_video"
+                soup.body.append(new_div)
+
+                new_sub_text_div = soup.new_tag("div")
+                new_sub_text_div["class"] = "text"
+                new_div.append(new_sub_text_div)
+
+                new_text = soup.new_tag("b")
+                new_text.string = sample_color_img_name
+                new_sub_text_div.append(new_text)
+
+                # Append on video div to one_line_video div
+                for one_video_path in one_line_video:
+                    one_video_div = soup.new_tag("div")
+                    one_video_div["class"] = "video"
+                    new_div.append(one_video_div)
+
+                    front_video = soup.new_tag("video")
+                    front_video["class"] = "lazy-video"
+                    front_video["controls"] = "True"
+                    front_video["autoplay"] = "True"
+                    front_video["muted"] = "True"
+                    front_video["loop"] = "True"
+                    front_video["src"] = ""
+                    
+                    new_link = soup.new_tag("source")
+                    new_link["data-src"] = one_video_path
+                    new_link["type"] = "video/mp4"
+                    front_video.append(new_link)
+                    one_video_div.append(front_video)
+            
+            html_path = os.path.join(self.output_folder, "{}.html".format(html_index))
+            save_html(html_path, soup)
+
+        
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Get Setting :D')
@@ -339,6 +440,13 @@ if __name__ == "__main__":
         vis_tool.generate_video_for_all()
     elif args.stage == "5":
         vis_tool.generate_video_for_all()
+    elif args.stage == "6":
+        vis_tool.set_view_mode("topdown")
+        vis_tool.gen_GT_errorMap_pred_topdownScreenshot_all()
+        vis_tool.set_view_mode("front")
+        vis_tool.gen_GT_errorMap_pred_topdownScreenshot_all()
+    elif args.stage == "7":
+        vis_tool.gen_GT_errorMap_pred_topdownScreenshot_all()
     elif args.stage == "all":
         # Generate pcd for visualization
         vis_tool.generate_pcd_for_whole_dataset()
