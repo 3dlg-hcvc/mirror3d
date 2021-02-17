@@ -10,6 +10,10 @@ import pdb
 import math
 from utils.algorithm import *
 from utils.general_utlis import *
+from sympy import *
+
+
+
 
 
 
@@ -151,10 +155,12 @@ def get_colored_pcd(f=538, depth_img_path="", color_img_path="", mirror_mask=Non
 
 
 
+
+
 # ---------------------------------------------------------------------------- #
 #                    get_mirror_init_plane based on 3 points                   #
 # ---------------------------------------------------------------------------- #
-def get_mirror_init_plane_from_3points(p1, p2, p3):
+def get_mirror_init_plane_from_3points(p1, p2, p3, plane_init_size=1000):
     import open3d as o3d
 
     def get_z_from_plane(plane_parameter, x, y):
@@ -162,22 +168,28 @@ def get_mirror_init_plane_from_3points(p1, p2, p3):
         z = (-d - a * x - b * y) / c
         return z
 
-    x_min = min(p1[0], p2[0], p3[0])
-    x_max = max(p1[0], p2[0], p3[0])
-    y_min = min(p1[1], p2[1], p3[1])
-    y_max = max(p1[1], p2[1], p3[1])
-
-    init_plane_width = max(x_max - x_min, y_max - y_min) / 2
     plane_parameter =  get_planeParam_from_3_points(p1, p2, p3)
-    camera_plane_p1 = [x_min - init_plane_width,y_max + init_plane_width,get_z_from_plane(plane_parameter, x_min - init_plane_width,y_max + init_plane_width)]
-    camera_plane_p2 = [x_max + init_plane_width,y_max + init_plane_width,get_z_from_plane(plane_parameter, x_max + init_plane_width,y_max + init_plane_width)]
-    camera_plane_p3 = [x_max + init_plane_width,y_min - init_plane_width,get_z_from_plane(plane_parameter, x_max + init_plane_width,y_min - init_plane_width)]
-    camera_plane_p4 = [x_min - init_plane_width,y_min - init_plane_width,get_z_from_plane(plane_parameter, x_min - init_plane_width,y_min - init_plane_width)]
+
+    [a, b, c, d] = plane_parameter
+    x = Symbol('x',real=True)
+    y = Symbol('y',real=True)
+    z = Symbol('z',real=True)
+    selected_center = np.mean([p1,p2,p3], axis=0)
+    camera_plane_p1, camera_plane_p2 = solve([a*x + b*y + c*z +d, \
+                    (x-selected_center[0])*(x-selected_center[0]) + (y-selected_center[1])*(y-selected_center[1]) + (z-selected_center[2])*(z-selected_center[2]) - 1000*1000,\
+                     y-selected_center[1] - 800], [x,y,z])
+    camera_plane_p3, camera_plane_p4 = solve([a*x + b*y + c*z +d, \
+                    (x-selected_center[0])*(x-selected_center[0]) + (y-selected_center[1])*(y-selected_center[1]) + (z-selected_center[2])*(z-selected_center[2]) - 1000*1000,\
+                     y-selected_center[1] + 800], [x,y,z])
+
+    camera_plane_p1 = [float(complex(i).real) for i in camera_plane_p1]
+    camera_plane_p2 = [float(complex(i).real) for i in camera_plane_p2]
+    camera_plane_p3 = [float(complex(i).real) for i in camera_plane_p3]
+    camera_plane_p4 = [float(complex(i).real) for i in camera_plane_p4]
 
     camera_plane = o3d.geometry.TriangleMesh()
     camera_plane.vertices = o3d.utility.Vector3dVector(np.array([camera_plane_p1,camera_plane_p2,camera_plane_p3,camera_plane_p4]))
-    camera_plane.triangles= o3d.utility.Vector3iVector(np.array([[0,1,2],
-                                                            [0,2,3]]))
+    camera_plane.triangles= o3d.utility.Vector3iVector(np.array([[0,1,2],[0,1,3],[1,2,3],[2,1,0],[3,1,0],[3,2,1]]))
     camera_plane.paint_uniform_color([0.1, 1, 1])
     return camera_plane
 
@@ -209,8 +221,46 @@ def get_mirror_init_plane_from_mirrorbbox(plane_parameter, mirror_bbox):
     plane.vertices = o3d.utility.Vector3dVector(np.array([plane_p1,plane_p2,plane_p3,plane_p4]))
     plane.triangles= o3d.utility.Vector3iVector(np.array([[0,1,2],[0,1,3],[1,2,3],[2,1,0],[3,1,0],[3,2,1]]))
     plane.paint_uniform_color([0.1, 1, 1])
+    return plane
+
+
+# ---------------------------------------------------------------------------- #
+#                     resize_plane                                             #
+# ---------------------------------------------------------------------------- #
+def resize_plane(plane, ratio):
+    import open3d as o3d
+
+    p1, p2, p3, p4 = np.unique(np.array(plane.vertices),axis=0)
+
+    plane_parameter =  get_planeParam_from_3_points(p1, p2, p3)
+    [a, b, c, d] = plane_parameter
+    x = Symbol('x',real=True)
+    y = Symbol('y',real=True)
+    z = Symbol('z',real=True)
+
+    selected_center = np.mean([p1,p2,p3,p4], axis=0)
+    point_center_distance = np.linalg.norm(np.array(p1)-np.array(selected_center))*ratio
+
+    camera_plane_p1, camera_plane_p2 = solve([a*x + b*y + c*z +d, \
+                    (x-selected_center[0])*(x-selected_center[0]) + (y-selected_center[1])*(y-selected_center[1]) + (z-selected_center[2])*(z-selected_center[2]) - point_center_distance*point_center_distance,\
+                     (y-selected_center[1])*(p1[0]-selected_center[0])- (x-selected_center[0])*(p1[1]-selected_center[1]) ], [x,y,z])
+    camera_plane_p3, camera_plane_p4 = solve([a*x + b*y + c*z +d, \
+                    (x-selected_center[0])*(x-selected_center[0]) + (y-selected_center[1])*(y-selected_center[1]) + (z-selected_center[2])*(z-selected_center[2]) - point_center_distance*point_center_distance,\
+                     (y-selected_center[1])*(p2[0]-selected_center[0])- (x-selected_center[0])*(p2[1]-selected_center[1]) ], [x,y,z])
+
+    camera_plane_p1 = [float(complex(i).real) for i in camera_plane_p1]
+    camera_plane_p2 = [float(complex(i).real) for i in camera_plane_p2]
+    camera_plane_p3 = [float(complex(i).real) for i in camera_plane_p3]
+    camera_plane_p4 = [float(complex(i).real) for i in camera_plane_p4]
+
+
+    plane.vertices = o3d.utility.Vector3dVector(np.array([camera_plane_p1,camera_plane_p2,camera_plane_p3,camera_plane_p4]))
+    plane.triangles= o3d.utility.Vector3iVector(np.array([[0,1,2],[0,1,3],[1,2,3],[2,1,0],[3,1,0],[3,2,1]]))
 
     return plane
+
+
+
 
 # ---------------------------------------------------------------------------- #
 #                     mask mirror border area in RGB image                     #
@@ -570,9 +620,8 @@ def get_parameter_from_plane_adjustment(pcd, camera_plane, adjustment_init_step_
     turn_down = False
     turn_right = False
     turn_left = False
-    counter_clockwise = False
-    clockwise = False
-    false_example = False
+    shink = False
+    expand = False
 
     vis = o3d.visualization.VisualizerWithKeyCallback()
 
@@ -677,37 +726,24 @@ def get_parameter_from_plane_adjustment(pcd, camera_plane, adjustment_init_step_
             turn_right = True
         return True
 
-    def mirror_clockwise(vis, action, mods):
-        nonlocal clockwise
-        print(action)
+    def mirror_expand(vis, action, mods):
+        nonlocal expand
         if action == 1:  # key down
-            clockwise = True
+            expand = True
         elif action == 0:  # key up
-            clockwise = False
+            expand = False
         elif action == 2:  # key repeat
-            clockwise = True
+            expand = True
         return True
     
-    def mirror_counter_clockwise(vis, action, mods):
-        nonlocal counter_clockwise
-        print(action)
+    def mirror_shink(vis, action, mods):
+        nonlocal shink
         if action == 1:  # key down
-            counter_clockwise = True
+            shink = True
         elif action == 0:  # key up
-            counter_clockwise = False
+            shink = False
         elif action == 2:  # key repeat
-            counter_clockwise = True
-        return True
-
-    def mirror_false_example(vis, action, mods):
-        nonlocal false_example
-        print(action)
-        if action == 1:  # key down
-            false_example = True
-        elif action == 0:  # key up
-            false_example = False
-        elif action == 2:  # key repeat
-            false_example = True
+            shink = True
         return True
 
     # ------------------------- define callback action ------------------------ #
@@ -715,65 +751,38 @@ def get_parameter_from_plane_adjustment(pcd, camera_plane, adjustment_init_step_
         if up:
             camera_plane.translate((0,adjustment_init_step_size,0))
             vis.update_geometry(camera_plane)
-            coor.translate((0,adjustment_init_step_size,0))
-            vis.update_geometry(coor)
         if down:
             camera_plane.translate((0,-adjustment_init_step_size,0))
             vis.update_geometry(camera_plane)
-            coor.translate((0,-adjustment_init_step_size,0))
-            vis.update_geometry(coor)
         if left:
             camera_plane.translate((adjustment_init_step_size,0,0))
             vis.update_geometry(camera_plane)
-            coor.translate((adjustment_init_step_size,0,0))
-            vis.update_geometry(coor)
         if right:
             camera_plane.translate((-adjustment_init_step_size,0,0))
             vis.update_geometry(camera_plane)
-            coor.translate((-adjustment_init_step_size,0,0))
-            vis.update_geometry(coor)
         if forward:
             camera_plane.translate((0,0,adjustment_init_step_size))
             vis.update_geometry(camera_plane)
-            coor.translate((0,0,adjustment_init_step_size))
-            vis.update_geometry(coor)
         if backward:
             camera_plane.translate((0,0,-adjustment_init_step_size))
             vis.update_geometry(camera_plane)
-            coor.translate((0,0,-adjustment_init_step_size))
-            vis.update_geometry(coor)
         if turn_up:
             camera_plane.rotate(get_3_3_rotation_matrix(init_rotation_angle, 0, 0),np.array(camera_plane.vertices).mean(0))
             vis.update_geometry(camera_plane)
-            coor.rotate(get_3_3_rotation_matrix(init_rotation_angle, 0, 0),np.array(camera_plane.vertices).mean(0))
-            vis.update_geometry(coor)
         if turn_down:
             camera_plane.rotate(get_3_3_rotation_matrix(-init_rotation_angle, 0, 0),np.array(camera_plane.vertices).mean(0))
             vis.update_geometry(camera_plane)
-            coor.rotate(get_3_3_rotation_matrix(-init_rotation_angle, 0, 0),np.array(camera_plane.vertices).mean(0))
-            vis.update_geometry(coor)
         if turn_left:
             camera_plane.rotate(get_3_3_rotation_matrix(0, -init_rotation_angle, 0),np.array(camera_plane.vertices).mean(0))
             vis.update_geometry(camera_plane)
-            coor.rotate(get_3_3_rotation_matrix(0, -init_rotation_angle, 0),np.array(camera_plane.vertices).mean(0))
-            vis.update_geometry(coor)
         if turn_right:
             camera_plane.rotate(get_3_3_rotation_matrix(0, init_rotation_angle, 0),np.array(camera_plane.vertices).mean(0))
             vis.update_geometry(camera_plane)
-            coor.rotate(get_3_3_rotation_matrix(0, init_rotation_angle, 0),np.array(camera_plane.vertices).mean(0))
-            vis.update_geometry(coor)
-        if clockwise:
-            camera_plane.rotate(get_3_3_rotation_matrix(0, 0, init_rotation_angle),np.array(camera_plane.vertices).mean(0))
-            vis.update_geometry(camera_plane)
-            coor.rotate(get_3_3_rotation_matrix(0, 0, init_rotation_angle),np.array(camera_plane.vertices).mean(0))
-            vis.update_geometry(coor)
-        if counter_clockwise:
-            camera_plane.rotate(get_3_3_rotation_matrix(0, 0, -init_rotation_angle),np.array(camera_plane.vertices).mean(0))
-            vis.update_geometry(camera_plane)
-            coor.rotate(get_3_3_rotation_matrix(0, 0, -init_rotation_angle),np.array(camera_plane.vertices).mean(0))
-            vis.update_geometry(coor)
-        if false_example:
-            vis.destroy_window()
+        if expand:
+            resize_plane(plane=camera_plane, ratio=1.03)
+        if shink:
+            resize_plane(plane=camera_plane, ratio=0.97)
+
 
     # ------------------------- link action with key ------------------------ #
     # a 65 w 87 s 83 d 68 e 69 r 82     j 74 i 73 k 75 l 76 o 79 p 80 z 90 x 88 n 78 m 77
@@ -786,18 +795,33 @@ def get_parameter_from_plane_adjustment(pcd, camera_plane, adjustment_init_step_
     vis.register_key_action_callback(82, mirror_forward) # r move far
 
     # # ratation
-    vis.register_key_action_callback(73, mirror_clockwise) # i red_x mirror_clockwise
-    vis.register_key_action_callback(75, mirror_counter_clockwise)  # k red_x mirror_clockwise
+    vis.register_key_action_callback(73, mirror_expand) # i  mirror_expand
+    vis.register_key_action_callback(75, mirror_shink)  # k  mirror_shink
     vis.register_key_action_callback(74, mirror_turn_left)  # j green_y 
     vis.register_key_action_callback(76, mirror_turn_right) # l green_y
     vis.register_key_action_callback(79, mirror_turn_up)  # o blue_z
     vis.register_key_action_callback(80, mirror_turn_down) # p blue_z
 
+
+    option_list = Option()
+    option_list.add_option("a", "plane move left")
+    option_list.add_option("w", "plane move up")
+    option_list.add_option("s", "plane move down")
+    option_list.add_option("d", "plane move right")
+    option_list.add_option("e", "plane move closer")
+    option_list.add_option("r", "plane move futher")
+    option_list.add_option("i", "make the plane larger")
+    option_list.add_option("k", "make the plane smaller")
+    option_list.add_option("j", "rotate left")
+    option_list.add_option("l", "rotate right")
+    option_list.add_option("o", "rotate upwards")
+    option_list.add_option("p", "rotate downwards")
+    option_list.print_option()
+
     coor_ori = o3d.geometry.TriangleMesh.create_coordinate_frame(size=8000,  origin=[0,0,0])
     vis.register_animation_callback(animation_callback)
     vis.create_window(width=800,height=800)
     vis.add_geometry(camera_plane)
-    # vis.add_geometry(coor_ori)
     vis.add_geometry(pcd)
     vis.get_view_control().set_front([0,0,-1])
     vis.get_view_control().set_constant_z_far(100000)
@@ -904,3 +928,80 @@ def clamp_pcd_by_bbox(mirror_bbox, depth_img_path, f, mirror_border_mask,plane_p
     return depth_to_refine
 
 
+
+
+# ---------------------------------------------------------------------------- #
+#                                 Option class                                 #
+# ---------------------------------------------------------------------------- #
+class Option():
+    """
+    The Option class currently does the following:
+    1. add_option
+    2. print_option
+    3. check input_option correctness
+    """
+    def __init__(self):
+        self.option_fun = dict()
+    
+    def add_option(self, option_key, option_discription):
+        self.option_fun[option_key] = option_discription
+    
+    def print_option(self):
+        print("OPTION : ")
+        for index, item in enumerate(self.option_fun.items()):
+            print("({}) {:8} : {}".format(index+1, item[0], item[1]))
+    
+    def is_input_key_valid(self, input_option, annotated_paths):
+        key = input_option.split()[0]
+        is_valid = False
+        for item in self.option_fun.items():
+            if key == item[0].split()[0]:
+                is_valid = True
+
+        if "back" in input_option:
+            try:
+                n = int(input_option.split()[1]) - 1
+                if n < 0 or n > len(annotated_paths):
+                    is_valid = False
+            except:
+                is_valid = False
+        return is_valid
+
+
+# ---------------------------------------------------------------------------- #
+#                    get mirror pcd based on plane parameter                   #
+# ---------------------------------------------------------------------------- #
+def get_mirrorPoint_based_on_plane_parameter(f, plane_parameter=[1,1,1,1], mirror_mask=None, color=None, color_img_path=""):
+    import open3d as o3d
+    h, w = cv2.imread(color_img_path, cv2.IMREAD_ANYDEPTH).shape
+    a, b, c, d  = plane_parameter
+
+    xyz = []
+    colors = []
+    
+    for y in range(h):
+        for x in range(w):
+            if  mirror_mask[y][x] > 0:
+                n = np.array([a, b, c])
+                V0 = np.array([0, 0, -d/c])
+                P0 = np.array([0,0,0])
+                P1 = np.array([(x - w/2), (y - h/2), f ])
+
+                j = P0 - V0
+                u = P1-P0
+                N = -np.dot(n,j)
+                D = np.dot(n,u)
+                sI = N / D
+                I = P0+ sI*u
+
+                xyz.append(list(I))
+                if color == None:
+                    colors.append([0,0.9,0])
+                else:
+                    colors.append(color)
+
+    pcd = o3d.geometry.PointCloud()
+    pcd.points = o3d.utility.Vector3dVector(np.stack(xyz,axis=0))
+    pcd.colors = o3d.utility.Vector3dVector(np.stack(colors,axis=0))
+
+    return pcd
