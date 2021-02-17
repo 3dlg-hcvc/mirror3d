@@ -902,9 +902,6 @@ def clamp_pcd_by_bbox(mirror_bbox, depth_img_path, f, mirror_border_mask,plane_p
 
     depth_to_refine = cv2.imread(depth_img_path, cv2.IMREAD_ANYDEPTH)
     h, w = depth_to_refine.shape
-    correct_colors = []
-    correct_xyz = []
-    border_xyz = []
     a, b, c, d  = plane_parameter
     for y in range(h):
         for x in range(w):
@@ -971,6 +968,59 @@ class Option():
 
 
 # ---------------------------------------------------------------------------- #
+#                         get 3D points' 2D coordinate                         #
+# ---------------------------------------------------------------------------- #
+def get_2D_coor_from_3D(3Dpoints, f):
+    return
+
+
+# ---------------------------------------------------------------------------- #
+#                               get_triange_mask                               #
+# ---------------------------------------------------------------------------- #
+def get_triange_mask(2D_points):
+    """
+    Args:
+        2D_points : 3 points (under 2D coordinate)
+    Output:
+        triangle_mask : binary mask
+    """
+    pass
+
+
+# ---------------------------------------------------------------------------- #
+#                  clamp the points in mask and over clamp_dis                 #
+# ---------------------------------------------------------------------------- #
+def clamp_pcd_by_mask(depth_to_refine, f, clamp_mask,plane_parameter, clamp_dis=100):
+
+    if clamp_mask is not None and len(clamp_mask.shape)>2:
+        clamp_mask = cv2.cvtColor(clamp_mask, cv2.COLOR_BGR2GRAY)
+    
+    h, w = depth_to_refine.shape
+    a, b, c, d  = plane_parameter
+    for y in range(h):
+        for x in range(w):
+            if clamp_mask[y][x] > 0:
+                ori_point = [(x - w/2) * (depth_to_refine[y][x]/f),(y - h/2) * (depth_to_refine[y][x]/f),depth_to_refine[y][x]]
+                n = np.array([a, b, c])
+                V0 = np.array([0, 0, -d/c])
+                P0 = np.array([0,0,0])
+                P1 = np.array([(x - w/2), (y - h/2), f ])
+
+                j = P0 - V0
+                u = P1-P0
+                N = -np.dot(n,j)
+                D = np.dot(n,u)
+                sI = N / D
+                I = P0+ sI*u
+                expand_point_on_plane = I[2]
+                if np.linalg.norm(np.array(expand_point_on_plane)-np.array(ori_point[0])) >= clamp_dis:
+                    depth_to_refine[y,x] = I[2]
+    
+    return depth_to_refine
+
+
+
+# ---------------------------------------------------------------------------- #
 #                    get mirror pcd based on plane parameter                   #
 # ---------------------------------------------------------------------------- #
 def get_mirrorPoint_based_on_plane_parameter(f, plane_parameter=[1,1,1,1], mirror_mask=None, color=None, color_img_path=""):
@@ -1007,3 +1057,5 @@ def get_mirrorPoint_based_on_plane_parameter(f, plane_parameter=[1,1,1,1], mirro
     pcd.colors = o3d.utility.Vector3dVector(np.stack(colors,axis=0))
 
     return pcd
+
+
