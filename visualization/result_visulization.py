@@ -88,7 +88,7 @@ class Dataset_visulization(Plane_annotation_tool):
             pred_depth_img_path =  os.path.join(self.prediction_output_folder, sample_name.replace("raw","pred_depth"))
 
         # Get and save pcd for the instance
-        pcd = get_pcd_from_rgbd(self.f, pred_depth_img_path, color_img_path)
+        pcd = get_pcd_from_rgbd_depthPath(self.f, pred_depth_img_path, color_img_path)
         o3d.io.write_point_cloud(pcd_save_path, pcd)
         print("point cloud saved  to :", os.path.abspath(pcd_save_path))
 
