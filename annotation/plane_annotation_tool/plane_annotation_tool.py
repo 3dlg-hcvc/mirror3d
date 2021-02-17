@@ -458,6 +458,9 @@ class Plane_annotation_tool():
         o3d.visualization.draw_geometries([pcd, mirror_pcd])
         init_step_size = ((np.max(np.array(pcd.points)[:,0])) - (np.min(np.array(pcd.points)[:,0])))/300
 
+
+        # TODO make a copy of the depth image
+
         while 1:
 
             option_list = Option()
@@ -479,11 +482,13 @@ class Plane_annotation_tool():
                 print("annotation of {} finished !".format(img_name))
                 exit()
             elif input_option == "r":
-                points = get_picked_points(pcd)
-                plane_parameter = get_parameter_from_plane_adjustment(pcd, get_mirror_init_plane_from_3points(p1, p2, p3), init_step_size)
-                mirror_pcd = get_mirrorPoint_based_on_plane_parameter(f=self.f, plane_parameter=plane_parameter, mirror_mask=instance_mask, color_img_path=color_img_path, color=[0,0,1])
-                o3d.visualization.draw_geometries([pcd, mirror_pcd])
+                # TODO (1) whether points are in 2D area, get 2D mask (2) clamp points in area [in mirror mask & over threshold]
+                three_points = get_picked_points(pcd)
+                three_points_3D = get_2D_coor_from_3D(three_points, self.f)
+                triangle_mask = get_triange_mask(three_points_3D)
 
+
+                pass
 
 class Data_post_processing(Plane_annotation_tool):
 
@@ -593,7 +598,7 @@ class Data_post_processing(Plane_annotation_tool):
             mask = cv2.imread(mask_img_path)
 
             
-            #  Get plane parameter for each instance (based on refined depth)
+            #  Get plane parameter for each instance (based on refined depth) 
             for instance_index in np.unique(np.reshape(mask,(-1,3)), axis = 0):
                 if sum(instance_index) == 0: # background
                     continue
