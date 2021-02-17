@@ -395,7 +395,6 @@ class Plane_annotation_tool():
                 continue
             
             if input_option == "f":
-                # TODO (1) save abcd to json (2) update depth
                 save_plane_parameter_2_json(plane_parameter, one_plane_para_save_path, instance_id)
                 cv2.imwrite(hole_refined_depth_path, refine_depth_with_plane_parameter_mask(plane_parameter, instance_mask, cv2.imread(hole_raw_depth_path, cv2.IMREAD_ANYDEPTH),self.f))
                 if self.is_matterport3d:
@@ -403,20 +402,88 @@ class Plane_annotation_tool():
                 print("annotation of {} finished !".format(img_name))
                 exit()
             elif input_option == "i":
-                # Init the plane using 3 picked point (2) adjust manully (3) show the refined result 
                 [p1, p2, p3] = get_picked_points(pcd)
                 plane_parameter = get_parameter_from_plane_adjustment(pcd, get_mirror_init_plane_from_3points(p1, p2, p3), init_step_size)
                 mirror_pcd = get_mirrorPoint_based_on_plane_parameter(f=self.f, plane_parameter=plane_parameter, mirror_mask=instance_mask, color_img_path=color_img_path, color=[0,0,1])
                 o3d.visualization.draw_geometries([pcd, mirror_pcd])
 
             elif input_option == "a":
-                # TODO (1) adjust the plane (2) show the refined result
                 p1 = np.mean(np.array(mirror_pcd.points), axis=0)
                 p2 = np.array(mirror_pcd.points)[0]
                 p3 = np.array(mirror_pcd.points)[-1]
                 plane_parameter = get_parameter_from_plane_adjustment(pcd, get_mirror_init_plane_from_3points(p1, p2, p3), init_step_size)
                 mirror_pcd = get_mirrorPoint_based_on_plane_parameter(f=self.f, plane_parameter=plane_parameter, mirror_mask=instance_mask, color_img_path=color_img_path, color=[0,0,1])
                 o3d.visualization.draw_geometries([pcd, mirror_pcd])
+
+
+
+    def manual_clamp_one_sample(self, instance_index=None, img_name=None):
+        """
+        Repeatedly adjust one sample's plane parameter
+
+        Args:
+            instance_index : "[R]_[G]_[B]",e.g. (128, 0, 0) --> "128_0_0"
+            img_name : color image sample name, e.g. 128
+        """
+        if len(a) == 0 or len(instance_index) == 0:
+            print("invalid input instance_index {} img_name {}".format(instance_index, img_name))
+            exit()
+
+        import open3d as o3d
+        if self.is_matterport3d:
+            hole_raw_depth_path = os.path.join(self.data_main_folder, "hole_raw_depth","{}.png".format(rreplace(img_name, "i", "d")))
+            mesh_raw_depth_path = os.path.join(self.data_main_folder, "mesh_raw_depth","{}.png".format(rreplace(img_name, "i", "d")))
+            mesh_refined_depth_path = os.path.join(self.anno_output_folder, "mesh_refined_depth","{}.png".format(rreplace(img_name, "i", "d")))
+            hole_refined_depth_path = os.path.join(self.anno_output_folder, "hole_refined_depth","{}.png".format(rreplace(img_name, "i", "d")))
+        else:
+            hole_raw_depth_path = os.path.join(self.data_main_folder, "hole_raw_depth","{}.png".format(img_name))
+            hole_refined_depth_path = os.path.join(self.anno_output_folder, "hole_refined_depth","{}.png".format(img_name))
+
+        color_img_path = os.path.join(self.data_main_folder, "raw","{}.png".format(img_name))
+        mask_path = os.path.join(self.data_main_folder, "instance_mask","{}.png".format(img_name))
+        instance_id = [int(i) for i in instance_index.split("_")]
+        instance_mask = get_grayscale_instanceMask(cv2.imread(mask_path),instance_id)
+
+        pcd_save_folder = os.path.join(self.anno_output_folder, "anno_pcd")
+        instance_tag = img_name + "_idx_" + instance_index
+        pcd_path = os.path.join(pcd_save_folder, "{}.ply".format(instance_tag))
+
+        
+        one_plane_para_save_path = os.path.join(os.path.join(self.anno_output_folder, "img_info"), "{}.json".format(img_name))
+        if os.path.exists(one_plane_para_save_path):
+            plane_parameter = read_json(one_plane_para_save_path)[instance_index]["plane_parameter"]
+
+        pcd = o3d.io.read_point_cloud(pcd_path)
+        mirror_pcd = get_mirrorPoint_based_on_plane_parameter(f=self.f, plane_parameter=plane_parameter, mirror_mask=instance_mask, color_img_path=color_img_path, color=[0,0,1])
+        o3d.visualization.draw_geometries([pcd, mirror_pcd])
+        init_step_size = ((np.max(np.array(pcd.points)[:,0])) - (np.min(np.array(pcd.points)[:,0])))/300
+
+        while 1:
+
+            option_list = Option()
+            option_list.add_option("f", "FINISH : update hole_refined_depth/ mesh_refined_depth/ img_info and EXIT")
+            option_list.add_option("r", "REPAIR : pick points and refine the specific area")
+            option_list.print_option()
+            input_option = input()
+
+            print("relevant color image path : {}".format(color_img_path))
+
+            if input_option not in ["f", "r"]:
+                print("invalid input, please input again :D")
+                continue
+            
+            if input_option == "f":
+                cv2.imwrite(hole_refined_depth_path, refine_depth_with_plane_parameter_mask(plane_parameter, instance_mask, cv2.imread(hole_raw_depth_path, cv2.IMREAD_ANYDEPTH),self.f))
+                if self.is_matterport3d:
+                    cv2.imwrite(mesh_refined_depth_path, refine_depth_with_plane_parameter_mask(plane_parameter, instance_mask, cv2.imread(mesh_raw_depth_path, cv2.IMREAD_ANYDEPTH),self.f))
+                print("annotation of {} finished !".format(img_name))
+                exit()
+            elif input_option == "r":
+                points = get_picked_points(pcd)
+                plane_parameter = get_parameter_from_plane_adjustment(pcd, get_mirror_init_plane_from_3points(p1, p2, p3), init_step_size)
+                mirror_pcd = get_mirrorPoint_based_on_plane_parameter(f=self.f, plane_parameter=plane_parameter, mirror_mask=instance_mask, color_img_path=color_img_path, color=[0,0,1])
+                o3d.visualization.draw_geometries([pcd, mirror_pcd])
+
 
 class Data_post_processing(Plane_annotation_tool):
 
