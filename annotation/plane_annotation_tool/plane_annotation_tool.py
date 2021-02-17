@@ -338,7 +338,7 @@ class Plane_annotation_tool():
             annotated_paths.sort()
         return annotated_paths, path_to_annotate, error_list, correct_list
 
-    def adjust_one_sample_plane(self, instance_index, img_name):
+    def adjust_one_sample_plane(self, instance_index=None, img_name=None):
         """
         Repeatedly adjust one sample's plane parameter
 
@@ -346,6 +346,10 @@ class Plane_annotation_tool():
             instance_index : "[R]_[G]_[B]",e.g. (128, 0, 0) --> "128_0_0"
             img_name : color image sample name, e.g. 128
         """
+        if len(a) == 0 or len(instance_index) == 0:
+            print("invalid input instance_index {} img_name {}".format(instance_index, img_name))
+            exit()
+
         import open3d as o3d
         if self.is_matterport3d:
             hole_raw_depth_path = os.path.join(self.data_main_folder, "hole_raw_depth","{}.png".format(rreplace(img_name, "i", "d")))
@@ -501,7 +505,7 @@ class Data_post_processing(Plane_annotation_tool):
                 cv2.imwrite(hole_refined_depth_path, clamp_pcd_by_bbox(mirror_bbox=mirror_bbox, depth_img_path=hole_refined_depth_path, f=self.f, mirror_border_mask=mirror_border_mask ,plane_parameter=one_info[1]["plane_parameter"], expand_range = self.expand_range, clamp_dis = self.clamp_dis))
                 print("update depth {}".format(hole_refined_depth_path))
 
-    def update_imgInfo_based_on_depth():
+    def update_imgInfo_based_on_depth(self):
         """
         Updata img_info based on refined depth
 
@@ -510,17 +514,18 @@ class Data_post_processing(Plane_annotation_tool):
                                (2) Other datasets img_info are updated based on hole_refined_depth
         """
         for color_img_path in self.color_img_list:
-            img_name = os.path.split(color_img_path)[1]
+            img_name = os.path.split(color_img_path)[1].split(".")[0]
             if self.is_matterport3d:
                 depth_img_path = os.path.join(self.data_main_folder, "mesh_refined_depth","{}.png".format(rreplace(img_name, "i", "d")))
             else:
                 depth_img_path = os.path.join(self.data_main_folder, "hole_refined_depth","{}.png".format(img_name))
             mask_img_path = color_img_path.replace("raw", "instance_mask")
-            img_info_path = color_img_path.replace("raw", "img_info")
+            img_info_path = color_img_path.replace("raw", "img_info").replace(".png",".json")
             smaple_name = os.path.split(color_img_path)[1].split(".")[0] 
 
             mask = cv2.imread(mask_img_path)
 
+            
             #  Get plane parameter for each instance (based on refined depth)
             for instance_index in np.unique(np.reshape(mask,(-1,3)), axis = 0):
                 if sum(instance_index) == 0: # background
@@ -530,13 +535,10 @@ class Data_post_processing(Plane_annotation_tool):
                 for i in instance_index:
                     instance_tag += "_{}".format(i)
                 instance_tag = smaple_name + instance_tag
-                pcd_save_path = os.path.join(pcd_save_folder,  "{}.ply".format(instance_tag))
-                if os.path.isfile(pcd_save_path):
-                    print(pcd_save_path , "exist! continue")
-                    continue
 
                 binary_instance_mask = get_grayscale_instanceMask(mask, instance_index)
-                plane_parameter = get_mirror_parameter_from_xyzs_by_ransac(get_points_in_mask(self.f, depth_img_path, color_img_path, mirror_mask=None))
+                
+                plane_parameter = get_mirror_parameter_from_xyzs_by_ransac(get_points_in_mask(self.f, depth_img_path, color_img_path, mirror_mask=binary_instance_mask))
                 save_plane_parameter_2_json(plane_parameter, img_info_path, instance_index)
                 print("updated plane_parameter in {}".format(img_info_path))
 
@@ -562,6 +564,10 @@ if __name__ == "__main__":
         '--clamp_dis', default=100, type=int, help="outliers threshold")
     parser.add_argument(
         '--anno_output_folder', default="./anno_output")
+    parser.add_argument(
+        '--img_name', default="")
+    parser.add_argument(
+        '--instance_index', default="")
     args = parser.parse_args()
 
 
@@ -586,10 +592,8 @@ if __name__ == "__main__":
         plane_anno_tool = Data_post_processing(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder, expand_range=args.expand_range, clamp_dis=args.clamp_dis)
         plane_anno_tool.data_clamping()
     elif args.stage == "5":
-        plane_anno_tool = Plane_annotation_tool(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
+        plane_anno_tool = Data_post_processing(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
         plane_anno_tool.update_imgInfo_based_on_depth()
     elif args.stage == "6":
         plane_anno_tool = Plane_annotation_tool(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
-        img_name = "221"
-        instance_index = "0_0_128"
-        plane_anno_tool.adjust_one_sample_plane(instance_index, img_name)
+        plane_anno_tool.adjust_one_sample_plane(args.instance_index, args.img_name)
