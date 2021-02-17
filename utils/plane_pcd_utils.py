@@ -11,7 +11,7 @@ import math
 from utils.algorithm import *
 from utils.general_utlis import *
 from sympy import *
-
+from PIL import Image, ImageDraw
 
 
 
@@ -297,10 +297,10 @@ def get_picked_points(pcd):
         vis = o3d.visualization.VisualizerWithEditing()
         vis.create_window(width=800,height=800)
         vis.add_geometry(pcd)
-        vis.get_view_control().set_front([0,0,-1])
-        vis.get_view_control().set_constant_z_far(100000)
-        vis.get_view_control().set_constant_z_near(0)
-        vis.get_view_control().set_up([0,-1,0])
+        # vis.get_view_control().set_front([0,0,-1])
+        # vis.get_view_control().set_constant_z_far(100000)
+        # vis.get_view_control().set_constant_z_near(0)
+        # vis.get_view_control().set_up([0,-1,0])
         vis.run()  # user picks points
         vis.destroy_window()
         points_index = vis.get_picked_points()
@@ -417,11 +417,47 @@ def get_points_in_mask(f, depth_img_path, color_img_path, mirror_mask=None, poin
 
 
 
+# ---------------------------------------------------------------------------- #
+#                           get_pcd_from_rgb_depthMap                          #
+# ---------------------------------------------------------------------------- #
+def get_pcd_from_rgb_depthMap(f, d, color_img_path, mirror_mask=None, color=None):
+    import open3d as o3d
+    color_img = cv2.cvtColor(cv2.imread(color_img_path), cv2.COLOR_BGR2RGB)
+    color_img = color_img/255
+
+    h, w = d.shape
+    x_cam = []
+    y_cam = []
+    z_cam = []
+    colors = []
+    xyz = []
+
+    for y in range(h):
+        for x in range(w):
+            if  mirror_mask is not None and mirror_mask[y][x]:
+                if color is not None:
+                    colors.append(color)
+                else:
+                    colors.append([0,0,1])
+                xyz.append([(x - w/2) * (d[y][x]/f),(y - h/2) * (d[y][x]/f),d[y][x]])
+            else:
+                if color is not None:
+                    colors.append(color)
+                else:
+                    colors.append(color_img[y][x])
+                xyz.append([(x - w/2) * (d[y][x]/f),(y - h/2) * (d[y][x]/f),d[y][x]])
+
+    pcd = o3d.geometry.PointCloud()
+    pcd.points = o3d.utility.Vector3dVector(np.stack(xyz,axis=0))
+    pcd.colors = o3d.utility.Vector3dVector(np.stack(colors,axis=0))
+    return pcd
+
+
 
 # ---------------------------------------------------------------------------- #
-#                               get_pcd_from_rgbd                              #
+#                               get_pcd_from_rgbd_depthPath                    #
 # ---------------------------------------------------------------------------- #
-def get_pcd_from_rgbd(f, depth_img_path, color_img_path, mirror_mask=None, color=None):
+def get_pcd_from_rgbd_depthPath(f, depth_img_path, color_img_path, mirror_mask=None, color=None):
     import open3d as o3d
     d = cv2.imread(depth_img_path, cv2.IMREAD_ANYDEPTH)
     color_img = cv2.cvtColor(cv2.imread(color_img_path), cv2.COLOR_BGR2RGB)
@@ -970,21 +1006,31 @@ class Option():
 # ---------------------------------------------------------------------------- #
 #                         get 3D points' 2D coordinate                         #
 # ---------------------------------------------------------------------------- #
-def get_2D_coor_from_3D(3Dpoints, f):
-    return
+def get_2D_coor_from_3D(points_3d, f, w, h):
+    points_2d = []
+    for point in points_3d:
+        points_2d.append([(point[0]*f)/point[2] + w/2, (point[1]*f)/point[2] + h/2])
+    return points_2d
 
 
 # ---------------------------------------------------------------------------- #
 #                               get_triange_mask                               #
 # ---------------------------------------------------------------------------- #
-def get_triange_mask(2D_points):
+def get_triange_mask(points_2d, width, height):
     """
     Args:
-        2D_points : 3 points (under 2D coordinate)
+        points_2d : 3 points (under 2D coordinate)
     Output:
         triangle_mask : binary mask
     """
-    pass
+
+    
+    polygon = [tuple(points_2d[0]), tuple(points_2d[1]), tuple(points_2d[2])]
+    img = Image.new('L', (width, height), 0)
+    ImageDraw.Draw(img).polygon(polygon, outline=1, fill=1)
+    mask = np.array(img)
+    import pdb; pdb.set_trace()
+    return mask
 
 
 # ---------------------------------------------------------------------------- #

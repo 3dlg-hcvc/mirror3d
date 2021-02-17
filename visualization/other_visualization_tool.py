@@ -26,7 +26,7 @@ def visualize_single_image():
 
 
 def vislize_pcd_from_rgbd(depth_img_path, color_img_path, f):
-    pcd = get_pcd_from_rgbd(f, depth_img_path, color_img_path)
+    pcd = get_pcd_from_rgbd_depthPath(f, depth_img_path, color_img_path)
     o3d.visualization.draw_geometries([pcd])
 
         

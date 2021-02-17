@@ -101,7 +101,7 @@ class Dataset_visulization(Plane_annotation_tool):
                 plane_parameter = one_img_info[instance_tag.split("_idx_")[1]]
 
                 # Get pcd for the instance
-                pcd = get_pcd_from_rgbd(self.f, depth_img_path, color_img_path, mirror_mask=binary_instance_mask)
+                pcd = get_pcd_from_rgbd_depthPath(self.f, depth_img_path, color_img_path, mirror_mask=binary_instance_mask)
 
                 # Get mirror plane for the instance
                 mirror_points = get_points_in_mask(self.f, depth_img_path, color_img_path, mirror_mask=binary_instance_mask)

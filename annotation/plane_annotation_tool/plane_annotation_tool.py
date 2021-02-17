@@ -346,7 +346,7 @@ class Plane_annotation_tool():
             instance_index : "[R]_[G]_[B]",e.g. (128, 0, 0) --> "128_0_0"
             img_name : color image sample name, e.g. 128
         """
-        if len(a) == 0 or len(instance_index) == 0:
+        if len(img_name) == 0 or len(instance_index) == 0:
             print("invalid input instance_index {} img_name {}".format(instance_index, img_name))
             exit()
 
@@ -425,15 +425,14 @@ class Plane_annotation_tool():
             instance_index : "[R]_[G]_[B]",e.g. (128, 0, 0) --> "128_0_0"
             img_name : color image sample name, e.g. 128
         """
-        if len(a) == 0 or len(instance_index) == 0:
+        if len(instance_index) == 0 or len(instance_index) == 0:
             print("invalid input instance_index {} img_name {}".format(instance_index, img_name))
             exit()
+        clamp_dis = 100
 
         import open3d as o3d
         if self.is_matterport3d:
             hole_raw_depth_path = os.path.join(self.data_main_folder, "hole_raw_depth","{}.png".format(rreplace(img_name, "i", "d")))
-            mesh_raw_depth_path = os.path.join(self.data_main_folder, "mesh_raw_depth","{}.png".format(rreplace(img_name, "i", "d")))
-            mesh_refined_depth_path = os.path.join(self.anno_output_folder, "mesh_refined_depth","{}.png".format(rreplace(img_name, "i", "d")))
             hole_refined_depth_path = os.path.join(self.anno_output_folder, "hole_refined_depth","{}.png".format(rreplace(img_name, "i", "d")))
         else:
             hole_raw_depth_path = os.path.join(self.data_main_folder, "hole_raw_depth","{}.png".format(img_name))
@@ -453,42 +452,44 @@ class Plane_annotation_tool():
         if os.path.exists(one_plane_para_save_path):
             plane_parameter = read_json(one_plane_para_save_path)[instance_index]["plane_parameter"]
 
-        pcd = o3d.io.read_point_cloud(pcd_path)
-        mirror_pcd = get_mirrorPoint_based_on_plane_parameter(f=self.f, plane_parameter=plane_parameter, mirror_mask=instance_mask, color_img_path=color_img_path, color=[0,0,1])
-        o3d.visualization.draw_geometries([pcd, mirror_pcd])
-        init_step_size = ((np.max(np.array(pcd.points)[:,0])) - (np.min(np.array(pcd.points)[:,0])))/300
-
-
-        # TODO make a copy of the depth image
+        refined_depth_to_clamp = cv2.imread(hole_refined_depth_path, cv2.IMREAD_ANYDEPTH)
+        h, w = refined_depth_to_clamp.shape
 
         while 1:
+
+            pcd = get_pcd_from_rgb_depthMap(self.f, refined_depth_to_clamp, color_img_path)
+            o3d.visualization.draw_geometries([pcd])
 
             option_list = Option()
             option_list.add_option("f", "FINISH : update hole_refined_depth/ mesh_refined_depth/ img_info and EXIT")
             option_list.add_option("r", "REPAIR : pick points and refine the specific area")
+            option_list.add_option("d", "DISTANCE : the clamping distance_threshold; distance over distance_threshold will be clamped")
+            option_list.add_option("exit", "EXIT : exit without saving the result")
             option_list.print_option()
             input_option = input()
 
             print("relevant color image path : {}".format(color_img_path))
 
-            if input_option not in ["f", "r"]:
+            if input_option not in ["f", "r", "exit", "d"]:
+                cv2.imwrite(hole_refined_depth_path, refined_depth_to_clamp)
                 print("invalid input, please input again :D")
                 continue
-            
-            if input_option == "f":
-                cv2.imwrite(hole_refined_depth_path, refine_depth_with_plane_parameter_mask(plane_parameter, instance_mask, cv2.imread(hole_raw_depth_path, cv2.IMREAD_ANYDEPTH),self.f))
-                if self.is_matterport3d:
-                    cv2.imwrite(mesh_refined_depth_path, refine_depth_with_plane_parameter_mask(plane_parameter, instance_mask, cv2.imread(mesh_raw_depth_path, cv2.IMREAD_ANYDEPTH),self.f))
+
+            if input_option == "d":
+                clamp_dis = int(input("please input new clamping distace (default : 100)"))
+            elif input_option == "f":
                 print("annotation of {} finished !".format(img_name))
                 exit()
             elif input_option == "r":
                 # TODO (1) whether points are in 2D area, get 2D mask (2) clamp points in area [in mirror mask & over threshold]
                 three_points = get_picked_points(pcd)
-                three_points_3D = get_2D_coor_from_3D(three_points, self.f)
-                triangle_mask = get_triange_mask(three_points_3D)
+                three_points_2D = get_2D_coor_from_3D(three_points, self.f, w, h) # TODO
+                clamp_mask = get_triange_mask(three_points_2D, w, h) # TODO
+                refined_depth_to_clamp = clamp_pcd_by_mask(depth_to_refine=refined_depth_to_clamp, f=self.f, clamp_mask=clamp_mask,plane_parameter=plane_parameter, clamp_dis=clamp_dis)
+                
+            elif input_option == "exit":
+                exit()
 
-
-                pass
 
 class Data_post_processing(Plane_annotation_tool):
 
@@ -620,9 +621,9 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
-        '--stage', default="6")
+        '--stage', default="7")
     parser.add_argument(
-        '--data_main_folder', default="/Users/tanjiaqi/Desktop/SFU/mirror3D/test2")
+        '--data_main_folder', default="/project/3dlg-hcvc/jiaqit/Mirror3D_dataset/nyu/with_mirror/precise")
     parser.add_argument(
         '--process_index', default=0, type=int, help="process index")
     parser.add_argument('--multi_processing', help='do multi-process or not',action='store_true')
@@ -637,9 +638,9 @@ if __name__ == "__main__":
     parser.add_argument(
         '--anno_output_folder', default="./anno_output")
     parser.add_argument(
-        '--img_name', default="")
+        '--img_name', default="712")
     parser.add_argument(
-        '--instance_index', default="")
+        '--instance_index', default="0_0_128")
     args = parser.parse_args()
 
 
@@ -669,3 +670,7 @@ if __name__ == "__main__":
     elif args.stage == "6":
         plane_anno_tool = Plane_annotation_tool(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
         plane_anno_tool.adjust_one_sample_plane(args.instance_index, args.img_name)
+    elif args.stage == "7":
+        plane_anno_tool = Plane_annotation_tool(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
+        plane_anno_tool.manual_clamp_one_sample(args.instance_index, args.img_name)
+        
