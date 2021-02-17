@@ -24,8 +24,8 @@ def save_plane_parameter_2_json(plane_parameter, one_plane_para_save_path, insta
     else:
         img_info = dict()
     img_info[str(sample_id)] = dict()
-    img_info[str(sample_id)]["plane_parameter"] = plane_parameter
-    img_info[str(sample_id)]["mirror_normal"] = plane_parameter[:-1]
+    img_info[str(sample_id)]["plane_parameter"] = list(plane_parameter)
+    img_info[str(sample_id)]["mirror_normal"] = list(plane_parameter[:-1])
     save_json(one_plane_para_save_path,img_info)
 
 def get_all_fileAbsPath_under_folder(folder_path):
