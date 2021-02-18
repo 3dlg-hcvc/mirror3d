@@ -13,11 +13,6 @@ from utils.general_utlis import *
 from sympy import *
 from PIL import Image, ImageDraw
 
-
-
-
-
-
 # ---------------------------------------------------------------------------- #
 #                   get grayscale mask from 3 channels's mask                  #
 # ---------------------------------------------------------------------------- #
@@ -954,10 +949,10 @@ def clamp_pcd_by_bbox(mirror_bbox, depth_img_path, f, mirror_border_mask,plane_p
                 D = np.dot(n,u)
                 sI = N / D
                 I = P0+ sI*u
-                expand_point_on_plane = I[2]
+                expand_point_on_plane = I
+                print(point_2_regBorder_in_3d(expand_point_on_plane, mirror_recrangle))
                 if point_2_regBorder_in_3d(expand_point_on_plane, mirror_recrangle) <= expand_range:
                     if np.linalg.norm(np.array(expand_point_on_plane)-np.array(ori_point[0])) >= clamp_dis:
-
                         depth_to_refine[y,x] = I[2]
     
     return depth_to_refine
@@ -1029,7 +1024,6 @@ def get_triange_mask(points_2d, width, height):
     img = Image.new('L', (width, height), 0)
     ImageDraw.Draw(img).polygon(polygon, outline=1, fill=1)
     mask = np.array(img)
-    import pdb; pdb.set_trace()
     return mask
 
 
@@ -1058,7 +1052,7 @@ def clamp_pcd_by_mask(depth_to_refine, f, clamp_mask,plane_parameter, clamp_dis=
                 D = np.dot(n,u)
                 sI = N / D
                 I = P0+ sI*u
-                expand_point_on_plane = I[2]
+                expand_point_on_plane = I
                 if np.linalg.norm(np.array(expand_point_on_plane)-np.array(ori_point[0])) >= clamp_dis:
                     depth_to_refine[y,x] = I[2]
     

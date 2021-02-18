@@ -180,3 +180,4 @@ Mirror3DNet/weight
 Mirror3DNet/important_checkpoint
 annotation_tool/jupyter_debug
 parallel_script
+temp.py

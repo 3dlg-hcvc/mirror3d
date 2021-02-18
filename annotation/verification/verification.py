@@ -112,7 +112,7 @@ class Verification():
                     front_video["src"] = ""
                     
                     new_link = soup.new_tag("source")
-                    new_link["data-src"] = one_video_path
+                    new_link["data-src"] = os.path.relpath(one_video_path, self.output_folder)
                     new_link["type"] = "video/mp4"
                     front_video.append(new_link)
                     one_video_div.append(front_video)
@@ -126,18 +126,17 @@ if __name__ == "__main__":
     parser.add_argument(
         '--stage', default="1")
     parser.add_argument(
-        '--data_main_folder', default="/Users/tanjiaqi/Desktop/SFU/mirror3D/test", help="dataset main folder / video main folder")
+        '--data_main_folder', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/hole_refined_ply", help="dataset main folder / video main folder")
     parser.add_argument(
         '--error_list', default="")
     parser.add_argument(
-        '--output_folder', default="/Users/tanjiaqi/Desktop/SFU/mirror3D/test/html")
-    parser.add_argument('--video_num_per_page', default=20, type=int)
+        '--output_folder', default="/project/3dlg-hcvc/mirrors/www/nyu_verification")
+    parser.add_argument('--video_num_per_page', default=150, type=int)
     args = parser.parse_args()
 
     if args.stage == "1":
-        args.data_main_folder = "/Users/tanjiaqi/Desktop/SFU/mirror3D/test/hole_refined_ply" # TODO delete later
-        verify = Verification(args.data_main_folder, args.output_folder)
+        verify = Verification(args.data_main_folder, args.output_folder,video_num_per_page =args.video_num_per_page)
         verify.generate_html()
     elif args.stage == "2":
-        verify = Verification(args.data_main_folder, args.output_folder)
+        verify = Verification(args.data_main_folder, args.output_folder, video_num_per_page =args.video_num_per_page)
         verify.sort_data_to_reannotate(args.error_list)
