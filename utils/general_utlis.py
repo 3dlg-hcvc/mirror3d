@@ -10,6 +10,7 @@ import pdb
 import math
 from PIL import Image
 import matplotlib.pyplot as plt
+from utils.algorithm import *
 
 def save_html(save_path, content):
     with open(save_path, "w") as outf:
@@ -17,6 +18,7 @@ def save_html(save_path, content):
     print("html saved to {}".format(save_path))
 
 def save_plane_parameter_2_json(plane_parameter, one_plane_para_save_path, instance_index):
+
     sample_id = "{}_{}_{}".format(instance_index[0], instance_index[1], instance_index[2])
     if os.path.exists(one_plane_para_save_path):
         with open(one_plane_para_save_path, 'r') as j:
@@ -26,6 +28,10 @@ def save_plane_parameter_2_json(plane_parameter, one_plane_para_save_path, insta
     img_info[str(sample_id)] = dict()
     img_info[str(sample_id)]["plane_parameter"] = list(plane_parameter)
     img_info[str(sample_id)]["mirror_normal"] = list(plane_parameter[:-1])
+    angle_degree = angle(np.array(plane_parameter[:-1]), np.array([0,0,1]))
+    if angle_degree > 90 and angle_degree <= 180:
+        angle_degree = 180 - angle_degree
+    img_info[str(sample_id)]["angle"] = angle_degree
     save_json(one_plane_para_save_path,img_info)
 
 def get_all_fileAbsPath_under_folder(folder_path):

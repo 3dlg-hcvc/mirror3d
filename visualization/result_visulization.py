@@ -199,7 +199,7 @@ class Dataset_visulization(Plane_annotation_tool):
                 print("image saved to {}".format(screenshot_save_path))
             ctrl.rotate(10, 0)
             vis.update_renderer()
-            if index > 300:
+            if index > 220:
                 vis.destroy_window()
                 break
 

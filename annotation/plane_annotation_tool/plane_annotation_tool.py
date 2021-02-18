@@ -471,20 +471,19 @@ class Plane_annotation_tool():
             print("relevant color image path : {}".format(color_img_path))
 
             if input_option not in ["f", "r", "exit", "d"]:
-                cv2.imwrite(hole_refined_depth_path, refined_depth_to_clamp)
                 print("invalid input, please input again :D")
                 continue
 
             if input_option == "d":
                 clamp_dis = int(input("please input new clamping distace (default : 100)"))
             elif input_option == "f":
-                print("annotation of {} finished !".format(img_name))
+                cv2.imwrite(hole_refined_depth_path, refined_depth_to_clamp)
+                print("annotation of {} finished !".format(hole_refined_depth_path))
                 exit()
             elif input_option == "r":
-                # TODO (1) whether points are in 2D area, get 2D mask (2) clamp points in area [in mirror mask & over threshold]
                 three_points = get_picked_points(pcd)
-                three_points_2D = get_2D_coor_from_3D(three_points, self.f, w, h) # TODO
-                clamp_mask = get_triange_mask(three_points_2D, w, h) # TODO
+                three_points_2D = get_2D_coor_from_3D(three_points, self.f, w, h)
+                clamp_mask = get_triange_mask(three_points_2D, w, h) 
                 refined_depth_to_clamp = clamp_pcd_by_mask(depth_to_refine=refined_depth_to_clamp, f=self.f, clamp_mask=clamp_mask,plane_parameter=plane_parameter, clamp_dis=clamp_dis)
                 
             elif input_option == "exit":
@@ -560,7 +559,8 @@ class Data_post_processing(Plane_annotation_tool):
                 
                 # Get mirror_border_mask
                 instance_mask = get_grayscale_instanceMask(cv2.imread(mask_img_path), instance_index_tuple)
-                mirror_border_mask = cv2.dilate(instance_mask, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (self.border_width,self.border_width))) - instance_mask
+                mirror_border_mask = cv2.dilate(instance_mask, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (self.border_width,self.border_width))) - cv2.erode(instance_mask,cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (10,10)))
+                
                 # Get mirror_bbox
                 mirror_points = get_points_in_mask(f=self.f, depth_img_path=depth_img_path, color_img_path=color_img_path, mirror_mask=instance_mask)
                 mirror_pcd = o3d.geometry.PointCloud()
@@ -623,16 +623,16 @@ if __name__ == "__main__":
     parser.add_argument(
         '--stage', default="7")
     parser.add_argument(
-        '--data_main_folder', default="/project/3dlg-hcvc/jiaqit/Mirror3D_dataset/nyu/with_mirror/precise")
+        '--data_main_folder', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise")
     parser.add_argument(
         '--process_index', default=0, type=int, help="process index")
     parser.add_argument('--multi_processing', help='do multi-process or not',action='store_true')
     parser.add_argument(
-        '--border_width', default=25, type=int, help="border_width")
+        '--border_width', default=50, type=int, help="border_width")
     parser.add_argument(
         '--f', default=519, type=int, help="camera focal length")
     parser.add_argument(
-        '--expand_range', default=100, type=int, help="expand the mirror instance bbox by expand_range; unit : cm")
+        '--expand_range', default=800, type=int, help="expand the mirror instance bbox by expand_range; unit : cm")
     parser.add_argument(
         '--clamp_dis', default=100, type=int, help="outliers threshold")
     parser.add_argument(

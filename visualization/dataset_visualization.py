@@ -140,6 +140,7 @@ class Dataset_visulization(Plane_annotation_tool):
         Call function self.generate_screenshot_for_pcdMesh_oneSample 
             to generate screenshot for all sample under ply_folder
         """
+        
         for color_img_path in self.color_img_list:
             self.generate_screenshot_for_pcdMesh_oneSample(color_img_path)
     
@@ -153,7 +154,6 @@ class Dataset_visulization(Plane_annotation_tool):
         Output:
             screenshots saved to : os.path.join(ply_folder, "screenshot_{}".format(self.view_mode))
         """
-
         import open3d as o3d
         def generate_screenshot(depth_img_path):
             # Pack as a function to better support Matterport3d ply generation
@@ -216,6 +216,7 @@ class Dataset_visulization(Plane_annotation_tool):
             Screenshots : Saved under output folder (self.screenshot_output_folder);
                           self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode)).
         """
+        import open3d as o3d
         pcd.translate(-np.array(plane.vertices).mean(0), relative=True)
         plane.translate(-np.array(plane.vertices).mean(0), relative=True)
         pcd.rotate(get_3_3_rotation_matrix(90, 0, 0),center=False) 
@@ -224,6 +225,7 @@ class Dataset_visulization(Plane_annotation_tool):
         screenshot_id = 0
 
         def rotate_view(vis):
+            
             nonlocal screenshot_id
             nonlocal pcd
             nonlocal object_rotation_matrix
@@ -241,7 +243,7 @@ class Dataset_visulization(Plane_annotation_tool):
             return False
 
         vis = o3d.visualization.VisualizerWithKeyCallback()
-        vis.register_animation_callback(rotate_view) # TODO
+        vis.register_animation_callback(rotate_view)
         vis.create_window(width=self.window_w,height=self.window_h)
         vis.add_geometry(pcd)
         vis.add_geometry(plane)
@@ -271,7 +273,6 @@ class Dataset_visulization(Plane_annotation_tool):
         vis.add_geometry(plane)
         ctrl = vis.get_view_control()
         ctrl.rotate(0, 1000)
-
         while vis.poll_events():
             index += 1
             if index%4 == 0:
@@ -282,7 +283,7 @@ class Dataset_visulization(Plane_annotation_tool):
             ctrl.rotate(10, 0)
             vis.update_renderer()
 
-            if index > 300:
+            if index > 220:
                 vis.destroy_window()
                 break
 
@@ -350,9 +351,9 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
-        '--stage', default="4")
+        '--stage', default="3")
     parser.add_argument(
-        '--data_main_folder', default="/Users/tanjiaqi/Desktop/SFU/mirror3D/test")
+        '--data_main_folder', default="/local-scratch/jiaqit/exp/test2")
     parser.add_argument(
         '--process_index', default=0, type=int, help="process index")
     parser.add_argument('--multi_processing', help='do multi-process or not',action='store_true')
@@ -364,9 +365,9 @@ if __name__ == "__main__":
     parser.add_argument(
         '--window_h', default=800, type=int, help="height of the visilization window")
     parser.add_argument(
-        '--output_folder', default="/Users/tanjiaqi/Desktop/SFU/mirror3D/test")
+        '--output_folder', default="/local-scratch/jiaqit/exp/test2/hole_refined_ply")
     parser.add_argument(
-        '--view_mode', default="topdown", help="object view angle : (1) topdown (2) front")
+        '--view_mode', default="front", help="object view angle : (1) topdown (2) front")
     args = parser.parse_args()
 
     vis_tool = Dataset_visulization(data_main_folder=args.data_main_folder, process_index=args.process_index, \
@@ -391,7 +392,7 @@ if __name__ == "__main__":
         vis_tool.generate_video_for_all()
     elif args.stage == "all":
         # Generate pcdMesh for visualization
-        vis_tool.generate_pcdMesh_for_whole_dataset()
+        # vis_tool.generate_pcdMesh_for_whole_dataset()
         # Generate screenshot for visualization
         vis_tool.set_view_mode("topdown")
         vis_tool.generate_screenshot_for_pcdMesh()

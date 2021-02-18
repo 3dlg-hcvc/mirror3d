@@ -35,8 +35,8 @@ def vislize_pcd_from_rgbd(depth_img_path, color_img_path, f):
 if __name__ == "__main__":
     
     # visualize_single_image()
-    depth_img_path = "/project/3dlg-hcvc/jiaqit/Mirror3D_dataset/nyu/with_mirror/precise/hole_refined_depth/501.png"
+    depth_img_path = "/local-scratch/jiaqit/exp/test2/hole_refined_depth/963.png"
     f = 519
-    color_img_path = "/project/3dlg-hcvc/jiaqit/Mirror3D_dataset/nyu/with_mirror/precise/raw/501.png"
+    color_img_path = "/local-scratch/jiaqit/exp/test2/raw/963.png"
     vislize_pcd_from_rgbd(depth_img_path, color_img_path, f)
     
