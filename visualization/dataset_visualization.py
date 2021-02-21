@@ -353,7 +353,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--stage', default="3")
     parser.add_argument(
-        '--data_main_folder', default="/local-scratch/jiaqit/exp/test2")
+        '--data_main_folder', default="/Users/tanjiaqi/Desktop/SFU/mirror3D/test2")
     parser.add_argument(
         '--process_index', default=0, type=int, help="process index")
     parser.add_argument('--multi_processing', help='do multi-process or not',action='store_true')
@@ -365,7 +365,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--window_h', default=800, type=int, help="height of the visilization window")
     parser.add_argument(
-        '--output_folder', default="/local-scratch/jiaqit/exp/test2/hole_refined_ply")
+        '--output_folder', default="/Users/tanjiaqi/Desktop/SFU/mirror3D/test2/hole_refined_ply")
     parser.add_argument(
         '--view_mode', default="front", help="object view angle : (1) topdown (2) front")
     args = parser.parse_args()
