@@ -9,6 +9,39 @@ import cv2
 import pdb
 import math
 
+
+def get_extrinsic(rx, ry, rz, translate):
+    """
+    Args:
+        rx, ry, rz are measured in degree
+    Output:
+        4*4 extrinsic matrix
+    """
+    translate = np.array(translate)
+    t = translate.reshape(3, 1)
+
+    rx = (rx/180)*np.pi
+    ry = (ry/180)*np.pi
+    rz = (rz/180)*np.pi
+    Rx = np.array((1, 0, 0,
+                    0, np.cos(rx), -np.sin(rx),
+                    0, np.sin(rx), np.cos(rx))).reshape(3, 3)
+    Ry = np.array((np.cos(ry), 0, np.sin(ry),
+                    0, 1, 0,
+                    -np.sin(ry), 0, np.cos(ry))).reshape(3, 3)
+    Rz = np.array((np.cos(rz), -np.sin(rz), 0,
+                    np.sin(rz), np.cos(rz), 0,
+                    0, 0, 1)).reshape(3, 3)
+    R = np.dot(Ry, Rx)
+    R = np.dot(Rz, R)
+
+    R = np.concatenate([R, t], axis=1)
+    last_row = np.array((0.0, 0.0, 0.0, 1.0)).reshape(1, 4)
+    R = np.concatenate([R, last_row], axis=0)
+    return R
+
+
+
 def get_z_from_plane(plane_parameter, x, y):
     [a, b, c, d] = plane_parameter
     z = (-d - a * x - b * y) / c
@@ -40,10 +73,6 @@ def run_ransac(data, estimate, is_inlier, sample_size, goal_inliers, max_iterati
             if is_inlier(m, data[j]):
                 ic += 1
 
-        # print(s)
-        # print('estimate:', m,)
-        # print('# inliers:', ic)
-
         if ic > best_ic:
             best_ic = ic
             best_model = m
@@ -59,6 +88,10 @@ def unit_vector(vector):
 
 
 def get_3_3_rotation_matrix(rx, ry, rz):
+    """
+    Args:
+        rx, ry, rz are measured in degree
+    """
     rx = (rx/180)*np.pi
     ry = (ry/180)*np.pi
     rz = (rz/180)*np.pi

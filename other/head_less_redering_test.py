@@ -169,26 +169,26 @@ class Dataset_visulization(Plane_annotation_tool):
             for instance_index in np.unique(np.reshape(mirror_mask,(-1,3)), axis = 0):
                 if sum(instance_index) == 0: # background
                     continue
-                try:
-                    instance_tag = "_idx"
-                    for i in instance_index:
-                        instance_tag += "_{}".format(i)
-                    instance_tag = color_img_path.split("/")[-1].split(".")[0] + instance_tag
+                # try:
+                instance_tag = "_idx"
+                for i in instance_index:
+                    instance_tag += "_{}".format(i)
+                instance_tag = color_img_path.split("/")[-1].split(".")[0] + instance_tag
 
-                    pcd_path = os.path.join(pcd_folder,  "{}.ply".format(instance_tag))
-                    mesh_path = os.path.join(mesh_folder,  "{}.ply".format(instance_tag))
-                    pcd = o3d.io.read_point_cloud(pcd_path)
-                    mirror_plane = o3d.io.read_triangle_mesh(mesh_path)
+                pcd_path = os.path.join(pcd_folder,  "{}.ply".format(instance_tag))
+                mesh_path = os.path.join(mesh_folder,  "{}.ply".format(instance_tag))
+                pcd = o3d.io.read_point_cloud(pcd_path)
+                mirror_plane = o3d.io.read_triangle_mesh(mesh_path)
 
-                    self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode), instance_tag)
-                    os.makedirs(self.screenshot_output_folder, exist_ok=True)
+                self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode), instance_tag)
+                os.makedirs(self.screenshot_output_folder, exist_ok=True)
 
-                    if self.view_mode == "topdown":
-                        self.rotate_pcdMesh_topdown_headless(pcd, mirror_plane)
-                    else:
-                        self.rotate_pcdMesh_front(pcd, mirror_plane)
-                except:
-                    self.save_error_raw_name(color_img_path.split("/")[-1])
+                if self.view_mode == "topdown":
+                    self.rotate_pcdMesh_topdown_headless(pcd, mirror_plane)
+                else:
+                    self.rotate_pcdMesh_front(pcd, mirror_plane)
+                # except:
+                #     self.save_error_raw_name(color_img_path.split("/")[-1])
 
         if color_img_path.find("m3d") > 0:
             depth_img_path = rreplace(color_img_path.replace("raw","hole_refined_depth").replace("json","png"),"i","d")
@@ -217,37 +217,49 @@ class Dataset_visulization(Plane_annotation_tool):
                           self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode)).
         """
         import open3d as o3d
-        pcd.translate(-np.array(plane.vertices).mean(0), relative=True)
-        plane.translate(-np.array(plane.vertices).mean(0), relative=True)
-        pcd.rotate(get_3_3_rotation_matrix(90, 0, 0),center=False) 
-        plane.rotate(get_3_3_rotation_matrix(90, 0, 0),center=False) 
-        object_rotation_matrix = get_3_3_rotation_matrix(0, 0, 10)
+        
         screenshot_id = 0
+        mesh_center = np.mean(np.array(plane.vertices), axis=0)
+        rotation_step_degree = 10
+        start_position = get_extrinsic(0,0,0,[0,0,3000])
 
         def rotate_view(vis):
             
             nonlocal screenshot_id
-            nonlocal pcd
-            nonlocal object_rotation_matrix
+            T_to_center = get_extrinsic(0,0,0,mesh_center)
+            T_rotate = get_extrinsic(0,rotation_step_degree*(screenshot_id+1),0,[0,0,0])
+            T_to_mesh = get_extrinsic(0,0,0,-mesh_center)
+            cam = vis.get_view_control().convert_to_pinhole_camera_parameters()
+            cam.extrinsic = np.dot(start_position, np.dot(np.dot(T_to_center, T_rotate),T_to_mesh))
+            vis.get_view_control().convert_from_pinhole_camera_parameters(cam)
+            
             screenshot_id += 1
             screenshot_save_path = os.path.join(self.screenshot_output_folder, "{0:05d}.png".format(screenshot_id))
-            time.sleep(0.05)
             vis.capture_screen_image(screenshot_save_path)
             print("image saved to {}".format(screenshot_save_path))
-            pcd.rotate(object_rotation_matrix,center=False) 
-            plane.rotate(object_rotation_matrix,center=False) 
-            vis.update_geometry(pcd)
-            vis.update_geometry(plane)
-            if screenshot_id >= 72:
+
+            if screenshot_id > (360/rotation_step_degree):
                 vis.destroy_window()
             return False
 
+
+        """
+        DELETE later 
+        cam = view_ctl.convert_to_pinhole_camera_parameters()
+        cam.extrinsic = T # where T is your matrix
+        view_ctl.ctr.convert_from_pinhole_camera_parameters(cam)
+        """
+
+        coor_ori = o3d.geometry.TriangleMesh.create_coordinate_frame(size=800,  origin=[0,0,0]) # TODO delete later
         vis = o3d.visualization.VisualizerWithKeyCallback()
         vis.register_animation_callback(rotate_view)
         vis.create_window(width=self.window_w,height=self.window_h)
-        vis.get_view_control().set_front([0,0,-1])
         vis.add_geometry(pcd)
+        vis.add_geometry(coor_ori)
         vis.add_geometry(plane)
+        cam = vis.get_view_control().convert_to_pinhole_camera_parameters()
+        cam.extrinsic = start_position
+        vis.get_view_control().convert_from_pinhole_camera_parameters(cam)
         vis.run()
 
     def set_view_mode(self, view_mode):
@@ -354,7 +366,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--stage', default="3")
     parser.add_argument(
-        '--data_main_folder', default="/local-scratch/jiaqit/exp/test2")
+        '--data_main_folder', default="/Users/tanjiaqi/Desktop/SFU/mirror3D/test2")
     parser.add_argument(
         '--process_index', default=0, type=int, help="process index")
     parser.add_argument('--multi_processing', help='do multi-process or not',action='store_true')
@@ -366,7 +378,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--window_h', default=800, type=int, help="height of the visilization window")
     parser.add_argument(
-        '--output_folder', default="/local-scratch/jiaqit/exp/test2/hole_refined_ply")
+        '--output_folder', default="/Users/tanjiaqi/Desktop/SFU/mirror3D/test2/hole_refined_ply")
     parser.add_argument(
         '--view_mode', default="front", help="object view angle : (1) topdown (2) front")
     args = parser.parse_args()
