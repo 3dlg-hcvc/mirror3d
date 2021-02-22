@@ -53,7 +53,45 @@ class Dataset_visulization(Plane_annotation_tool):
         else:
             self.output_folder = output_folder
         self.error_info_path = os.path.join(self.output_folder, "error_img_list.txt")
+
+    def generate_colored_depth_for_whole_dataset(self):
+        """
+        Call function self.generate_colored_depth_for_one_GTsample 
+            to colored depth image for all sample under self.data_main_folders
+        """
+        for one_color_img_path in self.color_img_list:
+            self.generate_colored_depth_for_one_GTsample(one_color_img_path)
     
+
+    def generate_colored_depth_for_one_GTsample(self, color_img_path):
+        """
+        Generate colored depth for one sample
+        Output:
+            colored depth image (using plt "magma" colormap)
+        """
+        if self.is_matterport3d:
+            sample_name = rreplace(color_img_path.split("/")[-1], "i", "d")
+            colored_depth_save_folder = os.path.join(self.output_folder, "hole_refined_colored_depth")
+            os.makedirs(colored_depth_save_folder, exist_ok=True)
+            ori_depth = os.path.join(self.data_main_folder, "hole_refined_depth", sample_name)
+            colored_depth_save_path = os.path.join(colored_depth_save_folder, sample_name)
+            save_heatmap_no_border(cv2.imread(ori_depth, cv2.IMREAD_ANYDEPTH), colored_depth_save_path)
+
+            colored_depth_save_folder = os.path.join(self.output_folder, "mesh_refined_colored_depth")
+            os.makedirs(colored_depth_save_folder, exist_ok=True)
+            ori_depth = os.path.join(self.data_main_folder, "mesh_refined_depth", sample_name)
+            colored_depth_save_path = os.path.join(colored_depth_save_folder, sample_name)
+            save_heatmap_no_border(cv2.imread(ori_depth, cv2.IMREAD_ANYDEPTH), colored_depth_save_path)
+        else:
+            sample_name = color_img_path.split("/")[-1]
+            colored_depth_save_folder = os.path.join(self.output_folder, "hole_refined_colored_depth")
+            os.makedirs(colored_depth_save_folder, exist_ok=True)
+            ori_depth = os.path.join(self.data_main_folder, "hole_refined_depth", sample_name)
+            colored_depth_save_path = os.path.join(colored_depth_save_folder, sample_name)
+            save_heatmap_no_border(cv2.imread(ori_depth, cv2.IMREAD_ANYDEPTH), colored_depth_save_path)
+
+
+
 
     def generate_pcdMesh_for_whole_dataset(self):
         """
@@ -237,9 +275,8 @@ class Dataset_visulization(Plane_annotation_tool):
             
             screenshot_id += 1
             screenshot_save_path = os.path.join(self.screenshot_output_folder, "{0:05d}.png".format(screenshot_id))
-            vis.capture_screen_image(screenshot_save_path)
+            vis.capture_screen_image(filename=screenshot_save_path, do_render=True)
             print("image saved to {}".format(screenshot_save_path))
-
             if screenshot_id > (360/rotation_step_degree):
                 vis.destroy_window()
             return False
@@ -252,7 +289,6 @@ class Dataset_visulization(Plane_annotation_tool):
         cam = vis.get_view_control().convert_to_pinhole_camera_parameters()
         cam.extrinsic = start_position
         vis.get_view_control().convert_from_pinhole_camera_parameters(cam)
-        print(start_position)
         vis.run()
 
 
@@ -291,9 +327,8 @@ class Dataset_visulization(Plane_annotation_tool):
             
             screenshot_id += 1
             screenshot_save_path = os.path.join(self.screenshot_output_folder, "{0:05d}.png".format(screenshot_id))
-            vis.capture_screen_image(screenshot_save_path)
+            vis.capture_screen_image(filename=screenshot_save_path, do_render=True)
             print("image saved to {}".format(screenshot_save_path))
-
             if screenshot_id > (360/rotation_step_degree):
                 vis.destroy_window()
             return False
@@ -372,9 +407,9 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
-        '--stage', default="3")
+        '--stage', default="6")
     parser.add_argument(
-        '--data_main_folder', default="/Users/tanjiaqi/Desktop/SFU/mirror3D/test2")
+        '--data_main_folder', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise")
     parser.add_argument(
         '--process_index', default=0, type=int, help="process index")
     parser.add_argument('--multi_processing', help='do multi-process or not',action='store_true')
@@ -386,7 +421,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--window_h', default=800, type=int, help="height of the visilization window")
     parser.add_argument(
-        '--output_folder', default="/Users/tanjiaqi/Desktop/SFU/mirror3D/test2/hole_refined_ply")
+        '--output_folder', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/hole_refined_ply")
     parser.add_argument(
         '--view_mode', default="front", help="object view angle : (1) topdown (2) front")
     args = parser.parse_args()
@@ -411,9 +446,13 @@ if __name__ == "__main__":
         vis_tool.generate_video_for_all()
     elif args.stage == "5":
         vis_tool.generate_video_for_all()
+    elif args.stage == "6":
+        vis_tool.generate_colored_depth_for_whole_dataset()
     elif args.stage == "all":
         # Generate pcdMesh for visualization
-        # vis_tool.generate_pcdMesh_for_whole_dataset()
+        vis_tool.generate_pcdMesh_for_whole_dataset()
+        # Generate colored GT depth map
+        vis_tool.generate_colored_depth_for_whole_dataset()
         # Generate screenshot for visualization
         vis_tool.set_view_mode("topdown")
         vis_tool.generate_screenshot_for_pcdMesh()

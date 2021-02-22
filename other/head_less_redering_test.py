@@ -237,7 +237,7 @@ class Dataset_visulization(Plane_annotation_tool):
             
             screenshot_id += 1
             screenshot_save_path = os.path.join(self.screenshot_output_folder, "{0:05d}.png".format(screenshot_id))
-            vis.capture_screen_image(screenshot_save_path)
+            vis.capture_screen_image(screenshot_save_path, do_render=True)
             print("image saved to {}".format(screenshot_save_path))
 
             if screenshot_id > (360/rotation_step_degree):
@@ -293,7 +293,7 @@ class Dataset_visulization(Plane_annotation_tool):
             
             screenshot_id += 1
             screenshot_save_path = os.path.join(self.screenshot_output_folder, "{0:05d}.png".format(screenshot_id))
-            vis.capture_screen_image(screenshot_save_path)
+            vis.capture_screen_image(screenshot_save_path, do_render=True)
             print("image saved to {}".format(screenshot_save_path))
 
             if screenshot_id > (360/rotation_step_degree):

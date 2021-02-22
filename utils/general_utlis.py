@@ -103,11 +103,14 @@ def get_compose_image(output_save_path, img_list, mini_img_w=320, mini_img_h=240
 def save_heatmap_no_border(image, save_path=""):
     """ 
     Save heatmap with no border
+    Args:
+        image : M * N image 
     """
     plt.figure()
-    fig = plt.imshow(depth_img, cmap=plt.get_cmap("magma"))
+    fig = plt.imshow(image, cmap=plt.get_cmap("magma"))
     plt.axis('off')
     fig.axes.get_xaxis().set_visible(False)
     fig.axes.get_yaxis().set_visible(False)
     figure = plt.gcf()
     plt.savefig(save_path, bbox_inches='tight', pad_inches = 0, dpi=100)
+    print("image saved to : {}".format(save_path))
