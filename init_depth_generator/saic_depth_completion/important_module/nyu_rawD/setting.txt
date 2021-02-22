@@ -1,0 +1,13 @@
+--debug False
+--postfix 
+--default_cfg LRN
+--config_file ./configs/lrn/LRN_efficientnet-b4_lena.yaml
+--snapshot_period 10
+--depth_shift 1000
+--epoch 200
+--input_height 120
+--input_width 160
+--train_coco_path /local-scratch/jiaqit/exp/data/nyu_crop_456_608/coco_input/with_neg_1280_1024/pos_train_normalFormat_10_normal.json
+--val_coco_path /local-scratch/jiaqit/exp/data/nyu_crop_456_608/coco_input/with_neg_1280_1024/pos_test_normalFormat_10_normal.json
+--coco_root /local-scratch/jiaqit/exp/data/nyu_crop_456_608
+--refined_depth False
