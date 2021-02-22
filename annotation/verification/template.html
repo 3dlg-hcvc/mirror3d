@@ -1,24 +1,73 @@
 <head>
     <style>
-        video {
+        .one-item {
             zoom: 1;
             width: 300px;
             height: 300px;
             margin: 50px 50px 50px 50px;
+            display: flex;
+            object-fit: contain;
         }
 
-        .one_instance_video {
+        .one-text {
+            margin: 50px 50px 50px 50px;
+            display: flex;
+        }
+
+        .one-instance {
             display: flex;
             justify-content: center;
         }
-     
-        .text {
-            margin-right: -102px;
+
+        img {
+            display: block;
+            max-width: 300px;
+            max-height: 300px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
         }
+
+        p {
+            display: flex;
+            font-size: 30px;
+            text-align: center;
+        }
+
+        .text-div {
+            height: 100%;
+            padding-top: 50%;
+        }
+
+        .col-text{
+            display: flex;
+        }
+        .four-col{
+            width: 300px;
+            margin: 0 50px 0 50px;
+            justify-content: center;
+        }
+        .col-p{
+            margin-top: 50px;
+        }
+        .first-col{
+            margin: 0 50px 0 50px;
+        }
+        
     </style>
 </head>
 
-<body></body>
+<body>
+
+    <div class="one-instance">
+        <div class="col-text first-col"><p class="col-p">ID</p></div>
+        <div class="col-text four-col"><p class="col-p">Color Image</p></div>
+        <div class="col-text four-col"><p class="col-p">Depth Image</p></div>
+        <div class="col-text four-col"><p class="col-p">Topdown View Point Cloud</p></div>
+        <div class="col-text four-col"><p class="col-p">Front View Point Cloud</p></div>
+    </div>
+    
+</body>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript">
