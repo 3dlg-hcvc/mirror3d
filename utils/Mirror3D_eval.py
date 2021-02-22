@@ -84,7 +84,7 @@ class Mirror3d_eval():
         if self.logger:
             self.logger.info(print_line)
 
-    def compute_and_update_mirror3D_metrics(self, pred_depth, depth_shift, color_image_path):
+    def compute_and_update_rmse_srmse(self, pred_depth, depth_shift, color_image_path):
 
         if color_image_path.find("m3d") > 0 and "mesh" not in self.Train_tag:
             self.Train_tag = self.Train_tag.replace("ref","mesh-ref")
@@ -168,102 +168,101 @@ class Mirror3d_eval():
         return 
 
 
-    # def compute_and_update_mirror3D_metrics(self, pred_depth, depth_shift, color_image_path):
+    def compute_and_update_rmse_srmse(self, pred_depth, depth_shift, color_image_path):
 
-    #     if color_image_path.find("m3d") > 0 and "mesh" not in self.Train_tag:
-    #         self.Train_tag = self.Train_tag.replace("ref","mesh-ref")
-    #         self.Train_tag = self.Train_tag.replace("raw","mesh")
+        if color_image_path.find("m3d") > 0 and "mesh" not in self.Train_tag:
+            self.Train_tag = self.Train_tag.replace("ref","mesh-ref")
+            self.Train_tag = self.Train_tag.replace("raw","mesh")
 
-    #     def compute_errors(gt, pred, mask): #! gt and pred are in m
+        def compute_errors(gt, pred, mask): #! gt and pred are in m
 
-    #         min_depth_eval = 1e-3
-    #         max_depth_eval = 10
+            min_depth_eval = 1e-3
+            max_depth_eval = 10
 
-    #         pred[pred < min_depth_eval] = min_depth_eval
-    #         # pred[pred > max_depth_eval] = max_depth_eval
-    #         pred[np.isinf(pred)] = max_depth_eval
+            pred[pred < min_depth_eval] = min_depth_eval
+            pred[np.isinf(pred)] = max_depth_eval
 
-    #         gt[np.isinf(gt)] = 0
-    #         gt[np.isnan(gt)] = 0
+            gt[np.isinf(gt)] = 0
+            gt[np.isnan(gt)] = 0
 
-    #         valid_mask = gt >  min_depth_eval #  np.logical_and(gt > min_depth_eval)#, gt < max_depth_eval
-    #         scale = np.sum(pred[valid_mask]*gt[valid_mask])/np.sum(pred[valid_mask]**2)
-    #         valid_mask = np.logical_and(valid_mask, mask)
+            valid_mask = gt >  min_depth_eval #  np.logical_and(gt > min_depth_eval)#, gt < max_depth_eval
+            scale = np.sum(pred[valid_mask]*gt[valid_mask])/np.sum(pred[valid_mask]**2)
+            valid_mask = np.logical_and(valid_mask, mask)
 
-    #         SSIM_obj = SSIM()
-    #         ssim_map = SSIM_obj.forward(torch.tensor(pred*valid_mask.astype(int)).unsqueeze(0).unsqueeze(0), torch.tensor(gt*valid_mask.astype(int)).unsqueeze(0).unsqueeze(0))
-    #         ssim = ssim_map[valid_mask].mean()
+            SSIM_obj = SSIM()
+            ssim_map = SSIM_obj.forward(torch.tensor(pred*valid_mask.astype(int)).unsqueeze(0).unsqueeze(0), torch.tensor(gt*valid_mask.astype(int)).unsqueeze(0).unsqueeze(0))
+            ssim = ssim_map[valid_mask].mean()
 
-    #         gt = gt[valid_mask]
-    #         pred = pred[valid_mask]
+            gt = gt[valid_mask]
+            pred = pred[valid_mask]
 
-    #         if valid_mask.sum() == 0 :
-    #             return False
+            if valid_mask.sum() == 0 :
+                return False
 
-    #         thresh = np.maximum((gt / pred), (pred / gt))
-    #         d125 = (thresh < 1.25).mean()
-    #         d125_2 = (thresh < 1.25 ** 2).mean()
-    #         d125_3 = (thresh < 1.25 ** 3).mean()
-    #         d105 = (thresh < 1.05).mean()
-    #         d110 = (thresh < 1.10).mean()
+            thresh = np.maximum((gt / pred), (pred / gt))
+            d125 = (thresh < 1.25).mean()
+            d125_2 = (thresh < 1.25 ** 2).mean()
+            d125_3 = (thresh < 1.25 ** 3).mean()
+            d105 = (thresh < 1.05).mean()
+            d110 = (thresh < 1.10).mean()
 
-    #         rmse = (gt - pred) ** 2
-    #         rmse = np.sqrt(rmse.mean())
+            rmse = (gt - pred) ** 2
+            rmse = np.sqrt(rmse.mean())
 
-    #         rel = np.mean((abs(gt - pred)) / gt)
+            rel = np.mean((abs(gt - pred)) / gt)
 
-    #         err = np.log(pred) - np.log(gt)
-    #         silog = np.sqrt(np.mean(err ** 2) - np.mean(err) ** 2) * 100
+            err = np.log(pred) - np.log(gt)
+            silog = np.sqrt(np.mean(err ** 2) - np.mean(err) ** 2) * 100
 
-    #         err = np.abs(np.log10(pred) - np.log10(gt))
-    #         log10 = np.mean(err)
+            err = np.abs(np.log10(pred) - np.log10(gt))
+            log10 = np.mean(err)
 
-    #         scaled_rms = np.sqrt(((scale * pred-gt)**2).mean())
+            scaled_rms = np.sqrt(((scale * pred-gt)**2).mean())
 
-    #         return rmse, scaled_rms, rel, ssim.item(), d105, d110, d125, d125_2, d125_3
+            return rmse, scaled_rms, rel, ssim.item(), d105, d110, d125, d125_2, d125_3
 
 
-    #     mask_path = rreplace(color_image_path, "raw","instance_mask")
-    #     if not os.path.exists(mask_path):
-    #         return 
+        mask_path = rreplace(color_image_path, "raw","instance_mask")
+        if not os.path.exists(mask_path):
+            return 
 
-    #     if color_image_path.find("m3d") > 0:
-    #         if os.path.exists(rreplace(color_image_path.replace("raw", "mesh_refined_depth"),"i","d")):
-    #             refD_gt_depth_path = rreplace(color_image_path.replace("raw", "mesh_refined_depth"),"i","d")
-    #         elif os.path.exists(rreplace(color_image_path.replace("raw", "hole_refined_depth"),"i","d")):
-    #             refD_gt_depth_path = rreplace(color_image_path.replace("raw", "hole_refined_depth"),"i","d")
-    #         else:
-    #             return
-    #     else:
-    #         if os.path.exists(color_image_path.replace("raw", "mesh_refined_depth")):
-    #             refD_gt_depth_path = color_image_path.replace("raw", "mesh_refined_depth")
-    #         elif os.path.exists(color_image_path.replace("raw", "hole_refined_depth")):
-    #             refD_gt_depth_path = color_image_path.replace("raw", "hole_refined_depth")
-    #         else:
-    #             return
+        if color_image_path.find("m3d") > 0:
+            if os.path.exists(rreplace(color_image_path.replace("raw", "mesh_refined_depth"),"i","d")):
+                refD_gt_depth_path = rreplace(color_image_path.replace("raw", "mesh_refined_depth"),"i","d")
+            elif os.path.exists(rreplace(color_image_path.replace("raw", "hole_refined_depth"),"i","d")):
+                refD_gt_depth_path = rreplace(color_image_path.replace("raw", "hole_refined_depth"),"i","d")
+            else:
+                return
+        else:
+            if os.path.exists(color_image_path.replace("raw", "mesh_refined_depth")):
+                refD_gt_depth_path = color_image_path.replace("raw", "mesh_refined_depth")
+            elif os.path.exists(color_image_path.replace("raw", "hole_refined_depth")):
+                refD_gt_depth_path = color_image_path.replace("raw", "hole_refined_depth")
+            else:
+                return
         
-    #     depth_shift = np.array(depth_shift)
-    #     refD_gt_depth = cv2.resize(cv2.imread(refD_gt_depth_path, cv2.IMREAD_ANYDEPTH), (pred_depth.shape[1], pred_depth.shape[0]), 0, 0, cv2.INTER_NEAREST)
-    #     refD_gt_depth = np.array(refD_gt_depth) / depth_shift
-    #     pred_depth = np.array(pred_depth)
+        depth_shift = np.array(depth_shift)
+        refD_gt_depth = cv2.resize(cv2.imread(refD_gt_depth_path, cv2.IMREAD_ANYDEPTH), (pred_depth.shape[1], pred_depth.shape[0]), 0, 0, cv2.INTER_NEAREST)
+        refD_gt_depth = np.array(refD_gt_depth) / depth_shift
+        pred_depth = np.array(pred_depth)
 
-    #     mirror_mask = cv2.resize(cv2.imread(mask_path, cv2.IMREAD_ANYDEPTH), (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
-    #     pred_depth = cv2.resize(pred_depth, (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
-    #     refD_gt_depth = cv2.resize(refD_gt_depth, (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
+        mirror_mask = cv2.resize(cv2.imread(mask_path, cv2.IMREAD_ANYDEPTH), (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
+        pred_depth = cv2.resize(pred_depth, (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
+        refD_gt_depth = cv2.resize(refD_gt_depth, (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
         
-    #     mirror_error = compute_errors(refD_gt_depth, pred_depth, mirror_mask>0)
-    #     non_mirror_error = compute_errors(refD_gt_depth, pred_depth, mirror_mask==False)
-    #     all_image_error = compute_errors(refD_gt_depth, pred_depth, True)
+        mirror_error = compute_errors(refD_gt_depth, pred_depth, mirror_mask>0)
+        non_mirror_error = compute_errors(refD_gt_depth, pred_depth, mirror_mask==False)
+        all_image_error = compute_errors(refD_gt_depth, pred_depth, True)
 
-    #     if all_image_error == False or mirror_error == False or non_mirror_error == False:
-    #         return 
+        if all_image_error == False or mirror_error == False or non_mirror_error == False:
+            return 
         
-    #     one_m_nm_all = mirror_error + non_mirror_error + all_image_error
+        one_m_nm_all = mirror_error + non_mirror_error + all_image_error
 
-    #     self.m_nm_all += torch.tensor(one_m_nm_all)
-    #     self.cnt += 1
+        self.m_nm_all += torch.tensor(one_m_nm_all)
+        self.cnt += 1
 
-    #     return 
+        return 
 
     def save_result(self, main_output_folder, pred_depth, depth_shift, color_img_path):
 
@@ -450,6 +449,6 @@ if __name__ == "__main__":
     for one_color_mask_gtD_predD in read_txt(info_list_path):
         color_path, mask_path, gtD_path, predD_path = one_color_mask_gtD_predD.split()
         predD = cv2.imread(predD_path, cv2.IMREAD_ANYDEPTH) / args.depth_shift
-        eval_fun.compute_and_update_mirror3D_metrics(predD, args.depth_shift, color_path)
+        eval_fun.compute_and_update_rmse_srmse(predD, args.depth_shift, color_path)
     print("input info path : {}".format(info_list_path))
     eval_fun.print_mirror3D_score()
