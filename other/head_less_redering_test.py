@@ -221,6 +221,64 @@ class Dataset_visulization(Plane_annotation_tool):
         screenshot_id = 0
         mesh_center = np.mean(np.array(plane.vertices), axis=0)
         rotation_step_degree = 10
+        start_rotation = get_extrinsic(90,0,0,[0,0,0])
+        if self.is_matterport3d:
+            stage_tranlation = get_extrinsic(0,0,0,[-mesh_center[0],-mesh_center[1] + 9000,-mesh_center[2]])
+        else:
+            stage_tranlation = get_extrinsic(0,0,0,[-mesh_center[0],-mesh_center[1] + 3000,-mesh_center[2]])
+        start_position = np.dot(start_rotation, stage_tranlation)
+        def rotate_view(vis):
+            
+            nonlocal screenshot_id
+            T_rotate = get_extrinsic(0,rotation_step_degree*(screenshot_id+1),0,[0,0,0])
+            cam = vis.get_view_control().convert_to_pinhole_camera_parameters()
+            cam.extrinsic = np.dot(np.dot(start_rotation, T_rotate), stage_tranlation)
+            vis.get_view_control().convert_from_pinhole_camera_parameters(cam)
+            
+            screenshot_id += 1
+            screenshot_save_path = os.path.join(self.screenshot_output_folder, "{0:05d}.png".format(screenshot_id))
+            vis.capture_screen_image(screenshot_save_path)
+            print("image saved to {}".format(screenshot_save_path))
+
+            if screenshot_id > (360/rotation_step_degree):
+                vis.destroy_window()
+            return False
+
+        coor_ori = o3d.geometry.TriangleMesh.create_coordinate_frame(size=800,  origin=[0,0,0]) # TODO delete later
+        vis = o3d.visualization.VisualizerWithKeyCallback()
+        vis.register_animation_callback(rotate_view)
+        # vis = o3d.visualization.Visualizer()
+        vis.create_window(width=self.window_w,height=self.window_h)
+        vis.add_geometry(pcd)
+        vis.add_geometry(coor_ori)
+        vis.add_geometry(plane)
+        cam = vis.get_view_control().convert_to_pinhole_camera_parameters()
+        cam.extrinsic = start_position
+        vis.get_view_control().convert_from_pinhole_camera_parameters(cam)
+        print(start_position)
+        vis.run()
+
+    def set_view_mode(self, view_mode):
+        """Function to save the view mode"""
+        self.view_mode = view_mode
+
+    def rotate_pcdMesh_front(self, pcd, plane):
+        """
+        Rotate the "pcd + mesh" by front view
+
+        Args:
+            pcd : Input point cloud.
+            plane : Input mesh plane.
+
+        Output:
+            Screenshots : Saved under output folder (self.screenshot_output_folder);
+                          self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode), instance_tag)
+        """
+        import open3d as o3d
+        
+        screenshot_id = 0
+        mesh_center = np.mean(np.array(plane.vertices), axis=0)
+        rotation_step_degree = 10
         start_position = get_extrinsic(0,0,0,[0,0,3000])
 
         def rotate_view(vis):
@@ -242,63 +300,15 @@ class Dataset_visulization(Plane_annotation_tool):
                 vis.destroy_window()
             return False
 
-
-        """
-        DELETE later 
-        cam = view_ctl.convert_to_pinhole_camera_parameters()
-        cam.extrinsic = T # where T is your matrix
-        view_ctl.ctr.convert_from_pinhole_camera_parameters(cam)
-        """
-
-        coor_ori = o3d.geometry.TriangleMesh.create_coordinate_frame(size=800,  origin=[0,0,0]) # TODO delete later
         vis = o3d.visualization.VisualizerWithKeyCallback()
         vis.register_animation_callback(rotate_view)
         vis.create_window(width=self.window_w,height=self.window_h)
         vis.add_geometry(pcd)
-        vis.add_geometry(coor_ori)
         vis.add_geometry(plane)
         cam = vis.get_view_control().convert_to_pinhole_camera_parameters()
         cam.extrinsic = start_position
         vis.get_view_control().convert_from_pinhole_camera_parameters(cam)
         vis.run()
-
-    def set_view_mode(self, view_mode):
-        """Function to save the view mode"""
-        self.view_mode = view_mode
-
-    def rotate_pcdMesh_front(self, pcd, plane):
-        """
-        Rotate the "pcd + mesh" by front view
-
-        Args:
-            pcd : Input point cloud.
-            plane : Input mesh plane.
-
-        Output:
-            Screenshots : Saved under output folder (self.screenshot_output_folder);
-                          self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode), instance_tag)
-        """
-        import open3d as o3d
-        index = 0
-        vis = o3d.visualization.Visualizer()
-        vis.create_window(width=self.window_w,height=self.window_h)
-        vis.add_geometry(pcd)
-        vis.add_geometry(plane)
-        ctrl = vis.get_view_control()
-        ctrl.rotate(0, 1000)
-        while vis.poll_events():
-            index += 1
-            if index%4 == 0:
-                screenshot_save_path = os.path.join(self.screenshot_output_folder, "{0:05d}.png".format(int(index/4)))
-                time.sleep(0.05)
-                vis.capture_screen_image(screenshot_save_path)
-                print("image saved to {}".format(screenshot_save_path))
-            ctrl.rotate(10, 0)
-            vis.update_renderer()
-
-            if index > 220:
-                vis.destroy_window()
-                break
 
     def generate_video_for_all(self):
         """

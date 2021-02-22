@@ -217,28 +217,30 @@ class Dataset_visulization(Plane_annotation_tool):
                           self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode)).
         """
         import open3d as o3d
-        pcd.translate(-np.array(plane.vertices).mean(0), relative=True)
-        plane.translate(-np.array(plane.vertices).mean(0), relative=True)
-        pcd.rotate(get_3_3_rotation_matrix(90, 0, 0),center=False) 
-        plane.rotate(get_3_3_rotation_matrix(90, 0, 0),center=False) 
-        object_rotation_matrix = get_3_3_rotation_matrix(0, 0, 10)
+        
         screenshot_id = 0
-
+        mesh_center = np.mean(np.array(plane.vertices), axis=0)
+        rotation_step_degree = 10
+        start_rotation = get_extrinsic(90,0,0,[0,0,0])
+        if self.is_matterport3d:
+            stage_tranlation = get_extrinsic(0,0,0,[-mesh_center[0],-mesh_center[1] + 9000,-mesh_center[2]])
+        else:
+            stage_tranlation = get_extrinsic(0,0,0,[-mesh_center[0],-mesh_center[1] + 3000,-mesh_center[2]])
+        start_position = np.dot(start_rotation, stage_tranlation)
         def rotate_view(vis):
             
             nonlocal screenshot_id
-            nonlocal pcd
-            nonlocal object_rotation_matrix
+            T_rotate = get_extrinsic(0,rotation_step_degree*(screenshot_id+1),0,[0,0,0])
+            cam = vis.get_view_control().convert_to_pinhole_camera_parameters()
+            cam.extrinsic = np.dot(np.dot(start_rotation, T_rotate), stage_tranlation)
+            vis.get_view_control().convert_from_pinhole_camera_parameters(cam)
+            
             screenshot_id += 1
             screenshot_save_path = os.path.join(self.screenshot_output_folder, "{0:05d}.png".format(screenshot_id))
-            time.sleep(0.05)
             vis.capture_screen_image(screenshot_save_path)
             print("image saved to {}".format(screenshot_save_path))
-            pcd.rotate(object_rotation_matrix,center=False) 
-            plane.rotate(object_rotation_matrix,center=False) 
-            vis.update_geometry(pcd)
-            vis.update_geometry(plane)
-            if screenshot_id >= 72:
+
+            if screenshot_id > (360/rotation_step_degree):
                 vis.destroy_window()
             return False
 
@@ -247,7 +249,12 @@ class Dataset_visulization(Plane_annotation_tool):
         vis.create_window(width=self.window_w,height=self.window_h)
         vis.add_geometry(pcd)
         vis.add_geometry(plane)
+        cam = vis.get_view_control().convert_to_pinhole_camera_parameters()
+        cam.extrinsic = start_position
+        vis.get_view_control().convert_from_pinhole_camera_parameters(cam)
+        print(start_position)
         vis.run()
+
 
     def set_view_mode(self, view_mode):
         """Function to save the view mode"""
@@ -266,26 +273,40 @@ class Dataset_visulization(Plane_annotation_tool):
                           self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode), instance_tag)
         """
         import open3d as o3d
-        index = 0
-        vis = o3d.visualization.Visualizer()
+        
+        screenshot_id = 0
+        mesh_center = np.mean(np.array(plane.vertices), axis=0)
+        rotation_step_degree = 10
+        start_position = get_extrinsic(0,0,0,[0,0,3000])
+
+        def rotate_view(vis):
+            
+            nonlocal screenshot_id
+            T_to_center = get_extrinsic(0,0,0,mesh_center)
+            T_rotate = get_extrinsic(0,rotation_step_degree*(screenshot_id+1),0,[0,0,0])
+            T_to_mesh = get_extrinsic(0,0,0,-mesh_center)
+            cam = vis.get_view_control().convert_to_pinhole_camera_parameters()
+            cam.extrinsic = np.dot(start_position, np.dot(np.dot(T_to_center, T_rotate),T_to_mesh))
+            vis.get_view_control().convert_from_pinhole_camera_parameters(cam)
+            
+            screenshot_id += 1
+            screenshot_save_path = os.path.join(self.screenshot_output_folder, "{0:05d}.png".format(screenshot_id))
+            vis.capture_screen_image(screenshot_save_path)
+            print("image saved to {}".format(screenshot_save_path))
+
+            if screenshot_id > (360/rotation_step_degree):
+                vis.destroy_window()
+            return False
+
+        vis = o3d.visualization.VisualizerWithKeyCallback()
+        vis.register_animation_callback(rotate_view)
         vis.create_window(width=self.window_w,height=self.window_h)
         vis.add_geometry(pcd)
         vis.add_geometry(plane)
-        ctrl = vis.get_view_control()
-        ctrl.rotate(0, 1000)
-        while vis.poll_events():
-            index += 1
-            if index%4 == 0:
-                screenshot_save_path = os.path.join(self.screenshot_output_folder, "{0:05d}.png".format(int(index/4)))
-                time.sleep(0.05)
-                vis.capture_screen_image(screenshot_save_path)
-                print("image saved to {}".format(screenshot_save_path))
-            ctrl.rotate(10, 0)
-            vis.update_renderer()
-
-            if index > 220:
-                vis.destroy_window()
-                break
+        cam = vis.get_view_control().convert_to_pinhole_camera_parameters()
+        cam.extrinsic = start_position
+        vis.get_view_control().convert_from_pinhole_camera_parameters(cam)
+        vis.run()
 
     def generate_video_for_all(self):
         """
