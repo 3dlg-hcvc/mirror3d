@@ -1,0 +1,15 @@
+python bts_main.py --num_epochs 200  \
+--refined_depth False \
+--mesh_depth False \
+--coco_val /local-scratch/jiaqit/exp/data/nyu_crop_456_608/coco_input/DE_with_neg_456_608/pos_test_normalFormat_10_normal.json \
+--coco_train /local-scratch/jiaqit/exp/data/nyu_crop_456_608/coco_input/DE_with_neg_456_608/pos_train_normalFormat_10_normal.json \
+--coco_input \
+--coco_root /local-scratch/jiaqit/exp/data/nyu_crop_456_608 \
+--coco_root /local-scratch/jiaqit/exp/data/nyu_crop_456_608 \
+--coco_focal_len 546 \
+--depth_shift 1000 \
+--input_height 480 \
+--input_width 640 \
+--batch_size 2 \
+--learning_rate 0.0001 \
+--model_name nyu_rawD
