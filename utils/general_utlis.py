@@ -11,6 +11,38 @@ import math
 from PIL import Image
 import matplotlib.pyplot as plt
 from utils.algorithm import *
+import shutil
+
+def center_crop_image(input_folder="", output_folder = "", new_w=608, new_h=456, ori_w=640, ori_h=480):
+    """
+    Center crop the image
+    Args:
+        input_folder : folder path; folder contains the image that needs to be cropped
+        output_folder : folder path to saved the cropped result
+    """
+    os.makedirs(output_folder, exist_ok=True)
+    w_border = int((ori_w - new_w)/2)
+    h_border = int((ori_h - new_h)/2)
+    for one_img in os.listdir(input_folder):
+        one_img_path = os.path.join(input_folder, one_img)
+        one_img_save_path = os.path.join(output_folder, one_img)
+        h, w, _ = cv2.imread(one_img_path).shape
+        if h == new_h and w == new_w:
+            shutil.copy(one_img_path, one_img_save_path)
+            continue
+        try:
+            if one_img_path.find("depth") > 0:
+                ori_img = cv2.imread(one_img_path, cv2.IMREAD_ANYDEPTH) 
+                ori_img = ori_img[h_border:h_border+new_h, w_border:w_border+new_w]
+            else:
+                ori_img = cv2.imread(one_img_path)
+                ori_img = ori_img[h_border:h_border+new_h, w_border:w_border+new_w]
+        except:
+            print(print("error: ", one_img_path))
+            continue
+        cv2.imwrite(one_img_save_path, ori_img)
+    print("corpped image saved to {}".format(output_folder))
+
 
 def save_html(save_path, content):
     with open(save_path, "w") as outf:
@@ -114,3 +146,10 @@ def save_heatmap_no_border(image, save_path=""):
     figure = plt.gcf()
     plt.savefig(save_path, bbox_inches='tight', pad_inches = 0, dpi=100)
     print("image saved to : {}".format(save_path))
+
+
+if __name__ == "__main__":
+    center_crop_image(input_folder = "/project/3dlg-hcvc/mirrors/data/nyu/all_images/coarse/instance_mask", output_folder = "/project/3dlg-hcvc/mirrors/www/lewis_to_verify_nyu/coarse/instance_mask")
+    center_crop_image(input_folder = "/project/3dlg-hcvc/mirrors/data/nyu/all_images/coarse/semantic_mask", output_folder = "/project/3dlg-hcvc/mirrors/www/lewis_to_verify_nyu/coarse/semantic_mask")
+    center_crop_image(input_folder = "/project/3dlg-hcvc/mirrors/data/nyu/all_images/precise/instance_mask", output_folder = "/project/3dlg-hcvc/mirrors/www/lewis_to_verify_nyu/precise/instance_mask")
+    center_crop_image(input_folder = "/project/3dlg-hcvc/mirrors/data/nyu/all_images/precise/semantic_mask", output_folder = "/project/3dlg-hcvc/mirrors/www/lewis_to_verify_nyu/precise/semantic_mask")

@@ -207,7 +207,7 @@ def main(args):
 if __name__ == "__main__":
     # args = default_argument_parser().parse_args()
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", default="chris_config/m3d_mirror3d_config.yml", type=str , help="path to config file")
+    parser.add_argument("--config", default="config/nyu_mirror3d_config.yml", type=str , help="path to config file")
     parser.add_argument("--resume", default=True, type=bool)
     parser.add_argument("--eval-only", action="store_true", help="perform evaluation only")
     parser.add_argument("--num-gpus", type=int, default=1, help="number of gpus *per machine*")
