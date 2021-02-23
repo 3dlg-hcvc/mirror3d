@@ -14,15 +14,15 @@ class BaseOptions():
         #TODO
         parser.add_argument('--mesh_depth',                action='store_true',  help='using coco input format or not')
         # TODO
-        parser.add_argument('--coco_val',                  type=str,   help='coco json path', default='/local-scratch/share_data/mirror3D/nyu/nyu_crop_456_608/coco_input/dt_only_15m3d_noraml/pos_test_normalFormat_15_normal.json')
+        parser.add_argument('--coco_val',                  type=str,   help='coco json path', default='/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json')
         # TODO
-        parser.add_argument('--coco_train',                type=str,   help='coco json path', default='/local-scratch/share_data/mirror3D/nyu/nyu_crop_456_608/coco_input/with_neg_1280_1024/pos_train_normalFormat_10_normal.json')
+        parser.add_argument('--coco_train',                type=str,   help='coco json path', default='/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json')
         # TODO
         parser.add_argument('--coco_train_root',           type=str,   help='coco data root', 
-            default="/local-scratch/share_data/mirror3D/nyu/nyu_crop_456_608")
+            default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise")
         # TODO
         parser.add_argument('--coco_val_root',             type=str,   help='coco data root', 
-            default="/local-scratch/share_data/mirror3D/nyu/nyu_crop_456_608")
+            default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise")
         # TODO
         parser.add_argument('--coco_focal_len',            type=int,   help='nyu : 519', dest='f', default=519)
         # TODO 
