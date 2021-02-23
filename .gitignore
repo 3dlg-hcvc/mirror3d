@@ -212,3 +212,4 @@ init_depth_generator/VNL_Monocular_Depth_Prediction/data/__init__.py
 init_depth_generator/VNL_Monocular_Depth_Prediction/data/kitti_dataset.py
 init_depth_generator/VNL_Monocular_Depth_Prediction/data/load_dataset.py
 init_depth_generator/VNL_Monocular_Depth_Prediction/data/any_dataset.py
+init_depth_generator/VNL_Monocular_Depth_Prediction/lib/configs
