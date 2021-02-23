@@ -14,7 +14,6 @@ from utils.general_utlis import *
 from utils.plane_pcd_utils import *
 from annotation.plane_annotation_tool.plane_annotation_tool import *
 
-
 class Input_Generator(Plane_annotation_tool):
 
     def __init__(self, mirror_data_main_folder, no_mirror_data_main_folder="", json_output_folder="", split="test", anchor_normal_path="", contain_no_mirror=False, split_info_folder=""):
