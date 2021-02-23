@@ -42,8 +42,7 @@ from tqdm import tqdm
 
 from bts import BtsModel
 from bts_dataloader import *
-from Mirror3D_eval import Mirror3d_eval
-
+from utils.Mirror3D_eval import Mirror3d_eval
 
 def convert_arg_line_to_args(arg_line):
     for arg in arg_line.split():
@@ -61,15 +60,15 @@ parser.add_argument('--refined_depth',             action='store_true',  help='u
 #TODO
 parser.add_argument('--mesh_depth',                action='store_true',  help='using coco input format or not')
 # TODO
-parser.add_argument('--coco_val',                  type=str,   help='coco json path', default='/local-scratch/share_data/mirror3D/nyu/nyu_crop_456_608/coco_input/with_neg_1280_1024/pos_test_normalFormat_10_normal.json')
+parser.add_argument('--coco_val',                  type=str,   help='coco json path', default='/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json')
 # TODO
-parser.add_argument('--coco_train',                type=str,   help='coco json path', default='/local-scratch/share_data/mirror3D/nyu/nyu_crop_456_608/coco_input/with_neg_1280_1024/pos_train_normalFormat_10_normal.json')
+parser.add_argument('--coco_train',                type=str,   help='coco json path', default='/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json')
 # TODO
 parser.add_argument('--coco_train_root',           type=str,   help='coco data root', 
-    default="/local-scratch/share_data/mirror3D/nyu/nyu_crop_456_608")
+    default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise")
 # TODO
 parser.add_argument('--coco_val_root',             type=str,   help='coco data root', 
-    default="/local-scratch/share_data/mirror3D/nyu/nyu_crop_456_608")
+    default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise")
 # TODO
 parser.add_argument('--coco_focal_len',            type=str,   help='focal length of input data; correspond to INPUT DEPTH!', default="310")
 # TODO 

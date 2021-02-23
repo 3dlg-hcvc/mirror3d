@@ -7,7 +7,7 @@ from PIL import Image
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
-from Mirror3D_eval import Mirror3d_eval
+from utils.Mirror3D_eval import Mirror3d_eval
 
 from saic_depth_completion.utils.meter import AggregatedMeter
 from saic_depth_completion.utils.meter import Statistics as LossMeter

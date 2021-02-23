@@ -4,7 +4,7 @@ import sys
 import datetime
 import time
 import os
-from Mirror3D_eval import Mirror3d_eval
+from utils.Mirror3D_eval import Mirror3d_eval
 import cv2
 from tqdm import tqdm
 import logging

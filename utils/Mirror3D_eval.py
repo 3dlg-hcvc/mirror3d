@@ -5,7 +5,7 @@ import numpy as np
 import math
 import argparse
 import sys
-from general_utlis import *
+from utils.general_utlis import *
 import logging
 
 class Mirror3d_eval():
@@ -111,8 +111,6 @@ class Mirror3d_eval():
 
             if valid_mask.sum() == 0 :
                 return False
-
-
 
             rmse = (gt - pred) ** 2
             rmse = np.sqrt(rmse.mean())

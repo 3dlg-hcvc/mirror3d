@@ -24,7 +24,7 @@ import torchvision.transforms as transforms
 from data.load_dataset import CustomerDataLoader
 from lib.models.metric_depth_model import MetricDepthModel
 from lib.models.image_transfer import bins_to_depth
-from Mirror3D_eval import Mirror3d_eval
+from utils.Mirror3D_eval import Mirror3d_eval
 
 
 
