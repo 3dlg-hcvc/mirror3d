@@ -249,5 +249,6 @@ init_depth_generator/saic_depth_completion/saic_depth_completion/config/dm_lrn.p
 init_depth_generator/saic_depth_completion/setup.py
 init_depth_generator/saic_depth_completion/configs
 init_depth_generator/saic_depth_completion/important_module
-Mirror3DNet/configs
+Mirror3DNet/detectron2_config
 Mirror3DNet/sbatch_config
+Mirror3DNet/chris_config
