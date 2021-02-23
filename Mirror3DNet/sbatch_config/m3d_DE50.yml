@@ -1,0 +1,57 @@
+_BASE_: "../configs/COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_1x.yaml"
+EVAL : False # TODO ---- eval ----
+
+TRAIN_COCO_JSON : ("/home/jiaqit/projects/rrg-msavva/jiaqit/data/real_scene_mirror/matterport_0913/input_info/img_640_480_ransac_f550_bm_split/pos_train_normalFormat_3_normal.json","/home/jiaqit/projects/rrg-msavva/jiaqit/data/detph_estimation/m3d_top500/pos_train_only_DE.json")
+VAL_COCO_JSON : ("/home/jiaqit/projects/rrg-msavva/jiaqit/data/real_scene_mirror/matterport_0913/input_info/img_640_480_ransac_f550_bm_split/pos_val_normalFormat_3_normal.json","/home/jiaqit/projects/rrg-msavva/jiaqit/data/detph_estimation/m3d_top500/pos_train_only_DE.json")
+TRAIN_IMG_ROOT : ("/home/jiaqit/projects/rrg-msavva/jiaqit/data/real_scene_mirror/matterport_0913/img_640_480_ransac_f550","/home/jiaqit/projects/rrg-msavva/jiaqit/data/detph_estimation/matterport_DE") # TODO
+TEST_IMG_ROOT : ("/home/jiaqit/projects/rrg-msavva/jiaqit/data/real_scene_mirror/matterport_0913/img_640_480_ransac_f550","/home/jiaqit/projects/rrg-msavva/jiaqit/data/detph_estimation/matterport_DE") # TODO
+TRAIN_NAME : ("m3d_c_train","m3d_DE50_train")
+TEST_NAME : ("m3d_c_val","m3d_DE50_val")
+
+############## planeRCNN configure ##############
+DEPTH_EST : True # TODO
+ONLY_DE : True
+FOCAL_LENGTH : 320 # TODO set when using plane-refine
+INVERSE_DEPTH : False
+DEPTH_SHIFT : 1000.0 # TODO
+
+ANCHOR_REG : False # TODO
+ANCHOR_REG_METHOD : 1  # TODO # (1) loss with GT residual (2) loss with GT normal 
+UNIT_ANCHOR_NORMAL : False # TODO
+
+ANCHOR_CLS : False # TODO
+ANCHOR_NORMAL_NYP : "../data/s3d_mirror/normal/s3d_kmeans_normal_3.npy"  # TODO 
+
+############## eval configure ##############
+EVAL_PLOT_IMAGE : False  # TODO ---- eval ----
+EVAL_RES_BBOX : False # TODO
+SAVE_DEPTH_IMG : False
+
+############## network configure ##############
+MODEL:
+  WEIGHTS : "./weight/R-50.pkl" # TODO ---- eval ---- # "./weight/R-50.pkl"
+  # DEVICE : "cuda:0" # TODO
+  ROI_HEADS:
+    BATCH_SIZE_PER_IMAGE : (128) # chris : set to largest
+    NUM_CLASSES : 1 # chris : only predict mirror; one class 
+
+TEST:
+  EVAL_PERIOD: 10 # TODO ---- eval ----
+  AUG:
+    ENABLED : False 
+
+SOLVER:
+  STEPS : (50000, 60000) # TODO
+  MAX_ITER : (100000) # TODO
+  IMS_PER_BATCH : 16 # TODO max 16
+  BASE_LR : 1e-4 # TODO
+  CHECKPOINT_PERIOD : 1000
+
+DATALOADER:
+  NUM_WORKERS : 1
+  
+INPUT:
+  MIN_SIZE_TRAIN : (480,)
+  MAX_SIZE_TRAIN : 640
+  MIN_SIZE_TEST : (480,)
+  MAX_SIZE_TEST : 640
