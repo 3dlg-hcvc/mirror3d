@@ -250,3 +250,4 @@ init_depth_generator/saic_depth_completion/setup.py
 init_depth_generator/saic_depth_completion/configs
 init_depth_generator/saic_depth_completion/important_module
 Mirror3DNet/configs
+Mirror3DNet/sbatch_config
