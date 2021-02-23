@@ -130,7 +130,6 @@ class Input_Generator(Plane_annotation_tool):
         coco_save_folder = self.json_output_folder
         os.makedirs(coco_save_folder, exist_ok=True)
         raw_folder = os.path.join(self.mirror_data_main_folder, "raw")
-        mirror_color_img_list =  [os.path.join(raw_folder, i) for i in os.listdir(raw_folder)]
 
         categories_info = dict()
         mirror_label = 1
@@ -146,11 +145,10 @@ class Input_Generator(Plane_annotation_tool):
 
         # Get COCO annoatation for images contain mirror
         for item_index, one_mirror_color_img_path in enumerate(tqdm(mirror_color_img_list)):
-            color_img = Image.open(one_mirror_color_img_path)
+            h, w, _ = cv2.imread(one_mirror_color_img_path).shape
             mask_path = one_mirror_color_img_path.replace("raw", "instance_mask")
             img_info_path = one_mirror_color_img_path.replace("raw", "img_info").split(".")[0] + ".json"
             img_info = read_json(img_info_path)
-            h, w = color_img.size
             one_mirror_color_img_path_abv = os.path.relpath(one_mirror_color_img_path, self.mirror_data_main_folder)
             if not os.path.exists(mask_path) or not os.path.exists(one_mirror_color_img_path):
                 continue
@@ -194,7 +192,7 @@ class Input_Generator(Plane_annotation_tool):
                 category_info = {'id': mirror_label, 'is_crowd': 0}
                 annotation = create_annotation_info(
                                 annotation_id, annotation_unique_id, category_info, ground_truth_binary_mask,
-                                color_img.size, tolerance=2)
+                                (w,h), tolerance=2)
                 annotation["mirror_normal_camera"] = unit_vector(img_info[str(instance_tag)]["mirror_normal"]).tolist()
                 anchor_normal_class, anchor_normal_residual = self.get_anchor_norma_info(annotation["mirror_normal_camera"])
                 annotation["anchor_normal_class"] = anchor_normal_class
