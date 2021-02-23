@@ -5,7 +5,7 @@ from tqdm import tqdm
 
 from saic_depth_completion.utils.meter import AggregatedMeter
 from saic_depth_completion.utils.meter import Statistics as LossMeter
-from Mirror3D_eval import Mirror3d_eval
+from utils.Mirror3D_eval import Mirror3d_eval
 import cv2
 
 def validate(
