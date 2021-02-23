@@ -147,9 +147,3 @@ def save_heatmap_no_border(image, save_path=""):
     plt.savefig(save_path, bbox_inches='tight', pad_inches = 0, dpi=100)
     print("image saved to : {}".format(save_path))
 
-
-if __name__ == "__main__":
-    center_crop_image(input_folder = "/project/3dlg-hcvc/mirrors/data/nyu/all_images/coarse/instance_mask", output_folder = "/project/3dlg-hcvc/mirrors/www/lewis_to_verify_nyu/coarse/instance_mask")
-    center_crop_image(input_folder = "/project/3dlg-hcvc/mirrors/data/nyu/all_images/coarse/semantic_mask", output_folder = "/project/3dlg-hcvc/mirrors/www/lewis_to_verify_nyu/coarse/semantic_mask")
-    center_crop_image(input_folder = "/project/3dlg-hcvc/mirrors/data/nyu/all_images/precise/instance_mask", output_folder = "/project/3dlg-hcvc/mirrors/www/lewis_to_verify_nyu/precise/instance_mask")
-    center_crop_image(input_folder = "/project/3dlg-hcvc/mirrors/data/nyu/all_images/precise/semantic_mask", output_folder = "/project/3dlg-hcvc/mirrors/www/lewis_to_verify_nyu/precise/semantic_mask")
