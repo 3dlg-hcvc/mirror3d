@@ -1,9 +1,0 @@
---encoder densenet161_bts
---data_path ../../dataset/nyu_depth_v2/official_splits/test/
---dataset nyu
---filenames_file ../train_test_inputs/nyudepthv2_test_files_with_gt.txt
---model_name bts_nyu_v2_pytorch_densenet161
---resume_checkpoint_path /local-scratch/jiaqit/exp/chris_mirror_proj/bts/pytorch/important_model/bts_nyu_v2_pytorch_densenet161/model
---input_height 480
---input_width 640
---max_depth 10

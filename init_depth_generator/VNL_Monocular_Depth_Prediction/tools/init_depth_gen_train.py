@@ -21,7 +21,6 @@ elif train_args.coco_train.find("m3d") > 0:
     dataset_name = "m3d"
 elif train_args.coco_train.find("scannet") > 0:
     dataset_name = "scannet"
-# train_opt.opt.dataset = dataset_name
 tag = ""
 if train_args.mesh_depth:
     tag = "meshD_"
