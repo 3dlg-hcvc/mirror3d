@@ -1,5 +1,5 @@
 _BASE_: "Base-RCNN-FPN.yaml"
-EVAL : True # TODO ---- eval ----
+EVAL : False # TODO ---- eval ----
 
 
 TRAIN_COCO_JSON : ["/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json"] # TODO
@@ -42,7 +42,7 @@ DATALOADER:
 INPUT:
   MIN_SIZE_TRAIN : (456,)
   MAX_SIZE_TRAIN : 608
-  MIN_SIZE_TEST : (456,)
+  MIN_SIZE_TEST : (456)
   MAX_SIZE_TEST : 608
 
 ############## planeRCNN configure ##############
