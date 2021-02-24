@@ -6,11 +6,11 @@ import detectron2.utils.comm as comm
 from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.engine import launch
 
-from detectron2.data.datasets import register_coco_instances
 from detectron2.modeling import build_model
 
 from mirror3d_lib.engine.defaults import Mirror3dTrainer
 from mirror3d_lib.config.config import get_cfg
+from mirror3d_lib.data.datasets.register_mirror3d_coco import register_mirror3d_coco_instances
 
 import time
 from contextlib import redirect_stdout
@@ -25,10 +25,10 @@ def main(args):
     cfg.merge_from_file(args.config)
     tag = ""
     for train_idx in range(len(cfg.TRAIN_COCO_JSON)):
-        register_coco_instances(cfg.TRAIN_NAME[train_idx], {}, cfg.TRAIN_COCO_JSON[train_idx], cfg.TRAIN_IMG_ROOT[train_idx]) 
+        register_mirror3d_coco_instances(cfg.TRAIN_NAME[train_idx], {}, cfg.TRAIN_COCO_JSON[train_idx], cfg.TRAIN_IMG_ROOT[train_idx]) 
         tag = tag + cfg.TRAIN_NAME[train_idx]
     for val_idx in range(len(cfg.VAL_COCO_JSON)):
-        register_coco_instances(cfg.VAL_NAME[val_idx], {}, cfg.VAL_COCO_JSON[val_idx], cfg.VAL_IMG_ROOT[val_idx]) 
+        register_mirror3d_coco_instances(cfg.VAL_NAME[val_idx], {}, cfg.VAL_COCO_JSON[val_idx], cfg.VAL_IMG_ROOT[val_idx]) 
 
     cfg.DATASETS.TRAIN = cfg.TRAIN_NAME
     cfg.DATASETS.TEST = cfg.VAL_NAME
@@ -85,7 +85,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", default="config/nyu_mirror3d_config.yml", type=str , help="path to config file")
+    parser.add_argument("--config", default="config/nyu_mirror3d_config_cleanup.yml", type=str , help="path to config file")
     parser.add_argument("--resume", default=True, type=bool)
     parser.add_argument("--eval-only", action="store_true", help="perform evaluation only")
     parser.add_argument("--num-gpus", type=int, default=1, help="number of gpus *per machine*")
