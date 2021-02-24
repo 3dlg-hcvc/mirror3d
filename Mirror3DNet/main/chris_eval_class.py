@@ -6,8 +6,8 @@
 import os
 import sys
 import torch
-from Mirror3D_eval import *
-from general_utlis import *
+from utils.Mirror3D_eval import *
+from utils.general_utlis import *
 
 from planrcnn_detectron2_lib.data import (
     MetadataCatalog,

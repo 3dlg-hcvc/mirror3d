@@ -1,4 +1,4 @@
-_BASE_: "Base-RCNN-FPN.yaml"
+_BASE_: "Mirror3d-RCNN-FPN.yaml"
 EVAL : False # TODO ---- eval ----
 
 
@@ -42,7 +42,7 @@ DATALOADER:
 INPUT:
   MIN_SIZE_TRAIN : (456,)
   MAX_SIZE_TRAIN : 608
-  MIN_SIZE_TEST : (456,)
+  MIN_SIZE_TEST : (456)
   MAX_SIZE_TEST : 608
 
 ############## planeRCNN configure ##############
