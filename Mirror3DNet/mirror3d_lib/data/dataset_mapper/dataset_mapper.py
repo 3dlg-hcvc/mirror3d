@@ -5,30 +5,26 @@ import numpy as np
 import torch
 from fvcore.common.file_io import PathManager
 from PIL import Image
-from detectron2.data import detection_utils as utils
-from detectron2.data import transforms as T
 import cv2
 
+from detectron2.data import detection_utils as utils
+from detectron2.data import transforms as T
 from detectron2.structures import (
-    BitMasks,
-    Boxes,
-    BoxMode,
     Instances,
-    Keypoints,
-    PolygonMasks,
-    RotatedBoxes,
     polygons_to_bitmask,
 )
+
+from ..mirror3d_utils import transform_instance_annotations, annotations_to_instances
 
 
 """
 This file contains the default mapping that's applied to "dataset dicts".
 """
 
-__all__ = ["DatasetMapper"]
+__all__ = ["Mirror3d_DatasetMapper"]
 
 
-class DatasetMapper:
+class Mirror3d_DatasetMapper:
     """
     A callable which takes a dataset dict in Detectron2 Dataset format,
     and map it into a format used by the model.
@@ -178,13 +174,13 @@ class DatasetMapper:
 
             # USER: Implement additional transformations if you have other types of data
             annos = [
-                utils.transform_instance_annotations(
+                transform_instance_annotations(
                     obj, transforms, image_shape, keypoint_hflip_indices=self.keypoint_hflip_indices, anchor_normals=self.anchor_normals
                 )
                 for obj in dataset_dict.pop("annotations")
                 if obj.get("iscrowd", 0) == 0
             ]
-            instances = utils.annotations_to_instances( 
+            instances = annotations_to_instances( 
                 annos, image_shape, mask_format=self.mask_format
             )
             # Create a tight bounding box from masks, useful when image is cropped

@@ -30,6 +30,8 @@ def main(args):
     for val_idx in range(len(cfg.VAL_COCO_JSON)):
         register_mirror3d_coco_instances(cfg.VAL_NAME[val_idx], {}, cfg.VAL_COCO_JSON[val_idx], cfg.VAL_IMG_ROOT[val_idx]) 
 
+
+    cfg.MODEL.META_ARCHITECTURE = "Mirror3d_GeneralizedRCNN"
     cfg.DATASETS.TRAIN = cfg.TRAIN_NAME
     cfg.DATASETS.TEST = cfg.VAL_NAME
     cfg.ANCHOR_NORMAL_CLASS_NUM = np.load(cfg.ANCHOR_NORMAL_NYP).shape[0]

@@ -1,0 +1,2 @@
+from .register_mirror3d_coco import register_mirror3d_coco_instances
+from .mirror3d_coco import load_mirror3d_coco_json
