@@ -253,4 +253,5 @@ Mirror3DNet/detectron2_config
 Mirror3DNet/sbatch_config
 Mirror3DNet/chris_config
 Mirror3DNet/planrcnn_detectron2_lib
+Mirror3DNet/main
 waste

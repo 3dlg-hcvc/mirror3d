@@ -1,4 +1,4 @@
-_BASE_: "../configs/Base-RCNN-FPN.yaml"
+_BASE_: "../configs/Mirror3d-R_50_FPN_1x.yaml"
 EVAL : True # TODO ---- eval ----
 
 
