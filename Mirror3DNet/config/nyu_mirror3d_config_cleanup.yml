@@ -46,7 +46,7 @@ INPUT:
   MAX_SIZE_TEST : 608
 
 ############## planeRCNN configure ##############
-DEPTH_EST : False  # TODO ori & new(optional)
+DEPTH_EST : True  # TODO ori & new(optional)
 ANCHOR_REG : True  #! TODO ori & new
 ANCHOR_CLS : True  #! TODO ori & new eval
 OBJECT_SEG : True # TODO ori & new

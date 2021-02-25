@@ -1,4 +1,6 @@
 MODEL:
+  PROPOSAL_GENERATOR:
+    NAME: "Mirror3d_RPN"
   META_ARCHITECTURE: "Mirror3d_GeneralizedRCNN"
   BACKBONE:
     NAME: "build_resnet_fpn_backbone"
@@ -10,6 +12,7 @@ MODEL:
     SIZES: [[32], [64], [128], [256], [512]]  # One size for each in feature map
     ASPECT_RATIOS: [[0.5, 1.0, 2.0]]  # Three aspect ratios (same for all in feature maps)
   RPN:
+    HEAD_NAME: "Mirror3d_StandardRPNHead"
     IN_FEATURES: ["p2", "p3", "p4", "p5", "p6"]
     PRE_NMS_TOPK_TRAIN: 2000  # Per FPN level
     PRE_NMS_TOPK_TEST: 1000  # Per FPN level

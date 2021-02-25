@@ -153,9 +153,6 @@ def mirror3d_fast_rcnn_inference_single_image(
     result.pred_anchor_classes = anchor_idx
     result.pred_residuals = pred_residual_3
     result.pred_classes = filter_inds[:, 1]
-
-    if len(keep) == 0 :
-        print("no prediction !!!! ------------------------ ")
     
     return result, filter_inds[:, 0]
 
