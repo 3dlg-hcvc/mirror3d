@@ -4,10 +4,14 @@ import numpy as np
 import sys
 import detectron2.utils.comm as comm
 from detectron2.checkpoint import DetectionCheckpointer
-from planrcnn_detectron2_lib.engine import DefaultTrainer, launch
-from planrcnn_detectron2_lib.data.datasets import register_coco_instances
-from planrcnn_detectron2_lib.config import get_cfg
-from planrcnn_detectron2_lib.modeling import build_model
+from detectron2.engine import launch
+
+from detectron2.modeling import build_model
+
+from mirror3d_lib.engine.defaults import Mirror3dTrainer
+from mirror3d_lib.config.config import get_cfg
+from mirror3d_lib.data.datasets.register_mirror3d_coco import register_mirror3d_coco_instances
+
 import time
 from contextlib import redirect_stdout
 import argparse
@@ -21,11 +25,13 @@ def main(args):
     cfg.merge_from_file(args.config)
     tag = ""
     for train_idx in range(len(cfg.TRAIN_COCO_JSON)):
-        register_coco_instances(cfg.TRAIN_NAME[train_idx], {}, cfg.TRAIN_COCO_JSON[train_idx], cfg.TRAIN_IMG_ROOT[train_idx]) 
+        register_mirror3d_coco_instances(cfg.TRAIN_NAME[train_idx], {}, cfg.TRAIN_COCO_JSON[train_idx], cfg.TRAIN_IMG_ROOT[train_idx]) 
         tag = tag + cfg.TRAIN_NAME[train_idx]
     for val_idx in range(len(cfg.VAL_COCO_JSON)):
-        register_coco_instances(cfg.VAL_NAME[val_idx], {}, cfg.VAL_COCO_JSON[val_idx], cfg.VAL_IMG_ROOT[val_idx]) 
+        register_mirror3d_coco_instances(cfg.VAL_NAME[val_idx], {}, cfg.VAL_COCO_JSON[val_idx], cfg.VAL_IMG_ROOT[val_idx]) 
 
+
+    cfg.MODEL.META_ARCHITECTURE = "Mirror3d_GeneralizedRCNN"
     cfg.DATASETS.TRAIN = cfg.TRAIN_NAME
     cfg.DATASETS.TEST = cfg.VAL_NAME
     cfg.ANCHOR_NORMAL_CLASS_NUM = np.load(cfg.ANCHOR_NORMAL_NYP).shape[0]
@@ -47,11 +53,11 @@ def main(args):
         cfg.OUTPUT_DIR = os.path.join(cfg.OUTPUT_DIR, eval_output_tag) + "_" + cfg.REF_DEPTH_TO_REFINE.split("/")[-1].split(".")[0] + "_" + time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()) 
         
         os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
-        model = DefaultTrainer.build_model(cfg)
+        model = Mirror3dTrainer.build_model(cfg)
         DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(
             cfg.MODEL.WEIGHTS, resume=args.resume
         )
-        res = DefaultTrainer.test(cfg, model)
+        res = Mirror3dTrainer.test(cfg, model)
 
         return res
 
@@ -66,7 +72,7 @@ def main(args):
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
 
 
-    trainer = DefaultTrainer(cfg)
+    trainer = Mirror3dTrainer(cfg)
     trainer.resume_or_load(resume=args.resume)
 
     yml_save_path = os.path.join(cfg.OUTPUT_DIR, "training_config.yml")
