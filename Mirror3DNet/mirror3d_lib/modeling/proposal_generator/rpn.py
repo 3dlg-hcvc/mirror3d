@@ -18,44 +18,7 @@ from detectron2.modeling.matcher import Matcher
 from detectron2.modeling.sampling import subsample_labels
 from detectron2.modeling.proposal_generator.build import PROPOSAL_GENERATOR_REGISTRY
 from detectron2.modeling.proposal_generator.proposal_utils import find_top_rpn_proposals
-from detectron2.modeling.proposal_generator.rpn import build_rpn_head
-
-RPN_HEAD_REGISTRY = Registry("RPN_HEAD")
-RPN_HEAD_REGISTRY.__doc__ = """
-Registry for RPN heads, which take feature maps and perform
-objectness classification and bounding box regression for anchors.
-
-The registered object will be called with `obj(cfg, input_shape)`.
-The call should return a `nn.Module` object.
-"""
-
-
-"""
-Shape shorthand in this module:
-
-    N: number of images in the minibatch
-    L: number of feature maps per image on which RPN is run
-    A: number of cell anchors (must be the same for all feature maps)
-    Hi, Wi: height and width of the i-th feature map
-    B: size of the box parameterization
-
-Naming convention:
-
-    objectness: refers to the binary classification of an anchor as object vs. not object.
-
-    deltas: refers to the 4-d (dx, dy, dw, dh) deltas that parameterize the box2box
-    transform (see :class:`box_regression.Box2BoxTransform`), or 5d for rotated boxes.
-
-    pred_objectness_logits: predicted objectness scores in [-inf, +inf]; use
-        sigmoid(pred_objectness_logits) to estimate P(object).
-
-    gt_labels: ground-truth binary classification labels for objectness
-
-    pred_anchor_deltas: predicted box2box transform deltas
-
-    gt_anchor_deltas: ground-truth box2box transform deltas
-"""
-
+from detectron2.modeling.proposal_generator.rpn import build_rpn_head, RPN_HEAD_REGISTRY
 
 @RPN_HEAD_REGISTRY.register()
 class Mirror3d_StandardRPNHead(nn.Module):
