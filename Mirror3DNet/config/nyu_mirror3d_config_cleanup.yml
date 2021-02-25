@@ -70,12 +70,12 @@ UNIT_ANCHOR_NORMAL : True
 ANCHOR_NORMAL_NYP : "/local-scratch/share_data/mirror3D/m3d/m3d_all_normal/m3d_kmeans_normal_10.npy"  #! TODO 
 
 #! ############# eval configure ##############
-EVAL_ANCHOR_AP : False # TODO
-EVAL_CLS_AP : False # TODO
-EVAL_MASK_IOU : False
-EVAL_NORMAL : False  # TODO angle diff & normal l2 loss
-EVAL_BRANCH_ORI_DEPTH : False # TODO mirror3d_eval matrics
-EVAL_BRANCH_REF_DEPTH : False # TODO mirror3d_eval matrics
+EVAL_ANCHOR_AP : True # TODO
+EVAL_CLS_AP : True # TODO
+EVAL_MASK_IOU : True
+EVAL_NORMAL : True  # TODO angle diff & normal l2 loss
+EVAL_BRANCH_ORI_DEPTH : True # TODO mirror3d_eval matrics
+EVAL_BRANCH_REF_DEPTH : True # TODO mirror3d_eval matrics
 EVAL_INPUT_REF_DEPTH : False # TODO REF_DEPTH_TO_REFINE
 EVAL_HEIGHT : 456
 EVAL_WIDTH : 608

@@ -1,29 +1,27 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-
-
-
 import os
 import sys
 import torch
 from utils.Mirror3D_eval import *
 from utils.general_utlis import *
+from utils.plane_pcd_utils import *
 
 from detectron2.data import (
     MetadataCatalog,
 )
 
 import logging
-import os
 import time
+import numpy as np
 import cv2
+
 from detectron2.utils.visualizer import Visualizer
 from detectron2.utils.visualizer import ColorMode
-import numpy as np
 from detectron2.utils.events import get_event_storage
 
 
-class Mirror3d_eval:
+class Mirror3DNet_Eval:
 
     def __init__(self, output_list, cfg):
         self.output_list = output_list

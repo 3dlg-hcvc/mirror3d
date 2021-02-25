@@ -8,6 +8,7 @@ import sys
 import torch
 from utils.Mirror3D_eval import *
 from utils.general_utlis import *
+from utils.plane_pcd_utils import *
 
 from planrcnn_detectron2_lib.data import (
     MetadataCatalog,
