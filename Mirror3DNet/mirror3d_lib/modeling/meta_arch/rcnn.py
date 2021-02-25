@@ -14,10 +14,9 @@ from detectron2.modeling.postprocessing import detector_postprocess
 from detectron2.modeling.proposal_generator import build_proposal_generator
 from detectron2.modeling.roi_heads import build_roi_heads
 from detectron2.modeling.meta_arch.build import META_ARCH_REGISTRY
-from detectron2.modeling.depth_predict import Depth
+from ..depth_predict import Depth
 
 __all__ = ["Mirror3d_GeneralizedRCNN"]
-
 
 @META_ARCH_REGISTRY.register()
 class Mirror3d_GeneralizedRCNN(nn.Module):
@@ -95,7 +94,7 @@ class Mirror3d_GeneralizedRCNN(nn.Module):
     def forward(self, batched_inputs): # chris // run here
         """
         Args:
-            batched_inputs: a list, batched outputs of :class:`DatasetMapper` .
+            batched_inputs: a list, batched outputs of :class:`Mirror3d_DatasetMapper` .
                 Each item in the list contains the inputs for one image.
                 For now, each item in the list is a dict that contains:
 

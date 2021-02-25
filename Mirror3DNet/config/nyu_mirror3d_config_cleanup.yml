@@ -1,5 +1,5 @@
 _BASE_: "Mirror3d-RCNN-FPN.yaml"
-EVAL : False # TODO ---- eval ----
+EVAL : True # TODO ---- eval ----
 
 
 TRAIN_COCO_JSON : ["/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json"] # TODO

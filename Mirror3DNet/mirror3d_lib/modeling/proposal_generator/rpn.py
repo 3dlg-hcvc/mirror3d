@@ -5,19 +5,20 @@ import torch.nn.functional as F
 from fvcore.nn import smooth_l1_loss
 from torch import nn
 
-from planrcnn_detectron2_lib.config import configurable
+from detectron2.config import configurable
 from detectron2.layers import ShapeSpec, cat
-from planrcnn_detectron2_lib.structures import Boxes, ImageList, Instances, pairwise_iou
+from detectron2.structures import Boxes, ImageList, Instances, pairwise_iou
 from detectron2.utils.events import get_event_storage
 from detectron2.utils.memory import retry_if_cuda_oom
 from detectron2.utils.registry import Registry
 
-from ..anchor_generator import build_anchor_generator
-from ..box_regression import Box2BoxTransform
-from ..matcher import Matcher
-from ..sampling import subsample_labels
-from .build import PROPOSAL_GENERATOR_REGISTRY
-from .proposal_utils import find_top_rpn_proposals
+from detectron2.modeling.anchor_generator import build_anchor_generator
+from detectron2.modeling.box_regression import Box2BoxTransform
+from detectron2.modeling.matcher import Matcher
+from detectron2.modeling.sampling import subsample_labels
+from detectron2.modeling.proposal_generator.build import PROPOSAL_GENERATOR_REGISTRY
+from detectron2.modeling.proposal_generator.proposal_utils import find_top_rpn_proposals
+from detectron2.modeling.proposal_generator.rpn import build_rpn_head
 
 RPN_HEAD_REGISTRY = Registry("RPN_HEAD")
 RPN_HEAD_REGISTRY.__doc__ = """
@@ -54,14 +55,6 @@ Naming convention:
 
     gt_anchor_deltas: ground-truth box2box transform deltas
 """
-
-
-def build_rpn_head(cfg, input_shape):
-    """
-    Build an RPN head defined by `cfg.MODEL.RPN.HEAD_NAME`.
-    """
-    name = cfg.MODEL.RPN.HEAD_NAME
-    return RPN_HEAD_REGISTRY.get(name)(cfg, input_shape)
 
 
 @RPN_HEAD_REGISTRY.register()

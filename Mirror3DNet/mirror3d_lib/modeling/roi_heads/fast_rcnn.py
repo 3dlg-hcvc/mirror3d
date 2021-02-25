@@ -167,7 +167,7 @@ def cross_entropy(Y, P):
 
     return -np.sum(Y * np.log(P) + (1 - Y) * np.log(1 - P))
 
-class FastRCNNOutputs(object):
+class Mirror3d_FastRCNNOutputs(object):
     """
     A class that stores information about outputs of a Fast R-CNN head.
     It provides methods that are used to decode the outputs of a Fast R-CNN head.
@@ -634,7 +634,7 @@ class Mirror3d_FastRCNNOutputLayers(nn.Module):
                 that were used to compute predictions.
         """
         scores, proposal_deltas ,anchor_normal_score , anchor_residual_pred=predictions
-        return FastRCNNOutputs(
+        return Mirror3d_FastRCNNOutputs(
             self.box2box_transform, scores, proposal_deltas, proposals, self.smooth_l1_beta,anchor_normal_score , anchor_residual_pred, self.anchor_normals,self.ANCHOR_REG_method , self.anchor_cls, self.ANCHOR_REG, self.training # changed !!! add gt *** here (3.2)
         ).losses()
 

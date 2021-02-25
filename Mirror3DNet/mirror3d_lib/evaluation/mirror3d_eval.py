@@ -9,7 +9,7 @@ import torch
 from utils.Mirror3D_eval import *
 from utils.general_utlis import *
 
-from planrcnn_detectron2_lib.data import (
+from detectron2.data import (
     MetadataCatalog,
 )
 
@@ -17,7 +17,7 @@ import logging
 import os
 import time
 import cv2
-from planrcnn_detectron2_lib.utils.visualizer import Visualizer
+from detectron2.utils.visualizer import Visualizer
 from detectron2.utils.visualizer import ColorMode
 import numpy as np
 from detectron2.utils.events import get_event_storage
