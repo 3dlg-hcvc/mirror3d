@@ -229,7 +229,7 @@ class Mirror3d_GeneralizedRCNN(nn.Module):
 
 
         if do_postprocess:
-            return GeneralizedRCNN._postprocess(results, batched_inputs, images.image_sizes, self.cfg.MASK_ON_OTHER_SIZE), pred_depth_list 
+            return Mirror3d_GeneralizedRCNN._postprocess(results, batched_inputs, images.image_sizes, self.cfg.MASK_ON_OTHER_SIZE), pred_depth_list 
         else:
             return results, pred_depth_list
 

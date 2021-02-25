@@ -27,6 +27,7 @@ def get_grayscale_instanceMask(mask, instance_index):
                 current_instance_mask[i][j] = 0
     return current_instance_mask
 
+
 # ---------------------------------------------------------------------------- #
 #                   get_mirror_parameter_from_xyzs_by_ransac                   #
 # ---------------------------------------------------------------------------- #

@@ -14,17 +14,24 @@ import torch
 import itertools
 import torch.utils.data
 from collections import OrderedDict
+import os
 
 from detectron2.engine.defaults import DefaultTrainer
 from detectron2.evaluation import (
+    COCOEvaluator,
     DatasetEvaluator,
     inference_on_dataset,
 )
 from detectron2.checkpoint import DetectionCheckpointer
+from detectron2.utils.registry import Registry
+from detectron2.data import (
+    build_detection_train_loader, 
+    build_detection_test_loader, 
+    MetadataCatalog
+)
 
 from mirror3d_lib.data.dataset_mapper import Mirror3d_DatasetMapper
-from detectron2.utils.registry import Registry
-from detectron2.data import build_detection_train_loader, build_detection_test_loader
+from mirror3d_lib.evaluation.mirror3d_eval import *
 
 
 # TODO delete later
@@ -34,6 +41,56 @@ from detectron2.utils.logger import setup_logger
 
 
 class Mirror3dTrainer(DefaultTrainer):
+
+    @classmethod
+    def build_evaluator(cls, cfg, dataset_name, output_folder=None):
+        """
+        Create evaluator(s) for a given dataset.
+        This uses the special metadata "evaluator_type" associated with each builtin dataset.
+        For your own dataset, you can simply create an evaluator manually in your
+        script and do not have to worry about the hacky if-else logic here.
+        """
+        if output_folder is None:
+            output_folder = os.path.join(cfg.OUTPUT_DIR, "inference")
+        evaluator_list = []
+        evaluator_type = MetadataCatalog.get(dataset_name).evaluator_type
+        if evaluator_type in ["sem_seg", "coco_panoptic_seg"]:
+            evaluator_list.append(
+                SemSegEvaluator(
+                    dataset_name,
+                    distributed=False,
+                    num_classes=cfg.MODEL.SEM_SEG_HEAD.NUM_CLASSES,
+                    ignore_label=cfg.MODEL.SEM_SEG_HEAD.IGNORE_VALUE,
+                    output_dir=output_folder,
+                )
+            )
+        if evaluator_type in ["coco", "coco_panoptic_seg"]:
+            evaluator_list.append(COCOEvaluator(dataset_name, cfg, True, output_folder))
+        if evaluator_type == "coco_panoptic_seg":
+            evaluator_list.append(COCOPanopticEvaluator(dataset_name, output_folder))
+        if evaluator_type == "cityscapes_instance":
+            assert (
+                torch.cuda.device_count() >= comm.get_rank()
+            ), "CityscapesEvaluator currently do not work with multiple machines."
+            return CityscapesInstanceEvaluator(dataset_name)
+        if evaluator_type == "cityscapes_sem_seg":
+            assert (
+                torch.cuda.device_count() >= comm.get_rank()
+            ), "CityscapesEvaluator currently do not work with multiple machines."
+            return CityscapesSemSegEvaluator(dataset_name)
+        elif evaluator_type == "pascal_voc":
+            return PascalVOCDetectionEvaluator(dataset_name)
+        elif evaluator_type == "lvis":
+            return LVISEvaluator(dataset_name, cfg, True, output_folder)
+        if len(evaluator_list) == 0:
+            raise NotImplementedError(
+                "no Evaluator for the dataset {} with the type {}".format(
+                    dataset_name, evaluator_type
+                )
+            )
+        elif len(evaluator_list) == 1:
+            return evaluator_list[0]
+        return DatasetEvaluators(evaluator_list)
 
 
 
@@ -100,8 +157,8 @@ class Mirror3dTrainer(DefaultTrainer):
                     results[dataset_name] = {}
                     continue
             output_list= inference_on_dataset(model, data_loader, evaluator)
-            chris_eval = Chris_eval(output_list, cfg)
-            chris_eval.eval_main()
+            mirror3d_eval = Mirror3DNet_Eval(output_list, cfg)
+            mirror3d_eval.eval_main()
 
         cls.output_list = output_list
         return OrderedDict()
