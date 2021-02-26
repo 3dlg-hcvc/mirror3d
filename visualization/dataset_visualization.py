@@ -428,7 +428,7 @@ if __name__ == "__main__":
 
     vis_tool = Dataset_visulization(data_main_folder=args.data_main_folder, process_index=args.process_index, \
                                     multi_processing=args.multi_processing, f=args.f, \
-                                    output_folder=args.output_folder, overwrite=args.overwrite, \
+                                    output_folder = args.output_folder, overwrite=args.overwrite, \
                                     window_w=args.window_w, window_h=args.window_h, view_mode=args.view_mode)
     if args.stage == "1":
         vis_tool.generate_pcdMesh_for_whole_dataset()

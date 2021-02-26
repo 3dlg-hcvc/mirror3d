@@ -307,7 +307,7 @@ class Dataset_visulization(Plane_annotation_tool):
 
         if self.is_matterport3d:
             pred_depth_img_path = os.path.join(self.prediction_output_folder, rreplace(sample_name.replace("raw","pred_depth"), "i", "d"))
-            gt_depth_img_path = rreplace(color_img_path.replace("raw","pred_depth"), "i", "d")) 
+            gt_depth_img_path = rreplace(color_img_path.replace("raw","pred_depth"), "i", "d")
         else:
             pred_depth_img_path =  os.path.join(self.prediction_output_folder, sample_name.replace("raw","pred_depth"))
             gt_depth_img_path = color_img_path.replace("raw","pred_depth")
