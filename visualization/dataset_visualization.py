@@ -217,7 +217,7 @@ class Dataset_visulization(Plane_annotation_tool):
                     mesh_path = os.path.join(mesh_folder,  "{}.ply".format(instance_tag))
                     pcd = o3d.io.read_point_cloud(pcd_path)
                     mirror_plane = o3d.io.read_triangle_mesh(mesh_path)
-
+                    # Screenshots are saved under "mesh_refined_ply" or "hole_refined_ply" folder
                     self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode), instance_tag)
                     os.makedirs(self.screenshot_output_folder, exist_ok=True)
 
@@ -241,7 +241,6 @@ class Dataset_visulization(Plane_annotation_tool):
             depth_img_path = color_img_path.replace("raw","hole_refined_depth")
             ply_folder = os.path.join(self.output_folder, "hole_refined_ply")
             generate_screenshot(depth_img_path)
-
 
     def rotate_pcdMesh_topdown(self, pcd, plane):
         """
@@ -291,6 +290,8 @@ class Dataset_visulization(Plane_annotation_tool):
         vis.get_view_control().convert_from_pinhole_camera_parameters(cam)
         vis.run()
 
+    def set_output_folder(self, output_folder):
+        self.output_folder = output_folder
 
     def set_view_mode(self, view_mode):
         """Function to save the view mode"""
@@ -363,6 +364,7 @@ class Dataset_visulization(Plane_annotation_tool):
         """
         def generate_video_to_call(ply_folder):
             # Pack as a function to better support Matterport3d ply generation
+            # Videos are saved under "mesh_refined_ply" or "hole_refined_ply" folder
             video_saved_folder = os.path.join(ply_folder, "video_{}".format(self.view_mode))
             os.makedirs(video_saved_folder, exist_ok=True)
             img_info = color_img_path.replace("raw", "img_info").replace("png", "json")
@@ -409,7 +411,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--stage', default="6")
     parser.add_argument(
-        '--data_main_folder', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise")
+        '--data_main_folder', default="/project/3dlg-hcvc/mirrors/data/nyu/final_data/precise")
     parser.add_argument(
         '--process_index', default=0, type=int, help="process index")
     parser.add_argument('--multi_processing', help='do multi-process or not',action='store_true')
@@ -421,7 +423,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--window_h', default=800, type=int, help="height of the visilization window")
     parser.add_argument(
-        '--output_folder', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/hole_refined_ply")
+        '--output_folder', default="/project/3dlg-hcvc/mirrors/www/final_verification/nyu")
     parser.add_argument(
         '--view_mode', default="front", help="object view angle : (1) topdown (2) front")
     args = parser.parse_args()

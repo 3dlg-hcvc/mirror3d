@@ -627,9 +627,9 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
-        '--stage', default="1")
+        '--stage', default="4")
     parser.add_argument(
-        '--data_main_folder', default="../reannotate")
+        '--data_main_folder', default="/project/3dlg-hcvc/mirrors/data/nyu/final_data/precise")
     parser.add_argument(
         '--process_index', default=0, type=int, help="process index")
     parser.add_argument('--multi_processing', help='do multi-process or not',action='store_true')
@@ -638,7 +638,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--f', default=519, type=int, help="camera focal length")
     parser.add_argument(
-        '--expand_range', default=800, type=int, help="expand the mirror instance bbox by expand_range; unit : cm")
+        '--expand_range', default=200, type=int, help="expand the mirror instance bbox by expand_range; unit : mm")
     parser.add_argument(
         '--clamp_dis', default=100, type=int, help="outliers threshold")
     parser.add_argument(
