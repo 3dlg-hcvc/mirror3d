@@ -36,12 +36,12 @@ class Verification():
         os.makedirs(self.output_folder, exist_ok=True)
         print("A copy of error data is saved to : {}".format(self.output_folder))
         for one_raw_name in read_txt(error_list):
-            color_img_path = os.path.join(self.video_main_folder, "raw", one_raw_name)
-            mask_path = os.path.join(self.video_main_folder, "instance_mask", one_raw_name)
-            img_info_path = os.path.join(self.video_main_folder, "img_info", one_raw_name.replace(".png", ".json"))
-            if self.video_main_folder.find("m3d") > 0:
-                raw_depth_path = os.path.join(self.video_main_folder, "hole_raw_depth", rreplace(one_raw_name, "i", "d"))
-                refined_depth_path = os.path.join(self.video_main_folder, "hole_refined_depth", rreplace(one_raw_name, "i", "d"))
+            color_img_path = os.path.join(self.data_main_folder, "raw", one_raw_name)
+            mask_path = os.path.join(self.data_main_folder, "instance_mask", one_raw_name)
+            img_info_path = os.path.join(self.data_main_folder, "img_info", one_raw_name.replace(".png", ".json"))
+            if self.data_main_folder.find("m3d") > 0:
+                raw_depth_path = os.path.join(self.data_main_folder, "hole_raw_depth", rreplace(one_raw_name, "i", "d"))
+                refined_depth_path = os.path.join(self.data_main_folder, "hole_refined_depth", rreplace(one_raw_name, "i", "d"))
                 img_to_copy = [color_img_path, mask_path, img_info_path, raw_depth_path, refined_depth_path]
                 for src_path in img_to_copy:
                     src_type = src_path.split("/")[-2]
@@ -72,7 +72,7 @@ class Verification():
                 txt = inf.read()
                 soup = bs4.BeautifulSoup(txt, features="html.parser")
 
-            for one_video_name in one_videoSubset:
+            for video_index ,one_video_name in enumerate(one_videoSubset):
             # Get video path for one instance (all put in one line)
                 if self.is_matterport3d:
                     one_line_video = []
@@ -157,7 +157,7 @@ class Verification():
             
             html_path = os.path.join(self.output_folder, "{}.html".format(html_index))
             save_html(html_path, soup)
-            print("saved html_path : {}".format(html_path))
+            print("{} videos saved in {}".format(video_index, html_path))
             exit() # TODO delete
 
 if __name__ == "__main__":
@@ -167,13 +167,13 @@ if __name__ == "__main__":
         '--stage', default="1")
     parser.add_argument('--show_mesh_depth', help='for Matterport3d dataset, only visulize mesh depth or not',action='store_true')
     parser.add_argument(
-        '--video_main_folder', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/hole_refined_ply", help="dataset main folder / video main folder")
+        '--video_main_folder', default="/project/3dlg-hcvc/mirrors/www/nyu_verification/nyu_final/hole_refined_ply", help="dataset main folder / video main folder (under which have video_front/ video_topdown folders)")
     parser.add_argument(
         '--data_main_folder', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise", help="dataset main folder / video main folder")
     parser.add_argument(
         '--error_list', default="")
     parser.add_argument(
-        '--output_folder', default="/project/3dlg-hcvc/mirrors/www/nyu_verification")
+        '--output_folder', default="/project/3dlg-hcvc/mirrors/www/nyu_verification/nyu_final/html")
     parser.add_argument('--video_num_per_page', default=150, type=int)
     args = parser.parse_args()
 

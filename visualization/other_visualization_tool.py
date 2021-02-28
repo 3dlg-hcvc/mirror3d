@@ -27,6 +27,7 @@ def visualize_single_image():
 
 def vislize_pcd_from_rgbd(depth_img_path, color_img_path, f):
     pcd = get_pcd_from_rgbd_depthPath(f, depth_img_path, color_img_path)
+    print("visulizing {}".format(color_img_path))
     o3d.visualization.draw_geometries([pcd])
 
         
@@ -35,8 +36,8 @@ def vislize_pcd_from_rgbd(depth_img_path, color_img_path, f):
 if __name__ == "__main__":
     
     # visualize_single_image()
-    depth_img_path = "/local-scratch/jiaqit/exp/test2/hole_refined_depth/963.png"
+    depth_img_path = "/project/3dlg-hcvc/mirrors/data/nyu/final_data/precise/hole_refined_depth/718.png"
     f = 519
-    color_img_path = "/local-scratch/jiaqit/exp/test2/raw/963.png"
+    color_img_path = "/project/3dlg-hcvc/mirrors/data/nyu/final_data/precise/raw/718.png"
     vislize_pcd_from_rgbd(depth_img_path, color_img_path, f)
     
