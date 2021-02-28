@@ -24,3 +24,5 @@ opencv-python==4.5.1.48
 scikit-image==0.18.1
 sympy==1.7.1
 tensorboard
+pandas==1.2.2
+beautifulsoup4==4.9.3

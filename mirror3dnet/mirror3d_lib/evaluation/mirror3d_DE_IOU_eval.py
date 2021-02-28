@@ -3,7 +3,7 @@
 import os
 import sys
 import torch
-from utils.Mirror3D_eval import *
+from utils.mirror3d_metrics import *
 from utils.general_utlis import *
 from utils.plane_pcd_utils import *
 

@@ -446,8 +446,8 @@ if __name__ == "__main__":
                 output_file_names.append(line.strip())
 
     
-# Start the GUI
-root = tk.Tk()
-root.protocol('WM_DELETE_WINDOW', close_window)
-app = ImageGui(root, labels, paths)
-root.mainloop()
+    # Start the GUI
+    root = tk.Tk()
+    root.protocol('WM_DELETE_WINDOW', close_window)
+    app = ImageGui(root, labels, paths)
+    root.mainloop()

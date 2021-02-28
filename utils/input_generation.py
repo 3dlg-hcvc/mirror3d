@@ -12,7 +12,7 @@ from tqdm import tqdm
 from utils.algorithm import *
 from utils.general_utlis import *
 from utils.plane_pcd_utils import *
-from annotation.plane_annotation_tool.plane_annotation_tool import *
+from annotation.plane_annotation_tool.plane_annotation_tool import Plane_annotation_tool
 
 class Input_Generator(Plane_annotation_tool):
 
