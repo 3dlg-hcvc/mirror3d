@@ -69,22 +69,27 @@ class Dataset_visulization(Plane_annotation_tool):
         Output:
             colored depth image (using plt "magma" colormap)
         """
+
+
         if self.is_matterport3d:
+            ply_folder = os.path.join(self.output_folder, "hole_refined_ply")
             sample_name = rreplace(color_img_path.split("/")[-1], "i", "d")
-            colored_depth_save_folder = os.path.join(self.output_folder, "hole_refined_colored_depth")
+            colored_depth_save_folder = os.path.join(ply_folder, "hole_refined_colored_depth")
             os.makedirs(colored_depth_save_folder, exist_ok=True)
             ori_depth = os.path.join(self.data_main_folder, "hole_refined_depth", sample_name)
             colored_depth_save_path = os.path.join(colored_depth_save_folder, sample_name)
             save_heatmap_no_border(cv2.imread(ori_depth, cv2.IMREAD_ANYDEPTH), colored_depth_save_path)
 
-            colored_depth_save_folder = os.path.join(self.output_folder, "mesh_refined_colored_depth")
+            ply_folder = os.path.join(self.output_folder, "mesh_refined_ply")
+            colored_depth_save_folder = os.path.join(ply_folder, "mesh_refined_colored_depth")
             os.makedirs(colored_depth_save_folder, exist_ok=True)
             ori_depth = os.path.join(self.data_main_folder, "mesh_refined_depth", sample_name)
             colored_depth_save_path = os.path.join(colored_depth_save_folder, sample_name)
             save_heatmap_no_border(cv2.imread(ori_depth, cv2.IMREAD_ANYDEPTH), colored_depth_save_path)
         else:
+            ply_folder = os.path.join(self.output_folder, "hole_refined_ply")
             sample_name = color_img_path.split("/")[-1]
-            colored_depth_save_folder = os.path.join(self.output_folder, "hole_refined_colored_depth")
+            colored_depth_save_folder = os.path.join(ply_folder, "hole_refined_colored_depth")
             os.makedirs(colored_depth_save_folder, exist_ok=True)
             ori_depth = os.path.join(self.data_main_folder, "hole_refined_depth", sample_name)
             colored_depth_save_path = os.path.join(colored_depth_save_folder, sample_name)
@@ -409,9 +414,9 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
-        '--stage', default="6")
+        '--stage', default="all")
     parser.add_argument(
-        '--data_main_folder', default="/project/3dlg-hcvc/mirrors/data/nyu/final_data/precise")
+        '--data_main_folder', default="/local-scratch/jiaqit/exp/reannotate")
     parser.add_argument(
         '--process_index', default=0, type=int, help="process index")
     parser.add_argument('--multi_processing', help='do multi-process or not',action='store_true')
@@ -423,7 +428,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--window_h', default=800, type=int, help="height of the visilization window")
     parser.add_argument(
-        '--output_folder', default="/project/3dlg-hcvc/mirrors/www/final_verification/nyu")
+        '--output_folder', default="/local-scratch/jiaqit/exp/reannotate")
     parser.add_argument(
         '--view_mode', default="front", help="object view angle : (1) topdown (2) front")
     args = parser.parse_args()

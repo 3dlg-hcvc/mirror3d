@@ -168,16 +168,16 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
-        '--stage', default="2")
+        '--stage', default="1")
     parser.add_argument('--show_mesh_depth', help='for Matterport3d dataset, only visulize mesh depth or not',action='store_true')
     parser.add_argument(
-        '--video_main_folder', default="/project/3dlg-hcvc/mirrors/www/nyu_verification/nyu_final/hole_refined_ply", help="dataset main folder / video main folder (under which have video_front/ video_topdown folders)")
+        '--video_main_folder', default="/project/3dlg-hcvc/mirrors/www/final_verification/nyu/hole_refined_ply", help="dataset main folder / video main folder (under which have video_front/ video_topdown folders)")
     parser.add_argument(
-        '--data_main_folder', default="/project/3dlg-hcvc/mirrors/data/nyu/final_data/precise", help="dataset main folder / video main folder")
+        '--data_main_folder', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise", help="dataset main folder / video main folder")
     parser.add_argument(
-        '--error_list', default="/local-scratch/jiaqit/exp/reannotate/error.txt")
+        '--error_list', default="/project/3dlg-hcvc/mirrors/www/final_verification/nyu/error.txt")
     parser.add_argument(
-        '--output_folder', default="../reannotate")
+        '--output_folder', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/dataset_vis/nyu")
     parser.add_argument('--video_num_per_page', default=150, type=int)
     args = parser.parse_args()
 
