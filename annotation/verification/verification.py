@@ -35,21 +35,25 @@ class Verification():
         """
         os.makedirs(self.output_folder, exist_ok=True)
         print("A copy of error data is saved to : {}".format(self.output_folder))
-        for one_raw_name in read_txt(error_list):
+        for one_raw_id in read_txt(error_list):
+            one_raw_name = "{}.png".format(one_raw_id)
             color_img_path = os.path.join(self.data_main_folder, "raw", one_raw_name)
             mask_path = os.path.join(self.data_main_folder, "instance_mask", one_raw_name)
             img_info_path = os.path.join(self.data_main_folder, "img_info", one_raw_name.replace(".png", ".json"))
             if self.data_main_folder.find("m3d") > 0:
                 raw_depth_path = os.path.join(self.data_main_folder, "hole_raw_depth", rreplace(one_raw_name, "i", "d"))
                 refined_depth_path = os.path.join(self.data_main_folder, "hole_refined_depth", rreplace(one_raw_name, "i", "d"))
-                img_to_copy = [color_img_path, mask_path, img_info_path, raw_depth_path, refined_depth_path]
-                for src_path in img_to_copy:
-                    src_type = src_path.split("/")[-2]
-                    dst_path_folder = os.path.join(self.output_folder, src_type)
-                    os.makedirs(dst_path_folder)
-                    dst_path = os.path.join(dst_path_folder, src_path.split("/")[-1])
-                    shutil.copy(src_path, dst_path)
-                    print("file copy to {}".format(dst_path))
+            else:
+                raw_depth_path = os.path.join(self.data_main_folder, "hole_raw_depth",one_raw_name)
+                refined_depth_path = os.path.join(self.data_main_folder, "hole_refined_depth",one_raw_name)
+            img_to_copy = [color_img_path, mask_path, img_info_path, raw_depth_path, refined_depth_path]
+            for src_path in img_to_copy:
+                src_type = src_path.split("/")[-2]
+                dst_path_folder = os.path.join(self.output_folder, src_type)
+                os.makedirs(dst_path_folder)
+                dst_path = os.path.join(dst_path_folder, src_path.split("/")[-1])
+                shutil.copy(src_path, dst_path)
+                print("file copy to {}".format(dst_path))
 
     def generate_html(self):
         """
@@ -164,16 +168,16 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
-        '--stage', default="1")
+        '--stage', default="2")
     parser.add_argument('--show_mesh_depth', help='for Matterport3d dataset, only visulize mesh depth or not',action='store_true')
     parser.add_argument(
         '--video_main_folder', default="/project/3dlg-hcvc/mirrors/www/nyu_verification/nyu_final/hole_refined_ply", help="dataset main folder / video main folder (under which have video_front/ video_topdown folders)")
     parser.add_argument(
-        '--data_main_folder', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise", help="dataset main folder / video main folder")
+        '--data_main_folder', default="/project/3dlg-hcvc/mirrors/data/nyu/final_data/precise", help="dataset main folder / video main folder")
     parser.add_argument(
-        '--error_list', default="")
+        '--error_list', default="/local-scratch/jiaqit/exp/reannotate/error.txt")
     parser.add_argument(
-        '--output_folder', default="/project/3dlg-hcvc/mirrors/www/nyu_verification/nyu_final/html")
+        '--output_folder', default="../reannotate")
     parser.add_argument('--video_num_per_page', default=150, type=int)
     args = parser.parse_args()
 

@@ -286,6 +286,9 @@ class Plane_annotation_tool():
                     mesh_raw_depth_path = os.path.join(self.data_main_folder, "mesh_raw_depth",depth_file_name)
                     mesh_refined_depth_path = os.path.join(self.data_main_folder, "mesh_refined_depth",depth_file_name)
                     os.makedirs(os.path.split(mesh_refined_depth_path)[0], exist_ok=True)
+                    # If there's refined depth; refine the refiend depth
+                    if os.path.exists(hole_refined_depth_path):
+                        hole_raw_depth_path = hole_refined_depth_path
                     cv2.imwrite(mesh_refined_depth_path, refine_depth_with_plane_parameter_mask(plane_parameter, binary_instance_mask, cv2.imread(hole_raw_depth_path,cv2.IMREAD_ANYDEPTH),self.f))
                     print("update depth {} {}".format(mesh_refined_depth_path))
                 else:
@@ -294,6 +297,9 @@ class Plane_annotation_tool():
                 hole_raw_depth_path = os.path.join(self.data_main_folder, "hole_raw_depth",depth_file_name)
                 hole_refined_depth_path = os.path.join(self.data_main_folder, "hole_refined_depth",depth_file_name)
                 os.makedirs(os.path.split(hole_refined_depth_path)[0], exist_ok=True)
+                # If there's refined depth; refine the refiend depth
+                if os.path.exists(hole_refined_depth_path):
+                    hole_raw_depth_path = hole_refined_depth_path
                 cv2.imwrite(hole_refined_depth_path, refine_depth_with_plane_parameter_mask(plane_parameter, binary_instance_mask, cv2.imread(hole_raw_depth_path,cv2.IMREAD_ANYDEPTH),self.f))
                 print("update depth {}".format(hole_refined_depth_path))
 
@@ -621,9 +627,9 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
-        '--stage', default="7")
+        '--stage', default="1")
     parser.add_argument(
-        '--data_main_folder', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise")
+        '--data_main_folder', default="../reannotate")
     parser.add_argument(
         '--process_index', default=0, type=int, help="process index")
     parser.add_argument('--multi_processing', help='do multi-process or not',action='store_true')
@@ -636,7 +642,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--clamp_dis', default=100, type=int, help="outliers threshold")
     parser.add_argument(
-        '--anno_output_folder', default="./anno_output")
+        '--anno_output_folder', default="")
     parser.add_argument(
         '--img_name', default="712")
     parser.add_argument(
