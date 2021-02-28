@@ -951,7 +951,6 @@ def clamp_pcd_by_bbox(mirror_bbox, depth_img_path, f, mirror_border_mask,plane_p
                 sI = N / D
                 I = P0+ sI*u
                 expand_point_on_plane = I
-                print(point_2_regBorder_in_3d(expand_point_on_plane, mirror_recrangle))
                 if point_2_regBorder_in_3d(expand_point_on_plane, mirror_recrangle) <= expand_range:
                     if np.linalg.norm(np.array(expand_point_on_plane)-np.array(ori_point[0])) >= clamp_dis:
                         depth_to_refine[y,x] = I[2]
