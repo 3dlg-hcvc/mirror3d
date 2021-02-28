@@ -202,7 +202,7 @@ class Dataset_visulization(Plane_annotation_tool):
 
             mirror_mask = cv2.imread(mask_path)
             if len(mirror_info) != (np.unique(mirror_mask).shape[0] - 1):
-                self.save_error_raw_name(color_img_path.split(color_img_path.split("/")[-1]))
+                self.save_error_raw_name(color_img_path.split("/")[-1].split(".")[0])
 
             for instance_index in np.unique(np.reshape(mirror_mask,(-1,3)), axis = 0):
                 if sum(instance_index) == 0: # background
@@ -226,7 +226,7 @@ class Dataset_visulization(Plane_annotation_tool):
                     else:
                         self.rotate_pcdMesh_front(pcd, mirror_plane)
                 except:
-                    self.save_error_raw_name(color_img_path.split("/")[-1])
+                    self.save_error_raw_name(color_img_path.split("/")[-1].split(".")[0])
 
         if color_img_path.find("m3d") > 0:
             depth_img_path = rreplace(color_img_path.replace("raw","hole_refined_depth").replace("json","png"),"i","d")
@@ -389,7 +389,7 @@ class Dataset_visulization(Plane_annotation_tool):
                     print("video saved to {}, used time :{}".format(one_video_save_path, time.time() - start_time))
                     start_time = time.time()
                 except:
-                    self.save_error_raw_name(color_img_path.split(color_img_path.split("/")[-1]))
+                    self.save_error_raw_name(color_img_path.split("/")[-1].split(".")[0])
 
         if color_img_path.find("m3d") > 0:
             ply_folder = os.path.join(self.output_folder, "hole_refined_ply")
