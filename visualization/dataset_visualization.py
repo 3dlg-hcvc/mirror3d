@@ -5,9 +5,9 @@ import os
 import matplotlib.pyplot as plt
 from skimage import io
 import sys
-from .algorithm import *
-from .general_utlis import *
-from .plane_pcd_utils import *
+from utils.algorithm import *
+from utils.general_utlis import *
+from utils.plane_pcd_utils import *
 import json
 import shutil
 from annotation.plane_annotation_tool.plane_annotation_tool import *
