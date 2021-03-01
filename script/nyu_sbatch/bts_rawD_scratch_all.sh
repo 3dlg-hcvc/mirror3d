@@ -8,7 +8,7 @@
 source /home/jiaqit/projects/rrg-msavva/jiaqit/setup/anaconda3/bin/activate
 conda activate mirror3d
 export PYTHONPATH="/home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D"
-python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.py \
+python init_depth_generator/bts/pytorch/init_depth_gen_train.py \
 --coco_train dataset/nyu/with_mirror/precise/network_input_json/train_10_normal_all.json \
 --coco_val dataset/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
 --coco_train_root /local-scratch/jiaqit/exp/Mirror3D/dataset/nyu \
