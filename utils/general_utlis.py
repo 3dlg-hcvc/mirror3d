@@ -147,3 +147,4 @@ def save_heatmap_no_border(image, save_path=""):
     plt.savefig(save_path, bbox_inches='tight', pad_inches = 0, dpi=100)
     print("image saved to : {}".format(save_path))
 
+

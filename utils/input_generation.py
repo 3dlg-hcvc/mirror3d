@@ -16,7 +16,7 @@ from annotation.plane_annotation_tool.plane_annotation_tool import Plane_annotat
 
 class Input_Generator(Plane_annotation_tool):
 
-    def __init__(self, mirror_data_main_folder, no_mirror_data_main_folder="", json_output_folder="", split="test", anchor_normal_path="", contain_no_mirror=False, split_info_folder=""):
+    def __init__(self, mirror_data_main_folder, no_mirror_data_main_folder="", dataset_main_folder="", json_output_folder="", split="test", anchor_normal_path="", contain_no_mirror=False, split_info_folder=""):
         """
         Args:
             mirror_data_main_folder : folder that contains "raw" , "instance_mask", "refined_depth" ... folders
@@ -28,6 +28,7 @@ class Input_Generator(Plane_annotation_tool):
         """
         self.split = split
         self.no_mirror_data_main_folder = no_mirror_data_main_folder
+        self.dataset_main_folder = dataset_main_folder
         self.split_info_folder = split_info_folder
         self.mirror_data_main_folder = mirror_data_main_folder
         if not os.path.exists(json_output_folder):
@@ -38,6 +39,7 @@ class Input_Generator(Plane_annotation_tool):
         self.contain_no_mirror = contain_no_mirror
         if self.contain_no_mirror:
             assert os.path.exists(self.no_mirror_data_main_folder), "please input a valid none mirror (original data) main folder"
+        assert os.path.exists(self.dataset_main_folder), "please input a valid dataset main folder"
         assert os.path.exists(self.mirror_data_main_folder), "please input a valid mirror data main folder"
         assert os.path.exists(self.split_info_folder), "please input a split information folder (please remember to down load the split_info.zip from http://aspis.cmpt.sfu.ca/projects/mirrors/data_release/split_info.zip)" 
         if "m3d" in self.mirror_data_main_folder:
@@ -149,11 +151,11 @@ class Input_Generator(Plane_annotation_tool):
             mask_path = one_mirror_color_img_path.replace("raw", "instance_mask")
             img_info_path = one_mirror_color_img_path.replace("raw", "img_info").split(".")[0] + ".json"
             img_info = read_json(img_info_path)
-            one_mirror_color_img_path_abv = os.path.relpath(one_mirror_color_img_path, self.mirror_data_main_folder)
+            one_mirror_color_img_path_abv = os.path.relpath(one_mirror_color_img_path, self.dataset_main_folder)
             if not os.path.exists(mask_path) or not os.path.exists(one_mirror_color_img_path):
                 continue
 
-            raw_img_path_abv = os.path.relpath(one_mirror_color_img_path, self.mirror_data_main_folder)
+            raw_img_path_abv = os.path.relpath(one_mirror_color_img_path, self.dataset_main_folder)
 
             if self.dataset_name == "m3d":
                 mesh_raw_path_abv = rreplace(raw_img_path_abv.replace("raw", "mesh_raw_depth"),"i","d").replace(".jpg", ".png")
@@ -180,7 +182,7 @@ class Input_Generator(Plane_annotation_tool):
             
             # COCO annotation[]
             mask_img = cv2.imread(mask_path)
-            mask_path_abv = os.path.relpath(mask_path, self.mirror_data_main_folder)
+            mask_path_abv = os.path.relpath(mask_path, self.dataset_main_folder)
             for instance_index in np.unique(np.reshape(mask_img,(-1,3)), axis = 0):
                 if sum(instance_index) == 0: # background
                     continue
@@ -213,8 +215,8 @@ class Input_Generator(Plane_annotation_tool):
             annotation_unique_id += 1
 
         # Get COCO annoatation for images don't have mirror
-        for item_index, one_no_mirror_color_img_path in enumerate(tqdm(no_mirror_color_img_list)):
-            raw_img_path_abv = os.path.relpath(one_no_mirror_color_img_path, self.no_mirror_data_main_folder)
+        for one_no_mirror_color_img_path in tqdm(no_mirror_color_img_list):
+            raw_img_path_abv = os.path.relpath(one_no_mirror_color_img_path, self.dataset_main_folder)
 
             if self.dataset_name == "m3d":
                 hole_raw_path_abv = rreplace(raw_img_path_abv.replace("color", "depth"),"i","d").replace(".jpg", ".png")
@@ -241,6 +243,7 @@ class Input_Generator(Plane_annotation_tool):
 
             if image not in images:
                 images.append(image)
+                item_index+= 1
 
         coco_format_output = dict()
         coco_format_output["annotations"] = annotations
@@ -258,23 +261,26 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
-        '--mirror_data_main_folder', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise", type=str, help="dataset main folder") 
+        '--mirror_data_main_folder', default="dataset/nyu/with_mirror/precise", type=str, help="dataset main folder") 
     parser.add_argument(
-        '--no_mirror_data_main_folder', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/no_mirror", type=str, help="dataset main folder") 
+        '--no_mirror_data_main_folder', default="dataset/nyu/no_mirror", type=str, help="dataset main folder") 
     parser.add_argument(
-        '--split_info_folder', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/split_info", type=str, help="split_info.zip unzip folder") 
+        '--dataset_main_folder', default="dataset/nyu", type=str, help="output path in .json will be the relative path to --dataset_main_folder") 
+    parser.add_argument(
+        '--split_info_folder', default="dataset/split_info", type=str, help="split_info.zip unzip folder") 
     parser.add_argument(
         '--json_output_folder', default="", type=str, help="dataset main folder") 
     parser.add_argument(
         '--split', default="all", type=str, help="dataset main folder") 
     parser.add_argument(
-        '--anchor_normal_path', default="/project/3dlg-hcvc/jiaqit/Mirror3D_dataset/mirror_normal/m3d_kmeans_normal_10.npy", type=str, help="anchor normal path") 
+        '--anchor_normal_path', default="dataset/mirror_normal/m3d_kmeans_normal_10.npy", type=str, help="anchor normal path") 
     parser.add_argument('--contain_no_mirror', help='do multi-process or not',action='store_true')
 
 
     args = parser.parse_args()
     generator = Input_Generator(mirror_data_main_folder = args.mirror_data_main_folder, \
                                 no_mirror_data_main_folder = args.no_mirror_data_main_folder, \
+                                dataset_main_folder = args.dataset_main_folder, \
                                 json_output_folder = args.json_output_folder, \
                                 split = args.split, \
                                 anchor_normal_path = args.anchor_normal_path, \
