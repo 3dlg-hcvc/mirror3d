@@ -12,8 +12,8 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_train.py \
 --refined_depth \
 --coco_train dataset/nyu/with_mirror/precise/network_input_json/train_10_normal_all.json \
 --coco_val dataset/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
---coco_train_root /local-scratch/jiaqit/exp/Mirror3D/dataset/nyu \
---coco_val_root /local-scratch/jiaqit/exp/Mirror3D/dataset/nyu \
+--coco_train_root dataset/nyu \
+--coco_val_root dataset/nyu \
 --coco_focal_len 519 \
 --depth_shift 1000 \
 --input_height 480 \
