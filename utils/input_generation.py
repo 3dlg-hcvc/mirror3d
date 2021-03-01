@@ -224,7 +224,7 @@ class Input_Generator(Plane_annotation_tool):
                 mesh_raw_path_abv = ((rreplace(hole_raw_path_abv, "undistorted_depth_images", "mesh_images")).replace("undistorted_depth_images", "matterport_render_depth")).split(".")[0] + "_mesh_depth.png"
                 mesh_refined_path_abv = mesh_raw_path_abv
             else:
-                hole_raw_path_abv = raw_img_path_abv.replace("raw", "hole_raw_depth")
+                hole_raw_path_abv = raw_img_path_abv.replace("color", "depth")
                 hole_refined_path_abv = hole_raw_path_abv
                 mesh_raw_path_abv = hole_raw_path_abv
                 mesh_refined_path_abv = hole_raw_path_abv
