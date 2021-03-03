@@ -144,7 +144,7 @@ class Mirror3d_DatasetMapper:
         # Therefore it's important to use torch.Tensor.
         dataset_dict["image"] = torch.as_tensor(np.ascontiguousarray(image.transpose(2, 0, 1)))
         dataset_dict["depth_image"] = torch.as_tensor(depth_image.astype(np.float32))
-        if noisy_depth_image and self.RGBD_INPUT:
+        if self.RGBD_INPUT:
             noisy_depth_image[noisy_depth_image<0] = 0
             dataset_dict["noisy_depth_image"] = torch.as_tensor(noisy_depth_image.astype(np.float32)) # changed !!!
         # USER: Remove if you don't use pre-computed proposals.

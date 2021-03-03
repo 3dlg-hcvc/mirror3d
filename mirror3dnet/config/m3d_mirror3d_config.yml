@@ -14,7 +14,7 @@ OUTPUT_DIR : "/project/3dlg-hcvc/jiaqit/checkpoint/mirror3d_net_output"
 ############## network configure ##############
 
 MODEL:
-  WEIGHTS : "/project/3dlg-hcvc/jiaqit/checkpoint/important_checkpoint/train_m3d_all_640_480_ransac_10_m3d_normal_all_640_480_ransac_2020-10-25-19-54-25/model_0072999.pth" # "./weight/R-50.pkl"
+  WEIGHTS : "/project/3dlg-hcvc/jiaqit/checkpoint/important_checkpoint/train_m3d_all_640_480_ransac_10_m3d_normal_all_640_480_ransac_2020-10-25-19-54-25/model_0072999.pth" # "checkpoint/R-50.pkl"
   DEVICE : "cuda:0" 
   ROI_HEADS:
     BATCH_SIZE_PER_IMAGE : (128) # set to largest

@@ -257,3 +257,4 @@ Mirror3DNet/main
 Mirror3DNet/config/mask_rcnn_R_50_FPN_1x.yaml
 waste
 output
+checkpoint
