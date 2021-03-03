@@ -21,7 +21,7 @@ from mirror3d_resnet import resnet50
 from PIL import Image
 import random
 from tensorboardX import SummaryWriter
-from classifier_Dataset import *
+from annotation.classifier.classifier_Dataset import *
 import logging
 import datetime as d
 
@@ -43,33 +43,33 @@ parser.add_argument('-b', '--batch_size', default=4, type=int,
 parser.add_argument('--lr', '--learning-rate', default=0.001, type=float,
                     metavar='LR', help='initial learning rate', dest='lr')
 # TODO retrain
-parser.add_argument('--resume', default='/project/3dlg-hcvc/jiaqit/output/classifier/checkpoint/epoch_20_checkpoint.pth.tar', type=str, metavar='PATH', # TODO checkpoint/checkpoint.pth.tar
+parser.add_argument('--resume', default='/local-scratch/jiaqit/exp/annotation/classifier/0302/resume.pth.tar', type=str, metavar='PATH', # TODO checkpoint/checkpoint.pth.tar
                     help='path to latest checkpoint (default: none)')
 # TODO 
-parser.add_argument('-e', '--evaluate', action='store_true', type=bool) 
+parser.add_argument('-e', '--evaluate', action='store_true') 
 # TODO output checkpoint & log file save directory
-parser.add_argument('--log_directory',    type=str,   help='training output folder', default='/project/3dlg-hcvc/jiaqit/output/classifier')
+parser.add_argument('--log_directory',    type=str,   help='training output folder', default='/local-scratch/jiaqit/exp/annotation/classifier/0302')
 # TODO retrain
 parser.add_argument('--checkpoint_save_freq',      type=int,   help="classifier's save frequncy (measure in EPOCH), usually set as 10", default=10)
 # TODO if coda boom
-parser.add_argument('--input_height',              type=int,   help='input height', default=512) # 480
+parser.add_argument('--input_height',              type=int,   help='input height', default=480) # 480
 # TODO  if coda boom
 parser.add_argument('--input_width',               type=int,   help='input width',  default=640) # 640
 # TODO 
 parser.add_argument('--world-size', default=-1, type=int,
                     help='number of nodes for distributed training')
 parser.add_argument('--train_pos_list',  # TODO retrain
-        default="/local-scratch/share_data/scannet_extracted/info/classifier/positive/all.txt",
+        default="/local-scratch/wla172/scannet/extension_annot/labels/train_positive.txt",
         type=str)
 parser.add_argument('--train_neg_list', # TODO retrain
-        default="/local-scratch/share_data/scannet_extracted/info/classifier/negative/training.txt",
+        default="/local-scratch/wla172/scannet/extension_annot/labels/train_negative.txt",
         type=str)
 
 parser.add_argument('--val_pos_list',  # TODO
-        default="/local-scratch/share_data/scannet_extracted/info/classifier/positive/all.txt",
+        default="/local-scratch/wla172/scannet/extension_annot/labels/val_positive.txt",
         type=str)
 parser.add_argument('--val_neg_list',  # TODO
-        default="/local-scratch/share_data/scannet_extracted/info/classifier/negative/training.txt",
+        default="/local-scratch/wla172/scannet/extension_annot/labels/val_negative.txt",
         type=str)
 parser.add_argument('-a', '--arch', metavar='ARCH', default='resnet50',
                     choices=model_names,

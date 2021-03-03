@@ -2,19 +2,19 @@ _BASE_: "Mirror3d-R_50_FPN_1x.yaml"
 EVAL : True # TODO ---- eval ----
 
 
-TRAIN_COCO_JSON : ["/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json"] # TODO
-TRAIN_IMG_ROOT : ["/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise"] # TODO
-TRAIN_NAME : ["nyu_456_608_train"]
-VAL_COCO_JSON : ["/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json"] # TODO
-VAL_IMG_ROOT : ["/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise"] # TODO
-VAL_NAME : ["nyu_456_608_test"]
-OUTPUT_DIR : "/project/3dlg-hcvc/jiaqit/checkpoint/mirror3d_net_output"
+TRAIN_COCO_JSON : ["dataset/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json"] # TODO
+TRAIN_IMG_ROOT : ["dataset/nyu"] # TODO
+TRAIN_NAME : ["train"]
+VAL_COCO_JSON : ["dataset/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json"] # TODO
+VAL_IMG_ROOT : ["dataset/nyu"] # TODO
+VAL_NAME : ["test"]
+OUTPUT_DIR : "output"
 
 
 ############## network configure ##############
 
 MODEL:
-  WEIGHTS : "/project/3dlg-hcvc/jiaqit/checkpoint/important_checkpoint/train_m3d_all_640_480_ransac_10_m3d_normal_all_640_480_ransac_2020-10-25-19-54-25/model_0072999.pth" # "checkpoint/R-50.pkl"
+  WEIGHTS : "checkpoint/R-50.pkl" # "checkpoint/R-50.pkl"
   DEVICE : "cuda:0" 
   ROI_HEADS:
     BATCH_SIZE_PER_IMAGE : (128) # set to largest
@@ -40,10 +40,10 @@ DATALOADER:
   FILTER_EMPTY_ANNOTATIONS : True
   
 INPUT:
-  MIN_SIZE_TRAIN : (456,)
-  MAX_SIZE_TRAIN : 608
-  MIN_SIZE_TEST : (456)
-  MAX_SIZE_TEST : 608
+  MIN_SIZE_TRAIN : (480,)
+  MAX_SIZE_TRAIN : 640
+  MIN_SIZE_TEST : (480)
+  MAX_SIZE_TEST : 640
 
 ############## planeRCNN configure ##############
 DEPTH_EST : True  # TODO ori & new(optional)
@@ -52,7 +52,7 @@ ANCHOR_CLS : True  #! TODO ori & new eval
 OBJECT_SEG : True # TODO ori & new
 OBJECT_CLS : True # TODO new 
 OBJECT_BBOX_REG : True # TODO ori & new
-RGBD_INPUT : False # TODO ori & new(optional)
+RGBD_INPUT : True # TODO ori & new(optional)
 
 # ---- DEPTH_EST -----
 FOCAL_LENGTH : 519 # TODO
@@ -67,7 +67,7 @@ UNIT_ANCHOR_NORMAL : True
 
 # ---- ANCHOR_CLS -----
 # during evaluation : evaluate img_size & f should be the same as MODEL.WEIGHTS's img_size & f
-ANCHOR_NORMAL_NYP : "/local-scratch/share_data/mirror3D/m3d/m3d_all_normal/m3d_kmeans_normal_10.npy"  #! TODO 
+ANCHOR_NORMAL_NYP : "dataset/mirror_normal/m3d_kmeans_normal_10.npy"  #! TODO 
 
 #! ############# eval configure ##############
 EVAL_ANCHOR_AP : True # TODO
@@ -77,8 +77,8 @@ EVAL_NORMAL : True  # TODO angle diff & normal l2 loss
 EVAL_BRANCH_ORI_DEPTH : True # TODO mirror3d_eval matrics
 EVAL_BRANCH_REF_DEPTH : True # TODO mirror3d_eval matrics
 EVAL_INPUT_REF_DEPTH : False # TODO REF_DEPTH_TO_REFINE
-EVAL_HEIGHT : 456
-EVAL_WIDTH : 608
+EVAL_HEIGHT : 480
+EVAL_WIDTH : 640
 
 # ---- eval output ----
 EVAL_SAVE_MASKED_IMG : False # TODO 
@@ -87,7 +87,7 @@ EVAL_SAVE_DEPTH : True # TODO
 MASK_ON_OTHER_SIZE : True
 
 # --------- refine depth -----------
-REF_DEPTH_TO_REFINE : "/project/3dlg-hcvc/jiaqit/cvpr/R1_rerun/saic_meshraw_color_mask_gtD_predD.txt" # TODO
+REF_DEPTH_TO_REFINE : "" # TODO
 REF_MODE : "DE_border" # TODO # "none / rawD_mirror / rawD_border / DE_mirror / DE_border " 
 REF_BORDER_WIDTH : 50 # TODO
 

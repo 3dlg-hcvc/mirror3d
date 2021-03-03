@@ -44,25 +44,24 @@ class Mirror3d_ROIHeads(ROIHeads):
 
 
 
-    def _sample_proposals_chris(
-        self, matched_idxs: torch.Tensor, matched_labels: torch.Tensor, gt_classes: torch.Tensor, anchor_normal_classes : torch.Tensor, anchor_normal_residuals : torch.Tensor, 
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    def _sample_proposals_chris( self, matched_idxs: torch.Tensor, matched_labels: torch.Tensor, gt_classes: torch.Tensor, anchor_normal_classes : torch.Tensor, anchor_normal_residuals : torch.Tensor, ) -> Tuple[torch.Tensor, torch.Tensor]:
+        
         """
-        Based on the matching between N proposals and M groundtruth,
-        sample the proposals and set their classification labels.
+            Based on the matching between N proposals and M groundtruth,
+            sample the proposals and set their classification labels.
 
-        Args:
-            matched_idxs (Tensor): a vector of length N, each is the best-matched
-                gt index in [0, M) for each proposal.
-            matched_labels (Tensor): a vector of length N, the matcher's label
-                (one of cfg.MODEL.ROI_HEADS.IOU_LABELS) for each proposal.
-            gt_classes (Tensor): a vector of length M.
+            Args:
+                matched_idxs (Tensor): a vector of length N, each is the best-matched
+                    gt index in [0, M) for each proposal.
+                matched_labels (Tensor): a vector of length N, the matcher's label
+                    (one of cfg.MODEL.ROI_HEADS.IOU_LABELS) for each proposal.
+                gt_classes (Tensor): a vector of length M.
 
-        Returns:
-            Tensor: a vector of indices of sampled proposals. Each is in [0, N).
-            Tensor: a vector of the same length, the classification label for
-                each sampled proposal. Each sample is labeled as either a category in
-                [0, num_classes) or the background (num_classes).
+            Returns:
+                Tensor: a vector of indices of sampled proposals. Each is in [0, N).
+                Tensor: a vector of the same length, the classification label for
+                    each sampled proposal. Each sample is labeled as either a category in
+                    [0, num_classes) or the background (num_classes).
         """
         has_gt = gt_classes.numel() > 0 # chris : gt_classes.shape torch.Size([<number_of_instance_in_the_image>])
         # Get the corresponding GT for each proposal
