@@ -1,6 +1,19 @@
-# bts test on refined depth
+# bts test on official checkpoint
 python init_depth_generator/bts/pytorch/init_depth_gen_infer.py \
---resume_checkpoint_path /local-scratch/jiaqit/exp/Mirror3D/checkpoint/bts_nyu_v2_pytorch_resnet50/model \
+--resume_checkpoint_path checkpoint/nyu/bts_official_nyu_raw \
+--coco_train dataset/nyu/with_mirror/precise/network_input_json/train_10_normal_all.json \
+--coco_val dataset/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+--coco_train_root dataset/nyu \
+--coco_val_root dataset/nyu \
+--coco_focal_len 519 \
+--depth_shift 1000 \
+--input_height 480 \
+--input_width 640 \
+--output_save_folder output
+
+# bts test on rawD checkpoint
+python init_depth_generator/bts/pytorch/init_depth_gen_infer.py \
+--resume_checkpoint_path checkpoint/nyu/bts_rawD \
 --coco_train dataset/nyu/with_mirror/precise/network_input_json/train_10_normal_all.json \
 --coco_val dataset/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
 --coco_train_root dataset/nyu \
@@ -12,9 +25,10 @@ python init_depth_generator/bts/pytorch/init_depth_gen_infer.py \
 --output_save_folder output
 
 
-# vnl test on refined depth
-python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.py \
---resume_checkpoint_path /local-scratch/jiaqit/exp/Mirror3D/checkpoint/vnl_official_nyu_raw.pth \
+# bts test on refD checkpoint
+python init_depth_generator/bts/pytorch/init_depth_gen_infer.py \
+--refined_depth \
+--resume_checkpoint_path checkpoint/nyu/bts_refD \
 --coco_train dataset/nyu/with_mirror/precise/network_input_json/train_10_normal_all.json \
 --coco_val dataset/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
 --coco_train_root dataset/nyu \
@@ -26,9 +40,9 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.
 --output_save_folder output
 
 
-
-# vnl test on sensor depth
+# vnl test on official checkpoint
 python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.py \
+--resume_checkpoint_path checkpoint/nyu/vnl_official_nyu_raw.pth \
 --coco_train dataset/nyu/with_mirror/precise/network_input_json/train_10_normal_all.json \
 --coco_val dataset/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
 --coco_train_root dataset/nyu \
@@ -37,15 +51,54 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.
 --depth_shift 1000 \
 --input_height 480 \
 --input_width 640 \
---batch_size 8 \
---checkpoint_save_freq 1500 \
---num_epochs 100 \
---learning_rate 1e-4 \
---log_directory output
+--output_save_folder output
 
-# saic test on refined depth
+
+# vnl test on rawD checkpoint
+python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.py \
+--resume_checkpoint_path checkpoint/nyu/vnl_rawD.pth \
+--coco_train dataset/nyu/with_mirror/precise/network_input_json/train_10_normal_all.json \
+--coco_val dataset/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+--coco_train_root dataset/nyu \
+--coco_val_root dataset/nyu \
+--coco_focal_len 519 \
+--depth_shift 1000 \
+--input_height 480 \
+--input_width 640 \
+--output_save_folder output
+
+# vnl test on refD checkpoint
+python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.py \
+--refined_depth \
+--resume_checkpoint_path checkpoint/nyu/vnl_refD.pth \
+--coco_train dataset/nyu/with_mirror/precise/network_input_json/train_10_normal_all.json \
+--coco_val dataset/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+--coco_train_root dataset/nyu \
+--coco_val_root dataset/nyu \
+--coco_focal_len 519 \
+--depth_shift 1000 \
+--input_height 480 \
+--input_width 640 \
+--output_save_folder output
+
+
+# saic test on rawD checkpoint
+python init_depth_generator/saic_depth_completion/init_depth_gen_infer.py \
+--resume_checkpoint_path checkpoint/nyu/saic_rawD.pth \
+--coco_train dataset/nyu/with_mirror/precise/network_input_json/train_10_normal_all.json \
+--coco_val dataset/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+--coco_train_root dataset/nyu \
+--coco_val_root dataset/nyu \
+--coco_focal_len 519 \
+--depth_shift 1000 \
+--input_height 480 \
+--input_width 640 \
+--output_save_folder output
+
+# saic test on refD checkpoint
 python init_depth_generator/saic_depth_completion/init_depth_gen_infer.py \
 --refined_depth \
+--resume_checkpoint_path checkpoint/nyu/saic_refD.pth \
 --coco_train dataset/nyu/with_mirror/precise/network_input_json/train_10_normal_all.json \
 --coco_val dataset/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
 --coco_train_root dataset/nyu \
@@ -54,27 +107,11 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_infer.py \
 --depth_shift 1000 \
 --input_height 480 \
 --input_width 640 \
---batch_size 8 \
---checkpoint_save_freq 1500 \
---num_epochs 100 \
---learning_rate 1e-4 \
---log_directory output
+--output_save_folder output
 
 
-# saic test on sensor depth
-python init_depth_generator/saic_depth_completion/init_depth_gen_infer.py \
---coco_train dataset/nyu/with_mirror/precise/network_input_json/train_10_normal_all.json \
---coco_val dataset/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
---coco_train_root dataset/nyu \
---coco_val_root dataset/nyu \
---coco_focal_len 519 \
---depth_shift 1000 \
---input_height 480 \
---input_width 640 \
---batch_size 8 \
---checkpoint_save_freq 1500 \
---num_epochs 100 \
---learning_rate 1e-4 \
---log_directory output
+
+
+
 
 
