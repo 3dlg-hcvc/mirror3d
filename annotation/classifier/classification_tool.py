@@ -21,10 +21,12 @@ import tkinter as tk
 import os
 from shutil import copyfile, move
 from PIL import ImageTk, Image
+from utils.general_utlis import read_txt, save_txt
 
 # Define global variables, which are to be changed by user:
 
 # added in version 2
+global exception_paths, input_folder, paths, train_val_info_folder
 
 # the folder in which the pictures that are to be sorted are stored
 # don't forget to end it with the sign '/' !
@@ -64,7 +66,7 @@ class ImageGui:
     Useful, for sorting views into sub views or for removing outliers from the data.
     """
 
-    def __init__(self, master, labels, paths):
+    def __init__(self, master, labels, paths, is_default):
         """
         Initialise GUI
         :param master: The parent window
@@ -85,6 +87,8 @@ class ImageGui:
         # Initialise grid
         frame.grid()
 
+        # Initialize default setting
+        self.is_default = is_default
         # Start at the first file name
         self.index = 0
         self.paths = paths
@@ -271,7 +275,8 @@ class ImageGui:
             self._copy_image(label, self.index)
         if copy_or_move == 'move':
             self._move_image(label, self.index)
-            
+        if self.is_default:
+            update_annotation_info()    
         self.show_next_image()
 
     def vote_key(self, event):
@@ -367,6 +372,39 @@ class ImageGui:
 
         df.loc[ind, 'sorted_in_folder'] = output_path
 
+def get_convert_path(path):
+    scene_id, scene_sub_id, img_id = path.split("_")
+    convert_path = "{}_{}/color/{}".format(scene_id, scene_sub_id, img_id)
+    return convert_path
+
+def update_annotation_info():
+    dst_folder = "output"
+    mirror_paths = os.listdir(os.path.join(dst_folder, "mirror"))
+    non_mirror_paths = os.listdir(os.path.join(dst_folder, "negative"))
+
+    exclusion_paths = set(exception_paths)
+    train_pos = set()
+    train_neg = set()
+    for path in mirror_paths:
+        convert_path = get_convert_path(path)
+        exclusion_paths.add(convert_path)
+        train_pos.add(os.path.join(input_folder, convert_path))
+    for path in non_mirror_paths:
+        convert_path = get_convert_path(path)
+        exclusion_paths.add(convert_path)
+        train_neg.add(os.path.join(input_folder, convert_path))
+    save_txt(os.path.join(dst_folder, "exclusion.txt"), exclusion_paths)
+    
+    annotated_paths = paths
+    verify_list = [path for path in paths if path not in train_pos.union(train_neg)]
+    save_txt(os.path.join(dst_folder,"verify.txt"), verify_list)
+
+    old_train_pos = set(read_txt(os.path.join(train_val_info_folder, "train_positive.txt")))
+    old_train_neg = set(read_txt(os.path.join(train_val_info_folder, "train_negative.txt")))
+    train_pos |= old_train_pos
+    train_neg |= old_train_neg
+    save_txt(os.path.join(dst_folder,"train_positive.txt"), train_pos)
+    save_txt(os.path.join(dst_folder,"train_negative.txt"), train_neg)
 
 def make_folder(directory):
     """
@@ -394,6 +432,8 @@ if __name__ == "__main__":
     parser.add_argument('-l', '--labels', nargs='+', help='Possible labels in the images', required=True)
     parser.add_argument('-e', '--exclusion', help='Exclusion file', required=False)
     parser.add_argument('-o', '--output_file_path', help='Output file name', required=True)
+    parser.add_argument('-i', '--train_val_info_folder', help='Train val info folder', required=True)
+    parser.add_argument('--is_default', type=bool, default=True, help='mirror negative labels')
     args = parser.parse_args()
 
     # grab input arguments from args structure
@@ -401,6 +441,8 @@ if __name__ == "__main__":
     labels = args.labels
     json_file_path = args.json_file_path
     output_file_names_path = args.output_file_path
+    train_val_info_folder = args.train_val_info_folder
+    is_default = args.is_default
 
     # Exception files
     exception_paths = []
@@ -421,11 +463,10 @@ if __name__ == "__main__":
 
     new_file_names = []
 
-    for name in file_names:
+    for name, score in file_names:
         if name not in exception_paths:
             new_file_names.append(name)
-
-    paths = [input_folder + '/' + file_name[0] for file_name in new_file_names]
+    paths = [input_folder + '/' + file_name for file_name in new_file_names]
 
     if copy_or_move == 'copy':
         try:
@@ -449,5 +490,5 @@ if __name__ == "__main__":
     # Start the GUI
     root = tk.Tk()
     root.protocol('WM_DELETE_WINDOW', close_window)
-    app = ImageGui(root, labels, paths)
+    app = ImageGui(root, labels, paths, is_default)
     root.mainloop()
