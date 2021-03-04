@@ -136,7 +136,6 @@ class Mirror3dCOCOeval(COCOeval):
         self.anchor_evalImgs = defaultdict(list)  
         self.eval     = {}                  # accumulated evaluation results
 
-        #### ----- chris : load anchor gt ----- ####
         if self.cfg.ANCHOR_CLS:
             if p.useCats:
                 anchor_gts=self.cocoGt.loadAnns(self.cocoGt.get_achorAnnIds(imgIds=p.imgIds, catIds=p.anchor_catIds))
@@ -163,11 +162,7 @@ class Mirror3dCOCOeval(COCOeval):
             for dt in anchor_dts:
                 self._anchor_dts[dt['image_id'], dt['anchor_normal_class']].append(dt)
 
-    
 
-        
-
-    # chris : get normal_anchor specific score
     def evaluate_anchor_ap(self):
 
         
@@ -214,9 +209,6 @@ class Mirror3dCOCOeval(COCOeval):
         print('DONE (t={:0.2f}s).'.format(toc-tic))
 
     def evaluate_normal(self, cfg):
-
-        # TODO img_save_folder = ？？？
-
         import random
         import matplotlib.pyplot as plt
         import os
@@ -379,16 +371,9 @@ class Mirror3dCOCOeval(COCOeval):
                                     iou_angle_list[iou].append([angle(mirror_pred_anchor, mirror_GT_normal),\
                                                             angle(mirror_pred_normal, mirror_GT_normal), \
                                                             angle(mirror_pred_res, mirror_GT_res)])
-                                    # print(iou_angle_list[iou])
                                     iou_predNum_noneNum[iou][0].add(image_id)
-                                
-                                # if iou_idx == 0 and cfg.EVAL_RES_BBOX:
-                                #     bbox_vis_save_folder = os.path.join(img_save_folder, "bbox_vis")
-                                #     os.makedirs(bbox_vis_save_folder, exist_ok=True)
-                                #     draw_bbox(mirror_pred_bboxes, mirror_GT_bboxes, mirror_image_path, bbox_vis_save_folder, improve, distance)
+    
                                 else:
-                                    # iou_CSlist[iou].append([0,0,0])
-                                    # iou_angle_list[iou].append([180,180,180])
                                     zero_count += 1
                                     iou_predNum_noneNum[iou][1].add(image_id)
             
@@ -407,12 +392,11 @@ class Mirror3dCOCOeval(COCOeval):
             
             #################################### get cos similarity ####################################
 
-    # chris : compute IOU based on self._anchor_gts & self._anchor_dts
     def anchor_specific_computeIoU(self, imgId, catId):
         p = self.params
         if p.useCats:
             gt = self._anchor_gts[imgId,catId]
-            dt = self._anchor_dts[imgId,catId] # self._anchor_dts[dt['image_id'], dt['anchor_normal_class']].append(dt)
+            dt = self._anchor_dts[imgId,catId] 
         else:
             gt = [_ for cId in p.catIds for _ in self._anchor_gts[imgId,cId]]
             dt = [_ for cId in p.catIds for _ in self._anchor_dts[imgId,cId]]
@@ -724,8 +708,8 @@ class Mirror3dCOCOeval(COCOeval):
                 'category_id':  catId,
                 'aRng':         aRng,
                 'maxDet':       maxDet,
-                'dtIds':        [d['id'] for d in dt], # chris : stores all the predict_instance_id if the predict_instance category the same as catID;
-                'gtIds':        [g['id'] for g in gt], # chris : stores all the GT_instance_id if the GT_instance category the same as catID; cloud be [] if there is no gt_instance in the image of class catID
+                'dtIds':        [d['id'] for d in dt], #  stores all the predict_instance_id if the predict_instance category the same as catID;
+                'gtIds':        [g['id'] for g in gt], #  stores all the GT_instance_id if the GT_instance category the same as catID; cloud be [] if there is no gt_instance in the image of class catID
                 'dtMatches':    dtm, # if 'gtIds' = [] this must be ([[0],[0]...])
                 'gtMatches':    gtm, # if 'gtIds' = [] this must be blank
                 'dtScores':     [d['anchor_score'] for d in dt],
@@ -767,7 +751,6 @@ class Mirror3dCOCOeval(COCOeval):
                 mean_s = -1
             else:
                 mean_s = np.mean(s[s>-1])
-            # print(iStr.format(titleStr, typeStr, iouStr, areaRng, maxDets, mean_s))
             return mean_s
         title = tag + "_AP"
         print("| {:45} | IOU 0.5:0.95 |  {:5f} |".format( title, _summarize(1)))

@@ -288,12 +288,12 @@ class Mirror3DNet_Eval:
                 continue
 
             img = cv2.resize(cv2.imread(img_path) , (self.cfg.EVAL_WIDTH, self.cfg.EVAL_HEIGHT), 0, 0, cv2.INTER_NEAREST)
-            v = Visualizer(img[:, :, ::-1], # chris : init result visulizer
+            v = Visualizer(img[:, :, ::-1], #  init result visulizer
                 metadata=MetadataCatalog.get("s3d_mirror_val"), 
                 scale=0.5, 
                 instance_mode=ColorMode.IMAGE_BW   # remove the colors of unsegmented pixels
                 )
-            v, colors = v.draw_instance_predictions(instances.to("cpu")) # chris : use result visualizer to show the result
+            v, colors = v.draw_instance_predictions(instances.to("cpu")) #  use result visualizer to show the result
             
             output_img = v.get_image()[:, :, ::-1]
             output_img, predict_correct = draw_gt_bbox(one_input[0]["annotations"] ,output_img,instances.pred_anchor_classes)

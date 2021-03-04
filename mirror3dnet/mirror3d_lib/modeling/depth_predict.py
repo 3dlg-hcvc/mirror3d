@@ -101,7 +101,7 @@ class Depth(nn.Module):
         x = self.deconv3(torch.cat([self.conv3(feature_maps["p4"]), x], dim=1))
         x = self.deconv4(torch.cat([self.conv4(feature_maps["p3"]), x], dim=1))
         x = self.deconv5(torch.cat([self.conv5(feature_maps["p2"]), x], dim=1))
-        x = self.depth_pred(x) # chris : torch.Size([1, 1, 240, 320])
+        x = self.depth_pred(x) #  torch.Size([1, 1, 240, 320])
 
         x = torch.nn.functional.interpolate(x, size=gt_depths[0].shape, mode='bilinear')
 

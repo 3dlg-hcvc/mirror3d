@@ -149,7 +149,7 @@ class Mirror3d_DatasetMapper:
             dataset_dict["noisy_depth_image"] = torch.as_tensor(noisy_depth_image.astype(np.float32)) # changed !!!
         # USER: Remove if you don't use pre-computed proposals.
         # Most users would not need this feature.
-        if self.load_proposals: # chris ： self.load_proposals = False
+        if self.load_proposals: 
             utils.transform_proposals(
                 dataset_dict,
                 image_shape,
@@ -160,7 +160,7 @@ class Mirror3d_DatasetMapper:
 
         if not self.is_train:
             # USER: Modify this if you want to keep them for some reason.
-            # dataset_dict.pop("annotations", None) # chris changed 
+            # dataset_dict.pop("annotations", None) 
             dataset_dict.pop("sem_seg_file_name", None)
             return dataset_dict
 

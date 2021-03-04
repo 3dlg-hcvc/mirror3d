@@ -106,7 +106,7 @@ def mirror3d_inference_on_dataset(model, data_loader, evaluator):
             if torch.cuda.is_available():
                 torch.cuda.synchronize()
             total_compute_time += time.perf_counter() - start_compute_time
-            evaluator.process(inputs, outputs) # TODO check!
+            evaluator.process(inputs, outputs)
 
             iters_after_start = idx + 1 - num_warmup * int(idx >= num_warmup)
             seconds_per_img = total_compute_time / iters_after_start
@@ -138,7 +138,7 @@ def mirror3d_inference_on_dataset(model, data_loader, evaluator):
     )
 
     # evaluate models output result
-    _ = evaluator.evaluate()  # TODO check!
+    _ = evaluator.evaluate() 
 
     return output_list 
 

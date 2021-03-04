@@ -143,7 +143,6 @@ class Mirror3D_AP_Evaluator(DatasetEvaluator):
             with PathManager.open(file_path, "wb") as f:
                 torch.save(predictions, f)
 
-        # TODO check how the evaluation process preceed here? 
         self._results = OrderedDict()
         if "proposals" in predictions[0]:
             self._eval_box_proposals(predictions)
@@ -195,12 +194,6 @@ class Mirror3D_AP_Evaluator(DatasetEvaluator):
                 if len(coco_results) > 0
                 else None  # cocoapi does not handle empty results very well
             )
-
-            # TODO how can we append the output in res ?
-            # res = self._derive_coco_results(
-            #     coco_eval, task, class_names=self._metadata.get("thing_classes")
-            # )
-            # self._results[task] = res
 
     def _eval_box_proposals(self, predictions):
         """
@@ -420,7 +413,6 @@ def _evaluate_box_proposals(dataset_predictions, coco_api, thresholds=None, area
         predictions = prediction_dict["proposals"]
 
         # sort predictions in descending order
-        # TODO maybe remove this and make it explicit in the documentation
         inds = predictions.objectness_logits.sort(descending=True)[1]
         predictions = predictions[inds]
 
@@ -509,7 +501,7 @@ def _evaluate_predictions_on_coco(coco_gt, coco_results, iou_type, kpt_oks_sigma
         for c in coco_results:
             c.pop("bbox", None)
 
-    coco_dt = coco_gt.loadRes(coco_results) # TODO add here
+    coco_dt = coco_gt.loadRes(coco_results)
     coco_eval = Mirror3dCOCOeval(coco_gt, coco_dt, iou_type, cfg)
     # Use the COCO default keypoint OKS sigmas unless overrides are specified
     if kpt_oks_sigmas:

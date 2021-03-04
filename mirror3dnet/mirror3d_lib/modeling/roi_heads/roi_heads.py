@@ -55,9 +55,9 @@ class Mirror3d_StandardROIHeads(StandardROIHeads):
         See :class:`ROIHeads.forward`.
         """
         del images
-        self.anchor_normal_class_num = anchor_normal_class_num # chris :  changed
+        self.anchor_normal_class_num = anchor_normal_class_num #   changed
         if self.training:
-            assert targets #! chris : get 128 proposals # TODO add gt_anchor_normal_class gt_anchor_normal_residual to Instance in Proposal
+            assert targets # add gt_anchor_normal_class gt_anchor_normal_residual to Instance in Proposal
             proposals = self.label_and_sample_proposals(proposals, targets) # proposals[0]._fields["gt_classes"] : [0, num_classes) or the background (num_classes).
         del targets 
 
@@ -76,7 +76,6 @@ class Mirror3d_StandardROIHeads(StandardROIHeads):
             # applied to the top scoring box detections.
 
             pred_instances = self.forward_with_given_boxes(features, pred_instances) 
-            # print("len(pred_instances[0]) : ", len(pred_instances[0]))
             return pred_instances
 
     @classmethod
@@ -170,7 +169,7 @@ class Mirror3d_StandardROIHeads(StandardROIHeads):
                     each sampled proposal. Each sample is labeled as either a category in
                     [0, num_classes) or the background (num_classes).
         """
-        has_gt = gt_classes.numel() > 0 # chris : gt_classes.shape torch.Size([<number_of_instance_in_the_image>])
+        has_gt = gt_classes.numel() > 0 #  gt_classes.shape torch.Size([<number_of_instance_in_the_image>])
         # Get the corresponding GT for each proposal
         if has_gt:
             gt_classes = gt_classes[matched_idxs] # gt_classes.shape = torch.Size([len(matched_idxs)]); get the gt_class of intance that match the corresponding proposal
@@ -178,7 +177,7 @@ class Mirror3d_StandardROIHeads(StandardROIHeads):
             gt_classes[matched_labels == 0] = self.num_classes # matched_labels == 0 means the IOU is between the [lower_bound, upper_bound]
             # Label ignore proposals (-1 label)
             gt_classes[matched_labels == -1] = -1
-            # chris : get gt_anchor_normal_classes
+            #  get gt_anchor_normal_classes
             anchor_normal_classes = anchor_normal_classes[matched_idxs]
             anchor_normal_classes[matched_labels == 0] = self.anchor_normal_class_num
             anchor_normal_classes[matched_labels == -1] = -1
@@ -221,7 +220,7 @@ class Mirror3d_StandardROIHeads(StandardROIHeads):
                 each sampled proposal. Each sample is labeled as either a category in
                 [0, num_classes) or the background (num_classes).
         """
-        has_gt = gt_classes.numel() > 0 # chris : gt_classes.shape torch.Size([<number_of_instance_in_the_image>])
+        has_gt = gt_classes.numel() > 0 #  gt_classes.shape torch.Size([<number_of_instance_in_the_image>])
         # Get the corresponding GT for each proposal
         if has_gt:
             gt_classes = gt_classes[matched_idxs] # gt_classes.shape = torch.Size([len(matched_idxs)]); get the gt_class of intance that match the corresponding proposal
@@ -278,7 +277,7 @@ class Mirror3d_StandardROIHeads(StandardROIHeads):
         # examples from the start of training. For RPN, this augmentation improves
         # convergence and empirically improves box AP on COCO by about 0.5
         # points (under one tested configuration).
-        if self.proposal_append_gt: # TODO_chris : add gt anchor gt anchor reisidual here
+        if self.proposal_append_gt: # TODO_ add gt anchor gt anchor reisidual here
             proposals = add_ground_truth_to_proposals(gt_boxes, proposals)
 
         proposals_with_gt = []
@@ -292,11 +291,11 @@ class Mirror3d_StandardROIHeads(StandardROIHeads):
             )
             matched_idxs, matched_labels = self.proposal_matcher(match_quality_matrix) 
             # sampled_idxs, gt_classes = self._sample_proposals( # gt_classes : [0, num_classes) or the background (num_classes).
-            #     matched_idxs, matched_labels, targets_per_image.gt_classes # chris : get 128 outof ~1000 sample
+            #     matched_idxs, matched_labels, targets_per_image.gt_classes #  get 128 outof ~1000 sample
             # )
             if "anchor_normal_classes" in targets_per_image._fields and "anchor_normal_residuals" in targets_per_image._fields:
                 sampled_idxs, gt_classes, gt_anchor_normal_classes, gt_anchor_normal_residuals = self._sample_proposals_chris( # gt_classes : [0, num_classes) or the background (num_classes).
-                    matched_idxs, matched_labels, targets_per_image.gt_classes, targets_per_image.anchor_normal_classes, targets_per_image.anchor_normal_residuals # chris : get 128 outof ~1000 sample
+                    matched_idxs, matched_labels, targets_per_image.gt_classes, targets_per_image.anchor_normal_classes, targets_per_image.anchor_normal_residuals #  get 128 outof ~1000 sample
                 )
             else:
                 sampled_idxs, gt_classes = self._sample_proposals(matched_idxs, matched_labels, targets_per_image.gt_classes)
@@ -341,6 +340,5 @@ class Mirror3d_StandardROIHeads(StandardROIHeads):
         storage = get_event_storage()
         storage.put_scalar("roi_head/num_fg_samples", np.mean(num_fg_samples))
         storage.put_scalar("roi_head/num_bg_samples", np.mean(num_bg_samples))
-        # print("fg & bg num",num_fg_samples, num_bg_samples)
         return proposals_with_gt # proposals_with_gt[0]._fields["gt_classes"] : [0, num_classes) or the background (num_classes).
 

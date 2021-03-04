@@ -99,10 +99,10 @@ class mirror3d_COCO(COCO):
         else:
             if not len(imgIds) == 0:
                 lists = [self.imgToAnns[imgId] for imgId in imgIds if imgId in self.imgToAnns]
-                anns = list(itertools.chain.from_iterable(lists)) # chris : get every instance in lists to anns, 
+                anns = list(itertools.chain.from_iterable(lists)) #  get every instance in lists to anns, 
             else:
                 anns = self.dataset['annotations']
-            anns = anns if len(catIds)  == 0 else [ann for ann in anns if ann['category_id'] in catIds] # TODO
+            anns = anns if len(catIds)  == 0 else [ann for ann in anns if ann['category_id'] in catIds]
             anns = anns if len(areaRng) == 0 else [ann for ann in anns if ann['area'] > areaRng[0] and ann['area'] < areaRng[1]]
         if not iscrowd == None:
             ids = [ann['id'] for ann in anns if ann['iscrowd'] == iscrowd]
@@ -400,7 +400,7 @@ class mirror3d_COCO(COCO):
                 anns = list(itertools.chain.from_iterable(lists))
             else:
                 anns = self.dataset['annotations']
-            anns = anns if len(catIds)  == 0 else [ann for ann in anns if ann['anchor_normal_class'] in catIds] # TODO
+            anns = anns if len(catIds)  == 0 else [ann for ann in anns if ann['anchor_normal_class'] in catIds]
             anns = anns if len(areaRng) == 0 else [ann for ann in anns if ann['area'] > areaRng[0] and ann['area'] < areaRng[1]]
         if not iscrowd == None:
             ids = [ann['id'] for ann in anns if ann['iscrowd'] == iscrowd]

@@ -6,7 +6,7 @@ from detectron2.structures import BoxMode
 from detectron2.data import transforms as T
 from detectron2.structures import *
 
-def transform_instance_annotations( # chris : transform on annotation item
+def transform_instance_annotations( 
     annotation, transforms, image_size, *, keypoint_hflip_indices=None, anchor_normals=None,
 ):
     """
@@ -132,7 +132,6 @@ def annotations_to_instances(annos, image_size, mask_format="polygon"):
     if len(annos) and "keypoints" in annos[0]:
         kpts = [obj.get("keypoints", []) for obj in annos]
         target.gt_keypoints = Keypoints(kpts)
-    # TODO add anchor_normal_class like classes = [obj["category_id"] for obj in annos]
     if "anchor_normal_class" in annos[0]:
         anchor_normal_classes = [obj["anchor_normal_class"] for obj in annos]
         anchor_normal_classes = torch.tensor(anchor_normal_classes, dtype=torch.int64) 
@@ -141,7 +140,7 @@ def annotations_to_instances(annos, image_size, mask_format="polygon"):
         anchor_normal_residuals = [obj["anchor_normal_residual"] for obj in annos]
         anchor_normal_residuals = torch.tensor(anchor_normal_residuals, dtype=torch.float64) 
         target._fields["anchor_normal_residuals"] = anchor_normal_residuals
-    return target # chris : get target._fields["gt_boxes"] here
+    return target 
 
 
 def transfor_anchor_annotation(anchor_normals, mirror_normal_camera, transforms):

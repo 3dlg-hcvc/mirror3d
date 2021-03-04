@@ -264,7 +264,6 @@ class Mirror3d_RPN(nn.Module):
                 # These values won't be used anyway since the anchor is labeled as background
                 matched_gt_boxes_i = torch.zeros_like(anchors.tensor)
             else:
-                # TODO wasted indexing computation for ignored boxes
                 matched_gt_boxes_i = gt_boxes_i[matched_idxs].tensor
 
             gt_labels.append(gt_labels_i)  # N,AHW
@@ -354,14 +353,14 @@ class Mirror3d_RPN(nn.Module):
         features = [features[f] for f in self.in_features]
         anchors = self.anchor_generator(features)
 
-        pred_objectness_logits, pred_anchor_deltas = self.rpn_head(features) # chris : thousands for anchor's score
+        pred_objectness_logits, pred_anchor_deltas = self.rpn_head(features) #  thousands for anchor's score
         # Transpose the Hi*Wi*A dimension to the middle:
         pred_objectness_logits = [
             # (N, A, Hi, Wi) -> (N, Hi, Wi, A) -> (N, Hi*Wi*A)
             score.permute(0, 2, 3, 1).flatten(1)
             for score in pred_objectness_logits
         ]
-        pred_anchor_deltas = [ # chris : thousands for anchor's deltas 
+        pred_anchor_deltas = [ #  thousands for anchor's deltas 
             # (N, A*B, Hi, Wi) -> (N, A, B, Hi, Wi) -> (N, Hi, Wi, A, B) -> (N, Hi*Wi*A, B)
             x.view(x.shape[0], -1, self.anchor_generator.box_dim, x.shape[-2], x.shape[-1])
             .permute(0, 3, 4, 1, 2)
@@ -373,18 +372,18 @@ class Mirror3d_RPN(nn.Module):
             # thousands of anchor's gt
             gt_labels, gt_boxes = self.label_and_sample_anchors(anchors, gt_instances) # anchors : 5 layers ; each layer contains all anchor boxes of that layer
             losses = self.losses( #! get 256 proposals to calculate loss 
-            # chris : get loss based on 256 anchors randomly select from 7w anchors (256 anchors contains no more than 128 positive anchros)
+            #  get loss based on 256 anchors randomly select from 7w anchors (256 anchors contains no more than 128 positive anchros)
                 anchors, pred_objectness_logits, gt_labels, pred_anchor_deltas, gt_boxes # gt_labels[0].shape = torch.Size([76740])
             )
             losses = {k: v * self.loss_weight for k, v in losses.items()}
         else:
             losses = {}
         #! get 1000/ 2000 proposals
-        proposals = self.predict_proposals( # chris : default : before NMS 2000 smaple, after NMS 1000 samples
+        proposals = self.predict_proposals( #  default : before NMS 2000 smaple, after NMS 1000 samples
             anchors, pred_objectness_logits, pred_anchor_deltas, images.image_sizes
         )
         # losses : loss_rpn_cls
-        return proposals, losses # chris : default : before NMS 2000 smaple, after NMS 1000 samples; losses : rpn losses
+        return proposals, losses #  default : before NMS 2000 smaple, after NMS 1000 samples; losses : rpn losses
 
     @torch.no_grad()
     def predict_proposals(
