@@ -2,10 +2,46 @@
 
 ## Environment Setup
 
-python 3.7.4
+- python 3.7.4
+- [Detectron2](https://github.com/facebookresearch/detectron2): `python -m pip install 'git+https://github.com/facebookresearch/detectron2.git'`
+- `pip install -r requirements.txt`
+
+
+
+## Preparation for all implementations
 
 ```shell
-export PYTHONPATH=[Mirror3D repository absolute path]
+$ mkdir workspace
+$ cd workspace
+### Put data under dataset folder
+$ mkdir dataset
+### Clone this repo
+$ git clone https://github.com/3dlg-hcvc/Mirror3D.git
+
+```
+
+## Preparation for initial depth generator (bts, vnl, saic)
+
+We test three methods on our dataset:
+
+- [BTS: From Big to Small: Multi-Scale Local Planar Guidance for Monocular Depth Estimation](https://github.com/cogaplex-bts/bts)
+- [VNL: Enforcing geometric constraints of virtual normal for depth prediction](https://github.com/YvanYin/VNL_Monocular_Depth_Prediction)
+- [saic : Decoder Modulation for Indoor Depth Completion](https://github.com/saic-vul/saic_depth_completion/tree/94bececdf12bb9867ce52c970bb2d11dee948d37)
+
+We've updated the dataloader and the main train/test script to support our input format. 
+
+To train the three initial depth generator:
+
+```shell
+### Train on NYUv2 refined dataset
+bash script/nyu/dg_nyu_train.sh
+```
+
+To test the three initial depth generator:
+
+```shell
+### Test on NYUv2 refined dataset
+bash script/nyu/dg_nyu_test.sh
 ```
 
 ## Annotation Tool
@@ -17,7 +53,7 @@ export PYTHONPATH=[Mirror3D repository absolute path]
 	```python
 	python Mirror3D/annotation/classifier/classifier_train.py --log_directory [checkpoint and .log file saved directory] --train_pos_list [training positive_sample_path.txt] --train_neg_list [training negative_sample_path.txt] --val_pos_list [validation positive_sample_path.txt] --val_neg_list [validation negative_sample_path.txt]
 	```
-Reference pretrained classifier's checkpoint can be found on [checkpoint.pth.tar](http://aspis.cmpt.sfu.ca/projects/mirrors/checkpoint/classifier_checkpoint/checkpoint.pth.tar)
+You can find reference pre-trained classifier's checkpoint on [checkpoint.pth.tar](http://aspis.cmpt.sfu.ca/projects/mirrors/checkpoint/classifier_checkpoint/checkpoint.pth.tar)
 
 - STEP 2: Get sorted img_list with scores
 
@@ -34,7 +70,7 @@ Reference pretrained classifier's checkpoint can be found on [checkpoint.pth.tar
 
 ### Mirror mask annotation 
 
-We use [cvat](https://github.com/dommorin/cvat) to annotate mirror mask manully. About how to annotate object's mask, please refer to [cvat user guide](https://github.com/dommorin/cvat/blob/master/cvat/apps/documentation/user_guide.md).
+We use [cvat](https://github.com/dommorin/cvat) to annotate mirror mask manually. Please refer to [cvat user guide](https://github.com/dommorin/cvat/blob/master/cvat/apps/documentation/user_guide.md) for guidance on mask annotation. 
 ### Plane annoatation
 
 ```python
@@ -82,7 +118,7 @@ python Mirror3D/annotation/plane_annotation_tool/plane_annotation_tool.py --stag
 	Mirror3D/annotation/verification/verification.py --stage 1 --data_main_folder [folder that contains "video_front, video_topdown .. etc" folders] --output_folder [.html files output folder] --video_num_per_page [int: how many video to display in one .html]
 	```
 
-	Annotators should manully note down the error sample's path to a [error_sample].txt
+	Annotators should manually note down the error sample's path to a [error_sample].txt
 
 - STEP 3: Copy out the error sample's data to another folder for reannotation
 
