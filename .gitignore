@@ -260,3 +260,5 @@ Mirror3DNet/config/mask_rcnn_R_50_FPN_1x.yaml
 waste
 output
 checkpoint
+mirror3dnet/config/m3d_mirror3d_config.yml
+mirror3dnet/config/nyu_mirror3d_config.yml
