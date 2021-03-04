@@ -240,6 +240,7 @@ class Mirror3DNet_Eval:
         for one_output, one_input in output_list:
             pred_depth = one_output[1][0].detach().cpu().numpy()
             np_pred_depth = pred_depth.copy()
+            depth_p = pred_depth.copy()
             
             
             # -------------- refine depth with predict anchor normal ------------
@@ -262,10 +263,6 @@ class Mirror3DNet_Eval:
                 else:
                     depth_p = refine_depth_fun.refine_depth_by_mirror_area(instance_mask, [a, b, c], pred_depth)
 
-            # If there's no predicted instance
-            if len(instances.pred_anchor_classes) == 0:
-                depth_p = pred_depth
-                
             np_pred_depth = np_pred_depth.astype(np.uint16)
             depth_p = depth_p.astype(np.uint16)
             mirror3d_eval.compute_and_update_mirror3D_metrics(depth_p/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, one_input[0]["img_path"])
