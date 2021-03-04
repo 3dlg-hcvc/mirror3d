@@ -1,5 +1,5 @@
 _BASE_: "Mirror3d-R_50_FPN_1x.yaml"
-EVAL : True # TODO ---- eval ----
+EVAL : False # TODO ---- eval ----
 
 
 TRAIN_COCO_JSON : ["dataset/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json"] # TODO
