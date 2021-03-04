@@ -262,3 +262,4 @@ output
 checkpoint
 mirror3dnet/config/m3d_mirror3d_config.yml
 mirror3dnet/config/nyu_mirror3d_config.yml
+script/nyu_sbatch
