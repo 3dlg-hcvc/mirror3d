@@ -20,6 +20,12 @@ def sh_to_sbatch(train_sh_path, log_config, sh_output_foler, sbatch_config, env_
                 depth_tag = "refD"
             if item.find("bts") > 0:
                 method_name = "bts"
+            if item.find("_normal_config") > 0:
+                method_name = "m3n_normal"
+            if item.find("3dnet_config") > 0:
+                method_name = "m3n_full"
+            if item.find("rcnn_config") > 0:
+                method_name = "planercnn"
             if item.find("saic") > 0:
                 method_name = "saic"
             if item.find("vnl") > 0:
@@ -66,7 +72,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
-        '--train_sh_path', default="script/nyu_train.sh", type=str) 
+        '--train_sh_path', default="script/nyu/m3n_nyu_train.sh", type=str) 
     parser.add_argument(
         '--log_config', default="/home/jiaqit/projects/rrg-msavva/jiaqit/result/log/%x-%j.out", type=str) 
     parser.add_argument(
