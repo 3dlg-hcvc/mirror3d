@@ -115,28 +115,28 @@ if __name__ == "__main__":
     parser.add_argument(
         "--machine-rank", type=int, default=0, help="the rank of this machine (unique per machine)"
     )
-    # Input config (mirror3d)
+    # Input config
     parser.add_argument('--refined_depth',             action='store_true',  help='using coco input format or not')
     parser.add_argument('--mesh_depth',                action='store_true',  help='using coco input format or not')
-    parser.add_argument('--coco_val',                  type=str,   help='coco json path', default='dataset/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json')
-    parser.add_argument('--coco_train',                type=str,   help='coco json path', default='dataset/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json')
-    parser.add_argument('--coco_train_root',           type=str,   help='coco data root', default="dataset/nyu")
-    parser.add_argument('--coco_val_root',             type=str,   help='coco data root', default="dataset/nyu")
+    parser.add_argument('--coco_val',                  type=str,   help='coco json path', default='')
+    parser.add_argument('--coco_train',                type=str,   help='coco json path', default='')
+    parser.add_argument('--coco_train_root',           type=str,   help='coco data root', default="")
+    parser.add_argument('--coco_val_root',             type=str,   help='coco data root', default="")
 
-    # Data information config (mirror3d)
+    # Data information config
     parser.add_argument('--coco_focal_len',            type=str,   help='focal length of input data; correspond to INPUT DEPTH!', default="519") 
     parser.add_argument('--depth_shift',               type=int,   help='nyu : 1000, m3d : 4000', default=1000) 
     parser.add_argument('--input_height',              type=int,   help='input height', default=480)   
     parser.add_argument('--input_width',               type=int,   help='input width',  default=640) 
 
-    # Network config (mirror3d)
+    # Network config
     parser.add_argument('--batch_size',                type=int,   help='batch size', default=2)
     parser.add_argument('--num_epochs',                type=int,   help='number of epochs', default=100)
     parser.add_argument('--learning_rate',             type=float, help='initial learning rate', default=1e-4)
     parser.add_argument('--resume_checkpoint_path',           type=str,   help='path to a checkpoint to load', default='')
 
-    # Log and save (mirror3d)
-    parser.add_argument('--log_directory',             type=str,   help='training output folder', default='output/mirror3dnet')
+    # Log and save
+    parser.add_argument('--log_directory',             type=str,   help='training output folder', default='output')
     parser.add_argument('--checkpoint_save_freq',                 type=int,   help='Checkpoint saving frequency in global steps /iteration; nyu 5000; m3d 10000', default=500)
 
     # PyTorch still may leave orphan processes in multi-gpu training.
