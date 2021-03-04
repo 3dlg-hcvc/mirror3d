@@ -20,7 +20,7 @@ $ git clone https://github.com/3dlg-hcvc/Mirror3D.git
 
 ```
 
-## Preparation for initial depth generator (bts, vnl, saic)
+## Preparation for initial depth generator
 
 We test three methods on our dataset:
 
