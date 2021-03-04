@@ -165,7 +165,6 @@ class Mirror3d_eval():
 
         return 
 
-
     def compute_and_update_mirror3D_metrics(self, pred_depth, depth_shift, color_image_path):
 
         if color_image_path.find("m3d") > 0 and "mesh" not in self.Train_tag:

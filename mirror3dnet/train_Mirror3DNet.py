@@ -35,8 +35,8 @@ def main(args):
     cfg.VAL_IMG_ROOT = args.coco_val_root
     cfg.TRAIN_NAME = train_name
     cfg.VAL_NAME = val_name
-    cfg.DATASETS.TRAIN = train_name
-    cfg.DATASETS.TEST = val_name
+    cfg.DATASETS.TRAIN = [train_name]
+    cfg.DATASETS.TEST = [val_name]
     cfg.ANCHOR_NORMAL_CLASS_NUM = np.load(cfg.ANCHOR_NORMAL_NYP).shape[0]
     cfg.REFINED_DEPTH = args.refined_depth
     cfg.MESH_DEPTH = args.mesh_depth
