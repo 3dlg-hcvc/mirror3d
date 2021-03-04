@@ -10,6 +10,8 @@ import torchvision.transforms as transforms
 from mirror3d_resnet import resnet50
 from classifier_Dataset import *
 from utils.general_utlis import *
+from tqdm import tqdm
+import operator
 
 def eval_get_score(args, val_loader, criterion, model):
     img_score = dict()
@@ -30,14 +32,10 @@ def eval_get_score(args, val_loader, criterion, model):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    # # parser.add_argument('--num_classes', default=2, type=int, help='num_classes to classify')
-    parser.add_argument('--batch_size', default=16, type=int)
-    # TODO retrain
-    parser.add_argument('--unsort_img_list',  default="/local-scratch/share_data/scannet_extracted/info/scannet_frames_25k.txt", type=str)
-    # TODO retrain
-    parser.add_argument('--resume_path',  default="/project/3dlg-hcvc/jiaqit/output/classifier/checkpoint/epoch_20_checkpoint.pth.tar", type=str) # /local-scratch/jiaqit/exp/chris_planercnn/examples/log/retrain_7_2020_08_07-16_45_00_log/checkpoint.pth.tar
-    # TODO retrain
-    parser.add_argument('--output_save_folder', default="/project/3dlg-hcvc/jiaqit/output/classifier/checkpoint/scannet_list_sort", type=str)
+    parser.add_argument('--batch_size', default=4, type=int)
+    parser.add_argument('--unsort_img_list',  default="", type=str)
+    parser.add_argument('--resume_path',  default="", type=str) 
+    parser.add_argument('--output_save_folder', default="", type=str)
 
     args = parser.parse_args(args=[])
 
