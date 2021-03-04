@@ -114,7 +114,7 @@ class Mirror3d_GeneralizedRCNN(nn.Module):
                 The :class:`Instances` object has the following keys:
                 "pred_boxes", "pred_classes", "scores", "pred_masks", "pred_keypoints"
         """
-        # self.training = True # chris : debug
+        # self.training = True #  debug
         if not self.training:
             return self.inference(batched_inputs)
 
@@ -124,7 +124,7 @@ class Mirror3d_GeneralizedRCNN(nn.Module):
         if self.inverse_depth:
             gt_depths = [1.0 / torch.clamp(gt_depth, min=1e-4) for gt_depth in gt_depths]
         
-        if "instances" in batched_inputs[0]: # chris : input here 
+        if "instances" in batched_inputs[0]: #  input here 
             try:
                 gt_instances = [x["instances"].to(self.device) for x in batched_inputs]
             except:
@@ -149,7 +149,7 @@ class Mirror3d_GeneralizedRCNN(nn.Module):
             proposals = [x["proposals"].to(self.device) for x in batched_inputs]
             proposal_losses = {}
 
-        _, detector_losses = self.roi_heads(images, features, proposals, gt_instances, self.anchor_normal_class_num)# chris : changed !!! proposals : 16*1000 , self.anchor_normal_class_num 
+        _, detector_losses = self.roi_heads(images, features, proposals, gt_instances, self.anchor_normal_class_num)#  changed !!! proposals : 16*1000 , self.anchor_normal_class_num 
         if not self.ANCHOR_CLS:
             detector_losses.pop("anchor_cls")
         if not self.ANCHOR_REG:
@@ -203,7 +203,7 @@ class Mirror3d_GeneralizedRCNN(nn.Module):
         if "depth_image" in batched_inputs[0]:
             gt_depths = [torch.clamp(x["depth_image"], min=1e-4).to(self.device) for x in batched_inputs]
             
-        if self.DEPTH_EST: # TODO get predict depth here
+        if self.DEPTH_EST:
             pred_depth_list = self.depth_predictor(features, gt_depths, self.training) # changed 
             if self.inverse_depth:
                 pred_depth_list = [(1.0/pred_depth)*self.depth_shift for pred_depth in pred_depth_list]
@@ -222,7 +222,7 @@ class Mirror3d_GeneralizedRCNN(nn.Module):
             else:
                 assert "proposals" in batched_inputs[0]
                 proposals = [x["proposals"].to(self.device) for x in batched_inputs]
-            results = self.roi_heads(images, features, proposals, None) # chris : get inferenced result # changed !! add gt here (1)
+            results = self.roi_heads(images, features, proposals, None) #  get inferenced result # changed !! add gt here (1)
         else:
             detected_instances = [x.to(self.device) for x in detected_instances]
             results = self.roi_heads.forward_with_given_boxes(features, detected_instances)

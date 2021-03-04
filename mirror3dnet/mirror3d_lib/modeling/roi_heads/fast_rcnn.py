@@ -242,7 +242,6 @@ class Mirror3d_FastRCNNOutputs(object):
                 self.gt_anchor_normal_classes = cat([p.gt_anchor_normal_classes for p in proposals], dim=0) # torch.Size([128])
             if proposals[0].has("gt_anchor_normal_residuals"):
                 self.gt_anchor_normal_residuals = cat([p.gt_anchor_normal_residuals for p in proposals], dim=0) # torch.Size([128])
-                # print("testing --------- ", ((self.gt_classes == self.gt_classes.max()) == (self.gt_anchor_normal_classes  == self.gt_anchor_normal_classes .max())).all())
         else:
             self.proposals = Boxes(torch.zeros(0, 4, device=self.pred_proposal_deltas.device))
         self._no_instances = len(proposals) == 0  # no instances found
@@ -268,12 +267,6 @@ class Mirror3d_FastRCNNOutputs(object):
         fg_num_accurate = (fg_pred_classes == fg_gt_classes).nonzero().numel()
 
         fg_score_test = self.pred_class_logits[:, :-1]
-        # if fg_num_accurate < 10 : 
-        #      print("------------------- foreground num : ", fg_num_accurate, num_fg)
-        # if sum(fg_score_test> 0.05) ==0:
-        #     print("fg_score_test error")
-        # print("------------------- foreground num : ", sum(fg_score_test> 0.05), num_fg)
-
         storage = get_event_storage()
         if num_instances > 0:
             storage.put_scalar("fast_rcnn/cls_accuracy", num_accurate / num_instances)
@@ -306,7 +299,7 @@ class Mirror3d_FastRCNNOutputs(object):
             return 0.0 * self.anchor_normal_score.sum()
         else:
             if self.is_training:
-                self._log_accuracy() # chris : torch.Size([128, 8]) & torch.Size([128])
+                self._log_accuracy() #  torch.Size([128, 8]) & torch.Size([128])
             return F.cross_entropy(self.anchor_normal_score, self.gt_anchor_normal_classes, reduction="mean") # self.pred_class_logits.shape torch.Size([128, 2]) self.gt_classes  torch.Size([128])
 
 
@@ -347,7 +340,7 @@ class Mirror3d_FastRCNNOutputs(object):
 
         loss_ANCHOR_REG_reg = smooth_l1_loss(
             self.anchor_residual_pred[fg_inds[:, None], gt_class_cols],
-            current_gt_anchor_normal_res, # TODO
+            current_gt_anchor_normal_res,
             self.smooth_l1_beta,
             reduction="sum",
         )
@@ -380,7 +373,7 @@ class Mirror3d_FastRCNNOutputs(object):
 
         loss_ANCHOR_REG_reg = smooth_l1_loss(
             self.anchor_residual_pred[fg_inds[:, None], gt_class_cols],
-            self.gt_anchor_normal_residuals[fg_inds], # TODO
+            self.gt_anchor_normal_residuals[fg_inds],
             self.smooth_l1_beta,
             reduction="sum",
         )
@@ -568,8 +561,8 @@ class Mirror3d_FastRCNNOutputLayers(nn.Module):
         num_bbox_reg_classes = 1 if cls_agnostic_bbox_reg else num_classes
         box_dim = len(box2box_transform.weights)
         self.bbox_pred = Linear(input_size, num_bbox_reg_classes * box_dim)
-        self.anchor_normal_score = nn.Linear(input_size, anchor_normal_class_num) # chris : changed !!! 
-        self.anchor_parameter = nn.Linear(input_size, anchor_normal_class_num * 3 ) # chris : changed !!!
+        self.anchor_normal_score = nn.Linear(input_size, anchor_normal_class_num) #  changed !!! 
+        self.anchor_parameter = nn.Linear(input_size, anchor_normal_class_num * 3 ) #  changed !!!
 
         nn.init.normal_(self.cls_score.weight, std=0.01)
         nn.init.normal_(self.bbox_pred.weight, std=0.001)
@@ -622,7 +615,6 @@ class Mirror3d_FastRCNNOutputLayers(nn.Module):
         anchor_residual_pred = self.anchor_parameter(x)
         return scores, proposal_deltas , anchor_normal_score , anchor_residual_pred
 
-    # TODO: move the implementation to this class.
     def losses(self, predictions, proposals): # changed !!! : add gt *** here (3)
         """
         Args:
@@ -641,14 +633,14 @@ class Mirror3d_FastRCNNOutputLayers(nn.Module):
             list[Instances]: same as `mirror3d_fast_rcnn_inference`.
             list[Tensor]: same as `mirror3d_fast_rcnn_inference`.
         """
-        # TODO_chris : get gt box match here  
+        # TODO_ get gt box match here  
         boxes = self.predict_boxes(predictions, proposals)
         scores = self.predict_probs(predictions, proposals) 
         anchor_scores = self.predict_anchor_cls(predictions, proposals)
         residual = self.predict_residual(predictions, proposals)
         image_shapes = [x.image_size for x in proposals]
 
-        # chris : get top score output changed
+        #  get top score output changed
         return mirror3d_fast_rcnn_inference( 
             boxes,
             scores,
@@ -668,7 +660,6 @@ class Mirror3d_FastRCNNOutputLayers(nn.Module):
             IOU = self.get_rec_IOU(one_box, gt_box)
             if IOU > 0.5:
                 match_id[box_index] = 1
-                # print("IOU > 0.5" , IOU, scores[box_index])
         print( "matched box count :",sum(match_id), "/ ",len(match_id) )
         return match_id
     

@@ -58,10 +58,10 @@ def get_cfg() -> CfgNode:
     _C.REF_BORDER_WIDTH = 50
 
     _C.ANCHOR_NORMAL_CLASS_NUM = 8 # 
-    _C.TRAIN_COCO_JSON = () # TODO
-    _C.VAL_COCO_JSON = () # TODO
-    _C.TRAIN_IMG_ROOT = () # TODO
-    _C.VAL_IMG_ROOT = () # TODO
+    _C.TRAIN_COCO_JSON = ()
+    _C.VAL_COCO_JSON = ()
+    _C.TRAIN_IMG_ROOT = ()
+    _C.VAL_IMG_ROOT = ()
     _C.TRAIN_NAME = ()
     _C.VAL_NAME = ()
 

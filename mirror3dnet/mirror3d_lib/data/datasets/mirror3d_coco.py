@@ -118,7 +118,6 @@ def load_mirror3d_coco_json(json_file, image_root, dataset_name=None, extra_anno
     ann_keys = ["iscrowd", "bbox", "keypoints", "category_id"] + (extra_annotation_keys or [])
 
     num_instances_without_valid_segmentation = 0
-    # ! chris : here make the return result one by one (multi-instances stores in different item in a list)
     for (img_dict, anno_dict_list) in imgs_anns:
         record = {}
         # changed !!!
