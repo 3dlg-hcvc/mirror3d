@@ -1,3 +1,4 @@
+script/to_sbatch.py
 init_depth_generator/README.md
 # Byte-compiled / optimized / DLL files
 __pycache__/
