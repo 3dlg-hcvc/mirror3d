@@ -132,6 +132,8 @@ def load_mirror3d_coco_json(json_file, image_root, dataset_name=None, extra_anno
             record["depth_path"]= os.path.join(image_root, img_dict["depth_path"])
         if "hole_raw_path" in img_dict:
             record["hole_raw_path"]= os.path.join(image_root, img_dict["hole_raw_path"])
+        if "hole_refined_path" in img_dict:
+            record["hole_refined_path"]= os.path.join(image_root, img_dict["hole_refined_path"])
         if "mesh_raw_path" in img_dict:
             record["mesh_raw_path"]= os.path.join(image_root, img_dict["mesh_raw_path"])
         if "mesh_refined_path" in img_dict:

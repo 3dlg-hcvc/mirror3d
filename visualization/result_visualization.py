@@ -11,9 +11,9 @@ from utils.plane_pcd_utils import *
 import json
 import shutil
 from annotation.plane_annotation_tool.plane_annotation_tool import *
- 
+from visualization.dataset_visualization import Dataset_visulization
 
-class Dataset_visulization(Plane_annotation_tool):
+class Dataset_visulization(Dataset_visulization):
 
     def __init__(self, dataset_main_folder=None, prediction_output_folder = None, method_tag="mirror3D", process_index=0, multi_processing=False, 
                 f=519, output_folder=None, overwrite=True, window_w=800, window_h=800, view_mode="topdown"):
