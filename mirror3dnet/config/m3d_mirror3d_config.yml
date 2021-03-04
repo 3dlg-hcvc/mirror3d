@@ -1,5 +1,5 @@
 _BASE_: "../configs/Mirror3d-R_50_FPN_1x.yaml"
-EVAL : True # TODO ---- eval ----
+EVAL : False # TODO ---- eval ----
 
 
 TRAIN_COCO_JSON : ["/project/3dlg-hcvc/jiaqit/Mirror3D_dataset/coco_input/m3d/m3d_kmeans_normal_10_only_mirror/pos_train_normalFormat_10_normal.json"] # TODO

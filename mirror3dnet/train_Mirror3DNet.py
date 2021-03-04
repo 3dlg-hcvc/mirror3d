@@ -107,7 +107,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", default="mirror3dnet/config/mirror3dnet_config.yml", type=str , help="path to config file")
+    parser.add_argument("--config", default="mirror3dnet/config/planercnn_config.yml", type=str , help="path to config file")
     parser.add_argument("--resume", default=True, type=bool)
     parser.add_argument("--eval-only", action="store_true", help="perform evaluation only")
     parser.add_argument("--num-gpus", type=int, default=1, help="number of gpus *per machine*")
@@ -116,12 +116,12 @@ if __name__ == "__main__":
         "--machine-rank", type=int, default=0, help="the rank of this machine (unique per machine)"
     )
     # Input config (mirror3d)
-    parser.add_argument('--refined_depth',             action='store_true',  help='using coco input format or not')
+    parser.add_argument('--refined_depth',             type=bool, default=True,  help='using coco input format or not')
     parser.add_argument('--mesh_depth',                action='store_true',  help='using coco input format or not')
-    parser.add_argument('--coco_val',                  type=str,   help='coco json path', default='')
-    parser.add_argument('--coco_train',                type=str,   help='coco json path', default='')
-    parser.add_argument('--coco_train_root',           type=str,   help='coco data root', default="")
-    parser.add_argument('--coco_val_root',             type=str,   help='coco data root', default="")
+    parser.add_argument('--coco_val',                  type=str,   help='coco json path', default='dataset/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json')
+    parser.add_argument('--coco_train',                type=str,   help='coco json path', default='dataset/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json')
+    parser.add_argument('--coco_train_root',           type=str,   help='coco data root', default="dataset/nyu")
+    parser.add_argument('--coco_val_root',             type=str,   help='coco data root', default="dataset/nyu")
 
     # Data information config (mirror3d)
     parser.add_argument('--coco_focal_len',            type=str,   help='focal length of input data; correspond to INPUT DEPTH!', default="519") 
@@ -133,12 +133,12 @@ if __name__ == "__main__":
     parser.add_argument('--batch_size',                type=int,   help='batch size', default=2)
     parser.add_argument('--num_epochs',                type=int,   help='number of epochs', default=100)
     parser.add_argument('--learning_rate',             type=float, help='initial learning rate', default=1e-4)
-    parser.add_argument('--resume_checkpoint_path',           type=str,   help='path to a checkpoint to load', default='')
+    parser.add_argument('--resume_checkpoint_path',           type=str,   help='path to a checkpoint to load', default='checkpoint/m3d_pretrained_m3n.pth')
 
     # Log and save (mirror3d)
     parser.add_argument('--log_directory',             type=str,   help='training output folder', default='output')
-    parser.add_argument('--checkpoint_save_freq',                 type=int,   help='Checkpoint saving frequency in global steps /iteration; nyu 5000; m3d 10000', default=500)
-
+    parser.add_argument('--checkpoint_save_freq',      type=int,   help='Checkpoint saving frequency in global steps /iteration; nyu 5000; m3d 10000', default=500)
+    
     # PyTorch still may leave orphan processes in multi-gpu training.
     # Therefore we use a deterministic way to obtain port,
     # so that users are aware of orphan processes by seeing the port occupied.
