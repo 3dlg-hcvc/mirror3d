@@ -42,10 +42,10 @@ def vislize_pcd_from_rgbd(depth_img_path, color_img_path, f, save_folder=""):
 
 if __name__ == "__main__":
     
-    # visualize_single_image()
+    visualize_single_image()
     depth_img_path = "/local-scratch/jiaqit/exp/reannotate/hole_refined_depth/718.png"
     f = 519
     color_img_path = "/local-scratch/jiaqit/exp/reannotate/raw/718.png"
     pcd_save_folder = "/local-scratch/jiaqit/exp/reannotate/vis"
-    vislize_pcd_from_rgbd(depth_img_path, color_img_path, f, pcd_save_folder)
+    #vislize_pcd_from_rgbd(depth_img_path, color_img_path, f, pcd_save_folder)
     
