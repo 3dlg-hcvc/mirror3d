@@ -5,6 +5,7 @@
 - python 3.7.4
 - [Detectron2](https://github.com/facebookresearch/detectron2): `python -m pip install 'git+https://github.com/facebookresearch/detectron2.git'`
 - `pip install -r requirements.txt`
+- Pull submodules `git submodule update --init --recursive`
 
 
 
