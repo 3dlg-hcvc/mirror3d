@@ -1,5 +1,5 @@
 # planercnn on refD 
-python mirror3dnet/train_Mirror3DNet.py \
+python mirror3dnet/run_mirror3dnet.py \
 --config mirror3dnet/config/planercnn_config.yml \
 --refined_depth \
 --coco_train dataset/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
@@ -18,7 +18,7 @@ python mirror3dnet/train_Mirror3DNet.py \
 
 
 # planercnn on rawD 
-python mirror3dnet/train_Mirror3DNet.py \
+python mirror3dnet/run_mirror3dnet.py \
 --config mirror3dnet/config/planercnn_config.yml \
 --coco_train dataset/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
 --coco_val dataset/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
@@ -36,7 +36,7 @@ python mirror3dnet/train_Mirror3DNet.py \
 
 
 # mirror3dnet on refD 
-python mirror3dnet/train_Mirror3DNet.py \
+python mirror3dnet/run_mirror3dnet.py \
 --config mirror3dnet/config/mirror3dnet_config.yml \
 --refined_depth \
 --coco_train dataset/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
@@ -55,7 +55,7 @@ python mirror3dnet/train_Mirror3DNet.py \
 
 
 # mirror3dnet on rawD 
-python mirror3dnet/train_Mirror3DNet.py \
+python mirror3dnet/run_mirror3dnet.py \
 --config mirror3dnet/config/mirror3dnet_config.yml \
 --coco_train dataset/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
 --coco_val dataset/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
@@ -74,7 +74,7 @@ python mirror3dnet/train_Mirror3DNet.py \
 
 
 # mirror3dnet (only normal)
-python mirror3dnet/train_Mirror3DNet.py \
+python mirror3dnet/run_mirror3dnet.py \
 --config mirror3dnet/config/mirror3dnet_normal_config.yml \
 --coco_train dataset/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
 --coco_val dataset/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
@@ -93,7 +93,7 @@ python mirror3dnet/train_Mirror3DNet.py \
 
 
 # mirror3dnet on refD  based on m3d pretrained
-python mirror3dnet/train_Mirror3DNet.py \
+python mirror3dnet/run_mirror3dnet.py \
 --resume_checkpoint_path checkpoint/m3d_pretrained_m3n.pth \
 --config mirror3dnet/config/mirror3dnet_config.yml \
 --refined_depth \
@@ -113,7 +113,7 @@ python mirror3dnet/train_Mirror3DNet.py \
 
 
 # mirror3dnet on rawD  based on m3d pretrained
-python mirror3dnet/train_Mirror3DNet.py \
+python mirror3dnet/run_mirror3dnet.py \
 --resume_checkpoint_path checkpoint/m3d_pretrained_m3n.pth \
 --config mirror3dnet/config/mirror3dnet_config.yml \
 --coco_train dataset/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
@@ -133,7 +133,7 @@ python mirror3dnet/train_Mirror3DNet.py \
 
 
 # mirror3dnet (only normal) based on m3d pretrained
-python mirror3dnet/train_Mirror3DNet.py \
+python mirror3dnet/run_mirror3dnet.py \
 --resume_checkpoint_path checkpoint/m3d_pretrained_m3n.pth \
 --config mirror3dnet/config/mirror3dnet_normal_config.yml \
 --coco_train dataset/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
