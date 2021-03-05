@@ -121,7 +121,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--machine-rank", type=int, default=0, help="the rank of this machine (unique per machine)"
     )
-    parser.add_argument('--evak',                      action='store_true', help="only evalution or training")
+    parser.add_argument('--eval',                      action='store_true', help="only evalution or training")
 
     # Input config (mirror3d)
     parser.add_argument('--refined_depth',             action='store_true',  help='using coco input format or not')
