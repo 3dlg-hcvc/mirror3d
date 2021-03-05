@@ -406,6 +406,13 @@ def update_annotation_info():
     save_txt(os.path.join(dst_folder,"train_positive.txt"), train_pos)
     save_txt(os.path.join(dst_folder,"train_negative.txt"), train_neg)
 
+def make_folder(directory):
+    """
+    Make folder if it doesn't already exist
+    :param directory: The folder destination path
+    """
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
 
 def close_window():
@@ -420,8 +427,8 @@ if __name__ == "__main__":
     # Commenting out the initial input and puting input into preamble
     # Make input arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('-r', '--data_root', help='Input folder where the *tif images should be', required=True)
-    parser.add_argument('-j', '--score_json_path', help='Json file consist of input file names', required=True)
+    parser.add_argument('-f', '--folder', help='Input folder where the *tif images should be', required=True)
+    parser.add_argument('-j', '--json_file_path', help='Json file consist of input file names', required=True)
     parser.add_argument('-l', '--labels', nargs='+', help='Possible labels in the images', required=True)
     parser.add_argument('-e', '--exclusion', help='Exclusion file', required=False)
     parser.add_argument('-o', '--output_file_path', help='Output file name', required=True)
@@ -444,8 +451,8 @@ if __name__ == "__main__":
             exception_paths.append(line)
     
     # Make folder for the new labels
-    for label in labels:
-        os.makedirs(os.path.join("output", label), exist_ok=True)
+    for label in args.labels:
+        make_folder(os.path.join("output", label))
 
     # Read file names from json
     with open(json_file_path, 'r') as j:
