@@ -55,23 +55,34 @@ def main(args):
     cfg.SOLVER.CHECKPOINT_PERIOD = args.checkpoint_save_freq
     cfg.TEST.EVAL_PERIOD = args.checkpoint_save_freq
     cfg.MODEL.WEIGHTS = args.resume_checkpoint_path
-    cfg.OUTPUT_DIR = args.log_directory
-    
+    cfg.EVAL = args.eval
+
+    # Create output folder 
+    if args.config.find("mirror3dnet_normal_config.yml") > 0:
+        method_name = "m3n_normal"
+    if args.config.find("mirror3dnet_config.yml") > 0:
+        method_name = "m3n_full"
+    if args.config.find("planercnn_config.yml") > 0:
+        method_name = "planercnn"
+    if args.refined_depth:
+        depth_tag = "refD"
+    else:
+        depth_tag = "rawD"
+    if os.path.exists(args.resume_checkpoint_path):
+        resume_tag = "resume"
+    else:
+        resume_tag = "scratch"
+
+    output_folder_name = "{}_{}_{}".format(method_name, depth_tag, resume_tag) + "_" + time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()) 
+    cfg.OUTPUT_DIR = os.path.join(args.log_directory, output_folder_name)
+    os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
+
     if cfg.EVAL:
         eval_output_tag = ""
-        if cfg.REF_DEPTH_TO_REFINE:
-            eval_output_tag = cfg.REF_DEPTH_TO_REFINE.split("/")[-2]
-        else:
-            if not cfg.OBJECT_CLS:
-                eval_output_tag = "ori_pr_preD_refD"
-            elif cfg.DEPTH_EST and cfg.RGBD_INPUT:
-                eval_output_tag = "mirror3d_preD_refD"
-            else:
-                eval_output_tag = "mirror3d_preD"
-            eval_output_tag = eval_output_tag + "_" + time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()) 
+        if os.path.exists(cfg.REF_DEPTH_TO_REFINE):
+            method_tag = cfg.REF_DEPTH_TO_REFINE.split("/")[-2]
         
-        cfg.OUTPUT_DIR = os.path.join(cfg.OUTPUT_DIR, eval_output_tag) + "_" + cfg.REF_DEPTH_TO_REFINE.split("/")[-1].split(".")[0] + "_" + time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()) 
-        
+        cfg.OUTPUT_DIR = os.path.join(cfg.OUTPUT_DIR, method_tag) 
         os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
         model = Mirror3dTrainer.build_model(cfg)
         DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(
@@ -86,11 +97,6 @@ def main(args):
     consider writing your own training loop (see plain_train_net.py) or
     subclassing the trainer.
     """
-
-    if os.path.exists(cfg.OUTPUT_DIR):
-        cfg.OUTPUT_DIR = os.path.join(cfg.OUTPUT_DIR, time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()))
-    os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
-
 
     trainer = Mirror3dTrainer(cfg)
     trainer.resume_or_load(resume=args.resume)
@@ -115,6 +121,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--machine-rank", type=int, default=0, help="the rank of this machine (unique per machine)"
     )
+    parser.add_argument('--evak',                      action='store_true', help="only evalution or training")
+
     # Input config (mirror3d)
     parser.add_argument('--refined_depth',             action='store_true',  help='using coco input format or not')
     parser.add_argument('--mesh_depth',                action='store_true',  help='using coco input format or not')
@@ -133,11 +141,11 @@ if __name__ == "__main__":
     parser.add_argument('--batch_size',                type=int,   help='batch size', default=2)
     parser.add_argument('--num_epochs',                type=int,   help='number of epochs', default=100)
     parser.add_argument('--learning_rate',             type=float, help='initial learning rate', default=1e-4)
-    parser.add_argument('--resume_checkpoint_path',    type=str,   help='path to a checkpoint to load', default='')
+    parser.add_argument('--resume_checkpoint_path',           type=str,   help='path to a checkpoint to load', default='')
 
     # Log and save (mirror3d)
     parser.add_argument('--log_directory',             type=str,   help='training output folder', default='output')
-    parser.add_argument('--checkpoint_save_freq',      type=int,   help='Checkpoint saving frequency in global steps /iteration; nyu 5000; m3d 10000', default=500)
+    parser.add_argument('--checkpoint_save_freq',                 type=int,   help='Checkpoint saving frequency in global steps /iteration; nyu 5000; m3d 10000', default=500)
 
     # PyTorch still may leave orphan processes in multi-gpu training.
     # Therefore we use a deterministic way to obtain port,
