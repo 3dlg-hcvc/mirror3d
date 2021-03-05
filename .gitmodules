@@ -7,3 +7,6 @@
 [submodule "init_depth_generator/bts"]
 	path = init_depth_generator/bts
 	url = https://github.com/ChristinaTan0704/bts.git
+[submodule "annotation/classifier/image-sorter2"]
+	path = annotation/classifier/image-sorter2
+	url = https://github.com/ChristinaTan0704/image-sorter2.git
