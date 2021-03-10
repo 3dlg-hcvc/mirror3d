@@ -81,8 +81,7 @@ def main(args):
         eval_output_tag = ""
         if os.path.exists(cfg.REF_DEPTH_TO_REFINE):
             method_tag = cfg.REF_DEPTH_TO_REFINE.split("/")[-2]
-        
-        cfg.OUTPUT_DIR = os.path.join(cfg.OUTPUT_DIR, method_tag) 
+            cfg.OUTPUT_DIR = os.path.join(cfg.OUTPUT_DIR, method_tag) 
         os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
         model = Mirror3dTrainer.build_model(cfg)
         DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(
