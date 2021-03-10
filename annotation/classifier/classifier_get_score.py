@@ -25,7 +25,7 @@ def eval_get_score(args, val_loader, criterion, model):
             img_score[img_path] = obj_score[index].item()
 
     img_score = dict(sorted(img_score.items(), key=operator.itemgetter(1),reverse=True))
-    json_save_path = os.path.join(args.output_save_folder, "imgPath_score_" + time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())  + ".json")
+    json_save_path = os.path.join(args.json_output_save_folder, "imgPath_score_" + time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())  + ".json")
     save_json(json_save_path,img_score)
 
 
@@ -35,12 +35,14 @@ if __name__ == "__main__":
     parser.add_argument('--batch_size', default=4, type=int)
     parser.add_argument('--unsort_img_list',  default="", type=str)
     parser.add_argument('--resume_path',  default="", type=str) 
-    parser.add_argument('--output_save_folder', default="", type=str)
+    parser.add_argument('--json_output_save_folder', default="", type=str)
+    args = parser.parse_args()
 
-    args = parser.parse_args(args=[])
-
-    os.makedirs(args.output_save_folder, exist_ok=True)
     print(args)
+
+    
+    os.makedirs(args.json_output_save_folder, exist_ok=True)
+    
 
 
     model_names = sorted(name for name in models.__dict__

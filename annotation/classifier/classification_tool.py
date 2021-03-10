@@ -15,7 +15,7 @@ class Classification_GUI:
     Useful, for sorting views into sub views or for removing outliers from the data.
     """
 
-    def __init__(self, master, labels, whole_path_list, anno_output_folder, dataset="scannet"):
+    def __init__(self, master="", whole_path_list="", anno_output_folder="", dataset="scannet"):
         """
         Initialise GUI
         :param master: The parent window
@@ -38,8 +38,8 @@ class Classification_GUI:
         frame.grid()
         
         
-        self.labels = labels
-        self.n_labels = len(labels)
+        self.labels = ["mirror", "negative"]
+        self.n_labels = 2
 
         self.image_panel = tk.Label(frame)
         self.set_image(whole_path_list[self.index])
@@ -258,26 +258,65 @@ class Classification_GUI:
         return self.annotated_paths, self.path_to_annotate, self.negative_list, self.positive_list
 
 
+def save_for_cavt(pos_list, cvat_folder, dataset_name):
+    os.makedirs(cvat_folder, exist_ok=True)
+    for pos_sample_path in pos_list:
+        if dataset_name == "scannet":
+            scannet_sample_name = "{}_{}".format(pos_sample_path.split("/")[-3], pos_sample_path.split("/")[-1])
+            save_path = os.path.join(cvat_folder, scannet_sample_name)
+            shutil.copy(pos_sample_path, save_path)
+        else:
+            save_path = os.path.join(cvat_folder, pos_sample_path.split("/")[-1])
+            shutil.copy(pos_sample_path, save_path)
+    print("smaples for CVAT annotation are copied to : {}".format(cvat_folder))
+
+
 
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', '--data_root', help='Input folder where the *tif images should be', default="/local-scratch/jiaqit/exp/data/scannet/scannet_frames_25k")
-    parser.add_argument('-j', '--json_file_path', help='Json file consist of input file names', default="/local-scratch/wla172/scannet/extension_annot/epochs/epoch2/imgPath_score_2021-03-03-12-24-35.json")
-    parser.add_argument('-e', '--exclusion', help='Exclusion file', required=False)
-    parser.add_argument('-o', '--output_file_path', help='Output file name', default="/local-scratch/jiaqit/exp/output/random_test.txt")
-    parser.add_argument('-i', '--train_val_info_folder', help='Train val info folder', default="/local-scratch/wla172/scannet/extension_annot/labels")
+    parser.add_argument('-j', '--json_file_path', help='Json file consist of input file names', default="/local-scratch/jiaqit/exp/annotation/classifier/0310_4/imgPath_score_2021-03-10-15-42-22.json")
+    parser.add_argument('-o', '--anno_output_folder', help='annotation result output folder', default="/local-scratch/jiaqit/exp/annotation/classifier/0310_5")
+    parser.add_argument('-s', '--stage', help='(1) annotation tool (2) generate retrain list (3) generate mirror package for CVAT annotation', default="2")
+    parser.add_argument('-ot', '--train_info_output_folder', help='stage 2 parameter : training information output folder', default="/local-scratch/jiaqit/exp/annotation/classifier/0310_5")
+    parser.add_argument('-p', '--pos_txt', help='stage 2 parameter : previous all positive path list txt', default="/local-scratch/jiaqit/exp/annotation/classifier/0310_4/train_positive.txt")
+    parser.add_argument('-n', '--neg_txt', help='stage 2 parameter : previous all negative path list txt', default="/local-scratch/jiaqit/exp/annotation/classifier/0310_4/train_negative.txt")
+    parser.add_argument('-ocvat', '--cvat_output_folder', help='stage 2 parameter : output folder for cvat', default="/local-scratch/jiaqit/exp/annotation/classifier/cvat")
+    parser.add_argument('-d', '--dataset_name', help='stage 2 parameter : dataset name', default="scannet")
     args = parser.parse_args()
 
     file_score_list = sorted(read_json(args.json_file_path).items(), key=operator.itemgetter(1),reverse=True)
     file_path_abv = [i[0] for i in file_score_list]
-
-    labels = ["mirror", "negative"]
     paths = [os.path.join(args.data_root,file_name) for file_name in file_path_abv]
 
-    root = tk.Tk()
-    root.title("Mirror Classification Tool")
-    root.protocol('WM_DELETE_WINDOW')
-    app = Classification_GUI(root, labels, paths,"/local-scratch/jiaqit/exp/output/waste")
-    root.mainloop()
+    if args.stage == "1":
+        
+        root = tk.Tk()
+        root.title("Mirror Classification Tool")
+        root.protocol('WM_DELETE_WINDOW')
+        app = Classification_GUI(master=root, whole_path_list=paths, anno_output_folder=args.anno_output_folder, dataset=args.dataset_name)
+        root.mainloop()
+    elif args.stage == "2":
+
+        anotation_progress_save_folder = os.path.join(args.anno_output_folder, "classification_progress")
+        anno_neg_txt_path = os.path.join(anotation_progress_save_folder, "negative_list.txt")
+        anno_pos_txt_path = os.path.join(anotation_progress_save_folder, "positive_list.txt")
+        pos_anno = read_txt(anno_pos_txt_path)
+        neg_anno = read_txt(anno_neg_txt_path)
+        to_anno = list(set(paths) - set(neg_anno) - set(pos_anno))
+        pos_new = read_txt(args.pos_txt) + pos_anno
+        neg_new = read_txt(args.neg_txt) + neg_anno
+        os.makedirs(args.train_info_output_folder, exist_ok=True)
+        new_neg_txt_savepath = os.path.join(args.train_info_output_folder, "train_negative.txt")
+        new_pos_txt_savepath = os.path.join(args.train_info_output_folder, "train_positive.txt")
+        to_anno_txt_savepath = os.path.join(args.train_info_output_folder, "to_anno_positive.txt")
+        save_txt(new_neg_txt_savepath,neg_new)
+        save_txt(new_pos_txt_savepath,pos_new)
+        save_txt(to_anno_txt_savepath,to_anno)
+
+        save_for_cavt(pos_anno, args.cvat_output_folder, args.dataset_name)
+
+
+        
