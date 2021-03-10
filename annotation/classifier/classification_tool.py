@@ -7,7 +7,7 @@ from shutil import copyfile, move
 from PIL import ImageTk, Image
 from utils.general_utlis import *
 from tkinter import messagebox
-
+import operator
 
 class Classification_GUI:
     """
@@ -169,6 +169,7 @@ class Classification_GUI:
             self.negative_list.append(current_path)
             self.annotated_paths.append(current_path)
 
+        self.mirror_tag_label.configure(text="Mirror count: {}".format(len(self.positive_list)))
         self.save_progress()
         self.show_next_image()
 
@@ -269,12 +270,11 @@ if __name__ == "__main__":
     parser.add_argument('-i', '--train_val_info_folder', help='Train val info folder', default="/local-scratch/wla172/scannet/extension_annot/labels")
     args = parser.parse_args()
 
-
-    file_names = [item[0] for item in read_json(args.json_file_path).items()]
-
+    file_score_list = sorted(read_json(args.json_file_path).items(), key=operator.itemgetter(1),reverse=True)
+    file_path_abv = [i[0] for i in file_score_list]
 
     labels = ["mirror", "negative"]
-    paths = [os.path.join(args.data_root,file_name) for file_name in file_names]
+    paths = [os.path.join(args.data_root,file_name) for file_name in file_path_abv]
 
     root = tk.Tk()
     root.title("Mirror Classification Tool")
