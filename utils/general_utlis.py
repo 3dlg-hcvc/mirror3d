@@ -13,6 +13,17 @@ import matplotlib.pyplot as plt
 from utils.algorithm import *
 import shutil
 
+
+def list_diff(list1, list2):
+    """
+    Get a list exist in list1 but don't exisit in list2
+    """
+    out = []
+    for ele in list1:
+        if not ele in list2:
+            out.append(ele)
+    return out
+
 def center_crop_image(input_folder="", output_folder = "", new_w=608, new_h=456, ori_w=640, ori_h=480):
     """
     Center crop the image
