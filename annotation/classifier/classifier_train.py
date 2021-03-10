@@ -43,14 +43,14 @@ parser.add_argument('-b', '--batch_size', default=4, type=int,
 parser.add_argument('--lr', '--learning-rate', default=0.001, type=float,
                     metavar='LR', help='initial learning rate', dest='lr')
 # TODO retrain
-parser.add_argument('--resume', default='/local-scratch/jiaqit/exp/annotation/classifier/0302/resume.pth.tar', type=str, metavar='PATH', # TODO checkpoint/checkpoint.pth.tar
+parser.add_argument('--resume', default='/local-scratch/jiaqit/exp/annotation/classifier/0310_3/checkpoint/epoch_9_checkpoint.pth.tar', type=str, metavar='PATH', # TODO checkpoint/checkpoint.pth.tar
                     help='path to latest checkpoint (default: none)')
 # TODO 
 parser.add_argument('-e', '--evaluate', action='store_true') 
 # TODO output checkpoint & log file save directory
-parser.add_argument('--log_directory',    type=str,   help='training output folder', default='/local-scratch/jiaqit/exp/annotation/classifier/0302')
+parser.add_argument('--log_directory',    type=str,   help='training output folder', default='/local-scratch/jiaqit/exp/annotation/classifier/0310_4')
 # TODO retrain
-parser.add_argument('--checkpoint_save_freq',      type=int,   help="classifier's save frequncy (measure in EPOCH), usually set as 10", default=10)
+parser.add_argument('--checkpoint_save_freq',      type=int,   help="classifier's save frequncy (measure in EPOCH), usually set as 10", default=1)
 # TODO if coda boom
 parser.add_argument('--input_height',              type=int,   help='input height', default=480) # 480
 # TODO  if coda boom
@@ -59,10 +59,10 @@ parser.add_argument('--input_width',               type=int,   help='input width
 parser.add_argument('--world-size', default=-1, type=int,
                     help='number of nodes for distributed training')
 parser.add_argument('--train_pos_list',  # TODO retrain
-        default="/local-scratch/wla172/scannet/extension_annot/labels/train_positive.txt",
+        default="/local-scratch/jiaqit/exp/annotation/classifier/0310_4/train_positive.txt",
         type=str)
 parser.add_argument('--train_neg_list', # TODO retrain
-        default="/local-scratch/wla172/scannet/extension_annot/labels/train_negative.txt",
+        default="/local-scratch/jiaqit/exp/annotation/classifier/0310_4/train_negative.txt",
         type=str)
 
 parser.add_argument('--val_pos_list',  # TODO
@@ -79,7 +79,7 @@ parser.add_argument('-a', '--arch', metavar='ARCH', default='resnet50',
 parser.add_argument('-j', '--workers', default=1, type=int, metavar='N',
                     help='number of data loading workers (default: 4)')
 # TODO retrain
-parser.add_argument('--epochs', default=100, type=int, metavar='N',
+parser.add_argument('--epochs', default=10, type=int, metavar='N',
                     help='number of total epochs to run')
 parser.add_argument('--start-epoch', default=0, type=int, metavar='N',
                     help='manual epoch number (useful on restarts)')
