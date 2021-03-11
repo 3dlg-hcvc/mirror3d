@@ -528,6 +528,7 @@ def _evaluate_predictions_on_coco(coco_gt, coco_results, iou_type, kpt_oks_sigma
     print("cfg.ANCHOR_NORMAL_CLASS_NUM",cfg.ANCHOR_NORMAL_CLASS_NUM)
     print("cfg.OUTPUT_DIR",cfg.OUTPUT_DIR)
 
+
     if cfg.EVAL_CLS_AP:
         coco_eval.evaluate()
         coco_eval.accumulate()
@@ -540,6 +541,7 @@ def _evaluate_predictions_on_coco(coco_gt, coco_results, iou_type, kpt_oks_sigma
         print("#################################### {:20} ####################################".format("anchor mAP"))
         coco_eval.chris_summarize("anchor")
 
+    
     if cfg.EVAL_NORMAL:
         print("#################################### {:20} ####################################".format("evaluate normal"))
         coco_eval.evaluate_normal(cfg)
