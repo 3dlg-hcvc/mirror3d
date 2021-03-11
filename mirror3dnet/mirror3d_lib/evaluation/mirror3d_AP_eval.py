@@ -279,118 +279,117 @@ class Mirror3dCOCOeval(COCOeval):
             print("| {:45} | IOU 0.5:0.95 | {:15} {:5f} |".format("mirror_pred_anchor & mirror_GT_normal", score_tag, np.array(IOU_list)[:,0].mean()))
             print("| {:45} | IOU 0.5:0.95 | {:15} {:5f} |".format("mirror_pred_normal & mirror_GT_normal", score_tag, np.array(IOU_list)[:,1].mean()))
             print("| {:45} | IOU 0.5:0.95 | {:15} {:5f} |".format("mirror_pred_res & mirror_GT_res", score_tag, np.array(IOU_list)[:,2].mean()))
-
-        def eval_normal():
-            all_areaRng = None
-            for areaRng, areaRngLbl in zip(self.params.areaRng, self.params.areaRngLbl):
-                if areaRngLbl == "all":
-                    all_areaRng = areaRng
-                    break
-
-            iou_l2lossList = dict()
-            for iou in self.params.iouThrs:
-                iou_l2lossList[iou] = []
-
-            iou_CSlist = dict()
-            for iou in self.params.iouThrs:
-                iou_CSlist[iou] = []
             
-            iou_angle_list = dict()
-            for iou in self.params.iouThrs:
-                iou_angle_list[iou] = []
+        all_areaRng = None
+        for areaRng, areaRngLbl in zip(self.params.areaRng, self.params.areaRngLbl):
+            if areaRngLbl == "all":
+                all_areaRng = areaRng
+                break
 
-            iou_predNum_noneNum = dict()
-            for iou in self.params.iouThrs:
-                iou_predNum_noneNum[iou] = [set(),set()]
-            
+        iou_l2lossList = dict()
+        for iou in self.params.iouThrs:
+            iou_l2lossList[iou] = []
+
+        iou_CSlist = dict()
+        for iou in self.params.iouThrs:
+            iou_CSlist[iou] = []
         
-            for one_eval_img in self.anchor_evalImgs: #  [evaluateImg(imgId (81), anchor_catId (anchor_normal_num + bg), areaRng (4 : s m l all), maxDet (100))
-                if one_eval_img: # if one_eval_img is not None
-                    if one_eval_img["aRng"] == all_areaRng: # only care about the performace on "All" image prediction
-                        for iou_idx, iou in enumerate(self.params.iouThrs):
-                            image_id = one_eval_img["image_id"]
-                            anchor_cat_id = one_eval_img["category_id"]
-                            gt_anchor_id = one_eval_img["dtMatches"][iou_idx] # GT index that dt match
-                            dt_anchor_id = one_eval_img["gtMatches"][iou_idx] # dt index that GT match
-                            
-                            zero_count = 0
-                            for idx, one_match_gt_id in enumerate(gt_anchor_id):
-                                if one_match_gt_id > 0 : # one_match_gt_id = 0 then this instance match background (gt[0] is background)
-                                    # get the matched GT instance 
+        iou_angle_list = dict()
+        for iou in self.params.iouThrs:
+            iou_angle_list[iou] = []
 
-                                    for gt_item in self._anchor_gts[image_id, anchor_cat_id]:
-                                        if gt_item["id"] == one_match_gt_id:
-                                            mirror_GT_normal = unit_vector(self.anchor_normals[gt_item["anchor_normal_class"]] + np.array(gt_item["anchor_normal_residual"])) # GT mirror normal 
-                                            mirror_GT_res = np.array(gt_item["anchor_normal_residual"])
-                                            mirror_GT_anchor = self.anchor_normals[gt_item["anchor_normal_class"]]
-                                            mirror_GT_normal_class = gt_item["anchor_normal_class"]
-                                            mirror_GT_bboxes = gt_item["bbox"]
-                                            mirror_image_path = gt_item["image_path"]
-                                            break
+        iou_predNum_noneNum = dict()
+        for iou in self.params.iouThrs:
+            iou_predNum_noneNum[iou] = [set(),set()]
+        
+        
 
-                                    # get the matched predicted instance 
-                                    have_match = False
-                                    for pred_item in self._anchor_dts[image_id, anchor_cat_id]:
-                                        if  pred_item["id"] == dt_anchor_id[idx - zero_count]:
-                                            mirror_pred_normal = unit_vector(self.anchor_normals[pred_item["anchor_normal_class"]] + np.array(pred_item["anchor_normal_residual"])) #  pred mirror normal
-                                            mirror_pred_res = np.array(pred_item["anchor_normal_residual"])
-                                            mirror_pred_anchor = self.anchor_normals[pred_item["anchor_normal_class"]]
-                                            mirror_pred_normal_class = pred_item["anchor_normal_class"]
-                                            mirror_pred_bboxes = pred_item["bbox"]
-                                            have_match = True
-                                            break
-                                    try:
-                                        improve = np.linalg.norm(mirror_pred_anchor - mirror_GT_normal) - np.linalg.norm(mirror_pred_normal - mirror_GT_normal)
-                                        distance = np.linalg.norm(mirror_GT_normal - mirror_GT_anchor)
-                                    except Exception as e:
-                                        improve = 0
-                                        distance = 0
-                                        print(e)
-                                        print("error ------------ one_match_gt_id, gt_anchor_id : ", one_match_gt_id, gt_anchor_id)
-                                        mirror_pred_anchor = np.array([0,0,0])
-                                        mirror_GT_normal = np.array([0,0,0])
-                                        mirror_pred_normal = np.array([0,0,0])
-                                        mirror_GT_anchor = np.array([0,0,0])
-                                        mirror_GT_res = np.array([0,0,0])
-                                        mirror_pred_res = np.array([0,0,0])
-                                        print(dt_anchor_id[idx - zero_count], dt_anchor_id)
-                                        
-                                    if not have_match:
-                                        iou_predNum_noneNum[iou][0].add(image_id)
-                                        continue
-                                    #################################### get L2 loss ####################################  
-                                    iou_l2lossList[iou].append([np.linalg.norm(mirror_pred_anchor - mirror_GT_normal),\
-                                                            np.linalg.norm(mirror_pred_normal - mirror_GT_normal), \
-                                                            np.linalg.norm(mirror_pred_res - mirror_GT_res),\
-                                                            improve,\
-                                                            distance])
-                                    #################################### get cos similarity ####################################
-                                    iou_CSlist[iou].append([cos_sim(mirror_pred_anchor, mirror_GT_normal),\
-                                                            cos_sim(mirror_pred_normal, mirror_GT_normal), \
-                                                            cos_sim(mirror_pred_res, mirror_GT_res)])
-                                    iou_angle_list[iou].append([angle(mirror_pred_anchor, mirror_GT_normal),\
-                                                            angle(mirror_pred_normal, mirror_GT_normal), \
-                                                            angle(mirror_pred_res, mirror_GT_res)])
+        for one_eval_img in self.anchor_evalImgs: #  [evaluateImg(imgId (81), anchor_catId (anchor_normal_num + bg), areaRng (4 : s m l all), maxDet (100))
+            if one_eval_img: # if one_eval_img is not None
+                if one_eval_img["aRng"] == all_areaRng: # only care about the performace on "All" image prediction
+                    for iou_idx, iou in enumerate(self.params.iouThrs):
+                        image_id = one_eval_img["image_id"]
+                        anchor_cat_id = one_eval_img["category_id"]
+                        gt_anchor_id = one_eval_img["dtMatches"][iou_idx] # GT index that dt match
+                        dt_anchor_id = one_eval_img["gtMatches"][iou_idx] # dt index that GT match
+                        
+                        zero_count = 0
+                        for idx, one_match_gt_id in enumerate(gt_anchor_id):
+                            if one_match_gt_id > 0 : # one_match_gt_id = 0 then this instance match background (gt[0] is background)
+                                # get the matched GT instance 
+
+                                for gt_item in self._anchor_gts[image_id, anchor_cat_id]:
+                                    if gt_item["id"] == one_match_gt_id:
+                                        mirror_GT_normal = unit_vector(self.anchor_normals[gt_item["anchor_normal_class"]] + np.array(gt_item["anchor_normal_residual"])) # GT mirror normal 
+                                        mirror_GT_res = np.array(gt_item["anchor_normal_residual"])
+                                        mirror_GT_anchor = self.anchor_normals[gt_item["anchor_normal_class"]]
+                                        mirror_GT_normal_class = gt_item["anchor_normal_class"]
+                                        mirror_GT_bboxes = gt_item["bbox"]
+                                        mirror_image_path = gt_item["image_path"]
+                                        break
+
+                                # get the matched predicted instance 
+                                have_match = False
+                                for pred_item in self._anchor_dts[image_id, anchor_cat_id]:
+                                    if  pred_item["id"] == dt_anchor_id[idx - zero_count]:
+                                        mirror_pred_normal = unit_vector(self.anchor_normals[pred_item["anchor_normal_class"]] + np.array(pred_item["anchor_normal_residual"])) #  pred mirror normal
+                                        mirror_pred_res = np.array(pred_item["anchor_normal_residual"])
+                                        mirror_pred_anchor = self.anchor_normals[pred_item["anchor_normal_class"]]
+                                        mirror_pred_normal_class = pred_item["anchor_normal_class"]
+                                        mirror_pred_bboxes = pred_item["bbox"]
+                                        have_match = True
+                                        break
+                                try:
+                                    improve = np.linalg.norm(mirror_pred_anchor - mirror_GT_normal) - np.linalg.norm(mirror_pred_normal - mirror_GT_normal)
+                                    distance = np.linalg.norm(mirror_GT_normal - mirror_GT_anchor)
+                                except Exception as e:
+                                    improve = 0
+                                    distance = 0
+                                    print(e)
+                                    print("error ------------ one_match_gt_id, gt_anchor_id : ", one_match_gt_id, gt_anchor_id)
+                                    mirror_pred_anchor = np.array([0,0,0])
+                                    mirror_GT_normal = np.array([0,0,0])
+                                    mirror_pred_normal = np.array([0,0,0])
+                                    mirror_GT_anchor = np.array([0,0,0])
+                                    mirror_GT_res = np.array([0,0,0])
+                                    mirror_pred_res = np.array([0,0,0])
+                                    print(dt_anchor_id[idx - zero_count], dt_anchor_id)
+                                    
+                                if not have_match:
                                     iou_predNum_noneNum[iou][0].add(image_id)
-    
-                                else:
-                                    zero_count += 1
-                                    iou_predNum_noneNum[iou][1].add(image_id)
-            
+                                    continue
+                                #################################### get L2 loss ####################################  
+                                iou_l2lossList[iou].append([np.linalg.norm(mirror_pred_anchor - mirror_GT_normal),\
+                                                        np.linalg.norm(mirror_pred_normal - mirror_GT_normal), \
+                                                        np.linalg.norm(mirror_pred_res - mirror_GT_res),\
+                                                        improve,\
+                                                        distance])
+                                #################################### get cos similarity ####################################
+                                iou_CSlist[iou].append([cos_sim(mirror_pred_anchor, mirror_GT_normal),\
+                                                        cos_sim(mirror_pred_normal, mirror_GT_normal), \
+                                                        cos_sim(mirror_pred_res, mirror_GT_res)])
+                                iou_angle_list[iou].append([angle(mirror_pred_anchor, mirror_GT_normal),\
+                                                        angle(mirror_pred_normal, mirror_GT_normal), \
+                                                        angle(mirror_pred_res, mirror_GT_res)])
+                                iou_predNum_noneNum[iou][0].add(image_id)
 
-            #################################### print prediction situation ####################################  
-            for iou in self.params.iouThrs:
-                print("| IOU {:.2f} : {:5}/{:5} have prediction|".format(iou, len(iou_predNum_noneNum[iou][0]), len( iou_predNum_noneNum[iou][0].union(iou_predNum_noneNum[iou][1]) )))
-            
-            if len(iou_predNum_noneNum[self.params.iouThrs[0]][0]) == 0:
-                return
+                            else:
+                                zero_count += 1
+                                iou_predNum_noneNum[iou][1].add(image_id)
+        
 
+        #################################### print prediction situation ####################################  
+        for iou in self.params.iouThrs:
+            print("| IOU {:.2f} : {:5}/{:5} have prediction|".format(iou, len(iou_predNum_noneNum[iou][0]), len( iou_predNum_noneNum[iou][0].union(iou_predNum_noneNum[iou][1]) )))
+        
+        if len(iou_predNum_noneNum[self.params.iouThrs[0]][0]) == 0:
+            return
 
-            print_score("L2_loss", iou_predNum_noneNum, iou_l2lossList)
-            print_score("SSIM", iou_predNum_noneNum, iou_CSlist)
-            print_score("angle_diff", iou_predNum_noneNum, iou_angle_list)
+        
+        print_score("L2_loss", iou_predNum_noneNum, iou_l2lossList)
+        print_score("SSIM", iou_predNum_noneNum, iou_CSlist)
+        print_score("angle_diff", iou_predNum_noneNum, iou_angle_list)
             
-            #################################### get cos similarity ####################################
 
     def anchor_specific_computeIoU(self, imgId, catId):
         p = self.params
