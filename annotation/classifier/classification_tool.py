@@ -276,14 +276,14 @@ def save_for_cavt(pos_list, cvat_folder, dataset_name):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-f', '--data_root', help='Input folder where the *tif images should be', default="/local-scratch/jiaqit/exp/data/scannet/scannet_frames_25k")
-    parser.add_argument('-j', '--json_file_path', help='Json file consist of input file names', default="/local-scratch/jiaqit/exp/annotation/classifier/0310_4/imgPath_score_2021-03-10-15-42-22.json")
-    parser.add_argument('-o', '--anno_output_folder', help='annotation result output folder', default="/local-scratch/jiaqit/exp/annotation/classifier/0310_5")
-    parser.add_argument('-s', '--stage', help='(1) annotation tool (2) generate retrain list (3) generate mirror package for CVAT annotation', default="2")
-    parser.add_argument('-ot', '--train_info_output_folder', help='stage 2 parameter : training information output folder', default="/local-scratch/jiaqit/exp/annotation/classifier/0310_5")
-    parser.add_argument('-p', '--pos_txt', help='stage 2 parameter : previous all positive path list txt', default="/local-scratch/jiaqit/exp/annotation/classifier/0310_4/train_positive.txt")
-    parser.add_argument('-n', '--neg_txt', help='stage 2 parameter : previous all negative path list txt', default="/local-scratch/jiaqit/exp/annotation/classifier/0310_4/train_negative.txt")
-    parser.add_argument('-ocvat', '--cvat_output_folder', help='stage 2 parameter : output folder for cvat', default="/local-scratch/jiaqit/exp/annotation/classifier/cvat")
+    parser.add_argument('-f', '--data_root', help='Input folder where the *tif images should be', default="")
+    parser.add_argument('-j', '--json_file_path', help='Json file consist of input file names', default="")
+    parser.add_argument('-o', '--anno_output_folder', help='annotation result output folder', default="")
+    parser.add_argument('-s', '--stage', help='(1) annotation tool (2) generate retrain list (3) generate mirror package for CVAT annotation', default="1")
+    parser.add_argument('-ot', '--train_info_output_folder', help='stage 2 parameter : training information output folder', default="")
+    parser.add_argument('-p', '--pos_txt', help='stage 2 parameter : previous all positive path list txt', default="")
+    parser.add_argument('-n', '--neg_txt', help='stage 2 parameter : previous all negative path list txt', default="")
+    parser.add_argument('-ocvat', '--cvat_output_folder', help='stage 2 parameter : output folder for cvat', default="")
     parser.add_argument('-d', '--dataset_name', help='stage 2 parameter : dataset name', default="scannet")
     args = parser.parse_args()
 
