@@ -43,12 +43,12 @@ parser.add_argument('-b', '--batch_size', default=4, type=int,
 parser.add_argument('--lr', '--learning-rate', default=0.001, type=float,
                     metavar='LR', help='initial learning rate', dest='lr')
 # TODO retrain
-parser.add_argument('--resume', default='/local-scratch/jiaqit/exp/annotation/classifier/0310_3/checkpoint/epoch_9_checkpoint.pth.tar', type=str, metavar='PATH', # TODO checkpoint/checkpoint.pth.tar
+parser.add_argument('--resume', default='', type=str, metavar='PATH', # TODO checkpoint/checkpoint.pth.tar
                     help='path to latest checkpoint (default: none)')
 # TODO 
 parser.add_argument('-e', '--evaluate', action='store_true') 
 # TODO output checkpoint & log file save directory
-parser.add_argument('--log_directory',    type=str,   help='training output folder', default='/local-scratch/jiaqit/exp/annotation/classifier/0310_4')
+parser.add_argument('--log_directory',    type=str,   help='training output folder', default='')
 # TODO retrain
 parser.add_argument('--checkpoint_save_freq',      type=int,   help="classifier's save frequncy (measure in EPOCH), usually set as 10", default=1)
 # TODO if coda boom
@@ -59,17 +59,17 @@ parser.add_argument('--input_width',               type=int,   help='input width
 parser.add_argument('--world-size', default=-1, type=int,
                     help='number of nodes for distributed training')
 parser.add_argument('--train_pos_list',  # TODO retrain
-        default="/local-scratch/jiaqit/exp/annotation/classifier/0310_4/train_positive.txt",
+        default="",
         type=str)
 parser.add_argument('--train_neg_list', # TODO retrain
-        default="/local-scratch/jiaqit/exp/annotation/classifier/0310_4/train_negative.txt",
+        default="",
         type=str)
 
 parser.add_argument('--val_pos_list',  # TODO
-        default="/local-scratch/wla172/scannet/extension_annot/labels/val_positive.txt",
+        default="",
         type=str)
 parser.add_argument('--val_neg_list',  # TODO
-        default="/local-scratch/wla172/scannet/extension_annot/labels/val_negative.txt",
+        default="",
         type=str)
 parser.add_argument('-a', '--arch', metavar='ARCH', default='resnet50',
                     choices=model_names,
