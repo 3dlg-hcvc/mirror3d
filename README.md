@@ -75,18 +75,22 @@ bash script/nyu/m3n_nyu_test.sh
 	```
 You can find reference pre-trained classifier's checkpoint on [checkpoint.pth.tar](http://aspis.cmpt.sfu.ca/projects/mirrors/checkpoint/classifier_checkpoint/checkpoint.pth.tar)
 
-- STEP 2: Get sorted img_list with scores
+- STEP 2: Get sorted img_list with scores (saved in .json file)
 
 	```python
-	python Mirror3D/annotation/classifier/classifier_train.py --unsort_img_list [img_path_to_be_sorted.txt] --resume_path [classifier_checkpoint_path] --output_save_folder [output_folder_path to save the output txt]
+	python Mirror3D/annotation/classifier/classifier_train.py --unsort_img_list [img_path_to_be_sorted.txt] --resume_path [classifier_checkpoint_path] --output_save_folder [output_folder_path to save the output .json file]
 	```
-
+	
+- STEP 3 : Pick positive sample based on the .json file output by STEP 2 manully
+<!---
 - STEP 3: Use `Mirror3D/annotation/classifier/classification_tool.py` to manually annotate mirror images
 
 
 	```python
-	python Mirror3D/annotation/classifier/classification_tool.py --folder [folder contains images] --json_file_path [json file output by STEP 2] --labels [label you want to have for the input images, e.g. "mirror", "no mirror"] --exclusion [path list .txt which you want to exclude]  --output_file_path [.txt file path to store the annotation result]
+	python Mirror3D/annotation/classifier/classification_tool.py --data_root [root path of the dataset] --json_file_path [path of the .json file output by STEP 2] --anno_output_folder [annotation result output folder] 
 	```
+-->
+
 
 ### Mirror mask annotation 
 
@@ -135,7 +139,7 @@ python Mirror3D/annotation/plane_annotation_tool/plane_annotation_tool.py --stag
 - STEP 2: Launch webpage to view the videos
 	
 	```python 
-	Mirror3D/annotation/verification/verification.py --stage 1 --data_main_folder [folder that contains "video_front, video_topdown .. etc" folders] --output_folder [.html files output folder] --video_num_per_page [int: how many video to display in one .html]
+	python Mirror3D/annotation/verification/verification.py --stage 1 --data_main_folder [folder that contains "video_front, video_topdown .. etc" folders] --output_folder [.html files output folder] --video_num_per_page [int: how many video to display in one .html]
 	```
 
 	Annotators should manually note down the error sample's path to a [error_sample].txt
@@ -143,5 +147,5 @@ python Mirror3D/annotation/plane_annotation_tool/plane_annotation_tool.py --stag
 - STEP 3: Copy out the error sample's data to another folder for reannotation
 
 	```python 
-	Mirror3D/annotation/verification/verification.py --stage 2 --data_main_folder [dataset main folder] --output_folder [folder to save the copy of data] --error_list [.txt that contains the error samples' name]
+	python Mirror3D/annotation/verification/verification.py --stage 2 --data_main_folder [dataset main folder] --output_folder [folder to save the copy of data] --error_list [.txt that contains the error samples' name]
 	```
