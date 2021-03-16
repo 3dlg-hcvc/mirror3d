@@ -25,6 +25,7 @@ class Mirror3d_eval():
             self.Train_tag = "raw"
         else:
             self.Train_tag = "*"
+        self.main_output_folder = ""
     
     def reset_setting(self,train_with_refD, logger=None, Input_tag="Input_tag", method_tag="method_tag",width=640, height=480):
         self.m_nm_all = torch.zeros(27)
@@ -83,6 +84,7 @@ class Mirror3d_eval():
         print(print_line)
         if self.logger:
             self.logger.info(print_line)
+        print("result saved to : ", self.main_output_folder)
 
     def compute_and_update_rmse_srmse(self, pred_depth, depth_shift, color_image_path):
 
@@ -262,7 +264,7 @@ class Mirror3d_eval():
         return 
 
     def save_result(self, main_output_folder, pred_depth, depth_shift, color_img_path):
-
+        self.main_output_folder = main_output_folder
 
         if os.path.exists(color_img_path.replace("raw", "mesh_refined_depth")):
             refD_gt_depth_path = color_img_path.replace("raw", "mesh_refined_depth")
