@@ -29,7 +29,7 @@ We test three methods on our dataset:
 - [VNL: Enforcing geometric constraints of virtual normal for depth prediction](https://github.com/YvanYin/VNL_Monocular_Depth_Prediction)
 - [saic : Decoder Modulation for Indoor Depth Completion](https://github.com/saic-vul/saic_depth_completion/tree/94bececdf12bb9867ce52c970bb2d11dee948d37)
 
-We've updated the dataloader and the main train/test script to support our input format. 
+We have updated the dataloader and the main train/test script to support our input format. 
 
 To train the three initial depth generator:
 
@@ -73,7 +73,7 @@ bash script/nyu/m3n_nyu_test.sh
 	```python
 	python Mirror3D/annotation/classifier/classifier_train.py --log_directory [checkpoint and .log file saved directory] --train_pos_list [training positive_sample_path.txt] --train_neg_list [training negative_sample_path.txt] --val_pos_list [validation positive_sample_path.txt] --val_neg_list [validation negative_sample_path.txt]
 	```
-You can find reference pre-trained classifier's checkpoint on [checkpoint.pth.tar](http://aspis.cmpt.sfu.ca/projects/mirrors/checkpoint/classifier_checkpoint/checkpoint.pth.tar)
+Martterport3d pre-trained checkpoint for the classifier can be found on [checkpoint.pth.tar](http://aspis.cmpt.sfu.ca/projects/mirrors/checkpoint/classifier_checkpoint/checkpoint.pth.tar)
 
 - STEP 2: Get sorted img_list with scores (saved in .json file)
 
@@ -81,7 +81,7 @@ You can find reference pre-trained classifier's checkpoint on [checkpoint.pth.ta
 	python Mirror3D/annotation/classifier/classifier_train.py --unsort_img_list [img_path_to_be_sorted.txt] --resume_path [classifier_checkpoint_path] --output_save_folder [output_folder_path to save the output .json file]
 	```
 	
-- STEP 3 : Pick positive sample based on the .json file output by STEP 2 manully
+- STEP 3: Pick positive samples based on the .json file output by STEP 2 manually
 <!---
 - STEP 3: Use `Mirror3D/annotation/classifier/classification_tool.py` to manually annotate mirror images
 
@@ -103,7 +103,7 @@ python Mirror3D/annotation/plane_annotation_tool/plane_annotation_tool.py --stag
 
 - `--stage 1`: Set up annotation environment 
 
-- `--stage 2`: Manually annotate the mirror plane
+- `--stage 2`: Manually annotate the mirror plane based on our plane annotation tool, check [User Instruction](todo) for how to use the plane annotation tool.
 
 - `--stage 3`: Update raw depth
 
@@ -115,9 +115,9 @@ python Mirror3D/annotation/plane_annotation_tool/plane_annotation_tool.py --stag
 - `--stage all` : Run stage 1 ~ 4 together
 
 - Note : 
-	- Only changing the ratio of w:h (and don't change f)  will change the point cloud's shape
+	- Only changing the ratio of w:h (and do not change f)  will change the point cloud's shape
 	- Only changing the depth image OR resizing the image but keep the w:h ratio will not change the shape of the point cloud (but the point cloud would be closer / further/ small / larger )
-	- During training: If the image is resized by ratio x (w:h ratio doesn't change), f should also multiply ratio x
+	- During training: If the image is resized by ratio x (w:h ratio does not change), f should also multiply ratio x
 
 
 ### Verification
