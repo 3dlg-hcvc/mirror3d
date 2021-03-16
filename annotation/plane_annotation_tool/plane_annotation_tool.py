@@ -217,6 +217,7 @@ class Plane_annotation_tool():
             input_option = input()
 
             if not option_list.is_input_key_valid(input_option, annotated_paths):
+                path_to_annotate.append(current_pcd_path)
                 print("invalid input, please input again :D")
                 continue
             
