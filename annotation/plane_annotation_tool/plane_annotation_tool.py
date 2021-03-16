@@ -98,7 +98,7 @@ class Plane_annotation_tool():
             else:
                 data_correct = False
                 self.save_error_raw_name(file_name)
-                print(" path not exisits : {} mask {} raw {} depth {}".format( file_name, os.path.exists(mask_file_path) , os.path.exists(raw_file_path) , os.path.exists(depth_file_path)))
+                print(" path not exisits : {} {} mask {} {}raw {} depth {} {}".format( file_name, os.path.exists(mask_file_path),mask_file_path , os.path.exists(raw_file_path),raw_file_path , os.path.exists(depth_file_path), depth_file_path))
         
         assert data_correct, "sth wrong with data, please check data first"
 
@@ -238,8 +238,7 @@ class Plane_annotation_tool():
                 back_path_list = []
                 n = int(input_option.split()[1]) - 1
                 for i in range(n):
-                    back_path_list.append(annotated_paths.pop())
-                correct_list = list(set(correct_list) - set(back_path_list))
+                    correct_list = list(set(correct_list) - set(back_path_list))
                 error_list = list(set(error_list) - set(back_path_list))
 
                 self.save_progress(error_list, correct_list)

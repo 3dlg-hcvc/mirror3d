@@ -56,6 +56,12 @@ def main(args):
     cfg.TEST.EVAL_PERIOD = args.checkpoint_save_freq
     cfg.MODEL.WEIGHTS = args.resume_checkpoint_path
     cfg.EVAL = args.eval
+    cfg.REF_MODE = args.ref_mode
+    if not os.path.exists(cfg.REF_DEPTH_TO_REFINE):
+        cfg.REF_DEPTH_TO_REFINE = args.to_ref_txt
+        cfg.EVAL_INPUT_REF_DEPTH = True
+        cfg.EVAL_SAVE_DEPTH = True
+        print("eval depth for : ", cfg.REF_DEPTH_TO_REFINE)
 
     # Create output folder 
     if args.config.find("mirror3dnet_normal_config.yml") > 0:
@@ -83,6 +89,7 @@ def main(args):
             method_tag = cfg.REF_DEPTH_TO_REFINE.split("/")[-2]
             cfg.OUTPUT_DIR = os.path.join(cfg.OUTPUT_DIR, method_tag) 
         os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
+        print("eval result saved  to : ", cfg.OUTPUT_DIR)
         model = Mirror3dTrainer.build_model(cfg)
         DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(
             cfg.MODEL.WEIGHTS, resume=args.resume
@@ -144,8 +151,11 @@ if __name__ == "__main__":
 
     # Log and save (mirror3d)
     parser.add_argument('--log_directory',             type=str,   help='training output folder', default='output')
-    parser.add_argument('--checkpoint_save_freq',                 type=int,   help='Checkpoint saving frequency in global steps /iteration; nyu 5000; m3d 10000', default=500)
+    parser.add_argument('--checkpoint_save_freq',      type=int,   help='Checkpoint saving frequency in global steps /iteration; nyu 5000; m3d 10000', default=500)
 
+    parser.add_argument('--to_ref_txt',                type=str,   help='txt to refine', default='')
+    parser.add_argument('--ref_mode',                  type=str,   help='none / rawD_mirror / rawD_border / DE_mirror / DE_border', default='DE_border')
+    
     # PyTorch still may leave orphan processes in multi-gpu training.
     # Therefore we use a deterministic way to obtain port,
     # so that users are aware of orphan processes by seeing the port occupied.
