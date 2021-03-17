@@ -199,7 +199,8 @@ class Plane_annotation_tool():
                 self.error_list.append(current_pcd_path)
                 self.save_progress()
                 self.get_progress()
-                print("[AUTO] sample index {} path {} is invalid".format(self.sample_index, masked_image_path))
+                print("[AUTO] sample index {} path {} is invalid".format(self.sample_index, current_pcd_path))
+                continue
 
             mirror_border_vis_save_folder = os.path.join(self.anno_output_folder, "border_vis")
             masked_image_path = os.path.join(mirror_border_vis_save_folder, "{}.jpg".format(current_pcd_path.split("/")[-1].split(".")[0]))
