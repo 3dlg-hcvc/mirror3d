@@ -181,10 +181,10 @@ def get_mirror_init_plane_from_3points(p1, p2, p3, plane_init_size=1000):
     except:
         camera_plane_p1, camera_plane_p2 = solve([a*x + b*y + c*z +d, \
                         (x-selected_center[0])*(x-selected_center[0]) + (y-selected_center[1])*(y-selected_center[1]) + (z-selected_center[2])*(z-selected_center[2]) - 1000*1000,\
-                        y-selected_center[1] - 100], [x,y,z])
+                        y-selected_center[1] - 1], [x,y,z])
         camera_plane_p3, camera_plane_p4 = solve([a*x + b*y + c*z +d, \
                         (x-selected_center[0])*(x-selected_center[0]) + (y-selected_center[1])*(y-selected_center[1]) + (z-selected_center[2])*(z-selected_center[2]) - 1000*1000,\
-                        y-selected_center[1] + 100], [x,y,z])
+                        y-selected_center[1] + 1], [x,y,z])
 
     camera_plane_p1 = [float(complex(i).real) for i in camera_plane_p1]
     camera_plane_p2 = [float(complex(i).real) for i in camera_plane_p2]
@@ -817,9 +817,9 @@ def get_parameter_from_plane_adjustment(pcd, camera_plane, adjustment_init_step_
             camera_plane.rotate(get_3_3_rotation_matrix(0, init_rotation_angle, 0),np.array(camera_plane.vertices).mean(0))
             vis.update_geometry(camera_plane)
         if expand:
-            resize_plane(plane=camera_plane, ratio=1.1)
+            resize_plane(plane=camera_plane, ratio=2)
         if shink:
-            resize_plane(plane=camera_plane, ratio=0.9)
+            resize_plane(plane=camera_plane, ratio=0.5)
 
 
     # ------------------------- link action with key ------------------------ #

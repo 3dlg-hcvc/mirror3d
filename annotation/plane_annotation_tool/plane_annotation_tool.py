@@ -184,12 +184,23 @@ class Plane_annotation_tool():
         os.makedirs(anotation_progress_save_folder, exist_ok=True)
         self.get_progress() # self.sample_index start from 0
         annotation_start_index = self.sample_index
+        manual_adjust_num = 0
         annotation_start_time = time.time()
         while 1:
             if self.sample_index == len(self.pcd_path_list):
                 print("annotation finished ! XD")
+                exit(1)
                 return
             current_pcd_path = self.pcd_path_list[self.sample_index]
+            currect_pcd_id = current_pcd_path.split("/")[-1].split("_idx_")[0]
+
+            # If one instance in the sample is negative; then this sample is invalid
+            if currect_pcd_id in self.error_id: 
+                self.error_list.append(current_pcd_path)
+                self.save_progress()
+                self.get_progress()
+                print("[AUTO] sample index {} path {} is invalid".format(self.sample_index, masked_image_path))
+
             mirror_border_vis_save_folder = os.path.join(self.anno_output_folder, "border_vis")
             masked_image_path = os.path.join(mirror_border_vis_save_folder, "{}.jpg".format(current_pcd_path.split("/")[-1].split(".")[0]))
             current_sample_status = "N/A"
@@ -245,10 +256,14 @@ class Plane_annotation_tool():
                 continue
             
             if input_option == "t":
+                if current_pcd_path in self.error_list:
+                    self.error_list.remove(current_pcd_path)
                 self.correct_list.append(current_pcd_path)
                 self.save_progress()
                 self.get_progress()
             elif input_option == "w":
+                if current_pcd_path in self.correct_list:
+                    self.correct_list.remove(current_pcd_path)
                 self.error_list.append(current_pcd_path)
                 self.save_progress()
                 self.get_progress()
@@ -261,9 +276,14 @@ class Plane_annotation_tool():
                 self.save_progress()
                 self.get_progress()
                 print("current progress {} / {}".format(self.sample_index, len(self.pcd_path_list)))
-                refer_speed = (time.time()-annotation_start_time)/ (self.sample_index - annotation_start_index)
-                left_h = ((len(self.pcd_path_list) - self.sample_index) * refer_speed) / 3600
-                print("Reference annotation speed {:.2f} s/sample; Estimate remaining time {:.1f} h.".format(refer_speed, left_h))
+                try:
+                    refer_speed = (time.time()-annotation_start_time)/ (self.sample_index - annotation_start_index)
+                    left_h = ((len(self.pcd_path_list) - self.sample_index) * refer_speed) / 3600
+                    manul_percentage = (manual_adjust_num /  (self.sample_index - annotation_start_index)) * 100
+                    print("Reference annotation speed {:.2f} s/sample; Estimate remaining time {:.1f} h; manual adjust {:.2f}%".format(refer_speed, left_h, manul_percentage))
+                    
+                except:
+                    pass
                 exit(1)
             elif "back" in input_option:
                 n = int(input_option.split()[1]) - 1
@@ -286,7 +306,7 @@ class Plane_annotation_tool():
 
                 one_plane_para_save_path = os.path.join(os.path.join(self.anno_output_folder, "img_info"), "{}.json".format(img_name))
                 save_plane_parameter_2_json(plane_parameter, one_plane_para_save_path, instance_id)
-
+                manual_adjust_num += 1
                 self.correct_list.append(current_pcd_path)
                 self.save_progress()
                 self.get_progress()
@@ -362,11 +382,16 @@ class Plane_annotation_tool():
             self.error_list = read_txt(error_txt)
         else:
             self.error_list = []
+        
+        self.error_id = []
+        for item in self.error_list:
+            self.error_id.append(item.split("/")[-1].split("_idx_")[0])
 
         if os.path.exists(correct_txt):
             self.correct_list = read_txt(correct_txt)
         else:
             self.correct_list = []
+
 
         for index, one_path in enumerate(self.pcd_path_list):
             if one_path not in self.correct_list and one_path not in self.error_list:
