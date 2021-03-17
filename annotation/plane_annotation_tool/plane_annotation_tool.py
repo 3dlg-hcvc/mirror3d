@@ -180,6 +180,8 @@ class Plane_annotation_tool():
         Requirement : open3d 0.10.0 +
         """
         import open3d as o3d
+        import warnings
+        warnings.filterwarnings("ignore")
         anotation_progress_save_folder = os.path.join(self.anno_output_folder, "anno_progress")
         os.makedirs(anotation_progress_save_folder, exist_ok=True)
         self.get_progress() # self.sample_index start from 0
@@ -190,7 +192,6 @@ class Plane_annotation_tool():
             if self.sample_index == len(self.pcd_path_list):
                 print("annotation finished ! XD")
                 exit(1)
-                return
             current_pcd_path = self.pcd_path_list[self.sample_index]
             currect_pcd_id = current_pcd_path.split("/")[-1].split("_idx_")[0]
 
@@ -398,6 +399,8 @@ class Plane_annotation_tool():
             if one_path not in self.correct_list and one_path not in self.error_list:
                 self.sample_index = index
                 return
+        self.sample_index = len(self.pcd_path_list)
+        return
 
 
 
