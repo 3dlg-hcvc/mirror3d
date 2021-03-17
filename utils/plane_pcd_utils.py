@@ -171,12 +171,20 @@ def get_mirror_init_plane_from_3points(p1, p2, p3, plane_init_size=1000):
     y = Symbol('y',real=True)
     z = Symbol('z',real=True)
     selected_center = np.mean([p1,p2,p3], axis=0)
-    camera_plane_p1, camera_plane_p2 = solve([a*x + b*y + c*z +d, \
-                    (x-selected_center[0])*(x-selected_center[0]) + (y-selected_center[1])*(y-selected_center[1]) + (z-selected_center[2])*(z-selected_center[2]) - 1000*1000,\
-                     y-selected_center[1] - 800], [x,y,z])
-    camera_plane_p3, camera_plane_p4 = solve([a*x + b*y + c*z +d, \
-                    (x-selected_center[0])*(x-selected_center[0]) + (y-selected_center[1])*(y-selected_center[1]) + (z-selected_center[2])*(z-selected_center[2]) - 1000*1000,\
-                     y-selected_center[1] + 800], [x,y,z])
+    try:
+        camera_plane_p1, camera_plane_p2 = solve([a*x + b*y + c*z +d, \
+                        (x-selected_center[0])*(x-selected_center[0]) + (y-selected_center[1])*(y-selected_center[1]) + (z-selected_center[2])*(z-selected_center[2]) - 1000*1000,\
+                        y-selected_center[1] - 800], [x,y,z])
+        camera_plane_p3, camera_plane_p4 = solve([a*x + b*y + c*z +d, \
+                        (x-selected_center[0])*(x-selected_center[0]) + (y-selected_center[1])*(y-selected_center[1]) + (z-selected_center[2])*(z-selected_center[2]) - 1000*1000,\
+                        y-selected_center[1] + 800], [x,y,z])
+    except:
+        camera_plane_p1, camera_plane_p2 = solve([a*x + b*y + c*z +d, \
+                        (x-selected_center[0])*(x-selected_center[0]) + (y-selected_center[1])*(y-selected_center[1]) + (z-selected_center[2])*(z-selected_center[2]) - 1000*1000,\
+                        y-selected_center[1] - 100], [x,y,z])
+        camera_plane_p3, camera_plane_p4 = solve([a*x + b*y + c*z +d, \
+                        (x-selected_center[0])*(x-selected_center[0]) + (y-selected_center[1])*(y-selected_center[1]) + (z-selected_center[2])*(z-selected_center[2]) - 1000*1000,\
+                        y-selected_center[1] + 100], [x,y,z])
 
     camera_plane_p1 = [float(complex(i).real) for i in camera_plane_p1]
     camera_plane_p2 = [float(complex(i).real) for i in camera_plane_p2]
@@ -291,12 +299,8 @@ def get_picked_points(pcd):
     while 1:
         coor_ori = o3d.geometry.TriangleMesh.create_coordinate_frame(size=8000,  origin=[0,0,0])
         vis = o3d.visualization.VisualizerWithEditing()
-        vis.create_window(width=800,height=800)
+        vis.create_window()
         vis.add_geometry(pcd)
-        # vis.get_view_control().set_front([0,0,-1])
-        # vis.get_view_control().set_constant_z_far(100000)
-        # vis.get_view_control().set_constant_z_near(0)
-        # vis.get_view_control().set_up([0,-1,0])
         vis.run()  # user picks points
         vis.destroy_window()
         points_index = vis.get_picked_points()
@@ -813,9 +817,9 @@ def get_parameter_from_plane_adjustment(pcd, camera_plane, adjustment_init_step_
             camera_plane.rotate(get_3_3_rotation_matrix(0, init_rotation_angle, 0),np.array(camera_plane.vertices).mean(0))
             vis.update_geometry(camera_plane)
         if expand:
-            resize_plane(plane=camera_plane, ratio=1.03)
+            resize_plane(plane=camera_plane, ratio=1.1)
         if shink:
-            resize_plane(plane=camera_plane, ratio=0.97)
+            resize_plane(plane=camera_plane, ratio=0.9)
 
 
     # ------------------------- link action with key ------------------------ #
@@ -837,7 +841,7 @@ def get_parameter_from_plane_adjustment(pcd, camera_plane, adjustment_init_step_
     vis.register_key_action_callback(80, mirror_turn_down) # p blue_z
 
 
-    option_list = Option()
+    option_list = Tool_Option()
     option_list.add_option("a", "plane move left")
     option_list.add_option("w", "plane move up")
     option_list.add_option("s", "plane move down")
@@ -854,7 +858,7 @@ def get_parameter_from_plane_adjustment(pcd, camera_plane, adjustment_init_step_
 
     coor_ori = o3d.geometry.TriangleMesh.create_coordinate_frame(size=8000,  origin=[0,0,0])
     vis.register_animation_callback(animation_callback)
-    vis.create_window(width=800,height=800)
+    vis.create_window()
     vis.add_geometry(camera_plane)
     vis.add_geometry(pcd)
     vis.get_view_control().set_front([0,0,-1])
@@ -963,7 +967,7 @@ def clamp_pcd_by_bbox(mirror_bbox, depth_img_path, f, mirror_border_mask,plane_p
 # ---------------------------------------------------------------------------- #
 #                                 Option class                                 #
 # ---------------------------------------------------------------------------- #
-class Option():
+class Tool_Option():
     """
     The Option class currently does the following:
     1. add_option
@@ -981,20 +985,13 @@ class Option():
         for index, item in enumerate(self.option_fun.items()):
             print("({}) {:8} : {}".format(index+1, item[0], item[1]))
     
-    def is_input_key_valid(self, input_option, annotated_paths):
+    def is_input_key_valid(self, input_option):
         key = input_option.split()[0]
         is_valid = False
         for item in self.option_fun.items():
             if key == item[0].split()[0]:
                 is_valid = True
 
-        if "back" in input_option:
-            try:
-                n = int(input_option.split()[1]) - 1
-                if n < 0 or n > len(annotated_paths):
-                    is_valid = False
-            except:
-                is_valid = False
         return is_valid
 
 

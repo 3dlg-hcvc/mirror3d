@@ -10,6 +10,7 @@ from utils.general_utlis import *
 from utils.plane_pcd_utils import *
 import json
 import shutil
+import time
 
 
 
@@ -55,6 +56,14 @@ class Plane_annotation_tool():
             print("########## NOTE output saved to {}, this may overwrite your current information ############".format(self.anno_output_folder))
         else:
             self.anno_output_folder = anno_output_folder
+    
+
+    def set_show_plane(self, show_plane):
+        """
+        For step 2: show the mesh plane during annotation or not
+        Suggest to show the mesh plane if computer allows
+        """
+        self.show_plane = show_plane
 
     def save_error_raw_name(self, sample_raw_name):
         """
@@ -173,18 +182,25 @@ class Plane_annotation_tool():
         import open3d as o3d
         anotation_progress_save_folder = os.path.join(self.anno_output_folder, "anno_progress")
         os.makedirs(anotation_progress_save_folder, exist_ok=True)
-        annotated_paths, path_to_annotate , error_list, correct_list = self.get_progress()
+        self.get_progress() # self.sample_index start from 0
+        annotation_start_index = self.sample_index
+        annotation_start_time = time.time()
         while 1:
-            if len(path_to_annotate) == 0:
+            if self.sample_index == len(self.pcd_path_list):
                 print("annotation finished ! XD")
                 return
-            current_pcd_path = path_to_annotate.pop()
+            current_pcd_path = self.pcd_path_list[self.sample_index]
             mirror_border_vis_save_folder = os.path.join(self.anno_output_folder, "border_vis")
             masked_image_path = os.path.join(mirror_border_vis_save_folder, "{}.jpg".format(current_pcd_path.split("/")[-1].split(".")[0]))
-            print("mirror to annotation : ",masked_image_path)
+            current_sample_status = "N/A"
+            if current_pcd_path in self.correct_list:
+                current_sample_status = "correct"
+            elif current_pcd_path in self.error_list:
+                current_sample_status = "error"
+            print("###################### sample status {} ######################".format(current_sample_status))
+            print("sample index {} mirror to annotate {}".format(self.sample_index, masked_image_path))
 
             pcd = o3d.io.read_point_cloud(current_pcd_path)
-
             pcd_name = current_pcd_path.split("/")[-1].split(".")[0]
             img_name = pcd_name.split("_idx_")[0]
             instance_id = [int(i) for i in pcd_name.split("_idx_")[1].split("_")]
@@ -194,56 +210,73 @@ class Plane_annotation_tool():
                 depth_img_path = os.path.join(self.data_main_folder, "hole_raw_depth","{}.png".format(img_name))
             color_img_path = os.path.join(self.data_main_folder, "raw","{}.png".format(img_name))
             mask_path = os.path.join(self.data_main_folder, "instance_mask","{}.png".format(img_name))
-            instance_mask = get_grayscale_instanceMask(cv2.imread(mask_path),instance_id)
-            plane_parameter = read_json(os.path.join(self.anno_output_folder, "img_info","{}.json".format(img_name)))[pcd_name.split("_idx_")[1]]["plane_parameter"]
-            mirror_points = get_points_in_mask(f=self.f, depth_img_path=depth_img_path, color_img_path=color_img_path, mirror_mask=instance_mask)
-            mirror_pcd = o3d.geometry.PointCloud()
-            mirror_pcd.points = o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0))
-            mirror_bbox = o3d.geometry.OrientedBoundingBox.create_from_points(o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0)))
-            try:
-                mirror_plane = get_mirror_init_plane_from_mirrorbbox(plane_parameter, mirror_bbox)
-                o3d.visualization.draw_geometries([pcd, mirror_plane])
-            except:
+
+            if self.show_plane:
+                instance_mask = get_grayscale_instanceMask(cv2.imread(mask_path),instance_id)
+                plane_parameter = read_json(os.path.join(self.anno_output_folder, "img_info","{}.json".format(img_name)))[pcd_name.split("_idx_")[1]]["plane_parameter"]
+                mirror_points = get_points_in_mask(f=self.f, depth_img_path=depth_img_path, color_img_path=color_img_path, mirror_mask=instance_mask)
+                mirror_pcd = o3d.geometry.PointCloud()
+                mirror_pcd.points = o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0))
+                mirror_bbox = o3d.geometry.OrientedBoundingBox.create_from_points(o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0)))
+
+            if self.show_plane:
+                try:
+                    mirror_plane = get_mirror_init_plane_from_mirrorbbox(plane_parameter, mirror_bbox)
+                    o3d.visualization.draw_geometries([pcd, mirror_plane])
+                except:
+                    o3d.visualization.draw_geometries([pcd])
+            else:
                 o3d.visualization.draw_geometries([pcd])
 
-            option_list = Option()
+            option_list = Tool_Option()
             option_list.add_option("t", "TRUE : initial plane parameter is correct")
             option_list.add_option("w", "WASTE : sample have error, can not be used (e.g. point cloud too noisy)")
             option_list.add_option("r", "REFINE : need to refine the plane parameter")
             option_list.add_option("back n", "BACK : return n times (e.g. back 3 : give up the recent 3 annotated sample and go back)")
+            option_list.add_option("goto n", "GOTO : goto the n th image (e.g. goto 3 : go to the third image")
+            option_list.add_option("n", "NEXT : goto next image without annotation")
             option_list.add_option("exit", "EXIT : save and exit")
             option_list.print_option()
 
             input_option = input()
 
-            if not option_list.is_input_key_valid(input_option, annotated_paths):
-                path_to_annotate.append(current_pcd_path)
+            if not option_list.is_input_key_valid(input_option):
                 print("invalid input, please input again :D")
                 continue
             
             if input_option == "t":
-                correct_list.append(current_pcd_path)
-                self.save_progress(error_list, correct_list)
-                annotated_paths, path_to_annotate , error_list, correct_list = self.get_progress()
+                self.correct_list.append(current_pcd_path)
+                self.save_progress()
+                self.get_progress()
             elif input_option == "w":
-                error_list.append(current_pcd_path)
-                self.save_progress(error_list, correct_list)
-                annotated_paths, path_to_annotate , error_list, correct_list = self.get_progress()
+                self.error_list.append(current_pcd_path)
+                self.save_progress()
+                self.get_progress()
+            elif input_option == "n":
+                if current_sample_status == "N/A":
+                    print("please annotate current sample :-)")
+                    continue
+                self.sample_index += 1
             elif input_option == "exit":
-                
-                self.save_progress(error_list, correct_list)
-                annotated_paths, path_to_annotate , error_list, correct_list = self.get_progress()
-                print("current progress {} / {}".format(len(annotated_paths), len(annotated_paths) + len(path_to_annotate)))
+                self.save_progress()
+                self.get_progress()
+                print("current progress {} / {}".format(self.sample_index, len(self.pcd_path_list)))
+                refer_speed = (time.time()-annotation_start_time)/ (self.sample_index - annotation_start_index)
+                left_h = ((len(self.pcd_path_list) - self.sample_index) * refer_speed) / 3600
+                print("Reference annotation speed {:.2f} s/sample; Estimate remaining time {:.1f} h.".format(refer_speed, left_h))
                 exit(1)
             elif "back" in input_option:
-                back_path_list = []
                 n = int(input_option.split()[1]) - 1
-                for i in range(n):
-                    correct_list = list(set(correct_list) - set(back_path_list))
-                error_list = list(set(error_list) - set(back_path_list))
-
-                self.save_progress(error_list, correct_list)
-                annotated_paths, path_to_annotate , error_list, correct_list = self.get_progress()
+                if self.sample_index - n < 0:
+                    print("at most return {} times".format(self.sample_index+1))
+                    continue
+                self.sample_index -= n
+            elif "goto" in input_option:
+                n = int(input_option.split()[1]) - 1
+                if  n > len(self.pcd_path_list)-1:
+                    print("you can go to 0 ~ {}".format(len(self.pcd_path_list)-1))
+                    continue
+                self.sample_index = n
 
             elif input_option == "r":
                 
@@ -254,9 +287,9 @@ class Plane_annotation_tool():
                 one_plane_para_save_path = os.path.join(os.path.join(self.anno_output_folder, "img_info"), "{}.json".format(img_name))
                 save_plane_parameter_2_json(plane_parameter, one_plane_para_save_path, instance_id)
 
-                correct_list.append(current_pcd_path)
-                self.save_progress(error_list, correct_list)
-                annotated_paths, path_to_annotate , error_list, correct_list = self.get_progress()
+                self.correct_list.append(current_pcd_path)
+                self.save_progress()
+                self.get_progress()
 
     def anno_update_depth_from_imgInfo(self):
         """
@@ -303,46 +336,44 @@ class Plane_annotation_tool():
                 cv2.imwrite(hole_refined_depth_path, refine_depth_with_plane_parameter_mask(plane_parameter, binary_instance_mask, cv2.imread(hole_raw_depth_path,cv2.IMREAD_ANYDEPTH),self.f))
                 print("update depth {}".format(hole_refined_depth_path))
 
-    def save_progress(self, error_list, correct_list):
+    def save_progress(self):
         """Save annotation progress"""
         anotation_progress_save_folder = os.path.join(self.anno_output_folder, "anno_progress")
         error_txt_path = os.path.join(anotation_progress_save_folder, "error_list.txt")
         correct_txt_path = os.path.join(anotation_progress_save_folder, "correct_list.txt")
-        save_txt(error_txt_path, error_list)
-        save_txt(correct_txt_path, correct_list)
+        save_txt(error_txt_path, set(self.error_list))
+        save_txt(correct_txt_path, set(self.correct_list))
 
     def get_progress(self):
         """Get annotation progress"""
-        pcd_path_list = []
+        self.sample_index = 0
+        start_index = 0
+        self.pcd_path_list = []
         pcd_save_folder = os.path.join(self.anno_output_folder, "anno_pcd")
         for pcd_name in os.listdir(pcd_save_folder):
-            pcd_path_list.append(os.path.join(pcd_save_folder, pcd_name))
-            
-
+            self.pcd_path_list.append(os.path.join(pcd_save_folder, pcd_name))
+        self.pcd_path_list.sort()
         anotation_progress_save_folder = os.path.join(self.anno_output_folder, "anno_progress")
 
         error_txt = os.path.join(anotation_progress_save_folder, "error_list.txt")
         correct_txt = os.path.join(anotation_progress_save_folder, "correct_list.txt")
 
         if os.path.exists(error_txt):
-            error_list = read_txt(error_txt)
+            self.error_list = read_txt(error_txt)
         else:
-            error_list = []
+            self.error_list = []
 
         if os.path.exists(correct_txt):
-            correct_list = read_txt(correct_txt)
+            self.correct_list = read_txt(correct_txt)
         else:
-            correct_list = []
+            self.correct_list = []
 
-        path_to_annotate = []
-        annotated_paths = []
-        path_to_annotate = list(set(pcd_path_list) - set(error_list) - set(correct_list))
-        annotated_paths = list(set(pcd_path_list) - set(path_to_annotate))
-        if len(path_to_annotate) > 0:
-            path_to_annotate.sort()
-        if len(annotated_paths) > 0:
-            annotated_paths.sort()
-        return annotated_paths, path_to_annotate, error_list, correct_list
+        for index, one_path in enumerate(self.pcd_path_list):
+            if one_path not in self.correct_list and one_path not in self.error_list:
+                self.sample_index = index
+                return
+
+
 
     def adjust_one_sample_plane(self, instance_index=None, img_name=None):
         """
@@ -387,7 +418,7 @@ class Plane_annotation_tool():
 
         while 1:
 
-            option_list = Option()
+            option_list = Tool_Option()
             option_list.add_option("f", "FINISH : update hole_refined_depth/ mesh_refined_depth/ img_info and EXIT")
             option_list.add_option("a", "ADJUST : need to adjust the plane parameter")
             option_list.add_option("i", "INIT : pick 3 points to initialize the plane")
@@ -466,7 +497,7 @@ class Plane_annotation_tool():
             pcd = get_pcd_from_rgb_depthMap(self.f, refined_depth_to_clamp, color_img_path)
             o3d.visualization.draw_geometries([pcd])
 
-            option_list = Option()
+            option_list = Tool_Option()
             option_list.add_option("f", "FINISH : update hole_refined_depth/ mesh_refined_depth/ img_info and EXIT")
             option_list.add_option("r", "REPAIR : pick points and refine the specific area")
             option_list.add_option("d", "DISTANCE : the clamping distance_threshold; distance over distance_threshold will be clamped")
@@ -629,10 +660,11 @@ if __name__ == "__main__":
     parser.add_argument(
         '--stage', default="4")
     parser.add_argument(
-        '--data_main_folder', default="/project/3dlg-hcvc/mirrors/data/nyu/final_data/precise")
+        '--data_main_folder', default="")
     parser.add_argument(
         '--process_index', default=0, type=int, help="process index")
     parser.add_argument('--multi_processing', help='do multi-process or not',action='store_true')
+    parser.add_argument('--anno_show_plane', help='do multi-process or not',action='store_true')
     parser.add_argument(
         '--border_width', default=50, type=int, help="border_width")
     parser.add_argument(
@@ -644,9 +676,9 @@ if __name__ == "__main__":
     parser.add_argument(
         '--anno_output_folder', default="")
     parser.add_argument(
-        '--img_name', default="712")
+        '--img_name', default="")
     parser.add_argument(
-        '--instance_index', default="0_0_128")
+        '--instance_index', default="")
     args = parser.parse_args()
 
 
@@ -656,6 +688,7 @@ if __name__ == "__main__":
         plane_anno_tool.anno_env_setup()
     elif args.stage == "2":
         plane_anno_tool = Plane_annotation_tool(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
+        plane_anno_tool.set_show_plane(args.anno_show_plane)
         plane_anno_tool.anno_plane_update_imgInfo()
     elif args.stage == "3":
         plane_anno_tool = Plane_annotation_tool(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
