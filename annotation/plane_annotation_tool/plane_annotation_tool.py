@@ -64,6 +64,12 @@ class Plane_annotation_tool():
         Suggest to show the mesh plane if computer allows
         """
         self.show_plane = show_plane
+    
+    def set_overwrite(self, overwrite):
+        """
+        For STEP 1 overwrite current environment setup or not
+        """
+        self.overwrite = overwrite
 
     def save_error_raw_name(self, sample_raw_name):
         """
@@ -144,15 +150,17 @@ class Plane_annotation_tool():
             for instance_index in np.unique(np.reshape(mask,(-1,3)), axis = 0):
                 if sum(instance_index) == 0: # background
                     continue
-                
+
                 instance_tag = "_idx"
                 for i in instance_index:
                     instance_tag += "_{}".format(i)
                 instance_tag = smaple_name + instance_tag
                 pcd_save_path = os.path.join(pcd_save_folder,  "{}.ply".format(instance_tag))
-                if os.path.isfile(pcd_save_path):
+                if os.path.isfile(pcd_save_path) and not self.overwrite:
                     print(pcd_save_path , "exist! continue")
                     continue
+                else:
+                    print("begin to overwrite {}".format(pcd_save_path))
 
                 binary_instance_mask = get_grayscale_instanceMask(mask, instance_index)
                 mirror_border_mask = cv2.dilate(binary_instance_mask, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (self.border_width,self.border_width))) - binary_instance_mask
@@ -326,8 +334,9 @@ class Plane_annotation_tool():
             smaple_name = os.path.split(color_img_path)[1].split(".")[0] 
             one_info_file_path = os.path.join(img_info_save_folder, "{}.json".format(smaple_name))
             info = read_json(one_info_file_path)
-            
+            valid_instance = False
             for one_info in info.items():
+                # TODO check if the sample is valid; if it's not valid copy the m
                 instance_index = [int(i) for i in one_info[0].split("_")]
 
                 mask_img_path = os.path.join(self.data_main_folder, "instance_mask","{}.png".format(smaple_name))
@@ -409,7 +418,7 @@ class Plane_annotation_tool():
         Repeatedly adjust one sample's plane parameter
 
         Args:
-            instance_index : "[R]_[G]_[B]",e.g. (128, 0, 0) --> "128_0_0"
+            instance_index : "[B]_[G]_[R]",e.g. (128, 0, 0) --> "128_0_0"
             img_name : color image sample name, e.g. 128
         """
         if len(img_name) == 0 or len(instance_index) == 0:
@@ -693,6 +702,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--process_index', default=0, type=int, help="process index")
     parser.add_argument('--multi_processing', help='do multi-process or not',action='store_true')
+    parser.add_argument('--overwrite', help='STEP 1 overwrite current environment setup or not',action='store_true')
     parser.add_argument('--anno_show_plane', help='do multi-process or not',action='store_true')
     parser.add_argument(
         '--border_width', default=50, type=int, help="border_width")
@@ -714,6 +724,7 @@ if __name__ == "__main__":
     # data_main_folder=None, process_index=0, multi_processing=False, border_width=50, f=519, anno_output_folder=None
     if args.stage == "1":
         plane_anno_tool = Plane_annotation_tool(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
+        plane_anno_tool.set_overwrite(args.overwrite)
         plane_anno_tool.anno_env_setup()
     elif args.stage == "2":
         plane_anno_tool = Plane_annotation_tool(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
