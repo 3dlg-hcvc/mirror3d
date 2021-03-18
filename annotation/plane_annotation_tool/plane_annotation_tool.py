@@ -371,9 +371,11 @@ class Plane_annotation_tool():
         """Save annotation progress"""
         anotation_progress_save_folder = os.path.join(self.anno_output_folder, "anno_progress")
         error_txt_path = os.path.join(anotation_progress_save_folder, "error_list.txt")
+        error_id_path = os.path.join(anotation_progress_save_folder, "error_id.txt")
         correct_txt_path = os.path.join(anotation_progress_save_folder, "correct_list.txt")
-        save_txt(error_txt_path, set(self.error_list))
-        save_txt(correct_txt_path, set(self.correct_list))
+        save_txt(error_id_path, set(self.error_id))
+        save_txt(error_txt_path, set([os.path.join(self.data_main_folder, item)  for item in self.error_list]))
+        save_txt(correct_txt_path, set([os.path.join(self.data_main_folder, item)  for item in self.correct_list]))
 
     def get_progress(self):
         """Get annotation progress"""
@@ -390,7 +392,7 @@ class Plane_annotation_tool():
         correct_txt = os.path.join(anotation_progress_save_folder, "correct_list.txt")
 
         if os.path.exists(error_txt):
-            self.error_list = read_txt(error_txt)
+            self.error_list = [os.path.join(self.data_main_folder, item)  for item in read_txt(error_txt)]
         else:
             self.error_list = []
         
@@ -399,10 +401,9 @@ class Plane_annotation_tool():
             self.error_id.append(item.split("/")[-1].split("_idx_")[0])
 
         if os.path.exists(correct_txt):
-            self.correct_list = read_txt(correct_txt)
+            self.correct_list = [os.path.join(self.data_main_folder, item)  for item in read_txt(correct_txt)]
         else:
             self.correct_list = []
-
 
         for index, one_path in enumerate(self.pcd_path_list):
             if one_path not in self.correct_list and one_path not in self.error_list:
