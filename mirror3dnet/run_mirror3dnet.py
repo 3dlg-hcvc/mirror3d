@@ -119,7 +119,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", default="mirror3dnet/config/nyu_mirror3d_config.yml", type=str , help="path to config file")
+    parser.add_argument("--config", default="mirror3dnet/config/mirror3dnet_config.yml", type=str , help="path to config file")
     parser.add_argument("--resume", default=True, type=bool)
     parser.add_argument("--eval-only", action="store_true", help="perform evaluation only")
     parser.add_argument("--num-gpus", type=int, default=1, help="number of gpus *per machine*")
@@ -138,8 +138,8 @@ if __name__ == "__main__":
     parser.add_argument('--coco_val_root',             type=str,   help='coco data root', default="")
 
     # Data information config (mirror3d)
-    parser.add_argument('--coco_focal_len',            type=str,   help='focal length of input data; correspond to INPUT DEPTH!', default="519") 
-    parser.add_argument('--depth_shift',               type=int,   help='nyu : 1000, m3d : 4000', default=1000) 
+    parser.add_argument('--coco_focal_len',            type=str,   help='focal length of input data; correspond to INPUT DEPTH! nyu : 519; scannet 575; m3d 1074.', default="519") 
+    parser.add_argument('--depth_shift',               type=int,   help='nyu / scannet : 1000, m3d : 4000', default=1000) 
     parser.add_argument('--input_height',              type=int,   help='input height', default=480)   
     parser.add_argument('--input_width',               type=int,   help='input width',  default=640) 
 
