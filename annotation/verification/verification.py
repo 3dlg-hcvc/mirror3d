@@ -4,6 +4,7 @@ from utils.general_utlis import *
 import shutil
 import os
 import bs4
+import tqdm
 
 class Verification():
 
@@ -24,36 +25,54 @@ class Verification():
         self.show_mesh_depth = show_mesh_depth
 
 
-    def sort_data_to_reannotate(self, error_list):
+    def sort_data_to_reannotate(self, error_id_path, waste_id_path, move):
         """
         Make a copy of error sample
 
         Args:
             self.video_main_folder : Dataset main folder.
             self.output_folder : Path to save the copy.
-            error_list : .txt file that contains the error sample's name.
+            error_id_path : .txt file that contains the error sample's id.
+            waste_id_path : .txt file path that contains invalid sample's id.
         """
+        if os.path.exists(waste_id_path):
+            invalid_id_list = set(read_txt(waste_id_path))
         os.makedirs(self.output_folder, exist_ok=True)
         print("A copy of error data is saved to : {}".format(self.output_folder))
-        for one_raw_id in read_txt(error_list):
-            one_raw_name = "{}.png".format(one_raw_id)
-            color_img_path = os.path.join(self.data_main_folder, "raw", one_raw_name)
-            mask_path = os.path.join(self.data_main_folder, "instance_mask", one_raw_name)
-            img_info_path = os.path.join(self.data_main_folder, "img_info", one_raw_name.replace(".png", ".json"))
-            if self.data_main_folder.find("m3d") > 0:
-                raw_depth_path = os.path.join(self.data_main_folder, "hole_raw_depth", rreplace(one_raw_name, "i", "d"))
-                refined_depth_path = os.path.join(self.data_main_folder, "hole_refined_depth", rreplace(one_raw_name, "i", "d"))
-            else:
-                raw_depth_path = os.path.join(self.data_main_folder, "hole_raw_depth",one_raw_name)
-                refined_depth_path = os.path.join(self.data_main_folder, "hole_refined_depth",one_raw_name)
-            img_to_copy = [color_img_path, mask_path, img_info_path, raw_depth_path, refined_depth_path]
-            for src_path in img_to_copy:
-                src_type = src_path.split("/")[-2]
-                dst_path_folder = os.path.join(self.output_folder, src_type)
-                os.makedirs(dst_path_folder)
-                dst_path = os.path.join(dst_path_folder, src_path.split("/")[-1])
-                shutil.copy(src_path, dst_path)
-                print("file copy to {}".format(dst_path))
+        re_anno_id_list = set(read_txt(error_id_path)) - invalid_id_list
+
+        # move invalid sample to "only_mask" folder
+        color_image_folder = os.path.join(self.data_main_folder, "raw")
+        for one_color_img_name in os.listdir(color_image_folder):
+            color_img_path = os.path.join(color_image_folder, one_color_img_name)
+            sample_id = color_img_path.split("/")[-1].split(".")[0]
+            if sample_id in invalid_id_list:
+                command = "find {} -type f | grep {}".format(self.data_main_folder, sample_id)
+                for src_path in os.popen(command).readlines():
+                    src_path = src_path.strip()
+                    dst_path = src_path.replace("with_mirror", "only_mask")
+                    dst_folder = os.path.split(dst_path)[0]
+                    os.makedirs(dst_folder, exist_ok=True)
+                    if move:
+                        print("moving {} to only_mask {}".format(src_path, dst_folder))
+                        shutil.move(src_path, dst_folder)
+                    else:
+                        print("copying {} to only_mask {}".format(src_path, dst_folder))
+                        shutil.copy(src_path, dst_path)
+            elif sample_id in re_anno_id_list:
+                command = "find {} -type f | grep {}".format(self.data_main_folder, sample_id)
+                for src_path in os.popen(command).readlines():
+                    src_path = src_path.strip()
+                    dst_path = src_path.replace(self.data_main_folder, self.output_folder)
+                    dst_folder = os.path.split(dst_path)[0]
+                    os.makedirs(dst_folder, exist_ok=True)
+                    if move:
+                        print("moving {} to new_folder {}".format(src_path, dst_folder))
+                        shutil.move(src_path, dst_folder)
+                    else:
+                        print("copying {} to new_folder {}".format(src_path, dst_folder))
+                        shutil.move(src_path, dst_path)
+
 
     def generate_html(self):
         """
@@ -71,7 +90,7 @@ class Verification():
         video_path_list = os.listdir(one_video_folder_path)
         videoSubset_list = [video_path_list[x:x+self.video_num_per_page] for x in range(0, len(video_path_list), self.video_num_per_page)]
         for html_index, one_videoSubset in enumerate(videoSubset_list):
-
+            
             with open(self.template_path) as inf:
                 txt = inf.read()
                 soup = bs4.BeautifulSoup(txt, features="html.parser")
@@ -94,18 +113,19 @@ class Verification():
 
                 new_div = soup.new_tag("div")
                 new_div['class'] = "one-instance"
+                
                 soup.body.append(new_div)
 
 
                 # Append text to one line in HTML
                 one_text = soup.new_tag("div")
-                text_div = soup.new_tag("div")
-                text_div["class"] = "text-div"
-                new_text = soup.new_tag("p")
-                new_text["class"] = "one-text"
-                new_text.string = sample_color_img_name.split(".")[0]
-                text_div.append(new_text)
-                one_text.append(text_div)
+                one_text["class"] = "one-item"
+                if not self.is_matterport3d:
+                    one_text['style'] = "padding-top: 100px;font-size: 25pt;"
+                else:
+                    one_text['style'] = "padding-top: 100px;"
+
+                one_text.string = sample_color_img_name.split(".")[0]
                 new_div.append(one_text)
 
                 # Append color image to one line in HTML
@@ -161,23 +181,27 @@ class Verification():
             
             html_path = os.path.join(self.output_folder, "{}.html".format(html_index))
             save_html(html_path, soup)
-            print("{} videos saved in {}".format(video_index, html_path))
-            exit() # TODO delete
+            
+            print("{} videos saved in {} link {}".format(video_index, html_path, html_path.replace("/project/3dlg-hcvc/mirrors/www","http://aspis.cmpt.sfu.ca/projects/mirrors")))
+
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
         '--stage', default="1")
+    parser.add_argument('--move', help='For step 2 move the smaple to output_folder or copy the sample to output_folder',action='store_true')
     parser.add_argument('--show_mesh_depth', help='for Matterport3d dataset, only visulize mesh depth or not',action='store_true')
     parser.add_argument(
-        '--video_main_folder', default="/project/3dlg-hcvc/mirrors/www/final_verification/nyu/hole_refined_ply", help="dataset main folder / video main folder (under which have video_front/ video_topdown folders)")
+        '--video_main_folder', default="", help="dataset main folder / video main folder (under which have video_front/ video_topdown folders)")
     parser.add_argument(
-        '--data_main_folder', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise", help="dataset main folder / video main folder")
+        '--data_main_folder', default="", help="dataset main folder / video main folder (under which have raw instance_mask ...)")
     parser.add_argument(
-        '--error_list', default="/project/3dlg-hcvc/mirrors/www/final_verification/nyu/error.txt")
+        '--error_list', default="")
     parser.add_argument(
-        '--output_folder', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/dataset_vis/nyu")
+        '--waste_list', default="")
+    parser.add_argument(
+        '--output_folder', default="")
     parser.add_argument('--video_num_per_page', default=150, type=int)
     args = parser.parse_args()
 
@@ -186,4 +210,4 @@ if __name__ == "__main__":
         verify.generate_html()
     elif args.stage == "2":
         verify = Verification(data_main_folder=args.data_main_folder, video_main_folder=args.video_main_folder, output_folder=args.output_folder, video_num_per_page =args.video_num_per_page, show_mesh_depth=args.show_mesh_depth)
-        verify.sort_data_to_reannotate(args.error_list)
+        verify.sort_data_to_reannotate(args.error_list, args.waste_list, args.move)

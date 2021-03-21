@@ -163,10 +163,10 @@ class Dataset_visulization(Plane_annotation_tool):
                 print("mirror plane (mesh) saved  to :", os.path.abspath(mesh_save_path))
 
         if self.is_matterport3d:
-                depth_img_path = rreplace(color_img_path.replace("raw","hole_refined_depth"), "i", "d")
-                ply_save_folder = os.path.join(self.output_folder, "hole_refined_ply")
-                os.makedirs(ply_save_folder, exist_ok=True)
-                generate_and_save_ply(depth_img_path, ply_save_folder)
+                # depth_img_path = rreplace(color_img_path.replace("raw","hole_refined_depth"), "i", "d")
+                # ply_save_folder = os.path.join(self.output_folder, "hole_refined_ply")
+                # os.makedirs(ply_save_folder, exist_ok=True)
+                # generate_and_save_ply(depth_img_path, ply_save_folder)
 
                 depth_img_path = rreplace(color_img_path.replace("raw","mesh_refined_depth"), "i", "d")
                 ply_save_folder = os.path.join(self.output_folder, "mesh_refined_ply")
@@ -235,9 +235,9 @@ class Dataset_visulization(Plane_annotation_tool):
                     self.save_error_raw_name(color_img_path.split("/")[-1].split(".")[0])
 
         if color_img_path.find("m3d") > 0:
-            depth_img_path = rreplace(color_img_path.replace("raw","hole_refined_depth").replace("json","png"),"i","d")
-            ply_folder = os.path.join(self.output_folder, "hole_refined_ply")
-            generate_screenshot(depth_img_path)
+            # depth_img_path = rreplace(color_img_path.replace("raw","hole_refined_depth").replace("json","png"),"i","d")
+            # ply_folder = os.path.join(self.output_folder, "hole_refined_ply")
+            # generate_screenshot(depth_img_path)
 
             depth_img_path = rreplace(color_img_path.replace("raw","mesh_refined_depth").replace("json","png"),"i","d")
             ply_folder = os.path.join(self.output_folder, "mesh_refined_ply")
@@ -289,6 +289,7 @@ class Dataset_visulization(Plane_annotation_tool):
         vis = o3d.visualization.VisualizerWithKeyCallback()
         vis.register_animation_callback(rotate_view)
         vis.create_window(width=self.window_w,height=self.window_h)
+        vis.get_render_option().point_size = 1.0
         vis.add_geometry(pcd)
         vis.add_geometry(plane)
         cam = vis.get_view_control().convert_to_pinhole_camera_parameters()
@@ -343,6 +344,7 @@ class Dataset_visulization(Plane_annotation_tool):
         vis = o3d.visualization.VisualizerWithKeyCallback()
         vis.register_animation_callback(rotate_view)
         vis.create_window(width=self.window_w,height=self.window_h)
+        vis.get_render_option().point_size = 1.0
         vis.add_geometry(pcd)
         vis.add_geometry(plane)
         cam = vis.get_view_control().convert_to_pinhole_camera_parameters()
