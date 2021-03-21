@@ -160,7 +160,10 @@ class Plane_annotation_tool():
                     print(pcd_save_path , "exist! continue")
                     continue
                 else:
-                    print("begin to overwrite {}".format(pcd_save_path))
+                    if os.path.exists(pcd_save_path):
+                        print("begin to overwrite {}".format(pcd_save_path))
+                    else:
+                        print("generating pcd {}".format(pcd_save_path))
 
                 binary_instance_mask = get_grayscale_instanceMask(mask, instance_index)
                 mirror_border_mask = cv2.dilate(binary_instance_mask, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (self.border_width,self.border_width))) - binary_instance_mask
@@ -369,10 +372,10 @@ class Plane_annotation_tool():
                     mesh_raw_depth_path = os.path.join(self.data_main_folder, "mesh_raw_depth",depth_file_name)
                     mesh_refined_depth_path = os.path.join(self.data_main_folder, "mesh_refined_depth",depth_file_name)
                     os.makedirs(os.path.split(mesh_refined_depth_path)[0], exist_ok=True)
-                    # If there's refined depth; refine the refiend depth
-                    if os.path.exists(hole_refined_depth_path):
-                        hole_raw_depth_path = hole_refined_depth_path
-                    cv2.imwrite(mesh_refined_depth_path, refine_depth_with_plane_parameter_mask(plane_parameter, binary_instance_mask, cv2.imread(hole_raw_depth_path,cv2.IMREAD_ANYDEPTH),self.f))
+                    # If there's refined depth; refine the refiend depth 
+                    if os.path.exists(mesh_refined_depth_path):
+                        mesh_raw_depth_path = mesh_refined_depth_path
+                    cv2.imwrite(mesh_refined_depth_path, refine_depth_with_plane_parameter_mask(plane_parameter, binary_instance_mask, cv2.imread(mesh_raw_depth_path,cv2.IMREAD_ANYDEPTH),self.f))
                     print("update depth {}".format(mesh_refined_depth_path))
                 else:
                     depth_file_name = "{}.png".format(smaple_name)
