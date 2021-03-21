@@ -155,7 +155,7 @@ class Dataset_visulization(Dataset_visulization):
             screenshot_id += 1
             screenshot_save_path = os.path.join(self.screenshot_output_folder, "{0:05d}.png".format(screenshot_id))
             time.sleep(0.05)
-            vis.capture_screen_image(screenshot_save_path)
+            vis.capture_screen_image(screenshot_save_path,do_render=True) 
             print("image saved to {}".format(screenshot_save_path))
             pcd.rotate(object_rotation_matrix,center=False) 
             vis.update_geometry(pcd)
@@ -204,7 +204,7 @@ class Dataset_visulization(Dataset_visulization):
             
             screenshot_id += 1
             screenshot_save_path = os.path.join(self.screenshot_output_folder, "{0:05d}.png".format(screenshot_id))
-            vis.capture_screen_image(screenshot_save_path)
+            vis.capture_screen_image(screenshot_save_path,do_render=True) 
             print("image saved to {}".format(screenshot_save_path))
 
             if screenshot_id > (360/rotation_step_degree):

@@ -1,8 +1,10 @@
 import open3d as o3d
 import os
 import numpy as np
-# from utils.plane_pcd_utils import *
+from utils.general_utlis import *
+from utils.plane_pcd_utils import *
 import cv2
+import argparse
 
 # ---------------------------------------------------------------------------- #
 #                function to iteratively visualize a point cloud               #
@@ -37,15 +39,48 @@ def vislize_pcd_from_rgbd(depth_img_path, color_img_path, f, save_folder=""):
         print("visulizing {}".format(color_img_path))
         o3d.visualization.draw_geometries([pcd])
 
-        
 
+def check_one_sample(color_img_path, depth_img_path, img_info_path, instance_id, f):
+    pcd = get_pcd_from_rgbd_depthPath(f, depth_img_path, color_img_path)
+    img_info = read_json(img_info_path)
+    plane_parameter = img_info[instance_id]["plane_parameter"]
+    mask_path = color_img_path.replace("raw", "instance_mask")
+    instance_mask = get_grayscale_instanceMask(cv2.imread(mask_path),[ int(i) for i in instance_id.split("_")])
+    mirror_points = get_points_in_mask(f, depth_img_path=depth_img_path, color_img_path=color_img_path, mirror_mask=instance_mask)
+    mirror_pcd = o3d.geometry.PointCloud()
+    mirror_pcd.points = o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0))
+    mirror_bbox = o3d.geometry.OrientedBoundingBox.create_from_points(o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0))) 
+    mirror_plane = get_mirror_init_plane_from_mirrorbbox(plane_parameter, mirror_bbox)
+    o3d.visualization.draw_geometries([pcd, mirror_plane])
 
 if __name__ == "__main__":
-    
-    visualize_single_image()
-    depth_img_path = "/local-scratch/jiaqit/exp/reannotate/hole_refined_depth/718.png"
-    f = 519
-    color_img_path = "/local-scratch/jiaqit/exp/reannotate/raw/718.png"
-    pcd_save_folder = "/local-scratch/jiaqit/exp/reannotate/vis"
-    #vislize_pcd_from_rgbd(depth_img_path, color_img_path, f, pcd_save_folder)
+
+    parser = argparse.ArgumentParser(description='Get Setting :D')
+    parser.add_argument(
+        '--stage', default="3")
+    parser.add_argument(
+        '--depth_img_path', default="")
+    parser.add_argument(
+        '--color_img_path', default="")
+    parser.add_argument(
+        '--img_info_path', default="")
+    parser.add_argument(
+        '--instance_index', default="")
+    parser.add_argument(
+        '--f', default=1075, type=int, help="camera focal length")
+
+    args = parser.parse_args()
+
+    if args.stage == "1":
+        visualize_single_image()
+    elif args.stage == "2":
+        vislize_pcd_from_rgbd(depth_img_path, color_img_path, f, "")
+    elif args.stage == "3":
+        check_one_sample(args.color_img_path, args.depth_img_path, args.img_info_path, args.instance_index, args.f)
+    # depth_img_path = "/local-scratch/jiaqit/exp/Mirror3D/dataset/m3d/with_mirror/precise/mesh_refined_depth/5e4c532bab8844699a423518eec22d72_d1_0.png"
+    # f = 1076
+    # color_img_path = "/local-scratch/jiaqit/exp/Mirror3D/dataset/m3d/with_mirror/precise/raw/5e4c532bab8844699a423518eec22d72_i1_0.png"
+    # vislize_pcd_from_rgbd(depth_img_path, color_img_path, f, "")
+    # pcd_save_folder = "/local-scratch/jiaqit/exp/reannotate/vis"
+    # vislize_pcd_from_rgbd(depth_img_path, color_img_path, f, pcd_save_folder)
     

@@ -330,23 +330,42 @@ class Plane_annotation_tool():
         """
         raw_image_save_folder = os.path.join(self.data_main_folder, "raw")
         img_info_save_folder = os.path.join(self.anno_output_folder, "img_info")
+        error_id_path = os.path.join(self.anno_output_folder, "anno_progress", "error_id.txt")
+        self.error_id = read_txt(error_id_path)
         for color_img_path in self.color_img_list:
             smaple_name = os.path.split(color_img_path)[1].split(".")[0] 
+            mask_img_path = os.path.join(self.data_main_folder, "instance_mask","{}.png".format(smaple_name))
+            mask = cv2.imread(mask_img_path)
+
             one_info_file_path = os.path.join(img_info_save_folder, "{}.json".format(smaple_name))
             info = read_json(one_info_file_path)
             valid_instance = False
-            for one_info in info.items():
-                # TODO check if the sample is valid; if it's not valid copy the m
-                instance_index = [int(i) for i in one_info[0].split("_")]
 
-                mask_img_path = os.path.join(self.data_main_folder, "instance_mask","{}.png".format(smaple_name))
-                mask = cv2.imread(mask_img_path)
+            # If this is an invalid sample; only save the RGB image and instance_mask
+            if smaple_name in self.error_id or len(info) != (len(np.unique(np.reshape(mask,(-1,3)), axis = 0)) -1 ):
+                import pdb; pdb.set_trace()
+                only_mask_color_img_path = color_img_path.replace("with_mirror", "only_mask")
+                only_mask_mask_img_path = only_mask_color_img_path.replace("raw", "instance_mask")
+                only_mask_color_img_save_folder = os.path.split(only_mask_color_img_path)[0]
+                os.makedirs(only_mask_color_img_save_folder, exist_ok=True)
+                only_mask_mask_img_save_folder = os.path.split(only_mask_mask_img_path)[0]
+                os.makedirs(only_mask_mask_img_save_folder, exist_ok=True)
+                shutil.move(mask_img_path, only_mask_mask_img_path)
+                shutil.move(color_img_path, only_mask_color_img_path)
+                print("only mask sample saved to {}".format(only_mask_color_img_path))
+                continue
+
+            
+            for one_info in info.items():
+                instance_index = [int(i) for i in one_info[0].split("_")]
                 binary_instance_mask = get_grayscale_instanceMask(mask, instance_index)
                 plane_parameter = one_info[1]["plane_parameter"]
 
                 # Refine mesh raw depth (only Matterport3d have mesh raw depth)
                 if self.is_matterport3d:
                     depth_file_name = "{}.png".format(rreplace(smaple_name,"i","d"))
+                    hole_raw_depth_path = os.path.join(self.data_main_folder, "hole_raw_depth",depth_file_name)
+                    hole_refined_depth_path = os.path.join(self.data_main_folder, "hole_refined_depth",depth_file_name)
                     mesh_raw_depth_path = os.path.join(self.data_main_folder, "mesh_raw_depth",depth_file_name)
                     mesh_refined_depth_path = os.path.join(self.data_main_folder, "mesh_refined_depth",depth_file_name)
                     os.makedirs(os.path.split(mesh_refined_depth_path)[0], exist_ok=True)
@@ -354,7 +373,7 @@ class Plane_annotation_tool():
                     if os.path.exists(hole_refined_depth_path):
                         hole_raw_depth_path = hole_refined_depth_path
                     cv2.imwrite(mesh_refined_depth_path, refine_depth_with_plane_parameter_mask(plane_parameter, binary_instance_mask, cv2.imread(hole_raw_depth_path,cv2.IMREAD_ANYDEPTH),self.f))
-                    print("update depth {} {}".format(mesh_refined_depth_path))
+                    print("update depth {}".format(mesh_refined_depth_path))
                 else:
                     depth_file_name = "{}.png".format(smaple_name)
                 # Refine hole raw depth
@@ -592,8 +611,10 @@ class Data_post_processing(Plane_annotation_tool):
             self.is_matterport3d = False
         else:
             self.is_matterport3d = True
+
         self.check_file()
         self.color_img_list = [os.path.join(data_main_folder, "raw", i) for i in os.listdir(os.path.join(data_main_folder, "raw"))]
+        
         if multi_processing:
             self.color_img_list = self.color_img_list[process_index:process_index+1]
         self.border_width = border_width
@@ -721,8 +742,6 @@ if __name__ == "__main__":
         '--instance_index', default="")
     args = parser.parse_args()
 
-
-    # data_main_folder=None, process_index=0, multi_processing=False, border_width=50, f=519, anno_output_folder=None
     if args.stage == "1":
         plane_anno_tool = Plane_annotation_tool(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
         plane_anno_tool.set_overwrite(args.overwrite)
