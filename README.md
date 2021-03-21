@@ -122,7 +122,7 @@ python Mirror3D/annotation/plane_annotation_tool/plane_annotation_tool.py --stag
 
 ### Verification
 
-- STEP 1: Generate video for vrification 
+- STEP 1: Generate video for verification 
 	```python
 	python Mirror3D/visualization/dataset_visualization.py --stage all --data_main_folder [dataset main folder] --process_index [the process index during multi-processing]  --multi_processing --overwrite --f [focal length of the dataset] --output_folder [output point cloud/ mesh plane/ screenshot/ video saved folder] --view_mode [topdown/ front]
 	```
