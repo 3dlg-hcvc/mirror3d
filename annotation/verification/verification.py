@@ -85,9 +85,11 @@ class Verification():
             if item.count('video', 0, len(item)) > 0 :
                 video_folder_list.append(item)
 
+        video_folder_list = ['video_topdown','video_front']
         one_video_folder_name = video_folder_list[0]
         one_video_folder_path = os.path.join(self.video_main_folder, one_video_folder_name)
         video_path_list = os.listdir(one_video_folder_path)
+        video_path_list.sort()
         videoSubset_list = [video_path_list[x:x+self.video_num_per_page] for x in range(0, len(video_path_list), self.video_num_per_page)]
         for html_index, one_videoSubset in enumerate(videoSubset_list):
             

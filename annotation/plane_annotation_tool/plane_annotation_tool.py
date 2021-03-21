@@ -46,6 +46,7 @@ class Plane_annotation_tool():
             self.is_matterport3d = True
         self.check_file()
         self.color_img_list = [os.path.join(data_main_folder, "raw", i) for i in os.listdir(os.path.join(data_main_folder, "raw"))]
+        self.color_img_list.sort()
         if multi_processing:
             self.color_img_list = self.color_img_list[process_index:process_index+1]
         # Because we use "cv2.getStructuringElement(cv2.MORPH_ELLIPSE ***" and the anchor of the element is at the center, so actual width is half of self.border_width
@@ -346,16 +347,14 @@ class Plane_annotation_tool():
 
             # If this is an invalid sample; only save the RGB image and instance_mask
             if smaple_name in self.error_id or len(info) != (len(np.unique(np.reshape(mask,(-1,3)), axis = 0)) -1 ):
-                import pdb; pdb.set_trace()
-                only_mask_color_img_path = color_img_path.replace("with_mirror", "only_mask")
-                only_mask_mask_img_path = only_mask_color_img_path.replace("raw", "instance_mask")
-                only_mask_color_img_save_folder = os.path.split(only_mask_color_img_path)[0]
-                os.makedirs(only_mask_color_img_save_folder, exist_ok=True)
-                only_mask_mask_img_save_folder = os.path.split(only_mask_mask_img_path)[0]
-                os.makedirs(only_mask_mask_img_save_folder, exist_ok=True)
-                shutil.move(mask_img_path, only_mask_mask_img_path)
-                shutil.move(color_img_path, only_mask_color_img_path)
-                print("only mask sample saved to {}".format(only_mask_color_img_path))
+                command = "find {} -type f | grep {}".format(self.data_main_folder, smaple_name)
+                for src_path in os.popen(command).readlines():
+                    src_path = src_path.strip()
+                    dst_path = src_path.replace("with_mirror", "only_mask")
+                    dst_folder = os.path.split(dst_path)[0]
+                    os.makedirs(dst_folder, exist_ok=True)
+                    print("moving {} to only_mask {}".format(src_path, dst_folder))
+                    shutil.move(src_path, dst_folder)
                 continue
 
             
@@ -617,7 +616,7 @@ class Data_post_processing(Plane_annotation_tool):
 
         self.check_file()
         self.color_img_list = [os.path.join(data_main_folder, "raw", i) for i in os.listdir(os.path.join(data_main_folder, "raw"))]
-        
+        self.color_img_list.sort()
         if multi_processing:
             self.color_img_list = self.color_img_list[process_index:process_index+1]
         self.border_width = border_width
@@ -671,7 +670,7 @@ class Data_post_processing(Plane_annotation_tool):
                     # Refine mesh raw depth (only Matterport3d have mesh raw depth)
                     mesh_refined_depth_path = os.path.join(self.data_main_folder, "mesh_refined_depth", depth_file_name)
                     cv2.imwrite(mesh_refined_depth_path, clamp_pcd_by_bbox(mirror_bbox=mirror_bbox, depth_img_path=mesh_refined_depth_path, f=self.f, mirror_border_mask=mirror_border_mask , plane_parameter=one_info[1]["plane_parameter"], expand_range = self.expand_range, clamp_dis = self.clamp_dis))
-                    print("update depth {} {}".format(mesh_refined_depth_path))
+                    print("update depth {}".format(mesh_refined_depth_path))
 
                 # Refine hole raw depth
                 hole_refined_depth_path = os.path.join(self.data_main_folder, "hole_refined_depth", depth_file_name)

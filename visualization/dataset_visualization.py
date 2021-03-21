@@ -45,6 +45,7 @@ class Dataset_visulization(Plane_annotation_tool):
         else:
             self.is_matterport3d = True
         self.color_img_list = [os.path.join(self.data_main_folder, "raw", i) for i in os.listdir(os.path.join(self.data_main_folder, "raw"))]
+        self.color_img_list.sort()
         if multi_processing:
             self.color_img_list = self.color_img_list[process_index:process_index+1]
         self.f = f
