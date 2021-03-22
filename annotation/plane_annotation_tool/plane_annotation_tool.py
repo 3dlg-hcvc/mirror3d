@@ -327,29 +327,35 @@ class Plane_annotation_tool():
                 self.get_progress()
             
             elif input_option == "a":
-                
+                instance_mask = get_grayscale_instanceMask(cv2.imread(mask_path),instance_id)
+                mirror_pcd = get_mirrorPoint_based_on_plane_parameter(f=self.f, plane_parameter=plane_parameter, mirror_mask=instance_mask, color_img_path=color_img_path, color=[1,1,0])
+                init_step_size = ((np.max(np.array(pcd.points)[:,0])) - (np.min(np.array(pcd.points)[:,0])))/300
                 while 1:
                     min_adjust_option_list = Tool_Option()
                     min_adjust_option_list.add_option("f", "FINISH : update hole_refined_depth/ mesh_refined_depth/ img_info and EXIT")
                     min_adjust_option_list.add_option("a", "ADJUST : need to adjust the plane parameter")
                     min_adjust_option_list.add_option("i", "INIT : pick 3 points to initialize the plane")
                     min_adjust_option_list.print_option()
-                    input_option = input()
+                    min_input_option = input()
 
-                    if input_option not in ["f", "i", "a"]:
+                    if min_input_option not in ["f", "i", "a"]:
                         print("invalid input, please input again :D")
                         continue
                     
-                    if input_option == "f":
+                    if min_input_option == "f":
                         save_plane_parameter_2_json(plane_parameter, one_plane_para_save_path, instance_id)
+                        manual_adjust_num += 1
+                        self.correct_list.append(current_pcd_path)
+                        self.save_progress()
+                        self.get_progress()
                         break
-                    elif input_option == "i":
+                    elif min_input_option == "i":
                         [p1, p2, p3] = get_picked_points(pcd)
                         plane_parameter = get_parameter_from_plane_adjustment(pcd, get_mirror_init_plane_from_3points(p1, p2, p3), init_step_size)
                         mirror_pcd = get_mirrorPoint_based_on_plane_parameter(f=self.f, plane_parameter=plane_parameter, mirror_mask=instance_mask, color_img_path=color_img_path, color=[1,1,0])
                         o3d.visualization.draw_geometries([pcd, mirror_pcd])
 
-                    elif input_option == "a":
+                    elif min_input_option == "a":
                         p1 = np.mean(np.array(mirror_pcd.points), axis=0)
                         p2 = np.array(mirror_pcd.points)[0]
                         p3 = np.array(mirror_pcd.points)[-1]
