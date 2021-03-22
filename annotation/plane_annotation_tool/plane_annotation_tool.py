@@ -329,11 +329,11 @@ class Plane_annotation_tool():
             elif input_option == "a":
                 
                 while 1:
-                    option_list = Tool_Option()
-                    option_list.add_option("f", "FINISH : update hole_refined_depth/ mesh_refined_depth/ img_info and EXIT")
-                    option_list.add_option("a", "ADJUST : need to adjust the plane parameter")
-                    option_list.add_option("i", "INIT : pick 3 points to initialize the plane")
-                    option_list.print_option()
+                    min_adjust_option_list = Tool_Option()
+                    min_adjust_option_list.add_option("f", "FINISH : update hole_refined_depth/ mesh_refined_depth/ img_info and EXIT")
+                    min_adjust_option_list.add_option("a", "ADJUST : need to adjust the plane parameter")
+                    min_adjust_option_list.add_option("i", "INIT : pick 3 points to initialize the plane")
+                    min_adjust_option_list.print_option()
                     input_option = input()
 
                     if input_option not in ["f", "i", "a"]:
