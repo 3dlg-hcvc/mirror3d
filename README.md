@@ -115,9 +115,10 @@ python Mirror3D/annotation/plane_annotation_tool/plane_annotation_tool.py --stag
 - `--stage all` : Run stage 1 ~ 4 together
 
 - Note : 
-	- Only changing the ratio of w:h (and do not change f)  will change the point cloud's shape
-	- Only changing the depth image OR resizing the image but keep the w:h ratio will not change the shape of the point cloud (but the point cloud would be closer / further/ small / larger )
-	- During training: If the image is resized by ratio x (w:h ratio does not change), f should also multiply ratio x
+    - Only changing the ratio of w:h (and do not change f)  will change the point cloud's shape
+    - Only changing the depth image OR resizing the image but keep the w:h ratio will not change the shape of the point cloud (but the point cloud would be closer / further/ small / larger )
+    - During training: If the image is resized by ratio x (w:h ratio does not change), f should also multiply ratio x
+    - the --data_main_folder need to contain "scannet" if you are annotating Scannet dataset; "m3d" for Matterport3d dataset; "nyu" for NYUv2 dataset; only .png image is supported; Apart from Matterpot3d other dataset's color image name and depth image name should be the same. 
 
 
 ### Verification
