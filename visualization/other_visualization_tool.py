@@ -77,10 +77,4 @@ if __name__ == "__main__":
         vislize_pcd_from_rgbd(args.depth_img_path, args.color_img_path, args.f, "")
     elif args.stage == "3":
         check_one_sample(args.color_img_path, args.depth_img_path, args.img_info_path, args.instance_index, args.f)
-    # depth_img_path = "/local-scratch/jiaqit/exp/Mirror3D/dataset/m3d/with_mirror/precise/mesh_refined_depth/5e4c532bab8844699a423518eec22d72_d1_0.png"
-    # f = 1076
-    # color_img_path = "/local-scratch/jiaqit/exp/Mirror3D/dataset/m3d/with_mirror/precise/raw/5e4c532bab8844699a423518eec22d72_i1_0.png"
-    # vislize_pcd_from_rgbd(depth_img_path, color_img_path, f, "")
-    # pcd_save_folder = "/local-scratch/jiaqit/exp/reannotate/vis"
-    # vislize_pcd_from_rgbd(depth_img_path, color_img_path, f, pcd_save_folder)
-    
+

@@ -235,10 +235,10 @@ class Plane_annotation_tool():
                 depth_img_path = os.path.join(self.data_main_folder, "hole_raw_depth","{}.png".format(img_name))
             color_img_path = os.path.join(self.data_main_folder, "raw","{}.png".format(img_name))
             mask_path = os.path.join(self.data_main_folder, "instance_mask","{}.png".format(img_name))
+            plane_parameter = read_json(os.path.join(self.anno_output_folder, "img_info","{}.json".format(img_name)))[pcd_name.split("_idx_")[1]]["plane_parameter"]
 
             if self.show_plane:
                 instance_mask = get_grayscale_instanceMask(cv2.imread(mask_path),instance_id)
-                plane_parameter = read_json(os.path.join(self.anno_output_folder, "img_info","{}.json".format(img_name)))[pcd_name.split("_idx_")[1]]["plane_parameter"]
                 mirror_points = get_points_in_mask(f=self.f, depth_img_path=depth_img_path, color_img_path=color_img_path, mirror_mask=instance_mask)
                 mirror_pcd = o3d.geometry.PointCloud()
                 mirror_pcd.points = o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0))
@@ -260,6 +260,7 @@ class Plane_annotation_tool():
             option_list.add_option("back n", "BACK : return n times (e.g. back 3 : give up the recent 3 annotated sample and go back)")
             option_list.add_option("goto n", "GOTO : goto the n th image (e.g. goto 3 : go to the third image")
             option_list.add_option("n", "NEXT : goto next image without annotation")
+            option_list.add_option("a", "adjust one sample repeatedly")
             option_list.add_option("exit", "EXIT : save and exit")
             option_list.print_option()
 
@@ -324,6 +325,38 @@ class Plane_annotation_tool():
                 self.correct_list.append(current_pcd_path)
                 self.save_progress()
                 self.get_progress()
+            
+            elif input_option == "a":
+                
+                while 1:
+                    option_list = Tool_Option()
+                    option_list.add_option("f", "FINISH : update hole_refined_depth/ mesh_refined_depth/ img_info and EXIT")
+                    option_list.add_option("a", "ADJUST : need to adjust the plane parameter")
+                    option_list.add_option("i", "INIT : pick 3 points to initialize the plane")
+                    option_list.print_option()
+                    input_option = input()
+
+                    if input_option not in ["f", "i", "a"]:
+                        print("invalid input, please input again :D")
+                        continue
+                    
+                    if input_option == "f":
+                        save_plane_parameter_2_json(plane_parameter, one_plane_para_save_path, instance_id)
+                        break
+                    elif input_option == "i":
+                        [p1, p2, p3] = get_picked_points(pcd)
+                        plane_parameter = get_parameter_from_plane_adjustment(pcd, get_mirror_init_plane_from_3points(p1, p2, p3), init_step_size)
+                        mirror_pcd = get_mirrorPoint_based_on_plane_parameter(f=self.f, plane_parameter=plane_parameter, mirror_mask=instance_mask, color_img_path=color_img_path, color=[1,1,0])
+                        o3d.visualization.draw_geometries([pcd, mirror_pcd])
+
+                    elif input_option == "a":
+                        p1 = np.mean(np.array(mirror_pcd.points), axis=0)
+                        p2 = np.array(mirror_pcd.points)[0]
+                        p3 = np.array(mirror_pcd.points)[-1]
+                        plane_parameter = get_parameter_from_plane_adjustment(pcd, get_mirror_init_plane_from_3points(p1, p2, p3), init_step_size)
+                        mirror_pcd = get_mirrorPoint_based_on_plane_parameter(f=self.f, plane_parameter=plane_parameter, mirror_mask=instance_mask, color_img_path=color_img_path, color=[1,1,0])
+                        o3d.visualization.draw_geometries([pcd, mirror_pcd])
+
 
     def anno_update_depth_from_imgInfo(self):
         """
