@@ -244,12 +244,14 @@ class Plane_annotation_tool():
                 print("sample index {} mirror to annotate {}".format(self.sample_index, color_img_path))
 
             if self.show_plane:
-                instance_mask = get_grayscale_instanceMask(cv2.imread(mask_path),instance_id)
-                mirror_points = get_points_in_mask(f=self.f, depth_img_path=depth_img_path, color_img_path=color_img_path, mirror_mask=instance_mask)
-                mirror_pcd = o3d.geometry.PointCloud()
-                mirror_pcd.points = o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0))
-                mirror_bbox = o3d.geometry.OrientedBoundingBox.create_from_points(o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0)))
-
+                try:
+                    instance_mask = get_grayscale_instanceMask(cv2.imread(mask_path),instance_id)
+                    mirror_points = get_points_in_mask(f=self.f, depth_img_path=depth_img_path, color_img_path=color_img_path, mirror_mask=instance_mask)
+                    mirror_pcd = o3d.geometry.PointCloud()
+                    mirror_pcd.points = o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0))
+                    mirror_bbox = o3d.geometry.OrientedBoundingBox.create_from_points(o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0)))
+                except:
+                    print("warning : can not generate mesh plane")
             if self.show_plane:
                 try:
                     mirror_plane = get_mirror_init_plane_from_mirrorbbox(plane_parameter, mirror_bbox)
