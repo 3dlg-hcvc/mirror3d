@@ -43,7 +43,9 @@ class Verification():
 
         # move invalid sample to "only_mask" folder
         color_image_folder = os.path.join(self.data_main_folder, "raw")
-        for one_color_img_name in os.listdir(color_image_folder):
+        color_name_list = os.listdir(color_image_folder)
+        color_name_list.sort()
+        for one_color_img_name in color_name_list:
             color_img_path = os.path.join(color_image_folder, one_color_img_name)
             sample_id = color_img_path.split("/")[-1].split(".")[0]
             if sample_id in invalid_id_list:
@@ -52,6 +54,8 @@ class Verification():
                     src_path = src_path.strip()
                     dst_path = src_path.replace("with_mirror", "only_mask")
                     dst_folder = os.path.split(dst_path)[0]
+                    if os.path.exists(dst_path) and move:
+                        continue
                     os.makedirs(dst_folder, exist_ok=True)
                     if move:
                         print("moving {} to only_mask {}".format(src_path, dst_folder))
@@ -65,6 +69,8 @@ class Verification():
                     src_path = src_path.strip()
                     dst_path = src_path.replace(self.data_main_folder, self.output_folder)
                     dst_folder = os.path.split(dst_path)[0]
+                    if os.path.exists(dst_path) and move:
+                        continue
                     os.makedirs(dst_folder, exist_ok=True)
                     if move:
                         print("moving {} to new_folder {}".format(src_path, dst_folder))
