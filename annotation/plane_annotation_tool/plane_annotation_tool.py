@@ -223,7 +223,8 @@ class Plane_annotation_tool():
             elif current_pcd_path in self.error_list:
                 current_sample_status = "error"
             print("###################### sample status {} ######################".format(current_sample_status))
-            print("sample index {} mirror to annotate {}".format(self.sample_index, masked_image_path))
+
+            
 
             pcd = o3d.io.read_point_cloud(current_pcd_path)
             pcd_name = current_pcd_path.split("/")[-1].split(".")[0]
@@ -236,6 +237,11 @@ class Plane_annotation_tool():
             color_img_path = os.path.join(self.data_main_folder, "raw","{}.png".format(img_name))
             mask_path = os.path.join(self.data_main_folder, "instance_mask","{}.png".format(img_name))
             plane_parameter = read_json(os.path.join(self.anno_output_folder, "img_info","{}.json".format(img_name)))[pcd_name.split("_idx_")[1]]["plane_parameter"]
+
+            if os.path.exists(masked_image_path):
+                print("sample index {} mirror to annotate {}".format(self.sample_index, masked_image_path))
+            else:
+                print("sample index {} mirror to annotate {}".format(self.sample_index, color_img_path))
 
             if self.show_plane:
                 instance_mask = get_grayscale_instanceMask(cv2.imread(mask_path),instance_id)
@@ -296,7 +302,6 @@ class Plane_annotation_tool():
                     left_h = ((len(self.pcd_path_list) - self.sample_index) * refer_speed) / 3600
                     manul_percentage = (manual_adjust_num /  (self.sample_index - annotation_start_index)) * 100
                     print("Reference annotation speed {:.2f} s/sample; Estimate remaining time {:.1f} h; manual adjust {:.2f}%".format(refer_speed, left_h, manul_percentage))
-                    
                 except:
                     pass
                 exit(1)
@@ -333,7 +338,7 @@ class Plane_annotation_tool():
                 while 1:
                     min_adjust_option_list = Tool_Option()
                     min_adjust_option_list.add_option("f", "FINISH : update hole_refined_depth/ mesh_refined_depth/ img_info and EXIT")
-                    min_adjust_option_list.add_option("a", "ADJUST : need to adjust the plane parameter")
+                    min_adjust_option_list.add_option("a", "ADJUST : adjust the plane parameter based on current plane parameter")
                     min_adjust_option_list.add_option("i", "INIT : pick 3 points to initialize the plane")
                     min_adjust_option_list.print_option()
                     min_input_option = input()
@@ -343,6 +348,7 @@ class Plane_annotation_tool():
                         continue
                     
                     if min_input_option == "f":
+                        one_plane_para_save_path = os.path.join(os.path.join(self.anno_output_folder, "img_info"), "{}.json".format(img_name))
                         save_plane_parameter_2_json(plane_parameter, one_plane_para_save_path, instance_id)
                         manual_adjust_num += 1
                         self.correct_list.append(current_pcd_path)
