@@ -48,7 +48,26 @@ class Verification():
         for one_color_img_name in color_name_list:
             color_img_path = os.path.join(color_image_folder, one_color_img_name)
             sample_id = color_img_path.split("/")[-1].split(".")[0]
+            
             if sample_id in invalid_id_list:
+
+                if self.is_matterport3d:
+                    depth_sample_id = "{}_{}_{}".format(sample_id.split("_")[0], sample_id.split("_")[1].replace("i", "d"), sample_id.split("_")[2])
+                    command = "find {} -type f | grep {}".format(self.data_main_folder, depth_sample_id)
+                    for src_path in os.popen(command).readlines():
+                        src_path = src_path.strip()
+                        dst_path = src_path.replace("with_mirror", "only_mask")
+                        dst_folder = os.path.split(dst_path)[0]
+                        if os.path.exists(dst_path) and move:
+                            continue
+                        os.makedirs(dst_folder, exist_ok=True)
+                        if move:
+                            print("moving {} to only_mask {}".format(src_path, dst_folder))
+                            shutil.move(src_path, dst_folder)
+                        else:
+                            print("copying {} to only_mask {}".format(src_path, dst_folder))
+                            shutil.copy(src_path, dst_path)
+
                 command = "find {} -type f | grep {}".format(self.data_main_folder, sample_id)
                 for src_path in os.popen(command).readlines():
                     src_path = src_path.strip()
@@ -63,7 +82,26 @@ class Verification():
                     else:
                         print("copying {} to only_mask {}".format(src_path, dst_folder))
                         shutil.copy(src_path, dst_path)
+
+                
             elif sample_id in re_anno_id_list:
+                if self.is_matterport3d:
+                    depth_sample_id = "{}_{}_{}".format(sample_id.split("_")[0], sample_id.split("_")[1].replace("i", "d"), sample_id.split("_")[2])
+                    command = "find {} -type f | grep {}".format(self.data_main_folder, depth_sample_id)
+                    for src_path in os.popen(command).readlines():
+                        src_path = src_path.strip()
+                        dst_path = src_path.replace(self.data_main_folder, self.output_folder)
+                        dst_folder = os.path.split(dst_path)[0]
+                        if os.path.exists(dst_path) and move:
+                            continue
+                        os.makedirs(dst_folder, exist_ok=True)
+                        if move:
+                            print("moving {} to new_folder {}".format(src_path, dst_folder))
+                            shutil.move(src_path, dst_folder)
+                        else:
+                            print("copying {} to new_folder {}".format(src_path, dst_folder))
+                            shutil.move(src_path, dst_path)
+
                 command = "find {} -type f | grep {}".format(self.data_main_folder, sample_id)
                 for src_path in os.popen(command).readlines():
                     src_path = src_path.strip()
@@ -79,7 +117,7 @@ class Verification():
                         print("copying {} to new_folder {}".format(src_path, dst_folder))
                         shutil.move(src_path, dst_path)
 
-
+                
     def generate_html(self):
         """
         Generate html to show video; all views for one sample is shown in one line;
