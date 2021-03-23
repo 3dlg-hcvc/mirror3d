@@ -34,6 +34,9 @@ class Input_Generator(Plane_annotation_tool):
         if not os.path.exists(json_output_folder):
             self.json_output_folder = os.path.join(self.mirror_data_main_folder, "network_input_json")
             os.makedirs(self.json_output_folder, exist_ok=True)
+            print("output json saved to : {}".format(self.json_output_folder))
+        else:
+            self.json_output_folder = json_output_folder
         self.anchor_normal_path = anchor_normal_path
         assert os.path.exists(self.anchor_normal_path), "please input a anchor normal .npy path"
         self.contain_no_mirror = contain_no_mirror
@@ -129,8 +132,6 @@ class Input_Generator(Plane_annotation_tool):
         Output:
             coco format annotation --> saved to coco_save_path
         """     
-        coco_save_folder = self.json_output_folder
-        os.makedirs(coco_save_folder, exist_ok=True)
         raw_folder = os.path.join(self.mirror_data_main_folder, "raw")
 
         categories_info = dict()
@@ -261,19 +262,19 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
-        '--mirror_data_main_folder', default="dataset/nyu/with_mirror/precise", type=str, help="folder contain raw, instance_mask... folders") 
+        '--mirror_data_main_folder', default="", type=str, help="folder contain raw, instance_mask... folders") 
     parser.add_argument(
-        '--no_mirror_data_main_folder', default="dataset/nyu/no_mirror", type=str, help="dataset main folder") 
+        '--no_mirror_data_main_folder', default="", type=str, help="dataset main folder") 
     parser.add_argument(
-        '--dataset_main_folder', default="dataset/nyu", type=str, help="output path in .json will be the relative path to --dataset_main_folder") 
+        '--dataset_main_folder', default="", type=str, help="output path in .json will be the relative path to --dataset_main_folder") 
     parser.add_argument(
-        '--split_info_folder', default="dataset/split_info", type=str, help="split_info.zip unzip folder") 
+        '--split_info_folder', default="", type=str, help="split_info.zip unzip folder") 
     parser.add_argument(
         '--json_output_folder', default="", type=str, help="dataset main folder") 
     parser.add_argument(
-        '--split', default="all", type=str, help="dataset main folder") 
+        '--split', default="all", type=str, help="train / test/ val") 
     parser.add_argument(
-        '--anchor_normal_path', default="dataset/mirror_normal/m3d_kmeans_normal_10.npy", type=str, help="anchor normal path") 
+        '--anchor_normal_path', default="", type=str, help="anchor normal path") 
     parser.add_argument('--contain_no_mirror', help='do multi-process or not',action='store_true')
 
 
