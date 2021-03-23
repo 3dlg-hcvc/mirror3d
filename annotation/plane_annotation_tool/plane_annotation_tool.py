@@ -390,11 +390,10 @@ class Plane_annotation_tool():
             mask = cv2.imread(mask_img_path)
 
             one_info_file_path = os.path.join(img_info_save_folder, "{}.json".format(smaple_name))
-            info = read_json(one_info_file_path)
             valid_instance = False
 
             # If this is an invalid sample; only save the RGB image and instance_mask
-            if smaple_name in self.error_id or len(info) != (len(np.unique(np.reshape(mask,(-1,3)), axis = 0)) -1 ):
+            if smaple_name in self.error_id:
                 command = "find {} -type f | grep {}".format(self.data_main_folder, smaple_name)
                 for src_path in os.popen(command).readlines():
                     src_path = src_path.strip()
@@ -430,21 +429,6 @@ class Plane_annotation_tool():
             info = read_json(one_info_file_path)
             valid_instance = False
 
-            # If this is an invalid sample; only save the RGB image and instance_mask
-            if smaple_name in self.error_id or len(info) != (len(np.unique(np.reshape(mask,(-1,3)), axis = 0)) -1 ):
-                command = "find {} -type f | grep {}".format(self.data_main_folder, smaple_name)
-                for src_path in os.popen(command).readlines():
-                    src_path = src_path.strip()
-                    dst_path = src_path.replace("with_mirror", "only_mask")
-                    dst_folder = os.path.split(dst_path)[0]
-                    os.makedirs(dst_folder, exist_ok=True)
-                    print("moving {} to only_mask {}".format(src_path, dst_folder))
-                    if os.path.exists(dst_path):
-                        os.remove(dst_path)
-                    shutil.move(src_path, dst_folder)
-                continue
-
-            
             for one_info in info.items():
                 instance_index = [int(i) for i in one_info[0].split("_")]
                 binary_instance_mask = get_grayscale_instanceMask(mask, instance_index)
@@ -881,7 +865,6 @@ if __name__ == "__main__":
         plane_anno_tool.anno_plane_update_imgInfo()
     elif args.stage == "3":
         plane_anno_tool = Plane_annotation_tool(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
-        plane_anno_tool.anno_move_only_mask()
         plane_anno_tool.anno_update_depth_from_imgInfo()
     elif args.stage == "4": 
         plane_anno_tool = Data_post_processing(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder, expand_range=args.expand_range, clamp_dis=args.clamp_dis)
@@ -907,4 +890,6 @@ if __name__ == "__main__":
     elif args.stage == "7":
         plane_anno_tool = Plane_annotation_tool(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
         plane_anno_tool.manual_clamp_one_sample(args.instance_index, args.img_name)
-        
+    elif args.stage == "8":
+        plane_anno_tool = Plane_annotation_tool(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
+        plane_anno_tool.anno_move_only_mask()

@@ -37,9 +37,16 @@ class Verification():
         """
         if os.path.exists(waste_id_path):
             invalid_id_list = set(read_txt(waste_id_path))
+        else:
+            invalid_id_list = []
+        if os.path.exists(error_id_path):
+            error_id_list = set(read_txt(error_id_path))
+        else:
+            error_id_list = []
         os.makedirs(self.output_folder, exist_ok=True)
         print("A copy of error data is saved to : {}".format(self.output_folder))
-        re_anno_id_list = set(read_txt(error_id_path)) - invalid_id_list
+        
+        re_anno_id_list = set(error_id_list) - set(invalid_id_list)
 
         # move invalid sample to "only_mask" folder
         color_image_folder = os.path.join(self.data_main_folder, "raw")
@@ -48,7 +55,7 @@ class Verification():
         for one_color_img_name in color_name_list:
             color_img_path = os.path.join(color_image_folder, one_color_img_name)
             sample_id = color_img_path.split("/")[-1].split(".")[0]
-            
+            print(sample_id, re_anno_id_list, sample_id in re_anno_id_list)
             if sample_id in invalid_id_list:
 
                 if self.is_matterport3d:

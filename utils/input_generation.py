@@ -261,7 +261,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
-        '--mirror_data_main_folder', default="dataset/nyu/with_mirror/precise", type=str, help="dataset main folder") 
+        '--mirror_data_main_folder', default="dataset/nyu/with_mirror/precise", type=str, help="folder contain raw, instance_mask... folders") 
     parser.add_argument(
         '--no_mirror_data_main_folder', default="dataset/nyu/no_mirror", type=str, help="dataset main folder") 
     parser.add_argument(
