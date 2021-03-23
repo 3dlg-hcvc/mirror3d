@@ -402,6 +402,8 @@ class Plane_annotation_tool():
                     dst_folder = os.path.split(dst_path)[0]
                     os.makedirs(dst_folder, exist_ok=True)
                     print("moving {} to only_mask {}".format(src_path, dst_folder))
+                    if os.path.exists(dst_path):
+                        os.remove(dst_path)
                     shutil.move(src_path, dst_folder)
                 continue
 
@@ -437,6 +439,8 @@ class Plane_annotation_tool():
                     dst_folder = os.path.split(dst_path)[0]
                     os.makedirs(dst_folder, exist_ok=True)
                     print("moving {} to only_mask {}".format(src_path, dst_folder))
+                    if os.path.exists(dst_path):
+                        os.remove(dst_path)
                     shutil.move(src_path, dst_folder)
                 continue
 
@@ -833,6 +837,8 @@ class Data_post_processing(Plane_annotation_tool):
                 dst_folder = os.path.split(dst_path)[0]
                 os.makedirs(dst_folder, exist_ok=True)
                 print("moving {} to clean_up {}".format(src_path, dst_folder))
+                if os.path.exists(dst_path):
+                    os.remove(dst_path)
                 shutil.move(src_path, dst_folder)
 
 if __name__ == "__main__":
