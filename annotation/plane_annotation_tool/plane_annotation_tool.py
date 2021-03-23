@@ -274,6 +274,8 @@ class Plane_annotation_tool():
 
             input_option = input()
 
+            mirror_plane = []
+
             if not option_list.is_input_key_valid(input_option):
                 print("invalid input, please input again :D")
                 continue
@@ -367,7 +369,9 @@ class Plane_annotation_tool():
                         p1 = np.mean(np.array(mirror_pcd.points), axis=0)
                         p2 = np.array(mirror_pcd.points)[0]
                         p3 = np.array(mirror_pcd.points)[-1]
-                        plane_parameter = get_parameter_from_plane_adjustment(pcd, get_mirror_init_plane_from_3points(p1, p2, p3), init_step_size)
+                        if mirror_plane == []:
+                            mirror_plane = get_mirror_init_plane_from_3points(p1, p2, p3)
+                        plane_parameter = get_parameter_from_plane_adjustment(pcd, mirror_plane, init_step_size)
                         mirror_pcd = get_mirrorPoint_based_on_plane_parameter(f=self.f, plane_parameter=plane_parameter, mirror_mask=instance_mask, color_img_path=color_img_path, color=[1,1,0])
                         o3d.visualization.draw_geometries([pcd, mirror_pcd])
 
@@ -674,6 +678,7 @@ class Data_post_processing(Plane_annotation_tool):
         self.expand_range = expand_range
         self.clamp_dis = clamp_dis
 
+    
 
     def data_clamping(self):
         """
@@ -761,6 +766,13 @@ class Data_post_processing(Plane_annotation_tool):
                 save_plane_parameter_2_json(plane_parameter, img_info_path, instance_index)
                 print("updated plane_parameter in {}".format(img_info_path))
 
+    def set_specific_clamp_parameter(self, specific_clamp_parameter_json):
+        para = read_json(specific_clamp_parameter_json)
+        for one_color_path in self.color_img_list:
+            for item in para.items():
+                if one_color_path.find(item[0]) > 0:
+                    self.expand_range = int(item[1])
+                    return
 
 
 if __name__ == "__main__":
@@ -788,6 +800,8 @@ if __name__ == "__main__":
     parser.add_argument(
         '--img_name', default="")
     parser.add_argument(
+        '--specific_clamp_parameter_json', default="", help="json file that contain the sample id and relevant expand_range; only useful for multi-processing")
+    parser.add_argument(
         '--instance_index', default="")
     args = parser.parse_args()
 
@@ -804,6 +818,8 @@ if __name__ == "__main__":
         plane_anno_tool.anno_update_depth_from_imgInfo()
     elif args.stage == "4": 
         plane_anno_tool = Data_post_processing(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder, expand_range=args.expand_range, clamp_dis=args.clamp_dis)
+        if os.path.exists(args.specific_clamp_parameter_json):
+            plane_anno_tool.set_specific_clamp_parameter(args.specific_clamp_parameter_json)
         plane_anno_tool.data_clamping()
     elif args.stage == "all":
         plane_anno_tool = Plane_annotation_tool(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
@@ -811,6 +827,8 @@ if __name__ == "__main__":
         plane_anno_tool.anno_plane_update_imgInfo()
         plane_anno_tool.anno_update_depth_from_imgInfo()
         plane_anno_tool = Data_post_processing(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder, expand_range=args.expand_range, clamp_dis=args.clamp_dis)
+        if os.path.exists(args.specific_clamp_parameter):
+            plane_anno_tool.set_specific_clamp_parameter(args.specific_clamp_parameter)
         plane_anno_tool.data_clamping()
     elif args.stage == "5":
         plane_anno_tool = Data_post_processing(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)

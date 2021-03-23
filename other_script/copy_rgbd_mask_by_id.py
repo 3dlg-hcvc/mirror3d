@@ -74,6 +74,20 @@ def get_error_sample_rgbd_mask(data_main_folder, dst_folder, current_raw_folder)
     copy_rgbd_mask_by_id(lack_id_list, data_main_folder, dst_folder)
 
 
+
+def get_diff(path_one, path_two):
+    lines_one = read_txt(path_one)
+    print("{} all num : {} unique num : {}".format(path_one, len(lines_one), len(set(lines_one))))
+
+    lines_two = read_txt(path_two)
+    print("{} all num : {} unique num : {}".format(path_two, len(lines_two), len(set(lines_two))))
+
+
+    print(set(lines_one) - set(lines_two))
+
+    print(set(lines_two) - set(lines_one))
+    
+
 def count_unique_line_num(txt_path):
     lines = read_txt(txt_path)
     print("all num : {} unique num : {}".format(len(lines), len(set(lines))))
@@ -104,5 +118,9 @@ if __name__ == "__main__":
         get_error_sample_rgbd_mask(args.data_main_folder, args.dst_folder, args.current_raw_folder)
     elif args.stage == "3":
         count_unique_line_num(args.txt_path)
+    elif args.stage == "4":
+        paths = args.txt_path.split(",")
+        print(paths)
+        get_diff(paths[0],paths[1])
 
 
