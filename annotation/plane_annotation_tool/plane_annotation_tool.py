@@ -376,6 +376,38 @@ class Plane_annotation_tool():
                         o3d.visualization.draw_geometries([pcd, mirror_pcd])
 
 
+    def anno_move_only_mask(self):
+        """
+        Move invalid sample to "only_mask" folder
+        """
+        raw_image_save_folder = os.path.join(self.data_main_folder, "raw")
+        img_info_save_folder = os.path.join(self.anno_output_folder, "img_info")
+        error_id_path = os.path.join(self.anno_output_folder, "anno_progress", "error_id.txt")
+        self.error_id = read_txt(error_id_path)
+        for color_img_path in self.color_img_list:
+            smaple_name = os.path.split(color_img_path)[1].split(".")[0] 
+            mask_img_path = os.path.join(self.data_main_folder, "instance_mask","{}.png".format(smaple_name))
+            mask = cv2.imread(mask_img_path)
+
+            one_info_file_path = os.path.join(img_info_save_folder, "{}.json".format(smaple_name))
+            info = read_json(one_info_file_path)
+            valid_instance = False
+
+            # If this is an invalid sample; only save the RGB image and instance_mask
+            if smaple_name in self.error_id or len(info) != (len(np.unique(np.reshape(mask,(-1,3)), axis = 0)) -1 ):
+                command = "find {} -type f | grep {}".format(self.data_main_folder, smaple_name)
+                for src_path in os.popen(command).readlines():
+                    src_path = src_path.strip()
+                    dst_path = src_path.replace("with_mirror", "only_mask")
+                    dst_folder = os.path.split(dst_path)[0]
+                    os.makedirs(dst_folder, exist_ok=True)
+                    print("moving {} to only_mask {}".format(src_path, dst_folder))
+                    shutil.move(src_path, dst_folder)
+                continue
+
+
+
+
     def anno_update_depth_from_imgInfo(self):
         """
         After plane annotation, update "hole_raw_depth/mesh_raw_depth" to "hole_refined_depth/mesh_refined_depth"
@@ -772,8 +804,36 @@ class Data_post_processing(Plane_annotation_tool):
             for item in para.items():
                 if one_color_path.find(item[0]) > 0:
                     self.expand_range = int(item[1])
+                    print("expand range set to {}".format(self.expand_range))
                     return
 
+
+
+    def clean_up_repo(self):
+        """
+        clean_up current folder based on raw image
+        """
+        raw_folder = os.path.join(self.data_main_folder, "raw")
+        raw_id_list = [i.split(".")[0] for i in os.listdir(raw_folder)]
+        command = "find {} -type f ".format(self.data_main_folder)
+        for src_path in os.popen(command).readlines():
+            is_related_to_color = False
+            for one_raw_id in raw_id_list:
+                if src_path.find(one_raw_id) > 0:
+                    is_related_to_color = True
+                    break
+                if self.is_matterport3d:
+                    one_depth_id = rreplace(one_raw_id)
+                    if src_path.find(one_depth_id) > 0:
+                        is_related_to_color = True
+                        break
+            if not is_related_to_color:
+                src_path = src_path.strip()
+                dst_path = src_path.replace("with_mirror", "clean_up")
+                dst_folder = os.path.split(dst_path)[0]
+                os.makedirs(dst_folder, exist_ok=True)
+                print("moving {} to clean_up {}".format(src_path, dst_folder))
+                shutil.move(src_path, dst_folder)
 
 if __name__ == "__main__":
 
@@ -815,6 +875,7 @@ if __name__ == "__main__":
         plane_anno_tool.anno_plane_update_imgInfo()
     elif args.stage == "3":
         plane_anno_tool = Plane_annotation_tool(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
+        plane_anno_tool.anno_move_only_mask()
         plane_anno_tool.anno_update_depth_from_imgInfo()
     elif args.stage == "4": 
         plane_anno_tool = Data_post_processing(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder, expand_range=args.expand_range, clamp_dis=args.clamp_dis)
@@ -825,6 +886,7 @@ if __name__ == "__main__":
         plane_anno_tool = Plane_annotation_tool(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
         plane_anno_tool.anno_env_setup()
         plane_anno_tool.anno_plane_update_imgInfo()
+        plane_anno_tool.anno_move_only_mask()
         plane_anno_tool.anno_update_depth_from_imgInfo()
         plane_anno_tool = Data_post_processing(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder, expand_range=args.expand_range, clamp_dis=args.clamp_dis)
         if os.path.exists(args.specific_clamp_parameter):
