@@ -45,6 +45,7 @@ class Plane_annotation_tool():
         else:
             self.is_matterport3d = True
         self.check_file()
+
         self.color_img_list = [os.path.join(data_main_folder, "raw", i) for i in os.listdir(os.path.join(data_main_folder, "raw"))]
         self.color_img_list.sort()
         if multi_processing:
@@ -58,6 +59,11 @@ class Plane_annotation_tool():
         else:
             self.anno_output_folder = anno_output_folder
     
+    def set_color_list(self, color_img_list_path):
+        self.color_img_list =list( set(read_txt(color_img_list_path)))
+        self.color_img_list.sort()
+        if self.multi_processing:
+            self.color_img_list = self.color_img_list[self.process_index:self.process_index+1]
 
     def set_show_plane(self, show_plane):
         """
@@ -100,24 +106,27 @@ class Plane_annotation_tool():
             depth_folder = os.path.join(self.data_main_folder, "hole_raw_depth")
 
         mask_folder = os.path.join(self.data_main_folder, "instance_mask")
+        img_info_folder = os.path.join(self.data_main_folder, "img_info")
 
         for file_name in os.listdir(raw_foler):
 
             raw_file_path = os.path.join(raw_foler, file_name)
+            img_info_file_path = os.path.join(img_info_folder, file_name).replace(".png",".json")
             depth_file_path = os.path.join(depth_folder, file_name)
             
             if self.is_matterport3d:
                 depth_file_path = rreplace(depth_file_path, "i", "d")
             mask_file_path =  os.path.join(mask_folder, file_name)
-            if os.path.exists(mask_file_path) and os.path.exists(raw_file_path) and os.path.exists(depth_file_path):
+            if os.path.exists(mask_file_path) and os.path.exists(raw_file_path) and os.path.exists(depth_file_path) and os.path.exists(img_info_file_path):
                 continue
             else:
                 data_correct = False
                 self.save_error_raw_name(file_name)
-                print(" path not exisits : {} {} mask {} {}raw {} depth {} {}".format( file_name, os.path.exists(mask_file_path),mask_file_path , os.path.exists(raw_file_path),raw_file_path , os.path.exists(depth_file_path), depth_file_path))
+                print(" path not exisits : {} {} mask {} {}raw {} depth {} {} img_info {} {}".format( file_name, os.path.exists(mask_file_path),mask_file_path , os.path.exists(raw_file_path),raw_file_path , os.path.exists(depth_file_path), depth_file_path, os.path.exists(img_info_file_path), img_info_file_path))
         
         assert data_correct, "sth wrong with data, please check data first"
 
+        print("dataset checking finished ~ ")
     
 
     def anno_env_setup(self):
@@ -381,15 +390,11 @@ class Plane_annotation_tool():
         Move invalid sample to "only_mask" folder
         """
         raw_image_save_folder = os.path.join(self.data_main_folder, "raw")
-        img_info_save_folder = os.path.join(self.anno_output_folder, "img_info")
         error_id_path = os.path.join(self.anno_output_folder, "anno_progress", "error_id.txt")
         self.error_id = read_txt(error_id_path)
         for color_img_path in self.color_img_list:
             smaple_name = os.path.split(color_img_path)[1].split(".")[0] 
-            mask_img_path = os.path.join(self.data_main_folder, "instance_mask","{}.png".format(smaple_name))
-            mask = cv2.imread(mask_img_path)
 
-            one_info_file_path = os.path.join(img_info_save_folder, "{}.json".format(smaple_name))
             valid_instance = False
 
             # If this is an invalid sample; only save the RGB image and instance_mask
@@ -404,7 +409,21 @@ class Plane_annotation_tool():
                     if os.path.exists(dst_path):
                         os.remove(dst_path)
                     shutil.move(src_path, dst_folder)
-                continue
+                
+                if self.is_matterport3d:
+                    smaple_name = rreplace(smaple_name,"i","d")
+                    command = "find {} -type f | grep {}".format(self.data_main_folder, smaple_name)
+                    for src_path in os.popen(command).readlines():
+                        src_path = src_path.strip()
+                        dst_path = src_path.replace("with_mirror", "only_mask")
+                        dst_folder = os.path.split(dst_path)[0]
+                        os.makedirs(dst_folder, exist_ok=True)
+                        print("moving {} to only_mask {}".format(src_path, dst_folder))
+                        if os.path.exists(dst_path):
+                            os.remove(dst_path)
+                        shutil.move(src_path, dst_folder)
+
+
 
 
 
@@ -721,8 +740,9 @@ class Data_post_processing(Plane_annotation_tool):
 
                 # Get mask_img_path, depth_img_path, color_img_path
                 mask_img_path = os.path.join(self.data_main_folder, "instance_mask","{}.png".format(img_name))
-                if self.is_matterport3d:
-                    depth_img_path = os.path.join(self.data_main_folder, "mesh_raw_depth","{}.png".format(rreplace(img_name, "i", "d")))
+                if self.is_matterport3d: 
+                    # matterport3d mesh depth don't need to be clamped 
+                    depth_img_path = os.path.join(self.data_main_folder, "hole_raw_depth","{}.png".format(rreplace(img_name, "i", "d")))
                 else:
                     depth_img_path = os.path.join(self.data_main_folder, "hole_raw_depth","{}.png".format(img_name))
                 depth_file_name = depth_img_path.split("/")[-1]
@@ -850,6 +870,8 @@ if __name__ == "__main__":
     parser.add_argument(
         '--img_name', default="")
     parser.add_argument(
+        '--color_img_list', default="", help="If you want to run anno_move_only_mask() please input a color_img_list")
+    parser.add_argument(
         '--specific_clamp_parameter_json', default="", help="json file that contain the sample id and relevant expand_range; only useful for multi-processing")
     parser.add_argument(
         '--instance_index', default="")
@@ -875,6 +897,8 @@ if __name__ == "__main__":
         plane_anno_tool = Plane_annotation_tool(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
         plane_anno_tool.anno_env_setup()
         plane_anno_tool.anno_plane_update_imgInfo()
+        assert os.path.exists(args.color_img_list), "please input a valid --color_img_list before moving data based on annotation result"
+        plane_anno_tool.set_color_list(args.color_img_list)
         plane_anno_tool.anno_move_only_mask()
         plane_anno_tool.anno_update_depth_from_imgInfo()
         plane_anno_tool = Data_post_processing(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder, expand_range=args.expand_range, clamp_dis=args.clamp_dis)
@@ -892,4 +916,6 @@ if __name__ == "__main__":
         plane_anno_tool.manual_clamp_one_sample(args.instance_index, args.img_name)
     elif args.stage == "8":
         plane_anno_tool = Plane_annotation_tool(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
+        assert os.path.exists(args.color_img_list), "please input a valid --color_img_list before moving data based on annotation result"
+        plane_anno_tool.set_color_list(args.color_img_list)
         plane_anno_tool.anno_move_only_mask()
