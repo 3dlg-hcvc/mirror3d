@@ -14,11 +14,11 @@ parallel -j 20 --eta "python /local-scratch/jiaqit/exp/Mirror3D/annotation/plane
 --stage 3 \
 --data_main_folder /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise \
 --anno_output_folder /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise \
---f 1076 --multi_processing --overwrite --process_index {1} >& ${log_folder}/m3d_final_3800.log" ::: {0..2000}
+--f 1076 --multi_processing --overwrite --process_index {1} >& ${log_folder}/m3d_final_3800.log" ::: {1999..4000}
 
 
-parallel -j 20 --eta "python /local-scratch/jiaqit/exp/Mirror3D/visualization/dataset_visualization.py \
---stage all \
---data_main_folder /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise \
---output_folder /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise \
---f 1076 --multi_processing --overwrite --process_index {1} >& ${log_folder}/m3d_final_3800.log" ::: {0..2000}
+# parallel -j 20 --eta "python /local-scratch/jiaqit/exp/Mirror3D/visualization/dataset_visualization.py \
+# --stage all \
+# --data_main_folder /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise \
+# --output_folder /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise \
+# --f 1076 --multi_processing --overwrite --process_index {1} >& ${log_folder}/m3d_final_3800.log" ::: {0..2000}
