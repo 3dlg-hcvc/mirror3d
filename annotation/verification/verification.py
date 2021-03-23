@@ -55,7 +55,6 @@ class Verification():
         for one_color_img_name in color_name_list:
             color_img_path = os.path.join(color_image_folder, one_color_img_name)
             sample_id = color_img_path.split("/")[-1].split(".")[0]
-            print(sample_id, re_anno_id_list, sample_id in re_anno_id_list)
             if sample_id in invalid_id_list:
 
                 if self.is_matterport3d:
@@ -107,7 +106,7 @@ class Verification():
                             shutil.move(src_path, dst_folder)
                         else:
                             print("copying {} to new_folder {}".format(src_path, dst_folder))
-                            shutil.move(src_path, dst_path)
+                            shutil.copy(src_path, dst_path)
 
                 command = "find {} -type f | grep {}".format(self.data_main_folder, sample_id)
                 for src_path in os.popen(command).readlines():
@@ -122,7 +121,7 @@ class Verification():
                         shutil.move(src_path, dst_folder)
                     else:
                         print("copying {} to new_folder {}".format(src_path, dst_folder))
-                        shutil.move(src_path, dst_path)
+                        shutil.copy(src_path, dst_path)
 
                 
     def generate_html(self):
