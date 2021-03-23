@@ -93,12 +93,23 @@ def count_unique_line_num(txt_path):
     print("all num : {} unique num : {}".format(len(lines), len(set(lines))))
 
 
+def check_invalid():
+    invalid = read_txt('/project/3dlg-hcvc/mirrors/www/Mirror3D_final/scannet/with_mirror/precise/anno_progress/error_id.txt')
+
+    raw_folder = "/project/3dlg-hcvc/mirrors/www/Mirror3D_final/scannet/only_mask/precise/raw"
+    print("invalid id num {}".format(len(set(invalid))))
+    for one_name in os.listdir(raw_folder):
+        one_path = os.path.join(raw_folder, one_name)
+        one_id = one_name.split(".")[0]
+        if one_id not in invalid:
+            print(one_path)
+
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
-        '--stage', default="1")
+        '--stage', default="5")
     parser.add_argument(
         '--txt_path', default="")
     parser.add_argument(
@@ -122,5 +133,7 @@ if __name__ == "__main__":
         paths = args.txt_path.split(",")
         print(paths)
         get_diff(paths[0],paths[1])
+    elif args.stage == "5":
+        check_invalid()
 
 
