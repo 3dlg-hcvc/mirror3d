@@ -17,7 +17,7 @@ from annotation.plane_annotation_tool.plane_annotation_tool import *
 class Dataset_visulization(Plane_annotation_tool):
 
     def __init__(self, data_main_folder=None, process_index=0, multi_processing=False, 
-                f=519, output_folder=None, overwrite=True, window_w=800, window_h=800, view_mode="topdown"):
+                f=519, output_folder=None, overwrite=True, window_w=800, window_h=800, view_mode="topdown", sensor_D_update=True):
         """
         Initilization
 
@@ -39,9 +39,12 @@ class Dataset_visulization(Plane_annotation_tool):
         self.window_w = window_w
         self.window_h = window_h
         self.view_mode = view_mode
+        self.sensor_D_update = sensor_D_update
         
         if "m3d" not in self.data_main_folder:
             self.is_matterport3d = False
+            # If it's not matterport3d; it only have sensorD
+            self.sensor_D_update = True
         else:
             self.is_matterport3d = True
         self.color_img_list = [os.path.join(self.data_main_folder, "raw", i) for i in os.listdir(os.path.join(self.data_main_folder, "raw"))]
@@ -55,6 +58,8 @@ class Dataset_visulization(Plane_annotation_tool):
         else:
             self.output_folder = output_folder
         self.error_info_path = os.path.join(self.output_folder, "error_img_list.txt")
+
+        
 
     def generate_colored_depth_for_whole_dataset(self):
         """
@@ -80,14 +85,16 @@ class Dataset_visulization(Plane_annotation_tool):
             os.makedirs(colored_depth_save_folder, exist_ok=True)
             ori_depth = os.path.join(self.data_main_folder, "hole_refined_depth", sample_name)
             colored_depth_save_path = os.path.join(colored_depth_save_folder, sample_name)
-            save_heatmap_no_border(cv2.imread(ori_depth, cv2.IMREAD_ANYDEPTH), colored_depth_save_path)
+            if (self.overwrite and os.path.exists(colored_depth_save_path)) or os.path.exists(colored_depth_save_path):
+                save_heatmap_no_border(cv2.imread(ori_depth, cv2.IMREAD_ANYDEPTH), colored_depth_save_path)
 
             ply_folder = os.path.join(self.output_folder, "mesh_refined_ply")
             colored_depth_save_folder = os.path.join(ply_folder, "mesh_refined_colored_depth")
             os.makedirs(colored_depth_save_folder, exist_ok=True)
             ori_depth = os.path.join(self.data_main_folder, "mesh_refined_depth", sample_name)
             colored_depth_save_path = os.path.join(colored_depth_save_folder, sample_name)
-            save_heatmap_no_border(cv2.imread(ori_depth, cv2.IMREAD_ANYDEPTH), colored_depth_save_path)
+            if (self.overwrite and os.path.exists(colored_depth_save_path)) or os.path.exists(colored_depth_save_path):
+                save_heatmap_no_border(cv2.imread(ori_depth, cv2.IMREAD_ANYDEPTH), colored_depth_save_path)
         else:
             ply_folder = os.path.join(self.output_folder, "hole_refined_ply")
             sample_name = color_img_path.split("/")[-1]
@@ -95,7 +102,8 @@ class Dataset_visulization(Plane_annotation_tool):
             os.makedirs(colored_depth_save_folder, exist_ok=True)
             ori_depth = os.path.join(self.data_main_folder, "hole_refined_depth", sample_name)
             colored_depth_save_path = os.path.join(colored_depth_save_folder, sample_name)
-            save_heatmap_no_border(cv2.imread(ori_depth, cv2.IMREAD_ANYDEPTH), colored_depth_save_path)
+            if (self.overwrite and os.path.exists(colored_depth_save_path)) or os.path.exists(colored_depth_save_path):
+                save_heatmap_no_border(cv2.imread(ori_depth, cv2.IMREAD_ANYDEPTH), colored_depth_save_path)
 
 
 
@@ -164,10 +172,11 @@ class Dataset_visulization(Plane_annotation_tool):
                 print("mirror plane (mesh) saved  to :", os.path.abspath(mesh_save_path))
 
         if self.is_matterport3d:
-                # depth_img_path = rreplace(color_img_path.replace("raw","hole_refined_depth"), "i", "d")
-                # ply_save_folder = os.path.join(self.output_folder, "hole_refined_ply")
-                # os.makedirs(ply_save_folder, exist_ok=True)
-                # generate_and_save_ply(depth_img_path, ply_save_folder)
+                if self.sensor_D_update:
+                    depth_img_path = rreplace(color_img_path.replace("raw","hole_refined_depth"), "i", "d")
+                    ply_save_folder = os.path.join(self.output_folder, "hole_refined_ply")
+                    os.makedirs(ply_save_folder, exist_ok=True)
+                    generate_and_save_ply(depth_img_path, ply_save_folder)
 
                 depth_img_path = rreplace(color_img_path.replace("raw","mesh_refined_depth"), "i", "d")
                 ply_save_folder = os.path.join(self.output_folder, "mesh_refined_ply")
@@ -236,9 +245,10 @@ class Dataset_visulization(Plane_annotation_tool):
                     self.save_error_raw_name(color_img_path.split("/")[-1].split(".")[0])
 
         if color_img_path.find("m3d") > 0:
-            # depth_img_path = rreplace(color_img_path.replace("raw","hole_refined_depth").replace("json","png"),"i","d")
-            # ply_folder = os.path.join(self.output_folder, "hole_refined_ply")
-            # generate_screenshot(depth_img_path)
+            if self.sensor_D_update:
+                depth_img_path = rreplace(color_img_path.replace("raw","hole_refined_depth").replace("json","png"),"i","d")
+                ply_folder = os.path.join(self.output_folder, "hole_refined_ply")
+                generate_screenshot(depth_img_path)
 
             depth_img_path = rreplace(color_img_path.replace("raw","mesh_refined_depth").replace("json","png"),"i","d")
             ply_folder = os.path.join(self.output_folder, "mesh_refined_ply")
@@ -424,6 +434,8 @@ if __name__ == "__main__":
     parser.add_argument(
         '--process_index', default=0, type=int, help="process index")
     parser.add_argument('--multi_processing', help='do multi-process or not',action='store_true')
+    parser.add_argument('--sensor_D_update', help='For mattterport3d; True: generate result for sensorD and meshD; \
+                                                False : generate result only for meshD',action='store_true')
     parser.add_argument('--overwrite', help='overwrite files under --output_folder or not',action='store_true')
     parser.add_argument(
         '--f', default=519, type=int, help="camera focal length")
@@ -440,7 +452,9 @@ if __name__ == "__main__":
     vis_tool = Dataset_visulization(data_main_folder=args.data_main_folder, process_index=args.process_index, \
                                     multi_processing=args.multi_processing, f=args.f, \
                                     output_folder = args.output_folder, overwrite=args.overwrite, \
-                                    window_w=args.window_w, window_h=args.window_h, view_mode=args.view_mode)
+                                    window_w=args.window_w, window_h=args.window_h, view_mode=args.view_mode, sensor_D_update=args.sensor_D_update)
+    
+
     if args.stage == "1":
         vis_tool.generate_pcdMesh_for_whole_dataset()
     elif args.stage == "2":
