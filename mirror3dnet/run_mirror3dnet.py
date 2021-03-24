@@ -57,7 +57,7 @@ def main(args):
     cfg.MODEL.WEIGHTS = args.resume_checkpoint_path
     cfg.EVAL = args.eval
     cfg.REF_MODE = args.ref_mode
-    if not os.path.exists(cfg.REF_DEPTH_TO_REFINE):
+    if os.path.exists(cfg.REF_DEPTH_TO_REFINE):
         cfg.REF_DEPTH_TO_REFINE = args.to_ref_txt
         cfg.EVAL_INPUT_REF_DEPTH = True
         cfg.EVAL_SAVE_DEPTH = True

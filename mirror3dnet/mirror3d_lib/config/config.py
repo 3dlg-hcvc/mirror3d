@@ -40,7 +40,7 @@ def get_cfg() -> CfgNode:
     _C.EVAL_NORMAL = True
     _C.EVAL_BRANCH_ORI_DEPTH = True
     _C.EVAL_BRANCH_REF_DEPTH = True
-    _C.EVAL_INPUT_REF_DEPTH = True
+    _C.EVAL_INPUT_REF_DEPTH = False
     _C.EVAL_HEIGHT = 480
     _C.EVAL_WIDTH = 640
 
