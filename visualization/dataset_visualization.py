@@ -426,8 +426,7 @@ class Dataset_visulization(Plane_annotation_tool):
         else:
             ply_folder = os.path.join(self.output_folder, "hole_refined_ply")
             generate_video_function(ply_folder)
-        
-
+    
 
     
 if __name__ == "__main__":

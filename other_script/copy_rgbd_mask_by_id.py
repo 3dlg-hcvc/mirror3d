@@ -104,12 +104,59 @@ def check_invalid():
         if one_id not in invalid:
             print(one_path)
 
+        # def is_complete(color_list, folder_path):
+        #     for index, one_color_path in enumerate(color_list):
+                
+
+
+        # self.color_img_list = [os.path.join(self.data_main_folder, "raw", i) for i in os.listdir(os.path.join(self.data_main_folder, "raw"))]
+        # self.color_img_list.sort()
+
+        # if self.is_matterport3d:
+        #     mesh_refined_depth_folder = os.path.join(self.data_main_folder, "mesh_refined_depth")
+        
+        # hole_refined_depth_folder = os.path.join(self.data_main_folder, "hole_refined_depth_folder")
+
+def check_complete(raw_folder="", check_folder="", img_info_folder="", is_m3d_depth=False):
+    color_img_list =  [os.path.join(raw_folder, i) for i in os.listdir(os.path.join(raw_folder))]
+    color_img_list.sort()
+    
+
+    existing_id_list = [i.split(".")[0] for i in os.listdir(check_folder)]
+
+
+    for index, one_color_path in enumerate(color_img_list):
+        one_info_path = one_color_path.replace("raw","img_info").replace(".png", ".json")
+        one_info = read_json(one_info_path)
+        one_color_name = one_color_path.split("/")[-1].split(".")[0]
+        # import pdb; pdb.set_trace()
+
+        # if check name = ***_idx_***
+        if os.path.exists(img_info_folder):
+            for item in one_info.items():
+                if is_m3d_depth:
+                    should_exist_id = "{}_idx_{}".format(rreplace(one_color_name,"i","d"), item[0])
+                else:
+                    should_exist_id = "{}_idx_{}".format(one_color_name, item[0])
+                if should_exist_id not in existing_id_list:
+                    print("index {} : {} not exist".format(index, should_exist_id))
+        else:
+            if is_m3d_depth:
+                should_exist_id = rreplace(one_color_name,"i","d")
+            else:
+                should_exist_id = one_color_name
+            if should_exist_id not in existing_id_list:
+                print("index {} : {} not exist".format(index, should_exist_id))
+
+
+        
+
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
-        '--stage', default="5")
+        '--stage', default="1")
     parser.add_argument(
         '--txt_path', default="")
     parser.add_argument(
@@ -120,6 +167,13 @@ if __name__ == "__main__":
         '--dst_folder', default="", help="folder to store new raw/ instance_mask/ hole_raw_depth .. as sub-folders")
     parser.add_argument(
         '--current_raw_folder', default="", help="raw folder that contains color images")
+    parser.add_argument(
+        '--raw_folder', default="")
+    parser.add_argument(
+        '--check_folder', default="")
+    parser.add_argument(
+        '--img_info_folder', default="")
+    parser.add_argument('--is_m3d_depth',action='store_true')
     args = parser.parse_args()
 
     if args.stage == "1":
@@ -135,5 +189,7 @@ if __name__ == "__main__":
         get_diff(paths[0],paths[1])
     elif args.stage == "5":
         check_invalid()
+    elif args.stage == "6":
+        check_complete(args.raw_folder, args.check_folder, args.img_info_folder, args.is_m3d_depth)
 
 
