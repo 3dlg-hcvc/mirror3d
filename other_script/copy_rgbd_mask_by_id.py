@@ -193,8 +193,37 @@ def check_complete(raw_folder="", check_folder="", img_info_folder="", is_m3d_de
             if should_exist_id not in existing_id_list:
                 print("index {} : {} not exist".format(index, should_exist_id))
 
-    
+
+
+def get_m3d_split():
+    data_main_folder = "/project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/raw"
+    train_scene = read_txt("/project/3dlg-hcvc/mirrors/www/Mirror3D_final/split_info/m3d_ori/train.txt")
+    test_scene = read_txt("/project/3dlg-hcvc/mirrors/www/Mirror3D_final/split_info/m3d_ori/test.txt")
+    val_scene = read_txt("/project/3dlg-hcvc/mirrors/www/Mirror3D_final/split_info/m3d_ori/val.txt")
+
+    train_id = []
+    test_id = []
+    val_id = []
+    for one_img_name in os.listdir(data_main_folder):
+        for one_train in train_scene:
+            if os.path.exists("/project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/no_mirror/undistorted_color_images/{}/undistorted_color_images/{}".format(one_train, one_img_name.replace("png","jpg"))):
+                train_id.append(one_img_name.split(".")[0])
+                print(one_img_name.split(".")[0])
+                break
+        for one_test in test_scene:
+            if os.path.exists("/project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/no_mirror/undistorted_color_images/{}/undistorted_color_images/{}".format(one_test, one_img_name.replace("png","jpg"))):
+                test_id.append(one_img_name.split(".")[0])
+                print(one_img_name.split(".")[0])
+                break
+        for one_val in val_scene:
+            if os.path.exists("/project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/no_mirror/undistorted_color_images/{}/undistorted_color_images/{}".format(one_val, one_img_name.replace("png","jpg"))):
+                val_id.append(one_img_name.split(".")[0])
+                print(one_img_name.split(".")[0])
+                break
         
+    save_txt("/project/3dlg-hcvc/mirrors/www/Mirror3D_final/split_info/m3d_mirror/train.txt", train_id)
+    save_txt("/project/3dlg-hcvc/mirrors/www/Mirror3D_final/split_info/m3d_mirror/test.txt", test_id)
+    save_txt("/project/3dlg-hcvc/mirrors/www/Mirror3D_final/split_info/m3d_mirror/val.txt", val_id)
 
 
 if __name__ == "__main__":
@@ -236,5 +265,6 @@ if __name__ == "__main__":
         check_invalid()
     elif args.stage == "6":
         check_complete(args.raw_folder, args.check_folder, args.img_info_folder, args.is_m3d_depth)
-
+    elif args.stage == "7":
+        get_m3d_split()
 
