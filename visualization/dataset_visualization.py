@@ -579,9 +579,6 @@ class Dataset_visulization(Plane_annotation_tool):
         print("figure saved to :", figure_save_path)
 
 
-        
-
-    
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Get Setting :D')
