@@ -2,7 +2,7 @@
 #SBATCH --account=rrg-msavva
 #SBATCH --gres=gpu:v100l:1
 #SBATCH --mem=48000
-#SBATCH --time=0-20:45
+#SBATCH --time=1-20:45
 #SBATCH --job-name=saic_rawD_scratch_all
 #SBATCH --output=/home/jiaqit/projects/rrg-msavva/jiaqit/cr_result/log/%x-%j.out
 source /home/jiaqit/projects/rrg-msavva/jiaqit/setup/anaconda3/bin/activate
@@ -21,3 +21,5 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_train.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100 \
 --learning_rate 1e-4 \
+--mesh_depth \
+--log_directory output

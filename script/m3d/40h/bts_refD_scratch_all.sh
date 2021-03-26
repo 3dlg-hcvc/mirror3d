@@ -22,4 +22,5 @@ python init_depth_generator/bts/pytorch/init_depth_gen_train.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100 \
 --learning_rate 1e-4 \
+--mesh_depth \
 --log_directory output
