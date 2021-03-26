@@ -10,6 +10,18 @@ import pdb
 import math
 
 
+def get_angle_to_Azimuth(vector):
+    x = vector[0]
+    y = vector[1]
+    z = vector[2]
+    hor_angle = np.arctan(x/z)
+    hor_degree = (hor_angle / np.pi)*180
+    x_z = math.sqrt(x**2 + z**2)
+    ver_angle = np.arctan(y/x_z)
+    ver_degree = (ver_angle / np.pi)*180 
+    return hor_degree, ver_degree
+
+
 def get_extrinsic(rx, ry, rz, translate):
     """
     Args:

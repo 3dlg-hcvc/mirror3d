@@ -470,10 +470,7 @@ class Dataset_visulization(Plane_annotation_tool):
                 refined_depth = cv2.imread(refined_depth_path, cv2.IMREAD_ANYDEPTH)
                 max_rawD_meter = (raw_depth*binary_instance_mask).max() / depth_2_m
                 max_refinedD_meter = (refined_depth*binary_instance_mask).max() / depth_2_m
-                hor_angle_degree = angle(mirror_normal, [0,0,-1])
-                ver_angle_degree = angle(mirror_normal, [0,1,0])
-                hor_angle_degree -= 90
-                ver_angle_degree -= 90
+                hor_angle_degree, ver_angle_degree = get_angle_to_Azimuth(mirror_normal)
                 ratio = binary_instance_mask.sum() / (w*h)
                 object_info["x_location"] = float(x_location)
                 object_info["y_location"] = float(y_location)
@@ -495,12 +492,12 @@ class Dataset_visulization(Plane_annotation_tool):
         os.makedirs(output_folder, exist_ok=True)
 
         # Define dataset_tag for caption 
-        if len(main_folders) == 0:
-            if "nyu" in main_folders[0]:
+        if len(main_folders) == 1:
+            if main_folders[0].find("nyu") > 0:
                 dataset_tag = "NYUv2"
-            elif "m3d" in main_folders[0]:
+            elif main_folders[0].find("m3d"):
                 dataset_tag = "Matterport3D"
-            elif "m3d" in main_folders[0]:
+            elif main_folders[0].find("scannet"):
                 dataset_tag = "ScanNet"
             else:
                 print("please include m3d in folder path to represent Matterport3D; \
@@ -578,6 +575,37 @@ class Dataset_visulization(Plane_annotation_tool):
         plt.close()
         print("figure saved to :", figure_save_path)
 
+        # Distribution of the ratio of mirror pixels to total pixels
+
+        plt.figure(figsize=(15, 12))
+        plot = sns.distplot(ratio_list, kde=False) 
+        plt.xticks(fontsize=35)
+        plt.yticks(fontsize=35)
+        plt.legend(fontsize=35)
+        plt.grid()
+        plt.ylabel('rmse', fontsize=35)
+        plt.xlabel('mirror ratio', fontsize=35)
+        figure_save_path = os.path.join(output_folder, "{}_ratio_distribution.png".format(dataset_tag))
+        plt.savefig(figure_save_path)
+        plt.close()
+        print("figure saved to :", figure_save_path)
+
+        # plot_json = dict()
+        # plot_json['mirror ratio'] = list(ratio_list)
+        # pd_data = pd.DataFrame(plot_json)
+        # pd_data = pd_data.set_index('mirror ratio')
+        # sns.set_palette("tab10")
+        # sns.lineplot(data=pd_data, dashes=False,markers=True,linewidth = 3)
+        # plt.grid()
+        # plt.ylabel('rmse', fontsize=18)
+        # plt.xlabel('mirror ratio', fontsize=18)
+        # plt.legend(fontsize=12,loc=2)
+        # figure_save_path = os.path.join(output_folder, "{}_ratio_distribution.png".format(dataset_tag))
+        # plt.savefig(figure_save_path)
+        # plt.clf()
+        # print("figure saved to :", figure_save_path)
+
+
 
 if __name__ == "__main__":
 
@@ -652,6 +680,7 @@ if __name__ == "__main__":
 
 
 """
+
 python /local-scratch/jiaqit/exp/Mirror3D/visualization/dataset_visualization.py \
 --stage 8 \
 --data_main_folder /project/3dlg-hcvc/mirrors/www/Mirror3D_final/scannet/with_mirror/precise \
@@ -659,6 +688,20 @@ python /local-scratch/jiaqit/exp/Mirror3D/visualization/dataset_visualization.py
 --multi_processing --process_index 1 --main_folders /project/3dlg-hcvc/mirrors/www/Mirror3D_final/scannet/with_mirror/precise \
 --output_folder /project/3dlg-hcvc/mirrors/www/Mirror3D_final/dataset_distribution
 
+
+python /local-scratch/jiaqit/exp/Mirror3D/visualization/dataset_visualization.py \
+--stage 8 \
+--data_main_folder /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise \
+--output_folder /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise \
+--multi_processing --process_index 1 --main_folders /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise \
+--output_folder /project/3dlg-hcvc/mirrors/www/Mirror3D_final/dataset_distribution
+
+
+python /local-scratch/jiaqit/exp/Mirror3D/visualization/dataset_visualization.py \
+--stage 7 \
+--data_main_folder /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise \
+--output_folder /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise \
+--multi_processing --process_index 1
 
 """
 
