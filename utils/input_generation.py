@@ -255,14 +255,51 @@ class Input_Generator(Plane_annotation_tool):
                             }
         coco_format_output["categories"] = [categories_info]
         save_json(coco_save_path, coco_format_output)  
+    
+
+
+def get_kmeans_normal(train_coco_json="", num_clusters=10, output_save_folder=""):
+
+    from collections import Counter
+    from kmeans_pytorch import kmeans
+
+    mirror_normal_list = []
+    print("normal generated based on : ", train_coco_json)
+    with open(train_coco_json, 'r') as j:
+        coco_annotation = json.loads(j.read())
+
+    for info in coco_annotation["annotations"]:
+        mirror_normal_list.append(info["mirror_normal_camera"])
+
+    mirror_normal_list = torch.from_numpy(mirror_normal_list)
+
+    # kmeans
+    cluster_ids_x, cluster_centers = kmeans(
+        X=mirror_normal_list, num_clusters=num_clusters, distance='euclidean', device=torch.device('cuda:0')
+    )
+
+    print(cluster_ids_x, cluster_centers)
+    kmeans_normal = cluster_centers.numpy()
+
+    os.makedirs(output_save_folder, exist_ok=True)
+    npy_save_path = os.path.join(output_save_folder, "m3d_kmeans_normal_{}.npy".format(str(num_clusters)))
+
+    np.save(npy_save_path, kmeans_normal)
+    print("numpy saved to : ", npy_save_path)
+    AN_count = Counter(cluster_ids_x.tolist())
+    anchor_normal_visulization(AN_count, kmeans_normal, npy_save_path.replace("npy","jpg"))
+
 
 
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Get Setting :D')
+    # Args for --stage 1
     parser.add_argument(
         '--mirror_data_main_folder', default="", type=str, help="folder contain raw, instance_mask... folders") 
+    parser.add_argument(
+        '--stage', default="", type=str, help="(1) generate coco format input (2) generate anchor normal") 
     parser.add_argument(
         '--no_mirror_data_main_folder', default="", type=str, help="dataset main folder") 
     parser.add_argument(
@@ -273,10 +310,17 @@ if __name__ == "__main__":
         '--json_output_folder', default="", type=str, help="dataset main folder") 
     parser.add_argument(
         '--split', default="all", type=str, help="train / test/ val") 
+    parser.add_argument('--contain_no_mirror', help='do multi-process or not',action='store_true')
     parser.add_argument(
         '--anchor_normal_path', default="", type=str, help="anchor normal path") 
-    parser.add_argument('--contain_no_mirror', help='do multi-process or not',action='store_true')
-
+    # Args for --stage 2
+    parser.add_argument(
+        '--output_save_folder', default="", type=str, help="kmeans anchor normal saved path") 
+     parser.add_argument(
+        '--coco_json', default="", type=str, help="coco format json file to generate the kmeans normal") 
+    parser.add_argument(
+        '--num_clusters', default=10, type=int, help="number of cluster center") 
+    
 
     args = parser.parse_args()
     generator = Input_Generator(mirror_data_main_folder = args.mirror_data_main_folder, \
@@ -287,13 +331,16 @@ if __name__ == "__main__":
                                 anchor_normal_path = args.anchor_normal_path, \
                                 contain_no_mirror = args.contain_no_mirror, \
                                 split_info_folder = args.split_info_folder)
-    if args.split == "all":
-        generator.set_split("train")
-        generator.generate_coco_main()
-        generator.set_split("test")
-        generator.generate_coco_main()
-        if args.mirror_data_main_folder.find("nyu") <=0 :
-            generator.set_split("val")
+    if args.stage == "1":
+        if args.split == "all":
+            generator.set_split("train")
             generator.generate_coco_main()
-    else:
-        generator.generate_coco_main()
+            generator.set_split("test")
+            generator.generate_coco_main()
+            if args.mirror_data_main_folder.find("nyu") <=0 :
+                generator.set_split("val")
+                generator.generate_coco_main()
+        else:
+            generator.generate_coco_main()
+    elif args.stage == "2":
+        get_kmeans_normal(train_coco_json=args.coco_json, num_clusters=args.num_clusters, output_save_folder=args.output_save_folder)
