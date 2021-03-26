@@ -38,13 +38,11 @@ class Input_Generator(Plane_annotation_tool):
         else:
             self.json_output_folder = json_output_folder
         self.anchor_normal_path = anchor_normal_path
-        assert os.path.exists(self.anchor_normal_path), "please input a anchor normal .npy path"
+        
         self.contain_no_mirror = contain_no_mirror
         if self.contain_no_mirror:
             assert os.path.exists(self.no_mirror_data_main_folder), "please input a valid none mirror (original data) main folder"
-        assert os.path.exists(self.dataset_main_folder), "please input a valid dataset main folder"
-        assert os.path.exists(self.mirror_data_main_folder), "please input a valid mirror data main folder"
-        assert os.path.exists(self.split_info_folder), "please input a split information folder (please remember to down load the split_info.zip from http://aspis.cmpt.sfu.ca/projects/mirrors/data_release/split_info.zip)" 
+       
         if "m3d" in self.mirror_data_main_folder:
             self.dataset_name = "m3d"
         elif "nyu" in self.mirror_data_main_folder:
@@ -145,7 +143,6 @@ class Input_Generator(Plane_annotation_tool):
         annotations = []
         images = []
         annotation_unique_id = 1
-
         # Get COCO annoatation for images contain mirror
         for item_index, one_mirror_color_img_path in enumerate(tqdm(mirror_color_img_list)):
             h, w, _ = cv2.imread(one_mirror_color_img_path).shape
@@ -187,9 +184,6 @@ class Input_Generator(Plane_annotation_tool):
             for instance_index in np.unique(np.reshape(mask_img,(-1,3)), axis = 0):
                 if sum(instance_index) == 0: # background
                     continue
-                
-
-
                 instance_tag = "{}_{}_{}".format(instance_index[0], instance_index[1], instance_index[2])
                 ground_truth_binary_mask = get_grayscale_instanceMask(mask_img, instance_index)
                 category_info = {'id': mirror_label, 'is_crowd': 0}
@@ -263,6 +257,37 @@ def get_kmeans_normal(train_coco_json="", num_clusters=10, output_save_folder=""
     from collections import Counter
     from kmeans_pytorch import kmeans
 
+
+    def anchor_normal_visulization(AN_count,kmeans_normal, save_path):
+
+        color_list  = ["orange","purple","pink","yellow","cyan","gray","lime","tan","gold","salmon","plum","peru","teal","olive"] 
+        # plt.cla()
+        fig = plt.figure()
+        title = ""
+
+        ax = fig.gca(projection='3d')
+        ax.set_title(title)
+        ax.set_xlim3d(-2000, 2000)
+        ax.set_ylim3d(-2000, 2000)
+        ax.set_zlim3d(-2000, 2000)
+        ax.quiver(0, 0, 0, 0, 0, 1, length = 2000,  color='b', arrow_length_ratio=0.05) # Z
+        ax.text(0, 0, 2000, "z", color='b')
+        ax.quiver(0, 0, 0, 0, 1, 0, length = 2000,  color='g', arrow_length_ratio=0.05) # Y
+        ax.text(0, 2000, 0, "y", color='g')
+        ax.quiver(0, 0, 0, 1, 0, 0, length = 2000,  color='r', arrow_length_ratio=0.05) # X
+        ax.text(2000, 0, 0, "x", color='r')
+
+
+        for anchor_id, one_normal in enumerate(kmeans_normal):
+            # (X, Z, Y)
+            ax.quiver(0, 0, 0, one_normal[0]*1, one_normal[1]*1, one_normal[2]*1, length = 2000,  color=color_list[anchor_id], arrow_length_ratio=0.05) # X
+            ax.text(one_normal[0]*2000, one_normal[1]*2000, one_normal[2]*2000, "{}:{}".format(anchor_id,AN_count[anchor_id]), color=color_list[anchor_id], fontsize=8)
+
+        ax.view_init(-80, -90)
+        # plt.show()
+        plt.savefig(save_path)
+        print("normal visulization saved to : ", save_path)
+
     mirror_normal_list = []
     print("normal generated based on : ", train_coco_json)
     with open(train_coco_json, 'r') as j:
@@ -271,7 +296,7 @@ def get_kmeans_normal(train_coco_json="", num_clusters=10, output_save_folder=""
     for info in coco_annotation["annotations"]:
         mirror_normal_list.append(info["mirror_normal_camera"])
 
-    mirror_normal_list = torch.from_numpy(mirror_normal_list)
+    mirror_normal_list = torch.from_numpy(np.array(mirror_normal_list))
 
     # kmeans
     cluster_ids_x, cluster_centers = kmeans(
@@ -315,13 +340,11 @@ if __name__ == "__main__":
         '--anchor_normal_path', default="", type=str, help="anchor normal path") 
     # Args for --stage 2
     parser.add_argument(
-        '--output_save_folder', default="", type=str, help="kmeans anchor normal saved path") 
-     parser.add_argument(
-        '--coco_json', default="", type=str, help="coco format json file to generate the kmeans normal") 
+        '--output_save_folder', default="", type=str, help="kmeans anchor normal saved path")
     parser.add_argument(
-        '--num_clusters', default=10, type=int, help="number of cluster center") 
-    
-
+        '--coco_json', default="", type=str, help="coco format json file to generate the kmeans normal")
+    parser.add_argument(
+        '--num_clusters', default=10, type=int, help="number of cluster center")
     args = parser.parse_args()
     generator = Input_Generator(mirror_data_main_folder = args.mirror_data_main_folder, \
                                 no_mirror_data_main_folder = args.no_mirror_data_main_folder, \
@@ -331,7 +354,12 @@ if __name__ == "__main__":
                                 anchor_normal_path = args.anchor_normal_path, \
                                 contain_no_mirror = args.contain_no_mirror, \
                                 split_info_folder = args.split_info_folder)
+
     if args.stage == "1":
+        assert os.path.exists(args.anchor_normal_path), "please input a anchor normal .npy path"
+        assert os.path.exists(args.dataset_main_folder), "please input a valid dataset main folder"
+        assert os.path.exists(args.mirror_data_main_folder), "please input a valid mirror data main folder"
+        assert os.path.exists(args.split_info_folder), "please input a split information folder (please remember to down load the split_info.zip from http://aspis.cmpt.sfu.ca/projects/mirrors/data_release/split_info.zip)" 
         if args.split == "all":
             generator.set_split("train")
             generator.generate_coco_main()

@@ -59,7 +59,6 @@ class Dataset_visulization(Plane_annotation_tool):
             self.output_folder = output_folder
         self.error_info_path = os.path.join(self.output_folder, "error_img_list.txt")
 
-        
 
     def generate_colored_depth_for_whole_dataset(self):
         """
@@ -76,7 +75,6 @@ class Dataset_visulization(Plane_annotation_tool):
         Output:
             colored depth image (using plt "magma" colormap)
         """
-
 
         if self.is_matterport3d:
             ply_folder = os.path.join(self.output_folder, "hole_refined_ply")
@@ -428,6 +426,161 @@ class Dataset_visulization(Plane_annotation_tool):
             generate_video_function(ply_folder)
     
 
+    def generate_analyze_info(self):
+        """
+        Args:
+            --data_main_folders folder that contain img_info, hole_raw_depth etc
+            --output_folder folder to save the output result 
+        """
+        da_info_output_folder = os.path.join(self.data_main_folder, "dataset_analysis")
+        os.makedirs(da_info_output_folder, exist_ok=True)
+        print("result will be saved to : {}".format(da_info_output_folder))
+
+        for color_img_path in self.color_img_list:
+            img_name = color_img_path.split("/")[-1].split(".")[0]
+            mask_img_path = color_img_path.replace("raw","instance_mask")
+            mask = cv2.imread(mask_img_path)
+            img_info_path = color_img_path.replace("raw","img_info").replace("png","json")
+            one_img_info = read_json(img_info_path)
+            if self.is_matterport3d:
+                depth_2_m = 4000
+                raw_depth_path = os.path.join(self.data_main_folder, "mesh_raw_depth","{}.png".format(rreplace(img_name, "i", "d")))
+                refined_depth_path = os.path.join(self.data_main_folder, "mesh_refined_depth","{}.png".format(rreplace(img_name, "i", "d")))
+            else:
+                depth_2_m = 1000
+                raw_depth_path = os.path.join(self.data_main_folder, "hole_raw_depth","{}.png".format(img_name))
+                refined_depth_path = os.path.join(self.data_main_folder, "hole_refined_depth","{}.png".format(img_name))
+
+            #  Get pcd and masked RGB image for each instance
+            for instance_index in np.unique(np.reshape(mask,(-1,3)), axis = 0):
+                if sum(instance_index) == 0: # background
+                    continue
+                object_info = dict()
+                instance_tag = "_idx"
+                for i in instance_index:
+                    instance_tag += "_{}".format(i)
+                instance_tag = color_img_path.split("/")[-1].split(".")[0] + instance_tag
+                
+                binary_instance_mask = get_grayscale_instanceMask(mask, instance_index)
+                mirror_normal = one_img_info[instance_tag.split("_idx_")[1]]["mirror_normal"]
+                h, w = binary_instance_mask.shape
+                x_location = np.mean(np.where(binary_instance_mask>0)[1]) / w 
+                y_location = np.mean(np.where(binary_instance_mask>0)[0]) / h 
+                raw_depth = cv2.imread(raw_depth_path, cv2.IMREAD_ANYDEPTH)
+                refined_depth = cv2.imread(refined_depth_path, cv2.IMREAD_ANYDEPTH)
+                max_rawD_meter = (raw_depth*binary_instance_mask).max() / depth_2_m
+                max_refinedD_meter = (refined_depth*binary_instance_mask).max() / depth_2_m
+                hor_angle_degree = angle(mirror_normal, [0,0,-1])
+                ver_angle_degree = angle(mirror_normal, [0,1,0])
+                hor_angle_degree -= 90
+                ver_angle_degree -= 90
+                ratio = binary_instance_mask.sum() / (w*h)
+                object_info["x_location"] = float(x_location)
+                object_info["y_location"] = float(y_location)
+                object_info["max_rawD_meter"] = float(max_rawD_meter)
+                object_info["max_refinedD_meter"] = float(max_refinedD_meter)
+                object_info["hor_angle_degree"] = float(hor_angle_degree)
+                object_info["ver_angle_degree"] = float(ver_angle_degree)
+                object_info["ratio"] = float(ratio)
+
+                instance_da_info_save_path = os.path.join(da_info_output_folder,  "{}.json".format(instance_tag))
+                save_json(instance_da_info_save_path, object_info)
+
+    def generate_data_distribution_figure(self, main_folders, output_folder):
+        """
+        Generate data distribution figure
+        """
+        import pandas as pd
+        import seaborn as sns
+        os.makedirs(output_folder, exist_ok=True)
+
+        # Define dataset_tag for caption 
+        if len(main_folders) == 0:
+            if "nyu" in main_folders[0]:
+                dataset_tag = "NYUv2"
+            elif "m3d" in main_folders[0]:
+                dataset_tag = "Matterport3D"
+            elif "m3d" in main_folders[0]:
+                dataset_tag = "ScanNet"
+            else:
+                print("please include m3d in folder path to represent Matterport3D; \
+                        include nyu in folder path to represent NYUv2; \
+                        include scannet in folder path to represent Scannet")
+                return
+        else:
+            dataset_tag = "Overall"
+
+        # Get all infomation
+        x_location_list = []
+        y_location_list = []
+        max_rawD_meter_list = []
+        max_refinedD_meter_list = []
+        hor_angle_degree_list = []
+        ver_angle_degree_list = []
+        ratio_list = []
+        for data_main_folder in main_folders:
+            da_info_folder = os.path.join(data_main_folder, "dataset_analysis")
+            assert os.path.exists(da_info_folder), "dataset_analysis folder doesn't exists; \
+                                                    please generate information for data analysis first"
+            for one_da_info_name in os.listdir(da_info_folder):
+                one_da_info_path = os.path.join(da_info_folder, one_da_info_name)
+                one_da_info = read_json(one_da_info_path)
+
+
+
+                x_location_list.append(one_da_info["x_location"])
+                y_location_list.append(one_da_info["y_location"])
+                max_rawD_meter_list.append(one_da_info["max_rawD_meter"])
+                max_refinedD_meter_list.append(one_da_info["max_refinedD_meter"])
+                hor_angle_degree_list.append(one_da_info["hor_angle_degree"])
+                ver_angle_degree_list.append(one_da_info["ver_angle_degree"])
+                ratio_list.append(one_da_info["ratio"])
+            
+
+        # Distribution of mirror mask centroids in image plane
+        pd_data = pd.DataFrame({"x location":x_location_list,"y location":y_location_list})
+        sns.set(font_scale=2, style="whitegrid")
+        plot = sns.jointplot(data=pd_data,x="x location",y="y location",alpha=.3,color="g")
+        plot.ax_marg_x.set_xlim(0,1)
+        plot.ax_marg_y.set_ylim(0,1)
+        plot.ax_marg_y.set_ylim(plot.ax_marg_y.get_ylim()[::-1])
+        figure_save_path = os.path.join(output_folder, "{}_pixel_location.png".format(dataset_tag))
+        plt.savefig(figure_save_path)
+        plt.close()
+        print("figure saved to :", figure_save_path)
+
+        # Distribution of the maximum depth value per frame by source RGBD dataset
+        plt.figure(figsize=(15, 12))
+        if dataset_tag == "Matterport3D":
+            sns.distplot(max_rawD_meter_list, kde=False, label="mesh depth",color="purple") 
+        else:
+            sns.distplot(max_rawD_meter_list, kde=False, label="raw depth",color="purple") 
+        plot = sns.distplot(max_refinedD_meter_list, kde=False, label="refined depth") 
+        plt.xticks(fontsize=35)
+        plt.yticks(fontsize=35)
+        plt.legend(fontsize=35)
+        plt.grid()
+        plt.ylabel('number of sample', fontsize=35)
+        plt.xlabel('pixel max depth (m)', fontsize=35)
+        figure_save_path = os.path.join(output_folder, "{}_ref_raw_depth_joint.png".format(dataset_tag))
+        plt.savefig(figure_save_path)
+        plt.close()
+        print("figure saved to :", figure_save_path)
+
+        # Distribution of mirror normals by source RGBD dataset (a through c) and overall
+        pd_data = pd.DataFrame({"horizontal angle":hor_angle_degree_list,"vertical angle":ver_angle_degree_list})
+        sns.set(font_scale=2, style="whitegrid")
+        plot = sns.jointplot(data=pd_data,x="horizontal angle",y="vertical angle",alpha=.3,color="darkorange")
+        plot.ax_marg_x.set_xlim(-90,90)
+        plot.ax_marg_y.set_ylim(-90,90)
+        figure_save_path = os.path.join(output_folder, "{}_normal_dis.png".format(dataset_tag))
+        plt.savefig(figure_save_path)
+        plt.close()
+        print("figure saved to :", figure_save_path)
+
+
+        
+
     
 if __name__ == "__main__":
 
@@ -435,7 +588,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--stage', default="all")
     parser.add_argument(
-        '--data_main_folder', default="/local-scratch/jiaqit/exp/reannotate")
+        '--data_main_folder', default="")
     parser.add_argument(
         '--process_index', default=0, type=int, help="process index")
     parser.add_argument('--multi_processing', help='do multi-process or not',action='store_true')
@@ -449,9 +602,11 @@ if __name__ == "__main__":
     parser.add_argument(
         '--window_h', default=800, type=int, help="height of the visilization window")
     parser.add_argument(
-        '--output_folder', default="/local-scratch/jiaqit/exp/reannotate")
+        '--output_folder', default="")
     parser.add_argument(
         '--view_mode', default="front", help="object view angle : (1) topdown (2) front")
+    parser.add_argument(
+        '--main_folders', default="", nargs='+', help="folders to plot the final result")
     args = parser.parse_args()
 
     vis_tool = Dataset_visulization(data_main_folder=args.data_main_folder, process_index=args.process_index, \
@@ -493,3 +648,30 @@ if __name__ == "__main__":
         vis_tool.generate_video_for_all()
         vis_tool.set_view_mode("front")
         vis_tool.generate_video_for_all()
+    elif args.stage == "7":
+        vis_tool.generate_analyze_info()
+    elif args.stage == "8":
+        vis_tool.generate_data_distribution_figure(args.main_folders, args.output_folder)
+
+
+"""
+python /local-scratch/jiaqit/exp/Mirror3D/visualization/dataset_visualization.py \
+--stage 8 \
+--data_main_folder /project/3dlg-hcvc/mirrors/www/Mirror3D_final/scannet/with_mirror/precise \
+--output_folder /project/3dlg-hcvc/mirrors/www/Mirror3D_final/scannet/with_mirror/precise \
+--multi_processing --process_index 1 --main_folders /project/3dlg-hcvc/mirrors/www/Mirror3D_final/scannet/with_mirror/precise \
+--output_folder /project/3dlg-hcvc/mirrors/www/Mirror3D_final/dataset_distribution
+
+
+"""
+
+
+        # instance_mask_folder = os.path.join(self.data_main_folder, "instance_mask")
+        # img_info_folder = os.path.join(self.data_main_folder, "img_info")
+        # if dataset_name == "Matterport3D"
+        #     rawD_folder = os.path.join(self.data_main_folder, "mesh_refined_depth")
+        #     refineD_folder = os.path.join(self.data_main_folder, "mesh_raw_depth")
+        # else:
+        #     rawD_folder = os.path.join(self.data_main_folder, "hole_refined_depth")
+        #     refineD_folder = os.path.join(self.data_main_folder, "hole_raw_depth")
+        
