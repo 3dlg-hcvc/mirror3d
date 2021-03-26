@@ -11,6 +11,51 @@ from PIL import Image, ImageDraw
 import shutil
 import argparse
 
+def reset_progress(anno_progress_folder, waste_path, re_anno_path):
+
+    correct_txt = os.path.join(anno_progress_folder, "correct_list.txt")
+    error_txt = os.path.join(anno_progress_folder, "error_list.txt")
+    error_id_txt = os.path.join(anno_progress_folder, "error_id.txt")
+
+    if os.path.exists(correct_txt):
+        correct_list = read_txt(correct_txt)
+    else:
+        correct_list = []
+    
+    if os.path.exists(error_txt):
+        error_list = read_txt(error_txt)
+    else:
+        error_list = []
+
+    if os.path.exists(error_id_txt):
+        error_id = read_txt(error_id_txt)
+    else:
+        error_id = []
+
+    if os.path.exists(waste_path):
+        waste_list = read_txt(waste_path)
+    else:
+        waste_list = []
+
+    if os.path.exists(re_anno_path):
+        re_anno_list = read_txt(re_anno_path)
+    else:
+        re_anno_list = []
+
+    new_correct_list = []
+    for one_ply_path in correct_list:
+        id = one_ply_path.split("/")[-1].split("_idx_")[0]
+        if id in waste_list:
+            error_id.append(id)
+            error_list.append(one_ply_path)
+        elif id not in re_anno_list:
+            new_correct_list.append(one_ply_path)
+        
+    save_txt(new_correct_list, correct_txt)
+    save_txt(error_id, error_id_txt)
+    save_txt(error_list, error_txt)
+
+
 
 
 
@@ -148,7 +193,7 @@ def check_complete(raw_folder="", check_folder="", img_info_folder="", is_m3d_de
             if should_exist_id not in existing_id_list:
                 print("index {} : {} not exist".format(index, should_exist_id))
 
-
+    
         
 
 

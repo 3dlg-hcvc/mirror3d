@@ -461,7 +461,7 @@ if __name__ == "__main__":
     
 
     if args.stage == "1":
-        vis_tool.generate_pcdMesh_for_whole_dataset()
+        vis_tool.generate_pcdMesh_for_whole_dataset()    
     elif args.stage == "2":
         vis_tool.set_view_mode("topdown")
         vis_tool.generate_screenshot_for_pcdMesh()

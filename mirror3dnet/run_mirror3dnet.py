@@ -37,6 +37,7 @@ def main(args):
     cfg.VAL_NAME = val_name
     cfg.DATASETS.TRAIN = [train_name]
     cfg.DATASETS.TEST = [val_name]
+    cfg.ANCHOR_NORMAL_NYP = args.anchor_normal_npy
     cfg.ANCHOR_NORMAL_CLASS_NUM = np.load(cfg.ANCHOR_NORMAL_NYP).shape[0]
     cfg.REFINED_DEPTH = args.refined_depth
     cfg.MESH_DEPTH = args.mesh_depth
@@ -138,6 +139,7 @@ if __name__ == "__main__":
     parser.add_argument('--coco_val_root',             type=str,   help='coco data root', default="")
 
     # Data information config (mirror3d)
+    parser.add_argument('--anchor_normal_npy',         type=int,   help='anchor normal .npy path', default="dataset/mirror_normal/m3d_kmeans_normal_10.npy")
     parser.add_argument('--coco_focal_len',            type=str,   help='focal length of input data; correspond to INPUT DEPTH! nyu : 519; scannet 575; m3d 1074.', default="519") 
     parser.add_argument('--depth_shift',               type=int,   help='nyu / scannet : 1000, m3d : 4000', default=1000) 
     parser.add_argument('--input_height',              type=int,   help='input height', default=480)   
