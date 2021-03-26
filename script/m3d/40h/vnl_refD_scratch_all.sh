@@ -18,8 +18,9 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.
 --depth_shift 4000 \
 --input_height 512 \
 --input_width 640 \
---batch_size 8 \
+--batch_size 4 \
 --checkpoint_save_freq 1500 \
 --num_epochs 100 \
 --learning_rate 1e-4 \
+--mesh_depth \
 --log_directory output

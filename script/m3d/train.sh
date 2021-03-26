@@ -13,6 +13,7 @@ python init_depth_generator/bts/pytorch/init_depth_gen_train.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100 \
 --learning_rate 1e-4 \
+--mesh_depth \
 --log_directory output
 
 # bts train on sensor depth
@@ -29,6 +30,7 @@ python init_depth_generator/bts/pytorch/init_depth_gen_train.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100 \
 --learning_rate 1e-4 \
+--mesh_depth \
 --log_directory output
 
 # vnl train on refined depth
@@ -46,6 +48,7 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.
 --checkpoint_save_freq 1500 \
 --num_epochs 100 \
 --learning_rate 1e-4 \
+--mesh_depth \
 --log_directory output
 
 
@@ -63,6 +66,7 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.
 --checkpoint_save_freq 1500 \
 --num_epochs 100 \
 --learning_rate 1e-4 \
+--mesh_depth \
 --log_directory output
 
 # saic train on refined depth
@@ -80,6 +84,7 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_train.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100 \
 --learning_rate 1e-4 \
+--mesh_depth \
 --log_directory output
 
 
@@ -97,4 +102,5 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_train.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100 \
 --learning_rate 1e-4 \
+--mesh_depth \
 --log_directory output
