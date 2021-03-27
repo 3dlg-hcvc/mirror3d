@@ -34,6 +34,9 @@ def sh_to_sbatch(train_sh_path, log_config, sh_output_foler, sbatch_config, env_
                 resume_tag = "resume"
             if item.find("-coco_train") > 0 and item.find("_mirror.json") > 0:
                 have_mirror_tag = "mirror"
+            if item.find("anchor_normal_npy") > 0:
+                anchor_num = item.split("m3d_kmeans_normal_")[-1].split(".")[0]
+                method_name = method_name + "_" + anchor_num
         
         job_name = "{}_{}_{}_{}".format(method_name, depth_tag, resume_tag, have_mirror_tag)
         return job_name

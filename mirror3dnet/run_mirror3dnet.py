@@ -139,7 +139,7 @@ if __name__ == "__main__":
     parser.add_argument('--coco_val_root',             type=str,   help='coco data root', default="")
 
     # Data information config (mirror3d)
-    parser.add_argument('--anchor_normal_npy',         type=int,   help='anchor normal .npy path', default="dataset/mirror_normal/m3d_kmeans_normal_10.npy")
+    parser.add_argument('--anchor_normal_npy',         type=str,   help='anchor normal .npy path', default="dataset/mirror_normal/m3d_kmeans_normal_10.npy")
     parser.add_argument('--coco_focal_len',            type=str,   help='focal length of input data; correspond to INPUT DEPTH! nyu : 519; scannet 575; m3d 1074.', default="519") 
     parser.add_argument('--depth_shift',               type=int,   help='nyu / scannet : 1000, m3d : 4000', default=1000) 
     parser.add_argument('--input_height',              type=int,   help='input height', default=480)   
