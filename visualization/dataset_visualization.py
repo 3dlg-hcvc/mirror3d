@@ -14,12 +14,12 @@ from annotation.plane_annotation_tool.plane_annotation_tool import *
 
  
 
-class Dataset_visulization(Plane_annotation_tool):
+class DatasetVisualizer(Plane_annotation_tool):
 
     def __init__(self, data_main_folder=None, process_index=0, multi_processing=False, 
                 f=519, output_folder=None, overwrite=True, window_w=800, window_h=800, view_mode="topdown", sensor_D_update=True):
         """
-        Initilization
+        Initialization
 
         Args:
             data_main_folder : Folder raw, hole_raw_depth/ mesh_raw_depth, instance_mask saved folder.
@@ -281,16 +281,16 @@ class Dataset_visulization(Plane_annotation_tool):
         rotation_step_degree = 10
         start_rotation = get_extrinsic(90,0,0,[0,0,0])
         if self.is_matterport3d:
-            stage_tranlation = get_extrinsic(0,0,0,[-mesh_center[0],-mesh_center[1] + 9000,-mesh_center[2]])
+            stage_translation = get_extrinsic(0,0,0,[-mesh_center[0],-mesh_center[1] + 9000,-mesh_center[2]])
         else:
-            stage_tranlation = get_extrinsic(0,0,0,[-mesh_center[0],-mesh_center[1] + 3000,-mesh_center[2]])
-        start_position = np.dot(start_rotation, stage_tranlation)
+            stage_translation = get_extrinsic(0,0,0,[-mesh_center[0],-mesh_center[1] + 3000,-mesh_center[2]])
+        start_position = np.dot(start_rotation, stage_translation)
         def rotate_view(vis):
             
             nonlocal screenshot_id
             T_rotate = get_extrinsic(0,rotation_step_degree*(screenshot_id+1),0,[0,0,0])
             cam = vis.get_view_control().convert_to_pinhole_camera_parameters()
-            cam.extrinsic = np.dot(np.dot(start_rotation, T_rotate), stage_tranlation)
+            cam.extrinsic = np.dot(np.dot(start_rotation, T_rotate), stage_translation)
             vis.get_view_control().convert_from_pinhole_camera_parameters(cam)
             
             screenshot_id += 1
@@ -634,10 +634,10 @@ if __name__ == "__main__":
         '--main_folders', default="", nargs='+', help="folders to plot the final result")
     args = parser.parse_args()
 
-    vis_tool = Dataset_visulization(data_main_folder=args.data_main_folder, process_index=args.process_index, \
-                                    multi_processing=args.multi_processing, f=args.f, \
-                                    output_folder = args.output_folder, overwrite=args.overwrite, \
-                                    window_w=args.window_w, window_h=args.window_h, view_mode=args.view_mode, sensor_D_update=args.sensor_D_update)
+    vis_tool = DatasetVisualizer(data_main_folder=args.data_main_folder, process_index=args.process_index, \
+                                 multi_processing=args.multi_processing, f=args.f, \
+                                 output_folder = args.output_folder, overwrite=args.overwrite, \
+                                 window_w=args.window_w, window_h=args.window_h, view_mode=args.view_mode, sensor_D_update=args.sensor_D_update)
     
 
     if args.stage == "1":

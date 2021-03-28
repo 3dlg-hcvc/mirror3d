@@ -11,14 +11,14 @@ from utils.plane_pcd_utils import *
 import json
 import shutil
 from annotation.plane_annotation_tool.plane_annotation_tool import *
-from visualization.dataset_visualization import Dataset_visulization
+from visualization.dataset_visualization import DatasetVisualizer
 
-class Dataset_visulization(Dataset_visulization):
+class ResultVisualizer(DatasetVisualizer):
 
     def __init__(self, dataset_main_folder=None, prediction_output_folder = None, method_tag="mirror3D", process_index=0, multi_processing=False, 
                 f=519, output_folder=None, overwrite=True, window_w=800, window_h=800, view_mode="topdown"):
         """
-        Initilization
+        Initialization
 
         Args:
             dataset_main_folder : Folder raw, hole_raw_depth/ mesh_raw_depth, instance_mask saved folder.
@@ -395,11 +395,11 @@ if __name__ == "__main__":
         '--view_mode', default="topdown", help="object view angle : (1) topdown (2) front")
     args = parser.parse_args()
 
-    vis_tool = Dataset_visulization(dataset_main_folder=args.dataset_main_folder, process_index=args.process_index, \
-                                    multi_processing=args.multi_processing, f=args.f, \
-                                    prediction_output_folder = args.prediction_output_folder, method_tag=args.method_tag \
-                                    output_folder=args.output_folder, overwrite=args.overwrite, \
-                                    window_w=args.window_w, window_h=args.window_h, view_mode=args.view_mode)
+    vis_tool = ResultVisualizer(dataset_main_folder=args.dataset_main_folder, process_index=args.process_index, \
+                                multi_processing=args.multi_processing, f=args.f, \
+                                prediction_output_folder = args.prediction_output_folder, method_tag=args.method_tag \
+                                output_folder=args.output_folder, overwrite=args.overwrite, \
+                                window_w=args.window_w, window_h=args.window_h, view_mode=args.view_mode)
     if args.stage == "1":
         vis_tool.generate_pcd_for_whole_dataset()
     elif args.stage == "2":
