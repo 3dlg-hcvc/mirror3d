@@ -279,7 +279,6 @@ def visulize_mask_one_image(color_img_path, mask):
         mask = cv2.cvtColor(mask.astype(np.uint16), cv2.COLOR_GRAY2RGB)
         mask[mask>0] = 255
         mask = np.array(mask, dtype=np.float)
-        # import pdbpdb.set_trace()
         mask /= 255.0
         #set transparency to 25%
         transparency = .25
@@ -457,13 +456,22 @@ def get_pcd_from_rgb_depthMap(f, d, color_img_path, mirror_mask=None, color=None
 # ---------------------------------------------------------------------------- #
 #                               get_pcd_from_rgbd_depthPath                    #
 # ---------------------------------------------------------------------------- #
-def get_pcd_from_rgbd_depthPath(f, depth_img_path, color_img_path, mirror_mask=None, color=None):
+def get_pcd_from_rgbd_depthPath(f, depth_img_path, color_img_path, mirror_mask=None, color=None, w=None, h=None):
     import open3d as o3d
     d = cv2.imread(depth_img_path, cv2.IMREAD_ANYDEPTH)
     color_img = cv2.cvtColor(cv2.imread(color_img_path), cv2.COLOR_BGR2RGB)
     color_img = color_img/255
+    
+    if w != None and h != None:
+        color_img = Image.open(color_img_path).resize((w,h), Image.NEAREST)
+        color_img = np.asarray(color_img, dtype=np.float32) / 255.0
+        d = np.asarray(cv2.resize(d, dsize=(w, h), interpolation=cv2.INTER_NEAREST), dtype=np.float32)
+    else:
+        h, w = d.shape
+    
 
-    h, w = d.shape
+    
+
     x_cam = []
     y_cam = []
     z_cam = []

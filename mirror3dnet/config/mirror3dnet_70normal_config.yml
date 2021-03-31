@@ -46,7 +46,7 @@ INPUT:
   MAX_SIZE_TEST : 640
 
 ############## planeRCNN configure ##############
-DEPTH_EST : True  # TODO ori & new(optional)
+DEPTH_EST : False  # TODO ori & new(optional)
 ANCHOR_REG : True  #! TODO ori & new
 ANCHOR_CLS : True  #! TODO ori & new eval
 OBJECT_SEG : True # TODO ori & new
@@ -75,7 +75,7 @@ EVAL_CLS_AP : True # TODO
 EVAL_MASK_IOU : True
 EVAL_NORMAL : True  # TODO angle diff & normal l2 loss
 EVAL_BRANCH_ORI_DEPTH : False # TODO mirror3d_eval matrics
-EVAL_BRANCH_REF_DEPTH : True # TODO mirror3d_eval matrics
+EVAL_BRANCH_REF_DEPTH : False # TODO mirror3d_eval matrics
 EVAL_INPUT_REF_DEPTH : False # TODO REF_DEPTH_TO_REFINE
 EVAL_HEIGHT : 480
 EVAL_WIDTH : 640
@@ -83,13 +83,13 @@ EVAL_WIDTH : 640
 # ---- eval output ----
 EVAL_SAVE_MASKED_IMG : False # TODO 
 EVAL_SAVE_NORMAL_VIS : False # TODO
-EVAL_SAVE_DEPTH : True # TODO
+EVAL_SAVE_DEPTH : False # TODO
 MASK_ON_OTHER_SIZE : True
 
 # --------- refine depth -----------
 REF_DEPTH_TO_REFINE : "" # TODO
 REF_MODE : "DE_border" # TODO # "none / rawD_mirror / rawD_border / DE_mirror / DE_border " 
-REF_BORDER_WIDTH : 50 # TODO
+REF_BORDER_WIDTH : 70 # TODO
 
 
 

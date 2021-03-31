@@ -93,8 +93,8 @@ def mirror3d_inference_on_dataset(model, data_loader, evaluator):
             for item in inputs:
                 temp = item.copy()
                 temp.pop("image")
-                # if "noisy_depth_image" in temp:
-                #     temp.pop("noisy_depth_image")
+                if "depth_image" in temp:
+                    temp.pop("depth_image")
                 input_temp.append(temp)
             output_list.append([outputs,input_temp])
             

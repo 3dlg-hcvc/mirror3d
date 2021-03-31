@@ -195,6 +195,10 @@ def check_complete(raw_folder="", check_folder="", img_info_folder="", is_m3d_de
 
 
 
+        
+
+
+
 def get_m3d_split():
     data_main_folder = "/project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/raw"
     train_scene = read_txt("/project/3dlg-hcvc/mirrors/www/Mirror3D_final/split_info/m3d_ori/train.txt")
@@ -226,6 +230,23 @@ def get_m3d_split():
     save_txt("/project/3dlg-hcvc/mirrors/www/Mirror3D_final/split_info/m3d_mirror/val.txt", val_id)
 
 
+def resize_image(src_folder="", dst_folder="", is_depth=False, target_width=640, target_height=512):
+    os.makedirs(dst_folder, exist_ok=True)
+    for one_name in os.listdir(src_folder):
+        one_path = os.path.join(src_folder, one_name)
+        one_save_path = os.path.join(dst_folder, one_name)
+        if is_depth:
+            img = cv2.imread(one_path, cv2.IMREAD_ANYDEPTH)
+            resize_img = np.asarray(cv2.resize(img, dsize=(target_width, target_height), interpolation=cv2.INTER_NEAREST), dtype=np.float32)
+            cv2.imwrite(one_save_path, np.array(resize_img, dtype=np.uint16))
+        else:
+            resize_img = Image.open(one_path).resize((target_width,target_height), Image.NEAREST)
+            resize_img.save(one_save_path)
+        print("resize :", one_path)
+        print("saved  to : ", one_save_path)
+
+        
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Get Setting :D')
@@ -248,6 +269,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--img_info_folder', default="")
     parser.add_argument('--is_m3d_depth',action='store_true')
+    parser.add_argument('--is_depth',action='store_true')
     args = parser.parse_args()
 
     if args.stage == "1":
@@ -267,4 +289,6 @@ if __name__ == "__main__":
         check_complete(args.raw_folder, args.check_folder, args.img_info_folder, args.is_m3d_depth)
     elif args.stage == "7":
         get_m3d_split()
+    elif args.stage == "8":
+        resize_image(src_folder=args.data_main_folder, dst_folder=args.dst_folder, is_depth=args.is_depth)
 

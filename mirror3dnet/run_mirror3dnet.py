@@ -58,7 +58,8 @@ def main(args):
     cfg.MODEL.WEIGHTS = args.resume_checkpoint_path
     cfg.EVAL = args.eval
     cfg.REF_MODE = args.ref_mode
-    if os.path.exists(cfg.REF_DEPTH_TO_REFINE):
+    cfg.EVAL_SAVE_DEPTH = args.eval_save_depth
+    if os.path.exists(args.to_ref_txt):
         cfg.REF_DEPTH_TO_REFINE = args.to_ref_txt
         cfg.EVAL_INPUT_REF_DEPTH = True
         cfg.EVAL_SAVE_DEPTH = True
@@ -85,6 +86,7 @@ def main(args):
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
 
     if cfg.EVAL:
+        cfg.EVAL_SAVE_DEPTH = True
         eval_output_tag = ""
         if os.path.exists(cfg.REF_DEPTH_TO_REFINE):
             method_tag = cfg.REF_DEPTH_TO_REFINE.split("/")[-2]
@@ -157,7 +159,7 @@ if __name__ == "__main__":
 
     parser.add_argument('--to_ref_txt',                type=str,   help='txt to refine', default='')
     parser.add_argument('--ref_mode',                  type=str,   help='none / rawD_mirror / rawD_border / DE_mirror / DE_border', default='DE_border')
-    
+    parser.add_argument("--eval_save_depth",           action="store_true", help="save output depth or not")
     # PyTorch still may leave orphan processes in multi-gpu training.
     # Therefore we use a deterministic way to obtain port,
     # so that users are aware of orphan processes by seeing the port occupied.

@@ -9,6 +9,7 @@ import pathlib
 import torch
 from utils.pycococreatortools import create_annotation_info
 from tqdm import tqdm
+import random
 from utils.algorithm import *
 from utils.general_utlis import *
 from utils.plane_pcd_utils import *
@@ -16,7 +17,7 @@ from annotation.plane_annotation_tool.plane_annotation_tool import Plane_annotat
 
 class Input_Generator(Plane_annotation_tool):
 
-    def __init__(self, mirror_data_main_folder, no_mirror_data_main_folder="", dataset_main_folder="", json_output_folder="", split="test", anchor_normal_path="", contain_no_mirror=False, split_info_folder=""):
+    def __init__(self, mirror_data_main_folder, no_mirror_data_main_folder="", dataset_main_folder="", json_output_folder="", split="test", anchor_normal_path="", contain_no_mirror=False, split_info_folder="", max_num=0):
         """
         Args:
             mirror_data_main_folder : folder that contains "raw" , "instance_mask", "refined_depth" ... folders
@@ -27,6 +28,7 @@ class Input_Generator(Plane_annotation_tool):
 
         """
         self.split = split
+        self.max_num = max_num
         self.no_mirror_data_main_folder = no_mirror_data_main_folder
         self.dataset_main_folder = dataset_main_folder
         self.split_info_folder = split_info_folder
@@ -90,7 +92,6 @@ class Input_Generator(Plane_annotation_tool):
                     # Matterport3d and ScanNet are classified by sceneID
                     if img_tag not in mirror_split_id_list and img_scene in no_mirror_split_id_list:
                         no_mirror_colorImg_list.append(one_img_path)
-
         normal_num = np.load(self.anchor_normal_path).shape[0]
 
         if self.contain_no_mirror:
@@ -210,6 +211,7 @@ class Input_Generator(Plane_annotation_tool):
             annotation_unique_id += 1
 
         # Get COCO annoatation for images don't have mirror
+        random.shuffle(no_mirror_color_img_list)
         for one_no_mirror_color_img_path in tqdm(no_mirror_color_img_list):
             raw_img_path_abv = os.path.relpath(one_no_mirror_color_img_path, self.dataset_main_folder)
 
@@ -239,6 +241,9 @@ class Input_Generator(Plane_annotation_tool):
             if image not in images:
                 images.append(image)
                 item_index+= 1
+            
+            if self.max_num != 0 and (item_index - annotation_unique_id > self.max_num):
+                break 
 
         coco_format_output = dict()
         coco_format_output["annotations"] = annotations
@@ -338,6 +343,8 @@ if __name__ == "__main__":
     parser.add_argument('--contain_no_mirror', help='do multi-process or not',action='store_true')
     parser.add_argument(
         '--anchor_normal_path', default="", type=str, help="anchor normal path") 
+    parser.add_argument(
+        '--max_num', default=0, type=int, help="max number of none-mirror samples")
     # Args for --stage 2
     parser.add_argument(
         '--output_save_folder', default="", type=str, help="kmeans anchor normal saved path")
@@ -353,7 +360,8 @@ if __name__ == "__main__":
                                 split = args.split, \
                                 anchor_normal_path = args.anchor_normal_path, \
                                 contain_no_mirror = args.contain_no_mirror, \
-                                split_info_folder = args.split_info_folder)
+                                split_info_folder = args.split_info_folder, \
+                                max_num = args.max_num)
 
     if args.stage == "1":
         assert os.path.exists(args.anchor_normal_path), "please input a anchor normal .npy path"

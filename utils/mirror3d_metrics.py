@@ -156,7 +156,6 @@ class Mirror3d_eval():
         all_image_error = compute_errors(refD_gt_depth, pred_depth, True)
 
 
-        print("{:.3f} {:.3f} {:.3f} {}".format(mirror_error[0], non_mirror_error[0], all_image_error[0],refD_gt_depth_path)) # TODO debug delete later
         if all_image_error == False or mirror_error == False or non_mirror_error == False:
             return 
         
@@ -217,7 +216,6 @@ class Mirror3d_eval():
             log10 = np.mean(err)
 
             scaled_rms = np.sqrt(((scale * pred-gt)**2).mean())
-
             return rmse, scaled_rms, rel, ssim.item(), d105, d110, d125, d125_2, d125_3
 
 
@@ -300,7 +298,7 @@ class Mirror3d_eval():
         with open(info_txt_save_path, "a") as file:
             file.write("{} {} {} {}".format(color_img_path, mask_path, refD_gt_depth_path, depth_np_save_path))
             file.write("\n")
-
+        np.int
 
 class SSIM(torch.nn.Module):
     def __init__(self, window_size=11, size_average=True, eps=1e-5):
