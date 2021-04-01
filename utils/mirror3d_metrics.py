@@ -10,7 +10,8 @@ import logging
 
 class Mirror3d_eval():
     def __init__(self, train_with_refD, logger=None, Input_tag="Input_tag", method_tag="method_tag",width=640, height=480):
-        self.m_nm_all = torch.zeros(27)
+        self.m_nm_all_refD = torch.zeros(27)
+        self.m_nm_all_rawD = torch.zeros(27)
         self.cnt = 0
         self.train_with_refD = train_with_refD
         self.logger = logger
@@ -28,7 +29,8 @@ class Mirror3d_eval():
         self.main_output_folder = ""
     
     def reset_setting(self,train_with_refD, logger=None, Input_tag="Input_tag", method_tag="method_tag",width=640, height=480):
-        self.m_nm_all = torch.zeros(27)
+        self.m_nm_all_refD = torch.zeros(27)
+        self.m_nm_all_rawD = torch.zeros(27)
         self.cnt = 0
         self.train_with_refD = train_with_refD
         self.logger = logger
@@ -47,44 +49,49 @@ class Mirror3d_eval():
 
     def print_mirror3D_score(self):
 
-        eval_measures_cpu = self.m_nm_all
-        eval_measures_cpu /= self.cnt
-        print('Computing errors for {} eval samples'.format(int(self.cnt)))
+        def print_all_scores(eval_measures_cpu):
+            print('Computing errors for {} eval samples'.format(int(self.cnt)))
 
-        # print title
-        print("{:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12} \\\\".format(
-        'Input', "Train", "Method", "Region", "RMSE", "s-RMSE", "Rel", "SSIM", '$d_{1.05}$', '$d_{1.12}$', '$d_{1.25}$', '$d_{1.25^2','$d_{1.25^3}$', "Count"))
-        if self.logger:
-            self.logger.info("{:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12} \\\\".format(
-        'Input', "Train", "Method", "Region", "RMSE", "s-RMSE", "Rel", "SSIM", '$d_{1.05}$', '$d_{1.12}$', '$d_{1.25}$', '$d_{1.25^2}$','$d_{1.25^3}$', "Count"))
+            # print title
+            print("{:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12} \\\\".format(
+            'Input', "Train", "Method", "Region", "RMSE", "s-RMSE", "Rel", "SSIM", '$d_{1.05}$', '$d_{1.12}$', '$d_{1.25}$', '$d_{1.25^2','$d_{1.25^3}$', "Count"))
+            if self.logger:
+                self.logger.info("{:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12} \\\\".format(
+            'Input', "Train", "Method", "Region", "RMSE", "s-RMSE", "Rel", "SSIM", '$d_{1.05}$', '$d_{1.12}$', '$d_{1.25}$', '$d_{1.25^2}$','$d_{1.25^3}$', "Count"))
 
-        # print mirror area score
-        print_line = "{:>12}& {:>12}& {:>12}& {:>12}& ".format(self.Input_tag, self.Train_tag, self.method_tag, "mirror")
-        for i in range(0,9):
-            print_line += '{:>12.3f}& '.format(eval_measures_cpu[i])
-        print_line += '{:>12} \\\\'.format(int(self.cnt))
-        print(print_line)
-        if self.logger:
-            self.logger.info(print_line)
+            # print mirror area score
+            print_line = "{:>12}& {:>12}& {:>12}& {:>12}& ".format(self.Input_tag, self.Train_tag, self.method_tag, "mirror")
+            for i in range(0,9):
+                print_line += '{:>12.3f}& '.format(eval_measures_cpu[i])
+            print_line += '{:>12} \\\\'.format(int(self.cnt))
+            print(print_line)
+            if self.logger:
+                self.logger.info(print_line)
 
-        # print non-mirror area score
-        print_line = "{:>12}& {:>12}& {:>12}& {:>12}& ".format(self.Input_tag, self.Train_tag, self.method_tag, "non-mirror")
-        for i in range(9,18):
-            print_line += '{:>12.3f}& '.format(eval_measures_cpu[i])
-        print_line += '{:>12} \\\\'.format(int(self.cnt))
-        print(print_line)
-        if self.logger:
-            self.logger.info(print_line)
+            # print non-mirror area score
+            print_line = "{:>12}& {:>12}& {:>12}& {:>12}& ".format(self.Input_tag, self.Train_tag, self.method_tag, "non-mirror")
+            for i in range(9,18):
+                print_line += '{:>12.3f}& '.format(eval_measures_cpu[i])
+            print_line += '{:>12} \\\\'.format(int(self.cnt))
+            print(print_line)
+            if self.logger:
+                self.logger.info(print_line)
 
-        # print all area score
-        print_line = "{:>12}& {:>12}& {:>12}& {:>12}& ".format(self.Input_tag, self.Train_tag, self.method_tag, "all")
-        for i in range(18,27):
-            print_line += '{:>12.3f}& '.format(eval_measures_cpu[i])
-        print_line += '{:>12} \\\\'.format(int(self.cnt))
-        print(print_line)
-        if self.logger:
-            self.logger.info(print_line)
-        print("result saved to : ", self.main_output_folder)
+            # print all area score
+            print_line = "{:>12}& {:>12}& {:>12}& {:>12}& ".format(self.Input_tag, self.Train_tag, self.method_tag, "all")
+            for i in range(18,27):
+                print_line += '{:>12.3f}& '.format(eval_measures_cpu[i])
+            print_line += '{:>12} \\\\'.format(int(self.cnt))
+            print(print_line)
+            if self.logger:
+                self.logger.info(print_line)
+            print("result saved to : ", self.main_output_folder)
+        
+        print("######################################## {:>20} ########################################".format("compared with refD"))
+        print_all_scores(self.m_nm_all_refD/ self.cnt)
+        print("######################################## {:>20} ########################################".format("compared with rawD"))
+        print_all_scores(self.m_nm_all_rawD/ self.cnt)
+
 
     def compute_and_update_rmse_srmse(self, pred_depth, depth_shift, color_image_path):
 
@@ -122,46 +129,79 @@ class Mirror3d_eval():
 
             return rmse, scaled_rms, 0, 0, 0, 0, 0, 0, 0
 
-
-        mask_path = rreplace(color_image_path, "raw","instance_mask")
-        if not os.path.exists(mask_path):
-            return 
-
-        if color_image_path.find("m3d") > 0:
-            if os.path.exists(rreplace(color_image_path.replace("raw", "mesh_refined_depth"),"i","d")):
-                refD_gt_depth_path = rreplace(color_image_path.replace("raw", "mesh_refined_depth"),"i","d")
-            elif os.path.exists(rreplace(color_image_path.replace("raw", "hole_refined_depth"),"i","d")):
-                refD_gt_depth_path = rreplace(color_image_path.replace("raw", "hole_refined_depth"),"i","d")
+        def get_refD_scores(pred_depth, depth_shift, color_image_path):
+            mask_path = rreplace(color_image_path, "raw","instance_mask")
+            if not os.path.exists(mask_path):
+                return 
+            if color_image_path.find("m3d") > 0:
+                if os.path.exists(rreplace(color_image_path.replace("raw", "mesh_refined_depth"),"i","d")):
+                    refD_gt_depth_path = rreplace(color_image_path.replace("raw", "mesh_refined_depth"),"i","d")
+                elif os.path.exists(rreplace(color_image_path.replace("raw", "hole_refined_depth"),"i","d")):
+                    refD_gt_depth_path = rreplace(color_image_path.replace("raw", "hole_refined_depth"),"i","d")
+                else:
+                    return
             else:
-                return
-        else:
-            if os.path.exists(color_image_path.replace("raw", "mesh_refined_depth")):
-                refD_gt_depth_path = color_image_path.replace("raw", "mesh_refined_depth")
-            elif os.path.exists(color_image_path.replace("raw", "hole_refined_depth")):
-                refD_gt_depth_path = color_image_path.replace("raw", "hole_refined_depth")
+                if os.path.exists(color_image_path.replace("raw", "mesh_refined_depth")):
+                    refD_gt_depth_path = color_image_path.replace("raw", "mesh_refined_depth")
+                elif os.path.exists(color_image_path.replace("raw", "hole_refined_depth")):
+                    refD_gt_depth_path = color_image_path.replace("raw", "hole_refined_depth")
+                else:
+                    return
+            depth_shift = np.array(depth_shift)
+            refD_gt_depth = cv2.resize(cv2.imread(refD_gt_depth_path, cv2.IMREAD_ANYDEPTH), (pred_depth.shape[1], pred_depth.shape[0]), 0, 0, cv2.INTER_NEAREST)
+            refD_gt_depth = np.array(refD_gt_depth) / depth_shift
+            pred_depth = np.array(pred_depth)
+
+            mirror_mask = cv2.resize(cv2.imread(mask_path, cv2.IMREAD_ANYDEPTH), (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
+            pred_depth = cv2.resize(pred_depth, (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
+            refD_gt_depth = cv2.resize(refD_gt_depth, (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
+            
+            mirror_error = compute_errors(refD_gt_depth, pred_depth, mirror_mask>0)
+            non_mirror_error = compute_errors(refD_gt_depth, pred_depth, mirror_mask==False)
+            all_image_error = compute_errors(refD_gt_depth, pred_depth, True)
+            if all_image_error == False or mirror_error == False or non_mirror_error == False:
+                return 
+            one_m_nm_all = mirror_error + non_mirror_error + all_image_error
+            return one_m_nm_all
+
+
+        def get_rawD_scores(pred_depth, depth_shift, color_image_path):
+            mask_path = rreplace(color_image_path, "raw","instance_mask")
+            if not os.path.exists(mask_path):
+                return 
+            if color_image_path.find("m3d") > 0:
+                if os.path.exists(rreplace(color_image_path.replace("raw", "mesh_raw_depth"),"i","d")):
+                    refD_gt_depth_path = rreplace(color_image_path.replace("raw", "mesh_raw_depth"),"i","d")
+                elif os.path.exists(rreplace(color_image_path.replace("raw", "hole_raw_depth"),"i","d")):
+                    refD_gt_depth_path = rreplace(color_image_path.replace("raw", "hole_raw_depth"),"i","d")
+                else:
+                    return
             else:
-                return
-        
-        depth_shift = np.array(depth_shift)
-        refD_gt_depth = cv2.resize(cv2.imread(refD_gt_depth_path, cv2.IMREAD_ANYDEPTH), (pred_depth.shape[1], pred_depth.shape[0]), 0, 0, cv2.INTER_NEAREST)
-        refD_gt_depth = np.array(refD_gt_depth) / depth_shift
-        pred_depth = np.array(pred_depth)
+                if os.path.exists(color_image_path.replace("raw", "mesh_raw_depth")):
+                    refD_gt_depth_path = color_image_path.replace("raw", "mesh_raw_depth")
+                elif os.path.exists(color_image_path.replace("raw", "hole_raw_depth")):
+                    refD_gt_depth_path = color_image_path.replace("raw", "hole_raw_depth")
+                else:
+                    return
+            depth_shift = np.array(depth_shift)
+            refD_gt_depth = cv2.resize(cv2.imread(refD_gt_depth_path, cv2.IMREAD_ANYDEPTH), (pred_depth.shape[1], pred_depth.shape[0]), 0, 0, cv2.INTER_NEAREST)
+            refD_gt_depth = np.array(refD_gt_depth) / depth_shift
+            pred_depth = np.array(pred_depth)
 
-        mirror_mask = cv2.resize(cv2.imread(mask_path, cv2.IMREAD_ANYDEPTH), (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
-        pred_depth = cv2.resize(pred_depth, (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
-        refD_gt_depth = cv2.resize(refD_gt_depth, (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
-        
-        mirror_error = compute_errors(refD_gt_depth, pred_depth, mirror_mask>0)
-        non_mirror_error = compute_errors(refD_gt_depth, pred_depth, mirror_mask==False)
-        all_image_error = compute_errors(refD_gt_depth, pred_depth, True)
+            mirror_mask = cv2.resize(cv2.imread(mask_path, cv2.IMREAD_ANYDEPTH), (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
+            pred_depth = cv2.resize(pred_depth, (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
+            refD_gt_depth = cv2.resize(refD_gt_depth, (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
+            
+            mirror_error = compute_errors(refD_gt_depth, pred_depth, mirror_mask>0)
+            non_mirror_error = compute_errors(refD_gt_depth, pred_depth, mirror_mask==False)
+            all_image_error = compute_errors(refD_gt_depth, pred_depth, True)
+            if all_image_error == False or mirror_error == False or non_mirror_error == False:
+                return 
+            one_m_nm_all = mirror_error + non_mirror_error + all_image_error
+            return one_m_nm_all
 
-
-        if all_image_error == False or mirror_error == False or non_mirror_error == False:
-            return 
-        
-        one_m_nm_all = mirror_error + non_mirror_error + all_image_error
-
-        self.m_nm_all += torch.tensor(one_m_nm_all)
+        self.m_nm_all_refD += torch.tensor(get_refD_scores(pred_depth, depth_shift, color_image_path))
+        self.m_nm_all_rawD += torch.tensor(get_rawD_scores(pred_depth, depth_shift, color_image_path))
         self.cnt += 1
 
         return 
@@ -218,45 +258,81 @@ class Mirror3d_eval():
             scaled_rms = np.sqrt(((scale * pred-gt)**2).mean())
             return rmse, scaled_rms, rel, ssim.item(), d105, d110, d125, d125_2, d125_3
 
+        def get_refD_scores(pred_depth, depth_shift, color_image_path):
+            mask_path = rreplace(color_image_path, "raw","instance_mask")
+            if not os.path.exists(mask_path):
+                return 
 
-        mask_path = rreplace(color_image_path, "raw","instance_mask")
-        if not os.path.exists(mask_path):
-            return 
-
-        if color_image_path.find("m3d") > 0:
-            if os.path.exists(rreplace(color_image_path.replace("raw", "mesh_refined_depth"),"i","d")):
-                refD_gt_depth_path = rreplace(color_image_path.replace("raw", "mesh_refined_depth"),"i","d")
-            elif os.path.exists(rreplace(color_image_path.replace("raw", "hole_refined_depth"),"i","d")):
-                refD_gt_depth_path = rreplace(color_image_path.replace("raw", "hole_refined_depth"),"i","d")
+            if color_image_path.find("m3d") > 0:
+                if os.path.exists(rreplace(color_image_path.replace("raw", "mesh_refined_depth"),"i","d")):
+                    refD_gt_depth_path = rreplace(color_image_path.replace("raw", "mesh_refined_depth"),"i","d")
+                elif os.path.exists(rreplace(color_image_path.replace("raw", "hole_refined_depth"),"i","d")):
+                    refD_gt_depth_path = rreplace(color_image_path.replace("raw", "hole_refined_depth"),"i","d")
+                else:
+                    return
             else:
-                return
-        else:
-            if os.path.exists(color_image_path.replace("raw", "mesh_refined_depth")):
-                refD_gt_depth_path = color_image_path.replace("raw", "mesh_refined_depth")
-            elif os.path.exists(color_image_path.replace("raw", "hole_refined_depth")):
-                refD_gt_depth_path = color_image_path.replace("raw", "hole_refined_depth")
+                if os.path.exists(color_image_path.replace("raw", "mesh_refined_depth")):
+                    refD_gt_depth_path = color_image_path.replace("raw", "mesh_refined_depth")
+                elif os.path.exists(color_image_path.replace("raw", "hole_refined_depth")):
+                    refD_gt_depth_path = color_image_path.replace("raw", "hole_refined_depth")
+                else:
+                    return
+            depth_shift = np.array(depth_shift)
+            refD_gt_depth = cv2.resize(cv2.imread(refD_gt_depth_path, cv2.IMREAD_ANYDEPTH), (pred_depth.shape[1], pred_depth.shape[0]), 0, 0, cv2.INTER_NEAREST)
+            refD_gt_depth = np.array(refD_gt_depth) / depth_shift
+            pred_depth = np.array(pred_depth)
+
+            mirror_mask = cv2.resize(cv2.imread(mask_path, cv2.IMREAD_ANYDEPTH), (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
+            pred_depth = cv2.resize(pred_depth, (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
+            refD_gt_depth = cv2.resize(refD_gt_depth, (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
+            
+            mirror_error = compute_errors(refD_gt_depth, pred_depth, mirror_mask>0)
+            non_mirror_error = compute_errors(refD_gt_depth, pred_depth, mirror_mask==False)
+            all_image_error = compute_errors(refD_gt_depth, pred_depth, True)
+            if all_image_error == False or mirror_error == False or non_mirror_error == False:
+                return 
+            one_m_nm_all = mirror_error + non_mirror_error + all_image_error
+            return one_m_nm_all
+
+        def get_rawD_scores(pred_depth, depth_shift, color_image_path):
+            mask_path = rreplace(color_image_path, "raw","instance_mask")
+            if not os.path.exists(mask_path):
+                return 
+
+            if color_image_path.find("m3d") > 0:
+                if os.path.exists(rreplace(color_image_path.replace("raw", "mesh_raw_depth"),"i","d")):
+                    refD_gt_depth_path = rreplace(color_image_path.replace("raw", "mesh_raw_depth"),"i","d")
+                elif os.path.exists(rreplace(color_image_path.replace("raw", "hole_raw_depth"),"i","d")):
+                    refD_gt_depth_path = rreplace(color_image_path.replace("raw", "hole_raw_depth"),"i","d")
+                else:
+                    return
             else:
-                return
-        
-        depth_shift = np.array(depth_shift)
-        refD_gt_depth = cv2.resize(cv2.imread(refD_gt_depth_path, cv2.IMREAD_ANYDEPTH), (pred_depth.shape[1], pred_depth.shape[0]), 0, 0, cv2.INTER_NEAREST)
-        refD_gt_depth = np.array(refD_gt_depth) / depth_shift
-        pred_depth = np.array(pred_depth)
+                if os.path.exists(color_image_path.replace("raw", "mesh_raw_depth")):
+                    refD_gt_depth_path = color_image_path.replace("raw", "mesh_raw_depth")
+                elif os.path.exists(color_image_path.replace("raw", "hole_raw_depth")):
+                    refD_gt_depth_path = color_image_path.replace("raw", "hole_raw_depth")
+                else:
+                    return
+            depth_shift = np.array(depth_shift)
+            refD_gt_depth = cv2.resize(cv2.imread(refD_gt_depth_path, cv2.IMREAD_ANYDEPTH), (pred_depth.shape[1], pred_depth.shape[0]), 0, 0, cv2.INTER_NEAREST)
+            refD_gt_depth = np.array(refD_gt_depth) / depth_shift
+            pred_depth = np.array(pred_depth)
 
-        mirror_mask = cv2.resize(cv2.imread(mask_path, cv2.IMREAD_ANYDEPTH), (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
-        pred_depth = cv2.resize(pred_depth, (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
-        refD_gt_depth = cv2.resize(refD_gt_depth, (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
-        
-        mirror_error = compute_errors(refD_gt_depth, pred_depth, mirror_mask>0)
-        non_mirror_error = compute_errors(refD_gt_depth, pred_depth, mirror_mask==False)
-        all_image_error = compute_errors(refD_gt_depth, pred_depth, True)
+            mirror_mask = cv2.resize(cv2.imread(mask_path, cv2.IMREAD_ANYDEPTH), (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
+            pred_depth = cv2.resize(pred_depth, (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
+            refD_gt_depth = cv2.resize(refD_gt_depth, (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
+            
+            mirror_error = compute_errors(refD_gt_depth, pred_depth, mirror_mask>0)
+            non_mirror_error = compute_errors(refD_gt_depth, pred_depth, mirror_mask==False)
+            all_image_error = compute_errors(refD_gt_depth, pred_depth, True)
+            if all_image_error == False or mirror_error == False or non_mirror_error == False:
+                return 
+            one_m_nm_all = mirror_error + non_mirror_error + all_image_error
+            return one_m_nm_all
 
-        if all_image_error == False or mirror_error == False or non_mirror_error == False:
-            return 
-        
-        one_m_nm_all = mirror_error + non_mirror_error + all_image_error
 
-        self.m_nm_all += torch.tensor(one_m_nm_all)
+        self.m_nm_all_refD += torch.tensor(get_refD_scores(pred_depth, depth_shift, color_image_path))
+        self.m_nm_all_rawD += torch.tensor(get_rawD_scores(pred_depth, depth_shift, color_image_path))
         self.cnt += 1
 
         return 
