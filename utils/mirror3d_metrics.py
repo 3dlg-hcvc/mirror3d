@@ -350,20 +350,16 @@ class Mirror3d_eval():
             one_m_nm_all = mirror_error + non_mirror_error + all_image_error
             return one_m_nm_all
         try:
-            ref_scores = torch.tensor(get_refD_scores(np.array(pred_depth).copy(), depth_shift, color_image_path))
-            if (ref_scores!=False).sum():
-                self.m_nm_all_refD += ref_scores
-                self.ref_cnt += 1
+            self.m_nm_all_refD += torch.tensor(get_refD_scores(np.array(pred_depth).copy(), depth_shift, color_image_path))
+            self.ref_cnt += 1
         except:
-            print(color_image_path, "can't calculate error")
+            print(color_image_path, "can't calculate ref error")
 
         try:
-            raw_scores = torch.tensor(get_rawD_scores(np.array(pred_depth).copy(), depth_shift, color_image_path))
-            if (raw_scores!=False).sum():
-                self.m_nm_all_rawD += raw_scores
-                self.raw_cnt += 1
+            self.m_nm_all_rawD += torch.tensor(get_rawD_scores(np.array(pred_depth).copy(), depth_shift, color_image_path))
+            self.raw_cnt += 1
         except:
-            print(color_image_path, "can't calculate error")
+            print(color_image_path, "can't calculate raw error")
 
         return 
 
