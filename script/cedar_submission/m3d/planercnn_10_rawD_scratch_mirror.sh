@@ -11,10 +11,10 @@ export PYTHONPATH="/home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D"
 python mirror3dnet/run_mirror3dnet.py \
 --config mirror3dnet/config/planercnn_config.yml \
 --mesh_depth \
---coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
---coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
---coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
---coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+--coco_train /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
+--coco_val /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
+--coco_train_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
+--coco_val_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
 --coco_focal_len 537 \
 --depth_shift 4000 \
 --input_height 512 \

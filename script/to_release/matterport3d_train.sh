@@ -1,10 +1,10 @@
 # bts train on refined depth
 python init_depth_generator/bts/pytorch/init_depth_gen_train.py \
 --refined_depth \
---coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_all.json \
---coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
---coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
---coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+--coco_train /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_all.json \
+--coco_val /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
+--coco_train_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
+--coco_val_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
 --coco_focal_len 537 \
 --depth_shift 4000 \
 --input_height 512 \
@@ -18,10 +18,10 @@ python init_depth_generator/bts/pytorch/init_depth_gen_train.py \
 
 # bts train on sensor depth
 python init_depth_generator/bts/pytorch/init_depth_gen_train.py \
---coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_all.json \
---coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
---coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
---coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+--coco_train /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_all.json \
+--coco_val /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
+--coco_train_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
+--coco_val_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
 --coco_focal_len 537 \
 --depth_shift 4000 \
 --input_height 512 \
@@ -36,10 +36,10 @@ python init_depth_generator/bts/pytorch/init_depth_gen_train.py \
 # vnl train on refined depth
 python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.py \
 --refined_depth \
---coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_all.json \
---coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
---coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
---coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+--coco_train /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_all.json \
+--coco_val /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
+--coco_train_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
+--coco_val_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
 --coco_focal_len 537 \
 --depth_shift 4000 \
 --input_height 512 \
@@ -54,10 +54,10 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.
 
 # vnl train on sensor depth
 python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.py \
---coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_all.json \
---coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
---coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
---coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+--coco_train /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_all.json \
+--coco_val /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
+--coco_train_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
+--coco_val_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
 --coco_focal_len 537 \
 --depth_shift 4000 \
 --input_height 512 \
@@ -72,10 +72,10 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.
 # saic train on refined depth
 python init_depth_generator/saic_depth_completion/init_depth_gen_train.py \
 --refined_depth \
---coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_all.json \
---coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
---coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
---coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+--coco_train /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_all.json \
+--coco_val /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
+--coco_train_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
+--coco_val_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
 --coco_focal_len 537 \
 --depth_shift 4000 \
 --input_height 512 \
@@ -90,10 +90,10 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_train.py \
 
 # saic train on sensor depth
 python init_depth_generator/saic_depth_completion/init_depth_gen_train.py \
---coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_all.json \
---coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
---coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
---coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+--coco_train /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_all.json \
+--coco_val /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
+--coco_train_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
+--coco_val_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
 --coco_focal_len 537 \
 --depth_shift 4000 \
 --input_height 512 \
@@ -112,10 +112,10 @@ python mirror3dnet/run_mirror3dnet.py \
 --config mirror3dnet/config/planercnn_config.yml \
 --refined_depth \
 --mesh_depth \
---coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
---coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
---coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
---coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+--coco_train /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
+--coco_val /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
+--coco_train_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
+--coco_val_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
 --coco_focal_len 537 \
 --depth_shift 4000 \
 --input_height 512 \
@@ -132,10 +132,10 @@ python mirror3dnet/run_mirror3dnet.py \
 python mirror3dnet/run_mirror3dnet.py \
 --config mirror3dnet/config/planercnn_config.yml \
 --mesh_depth \
---coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
---coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
---coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
---coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+--coco_train /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
+--coco_val /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
+--coco_train_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
+--coco_val_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
 --coco_focal_len 537 \
 --depth_shift 4000 \
 --input_height 512 \
@@ -153,10 +153,10 @@ python mirror3dnet/run_mirror3dnet.py \
 --config mirror3dnet/config/mirror3dnet_config.yml \
 --refined_depth \
 --mesh_depth \
---coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
---coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
---coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
---coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+--coco_train /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
+--coco_val /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
+--coco_train_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
+--coco_val_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
 --coco_focal_len 537 \
 --depth_shift 4000 \
 --input_height 512 \
@@ -172,10 +172,10 @@ python mirror3dnet/run_mirror3dnet.py \
 # mirror3dnet on rawD 
 python mirror3dnet/run_mirror3dnet.py \
 --config mirror3dnet/config/mirror3dnet_config.yml \
---coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
---coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
---coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
---coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+--coco_train /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
+--coco_val /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
+--coco_train_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
+--coco_val_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
 --coco_focal_len 537 \
 --mesh_depth \
 --depth_shift 4000 \
@@ -193,10 +193,10 @@ python mirror3dnet/run_mirror3dnet.py \
 # mirror3dnet (only normal) ablation 10
 python mirror3dnet/run_mirror3dnet.py \
 --config mirror3dnet/config/mirror3dnet_normal_config.yml \
---coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
---coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
---coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
---coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+--coco_train /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
+--coco_val /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
+--coco_train_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
+--coco_val_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
 --coco_focal_len 537 \
 --mesh_depth \
 --depth_shift 4000 \
@@ -212,10 +212,10 @@ python mirror3dnet/run_mirror3dnet.py \
 # mirror3dnet (only normal) ablation 3
 python mirror3dnet/run_mirror3dnet.py \
 --config mirror3dnet/config/mirror3dnet_normal_config.yml \
---coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_3_normal_mirror.json \
---coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_3_normal_mirror.json \
---coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
---coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+--coco_train /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_3_normal_mirror.json \
+--coco_val /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_3_normal_mirror.json \
+--coco_train_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
+--coco_val_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
 --coco_focal_len 537 \
 --mesh_depth \
 --depth_shift 4000 \
@@ -231,10 +231,10 @@ python mirror3dnet/run_mirror3dnet.py \
 # mirror3dnet (only normal) ablation 5
 python mirror3dnet/run_mirror3dnet.py \
 --config mirror3dnet/config/mirror3dnet_normal_config.yml \
---coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_5_normal_mirror.json \
---coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_5_normal_mirror.json \
---coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
---coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+--coco_train /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_5_normal_mirror.json \
+--coco_val /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_5_normal_mirror.json \
+--coco_train_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
+--coco_val_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
 --coco_focal_len 537 \
 --mesh_depth \
 --depth_shift 4000 \
@@ -250,10 +250,10 @@ python mirror3dnet/run_mirror3dnet.py \
 # mirror3dnet (only normal) ablation 7
 python mirror3dnet/run_mirror3dnet.py \
 --config mirror3dnet/config/mirror3dnet_normal_config.yml \
---coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_7_normal_mirror.json \
---coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_7_normal_mirror.json \
---coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
---coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+--coco_train /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_7_normal_mirror.json \
+--coco_val /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_7_normal_mirror.json \
+--coco_train_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
+--coco_val_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
 --coco_focal_len 537 \
 --mesh_depth \
 --depth_shift 4000 \
@@ -269,10 +269,10 @@ python mirror3dnet/run_mirror3dnet.py \
 # mirror3dnet (only normal) ablation 12
 python mirror3dnet/run_mirror3dnet.py \
 --config mirror3dnet/config/mirror3dnet_normal_config.yml \
---coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_12_normal_mirror.json \
---coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_12_normal_mirror.json \
---coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
---coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+--coco_train /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_12_normal_mirror.json \
+--coco_val /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_12_normal_mirror.json \
+--coco_train_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
+--coco_val_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
 --coco_focal_len 537 \
 --mesh_depth \
 --depth_shift 4000 \
