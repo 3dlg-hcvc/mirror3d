@@ -2,7 +2,7 @@
 #SBATCH --account=rrg-msavva
 #SBATCH --gres=gpu:v100l:1
 #SBATCH --mem=48000
-#SBATCH --time=0-10:45
+#SBATCH --time=0-23:45
 #SBATCH --job-name=saic_refD_scratch_all
 #SBATCH --output=/home/jiaqit/projects/rrg-msavva/jiaqit/cr_result/log/%x-%j.out
 source /home/jiaqit/projects/rrg-msavva/jiaqit/setup/anaconda3/bin/activate
