@@ -118,7 +118,9 @@ class Mirror3DNet_Eval:
             depth_to_ref[depth_to_ref<0] = 0
             mirror3d_eval.compute_and_update_mirror3D_metrics(depth_to_ref/self.cfg.DEPTH_SHIFT,  self.cfg.DEPTH_SHIFT, color_img_path)
             if self.cfg.EVAL_SAVE_DEPTH:
-                mirror3d_eval.save_result(self.cfg.OUTPUT_DIR, depth_to_ref/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, color_img_path)
+                refined_input_txt_output_folder = os.path.join(self.cfg.OUTPUT_DIR, "refined_input_txt_pred_depth")
+                os.makedirs(refined_input_txt_output_folder, exist_ok=True)
+                mirror3d_eval.save_result(refined_input_txt_output_folder, depth_to_ref/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, color_img_path)
 
         print("############# Result of 'txt {} + Mirror3dNet' #############".format(self.cfg.REF_DEPTH_TO_REFINE))
         if self.cfg.EVAL_SAVE_DEPTH:
@@ -144,7 +146,6 @@ class Mirror3DNet_Eval:
             imgPath_info[img_path] = item
         
         for i, item in enumerate(output_list):
-            print("{}/{}".format(i, len(output_list))) # TODO del later
             one_output, one_input = item
             instances = one_output[0][0]["instances"]
             color_img_path = one_input[0]["img_path"]
@@ -237,7 +238,9 @@ class Mirror3DNet_Eval:
             mirror3d_eval.compute_and_update_mirror3D_metrics(np_pred_depth/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, one_input[0]["img_path"])
 
             if self.cfg.EVAL_SAVE_DEPTH:
-                mirror3d_eval.save_result(self.cfg.OUTPUT_DIR, np_pred_depth/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, one_input[0]["img_path"])
+                raw_branch_output_folder = os.path.join(self.cfg.OUTPUT_DIR, "DE_branch_pred_depth")
+                os.makedirs(raw_branch_output_folder, exist_ok=True)
+                mirror3d_eval.save_result(raw_branch_output_folder, np_pred_depth/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, one_input[0]["img_path"])
             
         print("evaluate DE result for {}".format(method_tag))
         self.logger.info("evaluate DE result for {}".format(method_tag))
@@ -255,10 +258,7 @@ class Mirror3DNet_Eval:
 
         mirror3d_eval = Mirror3d_eval(train_with_refD=None, logger=self.logger,Input_tag=Input_tag, method_tag=method_tag,width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT)
 
-        i = 0
         for one_output, one_input in output_list:
-            print(i, len(output_list))
-            i+=1
             pred_depth = one_output[1][0].detach().cpu().numpy()
             np_pred_depth = pred_depth.copy()
             depth_p = pred_depth.copy()
@@ -289,7 +289,9 @@ class Mirror3DNet_Eval:
             mirror3d_eval.compute_and_update_mirror3D_metrics(depth_p/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, one_input[0]["img_path"])
 
             if self.cfg.EVAL_SAVE_DEPTH:
-                mirror3d_eval.save_result(self.cfg.OUTPUT_DIR, depth_p/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, one_input[0]["img_path"])
+                refined_DE_branch_output_folder = os.path.join(self.cfg.OUTPUT_DIR, "refined_DE_branch_pred_depth")
+                os.makedirs(refined_DE_branch_output_folder, exist_ok=True)
+                mirror3d_eval.save_result(refined_DE_branch_output_folder, depth_p/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, one_input[0]["img_path"])
             
         print("eval refined depth from DE branch : {}".format(method_tag))
         mirror3d_eval.print_mirror3D_score()

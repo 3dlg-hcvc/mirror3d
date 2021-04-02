@@ -1,1 +1,0 @@
-echo "planercnn rawD inference"

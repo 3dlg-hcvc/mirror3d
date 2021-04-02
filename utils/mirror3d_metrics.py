@@ -12,7 +12,8 @@ class Mirror3d_eval():
     def __init__(self, train_with_refD, logger=None, Input_tag="Input_tag", method_tag="method_tag",width=640, height=480):
         self.m_nm_all_refD = torch.zeros(27)
         self.m_nm_all_rawD = torch.zeros(27)
-        self.cnt = 0
+        self.raw_cnt = 0
+        self.ref_cnt = 0
         self.train_with_refD = train_with_refD
         self.logger = logger
         self.Input_tag = Input_tag
@@ -31,7 +32,8 @@ class Mirror3d_eval():
     def reset_setting(self,train_with_refD, logger=None, Input_tag="Input_tag", method_tag="method_tag",width=640, height=480):
         self.m_nm_all_refD = torch.zeros(27)
         self.m_nm_all_rawD = torch.zeros(27)
-        self.cnt = 0
+        self.raw_cnt = 0
+        self.ref_cnt = 0
         self.train_with_refD = train_with_refD
         self.logger = logger
         self.Input_tag = Input_tag
@@ -49,8 +51,8 @@ class Mirror3d_eval():
 
     def print_mirror3D_score(self):
 
-        def print_all_scores(eval_measures_cpu):
-            print('Computing errors for {} eval samples'.format(int(self.cnt)))
+        def print_all_scores(eval_measures_cpu, cnt):
+            print('Computing errors for {} eval samples'.format(int(cnt)))
 
             # print title
             print("{:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12} \\\\".format(
@@ -63,7 +65,7 @@ class Mirror3d_eval():
             print_line = "{:>12}& {:>12}& {:>12}& {:>12}& ".format(self.Input_tag, self.Train_tag, self.method_tag, "mirror")
             for i in range(0,9):
                 print_line += '{:>12.3f}& '.format(eval_measures_cpu[i])
-            print_line += '{:>12} \\\\'.format(int(self.cnt))
+            print_line += '{:>12} \\\\'.format(int(cnt))
             print(print_line)
             if self.logger:
                 self.logger.info(print_line)
@@ -72,7 +74,7 @@ class Mirror3d_eval():
             print_line = "{:>12}& {:>12}& {:>12}& {:>12}& ".format(self.Input_tag, self.Train_tag, self.method_tag, "non-mirror")
             for i in range(9,18):
                 print_line += '{:>12.3f}& '.format(eval_measures_cpu[i])
-            print_line += '{:>12} \\\\'.format(int(self.cnt))
+            print_line += '{:>12} \\\\'.format(int(cnt))
             print(print_line)
             if self.logger:
                 self.logger.info(print_line)
@@ -81,39 +83,44 @@ class Mirror3d_eval():
             print_line = "{:>12}& {:>12}& {:>12}& {:>12}& ".format(self.Input_tag, self.Train_tag, self.method_tag, "all")
             for i in range(18,27):
                 print_line += '{:>12.3f}& '.format(eval_measures_cpu[i])
-            print_line += '{:>12} \\\\'.format(int(self.cnt))
+            print_line += '{:>12} \\\\'.format(int(cnt))
             print(print_line)
             if self.logger:
                 self.logger.info(print_line)
             print("result saved to : ", self.main_output_folder)
-        
         print("######################################## {:>20} ########################################".format("compared with refD"))
-        print_all_scores(self.m_nm_all_refD/ self.cnt)
+        print_all_scores(self.m_nm_all_refD/ self.ref_cnt, self.ref_cnt)
         print("######################################## {:>20} ########################################".format("compared with rawD"))
-        print_all_scores(self.m_nm_all_rawD/ self.cnt)
+        print_all_scores(self.m_nm_all_rawD/ self.raw_cnt, self.raw_cnt)
 
 
-    def compute_and_update_rmse_srmse(self, pred_depth, depth_shift, color_image_path):
 
+
+    def compute_and_update_mirror3D_metrics_new(self, pred_depth, depth_shift, color_image_path):
         if color_image_path.find("m3d") > 0 and "mesh" not in self.Train_tag:
             self.Train_tag = self.Train_tag.replace("ref","mesh-ref")
             self.Train_tag = self.Train_tag.replace("raw","mesh")
 
-        def compute_errors(gt, pred, mask): #! gt and pred are in m
+        def compute_errors(gt, pred, eval_area, mirror_mask, include_mirror): #! gt and pred are in m
 
             min_depth_eval = 1e-3
             max_depth_eval = 10
 
             pred[pred < min_depth_eval] = min_depth_eval
-            # pred[pred > max_depth_eval] = max_depth_eval
             pred[np.isinf(pred)] = max_depth_eval
 
             gt[np.isinf(gt)] = 0
             gt[np.isnan(gt)] = 0
-
+            
             valid_mask = gt >  min_depth_eval #  np.logical_and(gt > min_depth_eval)#, gt < max_depth_eval
             scale = np.sum(pred[valid_mask]*gt[valid_mask])/np.sum(pred[valid_mask]**2)
-            valid_mask = np.logical_and(valid_mask, mask)
+            valid_mask = np.logical_and(valid_mask, eval_area)
+            if include_mirror:
+                valid_mask = np.logical_or(valid_mask, mirror_mask)
+
+            SSIM_obj = SSIM()
+            ssim_map = SSIM_obj.forward(torch.tensor(pred*valid_mask.astype(int)).unsqueeze(0).unsqueeze(0), torch.tensor(gt*valid_mask.astype(int)).unsqueeze(0).unsqueeze(0))
+            ssim = ssim_map[valid_mask].mean()
 
             gt = gt[valid_mask]
             pred = pred[valid_mask]
@@ -121,18 +128,32 @@ class Mirror3d_eval():
             if valid_mask.sum() == 0 :
                 return False
 
+            thresh = np.maximum((gt / pred), (pred / gt))
+            d125 = (thresh < 1.25).mean()
+            d125_2 = (thresh < 1.25 ** 2).mean()
+            d125_3 = (thresh < 1.25 ** 3).mean()
+            d105 = (thresh < 1.05).mean()
+            d110 = (thresh < 1.10).mean()
+
             rmse = (gt - pred) ** 2
             rmse = np.sqrt(rmse.mean())
 
+            rel = np.mean((abs(gt - pred)) / gt)
+
+            err = np.log(pred) - np.log(gt)
+            silog = np.sqrt(np.mean(err ** 2) - np.mean(err) ** 2) * 100
+
+            err = np.abs(np.log10(pred) - np.log10(gt))
+            log10 = np.mean(err)
 
             scaled_rms = np.sqrt(((scale * pred-gt)**2).mean())
-
-            return rmse, scaled_rms, 0, 0, 0, 0, 0, 0, 0
+            return rmse, scaled_rms, rel, ssim.item(), d105, d110, d125, d125_2, d125_3
 
         def get_refD_scores(pred_depth, depth_shift, color_image_path):
             mask_path = rreplace(color_image_path, "raw","instance_mask")
             if not os.path.exists(mask_path):
                 return 
+
             if color_image_path.find("m3d") > 0:
                 if os.path.exists(rreplace(color_image_path.replace("raw", "mesh_refined_depth"),"i","d")):
                     refD_gt_depth_path = rreplace(color_image_path.replace("raw", "mesh_refined_depth"),"i","d")
@@ -156,19 +177,19 @@ class Mirror3d_eval():
             pred_depth = cv2.resize(pred_depth, (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
             refD_gt_depth = cv2.resize(refD_gt_depth, (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
             
-            mirror_error = compute_errors(refD_gt_depth, pred_depth, mirror_mask>0)
-            non_mirror_error = compute_errors(refD_gt_depth, pred_depth, mirror_mask==False)
-            all_image_error = compute_errors(refD_gt_depth, pred_depth, True)
+            mirror_error = compute_errors(refD_gt_depth, pred_depth, mirror_mask>0, mirror_mask=mirror_mask>0, include_mirror=True)
+            non_mirror_error = compute_errors(refD_gt_depth, pred_depth, mirror_mask==False, mirror_mask=mirror_mask>0, include_mirror=False)
+            all_image_error = compute_errors(refD_gt_depth, pred_depth, True, mirror_mask=mirror_mask>0, include_mirror=True)
             if all_image_error == False or mirror_error == False or non_mirror_error == False:
                 return 
             one_m_nm_all = mirror_error + non_mirror_error + all_image_error
             return one_m_nm_all
 
-
         def get_rawD_scores(pred_depth, depth_shift, color_image_path):
             mask_path = rreplace(color_image_path, "raw","instance_mask")
             if not os.path.exists(mask_path):
                 return 
+
             if color_image_path.find("m3d") > 0:
                 if os.path.exists(rreplace(color_image_path.replace("raw", "mesh_raw_depth"),"i","d")):
                     refD_gt_depth_path = rreplace(color_image_path.replace("raw", "mesh_raw_depth"),"i","d")
@@ -192,27 +213,26 @@ class Mirror3d_eval():
             pred_depth = cv2.resize(pred_depth, (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
             refD_gt_depth = cv2.resize(refD_gt_depth, (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
             
-            mirror_error = compute_errors(refD_gt_depth, pred_depth, mirror_mask>0)
-            non_mirror_error = compute_errors(refD_gt_depth, pred_depth, mirror_mask==False)
-            all_image_error = compute_errors(refD_gt_depth, pred_depth, True)
+            mirror_error = compute_errors(refD_gt_depth, pred_depth, mirror_mask>0, mirror_mask=mirror_mask>0, include_mirror=True)
+            non_mirror_error = compute_errors(refD_gt_depth, pred_depth, mirror_mask==False, mirror_mask=mirror_mask>0, include_mirror=False)
+            all_image_error = compute_errors(refD_gt_depth, pred_depth, True, mirror_mask=mirror_mask>0, include_mirror=True)
             if all_image_error == False or mirror_error == False or non_mirror_error == False:
                 return 
             one_m_nm_all = mirror_error + non_mirror_error + all_image_error
             return one_m_nm_all
-
-        self.m_nm_all_refD += torch.tensor(get_refD_scores(pred_depth, depth_shift, color_image_path))
-        self.m_nm_all_rawD += torch.tensor(get_rawD_scores(pred_depth, depth_shift, color_image_path))
-        self.cnt += 1
+        
+        self.m_nm_all_refD += torch.tensor(get_refD_scores(np.array(pred_depth).copy(), depth_shift, color_image_path))
+        self.m_nm_all_rawD += torch.tensor(get_rawD_scores(np.array(pred_depth).copy(), depth_shift, color_image_path))
+        self.raw_cnt += 1 # TODO to be update later 
 
         return 
 
     def compute_and_update_mirror3D_metrics(self, pred_depth, depth_shift, color_image_path):
-
         if color_image_path.find("m3d") > 0 and "mesh" not in self.Train_tag:
             self.Train_tag = self.Train_tag.replace("ref","mesh-ref")
             self.Train_tag = self.Train_tag.replace("raw","mesh")
 
-        def compute_errors(gt, pred, mask): #! gt and pred are in m
+        def compute_errors(gt, pred, eval_area): #! gt and pred are in m
 
             min_depth_eval = 1e-3
             max_depth_eval = 10
@@ -222,10 +242,10 @@ class Mirror3d_eval():
 
             gt[np.isinf(gt)] = 0
             gt[np.isnan(gt)] = 0
-
+            
             valid_mask = gt >  min_depth_eval #  np.logical_and(gt > min_depth_eval)#, gt < max_depth_eval
             scale = np.sum(pred[valid_mask]*gt[valid_mask])/np.sum(pred[valid_mask]**2)
-            valid_mask = np.logical_and(valid_mask, mask)
+            valid_mask = np.logical_and(valid_mask, eval_area)
 
             SSIM_obj = SSIM()
             ssim_map = SSIM_obj.forward(torch.tensor(pred*valid_mask.astype(int)).unsqueeze(0).unsqueeze(0), torch.tensor(gt*valid_mask.astype(int)).unsqueeze(0).unsqueeze(0))
@@ -235,7 +255,7 @@ class Mirror3d_eval():
             pred = pred[valid_mask]
 
             if valid_mask.sum() == 0 :
-                return False
+                return np.array(False)
 
             thresh = np.maximum((gt / pred), (pred / gt))
             d125 = (thresh < 1.25).mean()
@@ -329,13 +349,24 @@ class Mirror3d_eval():
                 return 
             one_m_nm_all = mirror_error + non_mirror_error + all_image_error
             return one_m_nm_all
+        try:
+            ref_scores = torch.tensor(get_refD_scores(np.array(pred_depth).copy(), depth_shift, color_image_path))
+            if (ref_scores!=False).sum():
+                self.m_nm_all_refD += ref_scores
+                self.ref_cnt += 1
+        except:
+            print(color_image_path, "can't calculate error")
 
-
-        self.m_nm_all_refD += torch.tensor(get_refD_scores(pred_depth, depth_shift, color_image_path))
-        self.m_nm_all_rawD += torch.tensor(get_rawD_scores(pred_depth, depth_shift, color_image_path))
-        self.cnt += 1
+        try:
+            raw_scores = torch.tensor(get_rawD_scores(np.array(pred_depth).copy(), depth_shift, color_image_path))
+            if (raw_scores!=False).sum():
+                self.m_nm_all_rawD += raw_scores
+                self.raw_cnt += 1
+        except:
+            print(color_image_path, "can't calculate error")
 
         return 
+
 
     def save_result(self, main_output_folder, pred_depth, depth_shift, color_img_path):
         self.main_output_folder = main_output_folder

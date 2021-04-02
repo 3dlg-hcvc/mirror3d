@@ -45,7 +45,6 @@ class Plane_annotation_tool():
         else:
             self.is_matterport3d = True
         self.check_file()
-
         self.color_img_list = [os.path.join(data_main_folder, "raw", i) for i in os.listdir(os.path.join(data_main_folder, "raw"))]
         self.color_img_list.sort()
         if multi_processing:

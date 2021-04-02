@@ -135,6 +135,7 @@ if __name__ == "__main__":
     # Input config (mirror3d)
     parser.add_argument('--refined_depth',             action='store_true',  help='using coco input format or not')
     parser.add_argument('--mesh_depth',                action='store_true',  help='using coco input format or not')
+
     parser.add_argument('--coco_val',                  type=str,   help='coco json path', default='')
     parser.add_argument('--coco_train',                type=str,   help='coco json path', default='')
     parser.add_argument('--coco_train_root',           type=str,   help='coco data root', default="")
@@ -156,10 +157,10 @@ if __name__ == "__main__":
     # Log and save (mirror3d)
     parser.add_argument('--log_directory',             type=str,   help='training output folder', default='output')
     parser.add_argument('--checkpoint_save_freq',      type=int,   help='Checkpoint saving frequency in global steps /iteration; nyu 5000; m3d 10000', default=500)
+    parser.add_argument('--eval_save_depth',           action='store_true',  help='save the predicted depth during evaluation or not')
 
     parser.add_argument('--to_ref_txt',                type=str,   help='txt to refine', default='')
     parser.add_argument('--ref_mode',                  type=str,   help='none / rawD_mirror / rawD_border / DE_mirror / DE_border', default='DE_border')
-    parser.add_argument("--eval_save_depth",           action="store_true", help="save output depth or not")
     # PyTorch still may leave orphan processes in multi-gpu training.
     # Therefore we use a deterministic way to obtain port,
     # so that users are aware of orphan processes by seeing the port occupied.
