@@ -1,4 +1,5 @@
 script/to_sbatch.p
+other_to_clean/
 cr_output/
 init_depth_generator/README.md
 # Byte-compiled / optimized / DLL files
