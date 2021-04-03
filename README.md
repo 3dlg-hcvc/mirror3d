@@ -45,7 +45,7 @@ To test the three initial depth generator:
 bash script/nyu/dg_nyu_test.sh
 ```
 
-## Implement Mirror3dNet
+<!--## Implement Mirror3dNet
 
 We propose a simple architecture for 3D mirror plane estimation to refine depth estimates and produce more reliable reconstructions. Our module is based on [maskrcnn](https://github.com/facebookresearch/detectron2) and [planercnn](https://github.com/NVlabs/planercnn/tree/01e03fe5a97b7afc4c5c4c3090ddc9da41c071bd). 
 
@@ -63,7 +63,7 @@ To test the mirror3dnet and compare against planercnn module:
 ### Test on NYUv2 refined dataset
 bash script/nyu/m3n_nyu_test.sh
 ```
-
+-->
 ## Annotation Tool
 
 ### Classification
@@ -82,7 +82,8 @@ Martterport3d pre-trained checkpoint for the classifier can be found on [checkpo
 	```
 	
 - STEP 3: Pick positive samples based on the .json file output by STEP 2 manually
-<!---
+
+<!--
 - STEP 3: Use `Mirror3D/annotation/classifier/classification_tool.py` to manually annotate mirror images
 
 
@@ -91,23 +92,22 @@ Martterport3d pre-trained checkpoint for the classifier can be found on [checkpo
 	```
 -->
 
-
 ### Mirror mask annotation 
 
 We use [cvat](https://github.com/dommorin/cvat) to annotate mirror mask manually. Please refer to [cvat user guide](https://github.com/dommorin/cvat/blob/master/cvat/apps/documentation/user_guide.md) for guidance on mask annotation. 
 ### Plane annoatation
 
 ```python
-python Mirror3D/annotation/plane_annotation_tool/plane_annotation_tool.py --stage [all / 1 ~ 6] --data_main_folder [dataset main folder] --process_index [the process index during multi-processing] --border_width [mirror border width] --f [focal length of the dataset] --anno_output_folder [annotation result output folder]
+python Mirror3D/annotation/plane_annotation/plane_annotation_tool.py --stage [all / 1 ~ 6] --data_main_folder [dataset main folder] --process_index [the process index during multi-processing] --border_width [mirror border width] --f [focal length of the dataset] --anno_output_folder [annotation result output folder]
 ```
 
 - `--stage 1`: Set up annotation environment 
 
 - `--stage 2`: Manually annotate the mirror plane based on our plane annotation tool, check [User Instruction](todo) for how to use the plane annotation tool.
 
-- `--stage 3`: Update raw depth
+- `--stage 3`: Get refined depth map from original depth map
 
-- `--stage 4`: Clamp depth data (clamp outlier around the mirror instance)
+- `--stage 4`: Clamp depth map (clamp outlier around the mirror instance)
 
 - Other post processing function 
 	- `--stage 5` update img_info based on refined depth
@@ -135,18 +135,21 @@ python Mirror3D/annotation/plane_annotation_tool/plane_annotation_tool.py --stag
 	- `--stage 3`: Generate screenshot for "point cloud + mesh plane" under specific view
 	- `--stage 4`: Generate videos under "topdown + front" view
 	- `--stage 5`: Generate videos under specific view
-	- `--stage all`: run stage 1, 2, 4 together
+	- `--stage 6`: Generate refined depth colorful heatmap
+	- `--stage 7`: Generate relevant data information (mirror ratio, mirror area max depth, etc)
+	- `--stage 8`: Generate data distribution figures
+	- `--stage all`: run stage 1, 2, 4, 6 together
 
 - STEP 2: Launch webpage to view the videos
 	
 	```python 
-	python Mirror3D/annotation/verification/verification.py --stage 1 --data_main_folder [folder that contains "video_front, video_topdown .. etc" folders] --output_folder [.html files output folder] --video_num_per_page [int: how many video to display in one .html]
+	python Mirror3D/annotation/plane_annotation/verification.py --stage 1 --data_main_folder [folder that contains "video_front, video_topdown .. etc" folders] --output_folder [.html files output folder] --video_num_per_page [int: how many video to display in one .html]
 	```
 
 	Annotators should manually note down the error sample's path to a [error_sample].txt
 
-- STEP 3: Copy out the error sample's data to another folder for reannotation
+- STEP 3: Copy/ move out the error sample's data to another folder for reannotation
 
 	```python 
-	python Mirror3D/annotation/verification/verification.py --stage 2 --data_main_folder [dataset main folder] --output_folder [folder to save the copy of data] --error_list [.txt that contains the error samples' name]
+	python Mirror3D/annotation/plane_annotation/verification.py --stage 2 --data_main_folder [dataset main folder] --output_folder [folder to save the copy of data] --error_list [.txt that contains the error samples' name] --move [bool, if ture it will move out all the error samples' information, if false, it will copy out all the error samples' information]
 	```
