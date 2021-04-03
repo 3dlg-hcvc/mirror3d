@@ -124,6 +124,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100 \
 --learning_rate 1e-4 \
+--resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/checkpoint/R-50.pkl \
 --anchor_normal_npy /project/6049211/jiaqit/data/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
 --log_directory debug
 
@@ -144,6 +145,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100 \
 --learning_rate 1e-4 \
+--resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/checkpoint/R-50.pkl \
 --anchor_normal_npy /project/6049211/jiaqit/data/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
 --log_directory debug
 
@@ -165,6 +167,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100 \
 --learning_rate 1e-4 \
+--resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/checkpoint/R-50.pkl \
 --anchor_normal_npy /project/6049211/jiaqit/data/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
 --log_directory debug
 
@@ -185,6 +188,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100 \
 --learning_rate 1e-4 \
+--resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/checkpoint/R-50.pkl \
 --anchor_normal_npy /project/6049211/jiaqit/data/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
 --log_directory debug
 
@@ -206,6 +210,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100 \
 --learning_rate 1e-4 \
+--resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/checkpoint/R-50.pkl \
 --anchor_normal_npy /project/6049211/jiaqit/data/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
 --log_directory debug
 
@@ -225,6 +230,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100 \
 --learning_rate 1e-4 \
+--resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/checkpoint/R-50.pkl \
 --anchor_normal_npy /project/6049211/jiaqit/data/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_3.npy \
 --log_directory debug
 
@@ -244,6 +250,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100 \
 --learning_rate 1e-4 \
+--resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/checkpoint/R-50.pkl \
 --anchor_normal_npy /project/6049211/jiaqit/data/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_5.npy \
 --log_directory debug
 
@@ -263,6 +270,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100 \
 --learning_rate 1e-4 \
+--resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/checkpoint/R-50.pkl \
 --anchor_normal_npy /project/6049211/jiaqit/data/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_7.npy \
 --log_directory debug
 
@@ -282,6 +290,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100 \
 --learning_rate 1e-4 \
+--resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/checkpoint/R-50.pkl \
 --anchor_normal_npy /project/6049211/jiaqit/data/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_12.npy \
 --log_directory debug
 
