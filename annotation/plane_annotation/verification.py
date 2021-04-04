@@ -8,7 +8,7 @@ import tqdm
 
 class Verification():
 
-    def __init__(self, data_main_folder="", video_main_folder="", output_folder="", video_num_per_page=20, template_path = "./annotation/verification/template.html", show_mesh_depth=True):
+    def __init__(self, data_main_folder="", video_main_folder="", output_folder="", video_num_per_page=20, template_path = "./annotation/plane_annotation/template.html", show_mesh_depth=True):
         """
         Initilization
         """

@@ -11,7 +11,7 @@ from utils.general_utlis import *
 from utils.plane_pcd_utils import *
 import json
 import shutil
-from annotation.plane_annotation_tool.plane_annotation_tool import *
+from annotation.plane_annotation.plane_annotation_tool import *
 from visualization.dataset_visualization import Dataset_visulization
 
 class Dataset_visulization(Dataset_visulization):

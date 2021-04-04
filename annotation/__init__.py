@@ -1,2 +1,1 @@
-from annotation.plane_annotation_tool import Plane_annotation_tool
-from annotation.verification import *
+from annotation.plane_annotation.plane_annotation_tool import *
