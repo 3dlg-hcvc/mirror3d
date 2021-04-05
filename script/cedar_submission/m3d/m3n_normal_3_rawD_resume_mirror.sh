@@ -11,7 +11,7 @@ export PYTHONPATH="/home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D"
 python mirror3dnet/run_mirror3dnet.py \
 --config mirror3dnet/config/mirror3dnet_normal_config.yml \
 --coco_train /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_3_normal_mirror.json \
---coco_val /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_3_normal_mirror.json \
+--coco_val /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_3_normal_mirror.json \
 --coco_train_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
 --coco_val_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
 --coco_focal_len 537 \

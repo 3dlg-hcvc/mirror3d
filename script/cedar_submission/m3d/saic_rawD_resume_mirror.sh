@@ -14,7 +14,7 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_train.py \
 --coco_train_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
 --coco_val_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
 --coco_focal_len 537 \
---resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/debug/saic/saic_m3d_meshD_rawD_2021-04-02-16-24-23/checkpoint/snapshot_1_7884.pth \
+--resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/checkpoint/m3d/finetune_dg/saic_rawD.pth \
 --depth_shift 4000 \
 --input_height 512 \
 --input_width 640 \

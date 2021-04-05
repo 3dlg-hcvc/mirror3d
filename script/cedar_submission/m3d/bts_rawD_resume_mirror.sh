@@ -9,7 +9,7 @@ source /home/jiaqit/projects/rrg-msavva/jiaqit/setup/anaconda3/bin/activate
 conda activate mirror3d
 export PYTHONPATH="/home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D"
 python init_depth_generator/bts/pytorch/init_depth_gen_train.py \
---resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/debug/bts/bts_m3d_meshD_rawD_2021-04-02-16-06-33/checkpoint/model-24000 \
+--resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/checkpoint/m3d/finetune_dg/bts_rawD \
 --coco_train /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
 --coco_val /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
 --coco_train_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \

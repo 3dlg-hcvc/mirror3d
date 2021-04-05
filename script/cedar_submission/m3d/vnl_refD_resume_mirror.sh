@@ -10,7 +10,7 @@ conda activate mirror3d
 export PYTHONPATH="/home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D"
 python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.py \
 --refined_depth \
---resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/debug/vnl/vnl_m3d_meshD_refinedD_2021-04-02-17-42-25/checkpoint/epoch0_step30000.pth \
+--resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/checkpoint/m3d/finetune_dg/vnl_refD.pth \
 --coco_train /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
 --coco_val /project/6049211/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
 --coco_train_root /project/6049211/jiaqit/data/Mirror3D_final/m3d \
