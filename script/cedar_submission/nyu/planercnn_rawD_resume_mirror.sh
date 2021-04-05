@@ -21,6 +21,6 @@ python mirror3dnet/run_mirror3dnet.py \
 --input_width 640 \
 --batch_size 8 \
 --checkpoint_save_freq 1500 \
---num_epochs 100 \
+--num_epochs 100000 \
 --learning_rate 1e-4 \
 --log_directory debug/nyu

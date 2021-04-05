@@ -11,7 +11,7 @@ python init_depth_generator/bts/pytorch/init_depth_gen_train.py \
 --input_width 640 \
 --batch_size 8 \
 --checkpoint_save_freq 1500 \
---num_epochs 100 \
+--num_epochs 100000 \
 --learning_rate 1e-4 \
 --log_directory debug/nyu
 
@@ -27,7 +27,7 @@ python init_depth_generator/bts/pytorch/init_depth_gen_train.py \
 --input_width 640 \
 --batch_size 8 \
 --checkpoint_save_freq 1500 \
---num_epochs 100 \
+--num_epochs 100000 \
 --learning_rate 1e-4 \
 --log_directory debug/nyu
 
@@ -44,7 +44,7 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.
 --input_width 640 \
 --batch_size 4 \
 --checkpoint_save_freq 1500 \
---num_epochs 100 \
+--num_epochs 100000 \
 --learning_rate 1e-4 \
 --log_directory debug/nyu
 
@@ -61,7 +61,7 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.
 --input_width 640 \
 --batch_size 4 \
 --checkpoint_save_freq 1500 \
---num_epochs 100 \
+--num_epochs 100000 \
 --learning_rate 1e-4 \
 --log_directory debug/nyu
 
@@ -78,7 +78,7 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_train.py \
 --input_width 640 \
 --batch_size 8 \
 --checkpoint_save_freq 1500 \
---num_epochs 100 \
+--num_epochs 100000 \
 --learning_rate 1e-4 \
 --log_directory debug/nyu
 
@@ -95,7 +95,7 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_train.py \
 --input_width 640 \
 --batch_size 8 \
 --checkpoint_save_freq 1500 \
---num_epochs 100 \
+--num_epochs 100000 \
 --learning_rate 1e-4 \
 --log_directory debug/nyu
 
@@ -115,7 +115,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --input_width 640 \
 --batch_size 8 \
 --checkpoint_save_freq 1500 \
---num_epochs 100 \
+--num_epochs 100000 \
 --learning_rate 1e-4 \
 --log_directory debug/nyu
 
@@ -134,7 +134,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --input_width 640 \
 --batch_size 8 \
 --checkpoint_save_freq 1500 \
---num_epochs 100 \
+--num_epochs 100000 \
 --learning_rate 1e-4 \
 --log_directory debug/nyu
 
@@ -155,7 +155,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --input_width 640 \
 --batch_size 8 \
 --checkpoint_save_freq 1500 \
---num_epochs 100 \
+--num_epochs 100000 \
 --learning_rate 1e-4 \
 --log_directory debug/nyu
 
@@ -173,7 +173,27 @@ python mirror3dnet/run_mirror3dnet.py \
 --input_width 640 \
 --batch_size 8 \
 --checkpoint_save_freq 1500 \
---num_epochs 100 \
+--num_epochs 100000 \
 --learning_rate 1e-4 \
 --resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/checkpoint/m3d/m3d_rawD.pth \
+--log_directory debug/nyu
+
+# mirror3dnet only normal 10 anchor normal
+python mirror3dnet/run_mirror3dnet.py \
+--config mirror3dnet/config/mirror3dnet_normal_config.yml \
+--coco_train /project/6049211/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
+--coco_val /project/6049211/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+--coco_train_root /project/6049211/jiaqit/data/Mirror3D_final/nyu \
+--coco_val_root /project/6049211/jiaqit/data/Mirror3D_final/nyu \
+--coco_focal_len 519 \
+--mesh_depth \
+--depth_shift 1000 \
+--input_height 480 \
+--input_width 640 \
+--batch_size 8 \
+--checkpoint_save_freq 1500 \
+--num_epochs 100000 \
+--learning_rate 1e-4 \
+--resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/checkpoint/m3d/m3d_noraml_10.pth \
+--anchor_normal_npy /project/6049211/jiaqit/data/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
 --log_directory debug/nyu
