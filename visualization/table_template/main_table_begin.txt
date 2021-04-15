@@ -1,0 +1,7 @@
+\begin{table}
+    \resizebox{\linewidth}{!}{
+    \begin{tabular}{@{}lllllllll@{}}
+    \toprule
+        & & & \multicolumn{3}{c}{RMSE $\downarrow$} & \multicolumn{3}{c}{SSIM $\uparrow$} \\\cmidrule(lr){4-6}\cmidrule(lr){7-9}
+        Input & Train & Method & Mirror & Other & All & Mirror & Other & All \\
+    \midrule

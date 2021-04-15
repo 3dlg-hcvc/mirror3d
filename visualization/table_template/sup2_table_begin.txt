@@ -1,0 +1,7 @@
+    \resizebox{\linewidth}{!}{
+    \begin{tabular}{@{} lll lll lll lll lll lll @{}}
+    \toprule
+       & & & \multicolumn{3}{c}{1.05 $\uparrow$} & \multicolumn{3}{c}{1.10 $\uparrow$} & \multicolumn{3}{c}{1.25 $\uparrow$} & \multicolumn{3}{c}{${1.25}^2 \uparrow$} & \multicolumn{3}{c}{ ${1.25}^3\uparrow$}
+        \\\cmidrule(lr){4-6}\cmidrule(lr){7-9}\cmidrule(lr){10-12}\cmidrule(lr){13-15}\cmidrule(lr){16-18}
+        Input & Train & Method & Mirror & Other & All & Mirror & Other & All & Mirror & Other & All & Mirror & Other & All & Mirror & Other & All  \\
+        \midrule

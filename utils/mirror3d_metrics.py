@@ -8,8 +8,10 @@ import sys
 from utils.general_utlis import *
 import logging
 
+
+
 class Mirror3d_eval():
-    def __init__(self, train_with_refD, logger=None, Input_tag="Input_tag", method_tag="method_tag",width=640, height=480):
+    def __init__(self, train_with_refD, logger=None, Input_tag="Input_tag", method_tag="method_tag",width=640, height=480, dataset="nyu"):
         self.m_nm_all_refD = torch.zeros(27)
         self.m_nm_all_rawD = torch.zeros(27)
         self.raw_cnt = 0
@@ -20,14 +22,24 @@ class Mirror3d_eval():
         self.method_tag = method_tag
         self.width = width
         self.height = height
-
+        self.dataset = dataset
         if self.train_with_refD == True: 
-            self.Train_tag = "ref"
+            if self.dataset != "m3d":
+                self.Train_tag = "ref"
+            else:
+                self.Train_tag = "mesh-ref"
         elif self.train_with_refD == False:
-            self.Train_tag = "raw"
+            if self.dataset != "m3d":
+                self.Train_tag = "raw"
+            else:
+                self.Train_tag = "mesh"
         else:
             self.Train_tag = "*"
         self.main_output_folder = ""
+        self.method_logFile_json_save_folder = "output"
+    
+    def set_method_logFile_json_save_folder(self, folder):
+        self.method_logFile_json_save_folder = folder
     
     def reset_setting(self,train_with_refD, logger=None, Input_tag="Input_tag", method_tag="method_tag",width=640, height=480):
         self.m_nm_all_refD = torch.zeros(27)
@@ -42,27 +54,90 @@ class Mirror3d_eval():
         self.height = height
 
         if self.train_with_refD == True: 
-            self.Train_tag = "ref"
+            if self.dataset != "m3d":
+                self.Train_tag = "ref"
+            else:
+                self.Train_tag = "mesh-ref"
         elif self.train_with_refD == False:
-            self.Train_tag = "raw"
+            if self.dataset != "m3d":
+                self.Train_tag = "raw"
+            else:
+                self.Train_tag = "mesh"
         else:
             self.Train_tag = "*"
 
+    def save_as_table_format(self, eval_measures_cpu, compare_with_raw=False):
+        latex_method_tag = self.method_tag
+        latex_method_tag.replace("BTS", "BTS~\cite{lee2019big}") 
+        latex_method_tag.replace("VNL", "VNL~\cite{yin2019enforcing}") 
+        latex_method_tag.replace("saic", "saic~\cite{senushkin2020decoder}") 
+        latex_method_tag.replace("PlaneRCNN", "PlaneRCNN~\\cite{liu2019planercnn}") 
+
+
+        tag = "{},{},{}".format(self.Input_tag, self.Train_tag, latex_method_tag)
+        table_one_line_result = dict()
+        table_one_line_result["RMSE,SSIM"] = "{:>5} & {:>10} & {:>45} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} \\".format(
+            self.Input_tag, self.Train_tag, latex_method_tag, eval_measures_cpu[0], eval_measures_cpu[9], eval_measures_cpu[18], \
+                eval_measures_cpu[3], eval_measures_cpu[12], eval_measures_cpu[21]
+        )
+        table_one_line_result["RMSE,s-RMSE,Rel,SSIM"] = "{:>5} & {:>10} & {:>45} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f}\\".format(
+            self.Input_tag, self.Train_tag, latex_method_tag, eval_measures_cpu[0], eval_measures_cpu[9], eval_measures_cpu[18], \
+                eval_measures_cpu[1], eval_measures_cpu[10], eval_measures_cpu[19], \
+                eval_measures_cpu[2], eval_measures_cpu[11], eval_measures_cpu[20], \
+                eval_measures_cpu[3], eval_measures_cpu[12], eval_measures_cpu[21]
+        )
+        table_one_line_result["$d_{1.05}$,$d_{1.12}$,$d_{1.25}$,$d_{1.25^2}$,$d_{1.25^3}$"] = \
+                "{:>5} & {:>10} & {:>45} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f}\\".format(
+                self.Input_tag, self.Train_tag, latex_method_tag, \
+                eval_measures_cpu[4], eval_measures_cpu[13], eval_measures_cpu[22], \
+                eval_measures_cpu[5], eval_measures_cpu[14], eval_measures_cpu[23], \
+                eval_measures_cpu[6], eval_measures_cpu[15], eval_measures_cpu[24], \
+                eval_measures_cpu[7], eval_measures_cpu[16], eval_measures_cpu[25], \
+                eval_measures_cpu[8], eval_measures_cpu[17], eval_measures_cpu[26]
+        )
+        table_one_line_result["main_output_folder"] = "{}_{}_{} {}".format(self.Input_tag, self.Train_tag, latex_method_tag, os.path.abspath(self.main_output_folder))
+
+        if compare_with_raw:
+            one_name = "raw_result.json"
+            save_name = "raw_{}_result.json".format(self.dataset)
+        else:
+            one_name = "ref_result.json"
+            save_name = "ref_{}_result.json".format(self.dataset)
+
+        os.makedirs(self.method_logFile_json_save_folder, exist_ok=True)
+        method_logFile_json_save_path = os.path.join(self.method_logFile_json_save_folder, save_name)
+        if os.path.exists(method_logFile_json_save_path):
+            logFile_json = read_json(method_logFile_json_save_path)
+        else:
+            logFile_json = dict()
+        if tag in logFile_json:
+            if table_one_line_result not in logFile_json[tag]:
+                logFile_json[tag].append(table_one_line_result)
+        else:
+            logFile_json[tag] = [table_one_line_result]
+        save_json(method_logFile_json_save_path, logFile_json)
+        print("update info file : {}".format(method_logFile_json_save_path))
+
+        
+        latex_temp_save_path = os.path.join(self.main_output_folder, one_name)
+        save_json(latex_temp_save_path, table_one_line_result)
+        print("latex result saved to : {}".format(latex_temp_save_path))
 
     def print_mirror3D_score(self):
 
         def print_all_scores(eval_measures_cpu, cnt):
+
             print('Computing errors for {} eval samples'.format(int(cnt)))
 
             # print title
-            print("{:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12} \\\\".format(
+            print("{:>12}& {:>12}& {:>18}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12} \\\\".format(
             'Input', "Train", "Method", "Region", "RMSE", "s-RMSE", "Rel", "SSIM", '$d_{1.05}$', '$d_{1.12}$', '$d_{1.25}$', '$d_{1.25^2','$d_{1.25^3}$', "Count"))
             if self.logger:
-                self.logger.info("{:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12} \\\\".format(
+                self.logger.info("{:>12}& {:>12}& {:>18}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12} \\\\".format(
             'Input', "Train", "Method", "Region", "RMSE", "s-RMSE", "Rel", "SSIM", '$d_{1.05}$', '$d_{1.12}$', '$d_{1.25}$', '$d_{1.25^2}$','$d_{1.25^3}$', "Count"))
 
             # print mirror area score
-            print_line = "{:>12}& {:>12}& {:>12}& {:>12}& ".format(self.Input_tag, self.Train_tag, self.method_tag, "mirror")
+            print_line = "{:>12}& {:>12}& {:>18}& {:>12}& ".format(self.Input_tag, self.Train_tag, self.method_tag, "mirror")
             for i in range(0,9):
                 print_line += '{:>12.3f}& '.format(eval_measures_cpu[i])
             print_line += '{:>12} \\\\'.format(int(cnt))
@@ -71,7 +146,7 @@ class Mirror3d_eval():
                 self.logger.info(print_line)
 
             # print non-mirror area score
-            print_line = "{:>12}& {:>12}& {:>12}& {:>12}& ".format(self.Input_tag, self.Train_tag, self.method_tag, "non-mirror")
+            print_line = "{:>12}& {:>12}& {:>18}& {:>12}& ".format(self.Input_tag, self.Train_tag, self.method_tag, "non-mirror")
             for i in range(9,18):
                 print_line += '{:>12.3f}& '.format(eval_measures_cpu[i])
             print_line += '{:>12} \\\\'.format(int(cnt))
@@ -80,7 +155,7 @@ class Mirror3d_eval():
                 self.logger.info(print_line)
 
             # print all area score
-            print_line = "{:>12}& {:>12}& {:>12}& {:>12}& ".format(self.Input_tag, self.Train_tag, self.method_tag, "all")
+            print_line = "{:>12}& {:>12}& {:>18}& {:>12}& ".format(self.Input_tag, self.Train_tag, self.method_tag, "all")
             for i in range(18,27):
                 print_line += '{:>12.3f}& '.format(eval_measures_cpu[i])
             print_line += '{:>12} \\\\'.format(int(cnt))
@@ -88,10 +163,19 @@ class Mirror3d_eval():
             if self.logger:
                 self.logger.info(print_line)
             print("result saved to : ", self.main_output_folder)
+
+
+
+        self.logger.info("######################################## {:>20} ########################################".format("compared with refD"))
         print("######################################## {:>20} ########################################".format("compared with refD"))
         print_all_scores(self.m_nm_all_refD/ self.ref_cnt, self.ref_cnt)
+        self.save_as_table_format(self.m_nm_all_refD/ self.ref_cnt, compare_with_raw=False)
+        self.logger.info("######################################## {:>20} ########################################".format("compared with rawD"))
         print("######################################## {:>20} ########################################".format("compared with rawD"))
         print_all_scores(self.m_nm_all_rawD/ self.raw_cnt, self.raw_cnt)
+        self.save_as_table_format(self.m_nm_all_rawD/ self.raw_cnt, compare_with_raw=True)
+
+
 
 
 
@@ -189,7 +273,6 @@ class Mirror3d_eval():
             mask_path = rreplace(color_image_path, "raw","instance_mask")
             if not os.path.exists(mask_path):
                 return 
-
             if color_image_path.find("m3d") > 0:
                 if os.path.exists(rreplace(color_image_path.replace("raw", "mesh_raw_depth"),"i","d")):
                     refD_gt_depth_path = rreplace(color_image_path.replace("raw", "mesh_raw_depth"),"i","d")
@@ -279,6 +362,7 @@ class Mirror3d_eval():
             return rmse, scaled_rms, rel, ssim.item(), d105, d110, d125, d125_2, d125_3
 
         def get_refD_scores(pred_depth, depth_shift, color_image_path):
+
             mask_path = rreplace(color_image_path, "raw","instance_mask")
             if not os.path.exists(mask_path):
                 return 

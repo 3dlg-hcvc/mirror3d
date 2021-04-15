@@ -28,13 +28,21 @@ class Mirror3DNet_Eval:
         log_file_save_path = os.path.join(self.cfg.OUTPUT_DIR, "eval_result.log")
         logging.basicConfig(filename=log_file_save_path, filemode="w", format="%(asctime)s %(name)s:%(levelname)s:%(message)s", datefmt="%d-%m-%Y %H:%M:%S", level=logging.INFO)
         self.logger = logging
+
+        if self.cfg.TRAIN_COCO_JSON.find("nyu") > 0:
+            self.dataset_name = "nyu"
+        elif self.cfg.TRAIN_COCO_JSON.find("m3d") > 0:
+            self.dataset_name = "m3d"
+        elif self.cfg.TRAIN_COCO_JSON.find("scannet") > 0:
+            self.dataset_name = "scannet"
+
     def eval_main(self):
 
         if self.cfg.EVAL_MASK_IOU:
             print("calculate IOU, f_measure, MAE ..")
             self.eval_seg(self.output_list)
 
-        # ----------- evaluate Mirror3DNet/ planercnn model's predicted depth + Mirror3d -----------
+        # ----------- evaluate \mnet/ PlaneRCNN model's predicted depth + Mirror3d -----------
         if self.cfg.EVAL_BRANCH_REF_DEPTH:
             print("eval DE_pred + refine ...")
             self.refine_DEbranch_predD_and_eval(self.output_list)
@@ -47,7 +55,7 @@ class Mirror3DNet_Eval:
             print("eval rawD + refine ...")
             self.refine_raw_inputD_and_eval(self.output_list)
         
-        # ----------- evaluate REF_DEPTH_TO_REFINE (output from init_depth_generator/ Mirror3DNet'DE branch) + Mirror3d -----------
+        # ----------- evaluate REF_DEPTH_TO_REFINE (output from init_depth_generator/ \mnet'DE branch) + Mirror3d -----------
         if self.cfg.EVAL_INPUT_REF_DEPTH and "raw" not in self.cfg.REF_MODE:
             print("eval input {} + refine ...".format(self.cfg.REF_DEPTH_TO_REFINE))
             self.refine_input_txtD_and_eval(self.output_list)
@@ -61,23 +69,29 @@ class Mirror3DNet_Eval:
     def refine_input_txtD_and_eval(self, output_list):
         anchor_normal = np.load(self.cfg.ANCHOR_NORMAL_NYP)
         refine_depth_fun = Refine_depth(self.cfg.FOCAL_LENGTH, self.cfg.REF_BORDER_WIDTH, self.cfg.EVAL_WIDTH, self.cfg.EVAL_HEIGHT)
-        if self.cfg.REF_DEPTH_TO_REFINE.find("saic") > 0:
+        if self.cfg.REF_DEPTH_TO_REFINE.find("SAIC") > 0:
             Input_tag = "RGBD"
-            method_tag = "saic+M3DNet"
-        elif self.cfg.REF_DEPTH_TO_REFINE.find("bts") > 0:
+            method_tag = "saic + \mnet"
+        elif self.cfg.REF_DEPTH_TO_REFINE.find("BTS") > 0:
             Input_tag = "RGB"
-            method_tag = "bts+M3DNet"
-        elif self.cfg.REF_DEPTH_TO_REFINE.find("vnl") > 0:
+            method_tag = "BTS + \mnet"
+        elif self.cfg.REF_DEPTH_TO_REFINE.find("VNL") > 0:
             Input_tag = "RGB"
-            method_tag = "vnl+M3DNet"
+            method_tag = "VNL + \mnet"
         elif not self.cfg.OBJECT_CLS:
             Input_tag = "RGB"
-            method_tag = "planercnn"
+            method_tag = "PlaneRCNN"
         else:
             Input_tag = "RGB"
-            method_tag = "Mirror3DNet"
+            method_tag = "\mnet"
+        
+        train_with_refD=None 
+        if self.cfg.REF_DEPTH_TO_REFINE.find("ref") > 0:
+            train_with_refD = True
+        else:
+            train_with_refD = False
 
-        mirror3d_eval = Mirror3d_eval(train_with_refD=None, logger=self.logger,Input_tag=Input_tag, method_tag=method_tag,width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT)
+        mirror3d_eval = Mirror3d_eval(train_with_refD=train_with_refD, logger=self.logger,Input_tag=Input_tag, method_tag=method_tag,width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
 
         input_txt = read_txt(self.cfg.REF_DEPTH_TO_REFINE)
 
@@ -131,10 +145,10 @@ class Mirror3DNet_Eval:
         anchor_normal = np.load(self.cfg.ANCHOR_NORMAL_NYP)
         refine_depth_fun = Refine_depth(self.cfg.FOCAL_LENGTH, self.cfg.REF_BORDER_WIDTH, self.cfg.EVAL_WIDTH, self.cfg.EVAL_HEIGHT)
 
-        mirror3d_eval_sensorD = Mirror3d_eval(train_with_refD=None, logger=self.logger,Input_tag="RGBD", method_tag="sensorD",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT)
-        mirror3d_eval_meshD = Mirror3d_eval(train_with_refD=None, logger=self.logger,Input_tag="RGBD", method_tag="meshD",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT)
-        mirror3d_eval_hole = Mirror3d_eval(train_with_refD=None, logger=self.logger,Input_tag="RGBD", method_tag="Mirror3DNet",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT)
-        mirror3d_eval_mesh = Mirror3d_eval(train_with_refD=None, logger=self.logger,Input_tag="RGBD", method_tag="Mirror3DNet",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT)
+        mirror3d_eval_sensorD = Mirror3d_eval(train_with_refD=None, logger=self.logger,Input_tag="RGBD", method_tag="*",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
+        mirror3d_eval_meshD = Mirror3d_eval(train_with_refD=None, logger=self.logger,Input_tag="RGBD", method_tag="*",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
+        mirror3d_eval_hole = Mirror3d_eval(train_with_refD=None, logger=self.logger,Input_tag="RGBD", method_tag="\mnet",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
+        mirror3d_eval_mesh = Mirror3d_eval(train_with_refD=None, logger=self.logger,Input_tag="RGBD", method_tag="\mnet",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
 
         have_mesh_D = False
         imgPath_info = dict()
@@ -222,12 +236,17 @@ class Mirror3DNet_Eval:
 
         if not self.cfg.OBJECT_CLS:
             Input_tag = "RGB"
-            method_tag = "planercnn"
+            method_tag = "PlaneRCNN"
         else:
             Input_tag = "RGB"
-            method_tag = "Mirror3DNet"
+            method_tag = "\mnet"
+        
+        if self.cfg.REFINED_DEPTH:
+            train_with_refD = True
+        else:
+            train_with_refD = False
 
-        mirror3d_eval = Mirror3d_eval(train_with_refD=None, logger=self.logger,Input_tag=Input_tag, method_tag=method_tag,width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT)
+        mirror3d_eval = Mirror3d_eval(train_with_refD=train_with_refD, logger=self.logger,Input_tag=Input_tag, method_tag=method_tag,width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
 
         for one_output, one_input in output_list:
             pred_depth = one_output[1][0].detach().cpu().numpy()
@@ -251,12 +270,17 @@ class Mirror3DNet_Eval:
         refine_depth_fun = Refine_depth(self.cfg.FOCAL_LENGTH, self.cfg.REF_BORDER_WIDTH, self.cfg.EVAL_WIDTH, self.cfg.EVAL_HEIGHT)
         if not self.cfg.OBJECT_CLS:
             Input_tag = "RGB"
-            method_tag = "planercnn"
+            method_tag = "PlaneRCNN"
         else:
             Input_tag = "RGB"
-            method_tag = "Mirror3DNet"
+            method_tag = "\mnet"
 
-        mirror3d_eval = Mirror3d_eval(train_with_refD=None, logger=self.logger,Input_tag=Input_tag, method_tag=method_tag,width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT)
+        train_with_refD=None
+        if self.cfg.MODEL.WEIGHTS.find("ref") > 0:
+            train_with_refD = True
+        else:
+            train_with_refD = False
+        mirror3d_eval = Mirror3d_eval(train_with_refD=train_with_refD, logger=self.logger,Input_tag=Input_tag, method_tag=method_tag,width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
 
         for one_output, one_input in output_list:
             pred_depth = one_output[1][0].detach().cpu().numpy()
