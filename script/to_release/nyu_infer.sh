@@ -168,7 +168,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --eval \
 --mesh_depth \
 --eval_save_depth \
---resume_checkpoint_path /project/3dlg-hcvc/jiaqit/debug_0331/checkpoint/nyu/planercnn_rawD.pth \
+--resume_checkpoint_path /project/3dlg-hcvc/jiaqit/debug_0331/checkpoint/m3d/planercnn_rawD.pth \
 --config mirror3dnet/config/planercnn_config.yml \
 --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
 --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
@@ -190,7 +190,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --eval \
 --mesh_depth \
 --eval_save_depth \
---resume_checkpoint_path /project/3dlg-hcvc/jiaqit/debug_0331/checkpoint/nyu/planercnn_refD.pth \
+--resume_checkpoint_path /project/3dlg-hcvc/jiaqit/debug_0331/checkpoint/m3d/planercnn_refD.pth \
 --config mirror3dnet/config/planercnn_config.yml \
 --refined_depth \
 --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
@@ -213,7 +213,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --eval \
 --mesh_depth \
 --eval_save_depth \
---resume_checkpoint_path /project/3dlg-hcvc/jiaqit/debug_0331/checkpoint/nyu/m3n_rawD.pth \
+--resume_checkpoint_path /project/3dlg-hcvc/jiaqit/debug_0331/checkpoint/m3d/m3d_rawD.pth \
 --config mirror3dnet/config/mirror3dnet_config.yml \
 --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
 --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
@@ -235,7 +235,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --eval \
 --mesh_depth \
 --eval_save_depth \
---resume_checkpoint_path /project/3dlg-hcvc/jiaqit/debug_0331/checkpoint/nyu/m3n_refD.pth \
+--resume_checkpoint_path /project/3dlg-hcvc/jiaqit/debug_0331/checkpoint/m3d/m3d_refD.pth \
 --config mirror3dnet/config/mirror3dnet_config.yml \
 --refined_depth \
 --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \

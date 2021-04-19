@@ -421,7 +421,7 @@ class Dataset_visulization(Dataset_visulization):
 
         for exp_index, method_tag in enumerate(method_order_list):
             
-            one_latex_lines = [item for item in methodTag_info[method_tag][-1].items()] # TODO -1 is nyu normal 0 is m3d normal
+            one_latex_lines = [item for item in methodTag_info[method_tag][0].items()] # TODO -1 is nyu normal 0 is m3d normal
             main_table_lines_sub.append(one_latex_lines[0][1] +"\\")
             main_table_lines_metrics_list.append(one_latex_lines[0][0])
 
@@ -442,10 +442,10 @@ class Dataset_visulization(Dataset_visulization):
                 main_table_lines += main_table_lines_sub
                 sup_table_part1_lines += sup_table_part1_lines_sub
                 sup_table_part2_lines += sup_table_part2_lines_sub
-
-                main_table_lines.append("\midrule")
-                sup_table_part1_lines.append("\midrule")
-                sup_table_part2_lines.append("\midrule")
+                if exp_index != len(method_order_list)-1:
+                    main_table_lines.append("\midrule")
+                    sup_table_part1_lines.append("\midrule")
+                    sup_table_part2_lines.append("\midrule")
 
                 main_table_lines_sub = []
                 sup_table_part1_lines_sub = []
@@ -466,7 +466,7 @@ class Dataset_visulization(Dataset_visulization):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
-        '--stage', default="7")
+        '--stage', default="4")
     parser.add_argument(
         '--test_json', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json")
     parser.add_argument(
@@ -495,7 +495,7 @@ if __name__ == "__main__":
         '--output_folder', default="/project/3dlg-hcvc/mirrors/www/cr_vis/nyu_html")
     parser.add_argument(
         '--method_folder_list', nargs='+', default="", type=str)
-    parser.add_argument("--midrule_index", nargs="+", type=int, default="2 9", help="add /midrule in after these liens; index start from 1") 
+    parser.add_argument("--midrule_index", nargs="+", type=int, help="add /midrule in after these liens; index start from 1") 
     parser.add_argument(
         '--template_path', default="visualization/result_vis_template.html", type=str)
     parser.add_argument(

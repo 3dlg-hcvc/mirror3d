@@ -145,10 +145,10 @@ class Mirror3DNet_Eval:
         anchor_normal = np.load(self.cfg.ANCHOR_NORMAL_NYP)
         refine_depth_fun = Refine_depth(self.cfg.FOCAL_LENGTH, self.cfg.REF_BORDER_WIDTH, self.cfg.EVAL_WIDTH, self.cfg.EVAL_HEIGHT)
 
-        mirror3d_eval_sensorD = Mirror3d_eval(train_with_refD=None, logger=self.logger,Input_tag="RGBD", method_tag="*",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
-        mirror3d_eval_meshD = Mirror3d_eval(train_with_refD=None, logger=self.logger,Input_tag="RGBD", method_tag="*",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
-        mirror3d_eval_hole = Mirror3d_eval(train_with_refD=None, logger=self.logger,Input_tag="RGBD", method_tag="\mnet",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
-        mirror3d_eval_mesh = Mirror3d_eval(train_with_refD=None, logger=self.logger,Input_tag="RGBD", method_tag="\mnet",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
+        mirror3d_eval_sensorD = Mirror3d_eval(train_with_refD=None, logger=self.logger,Input_tag="sensor-D", method_tag="*",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
+        mirror3d_eval_meshD = Mirror3d_eval(train_with_refD=None, logger=self.logger,Input_tag="mesh-D", method_tag="*",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
+        mirror3d_eval_hole = Mirror3d_eval(train_with_refD=None, logger=self.logger,Input_tag="sensor-D", method_tag="\mnet",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
+        mirror3d_eval_mesh = Mirror3d_eval(train_with_refD=None, logger=self.logger,Input_tag="mesh-D", method_tag="\mnet",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
 
         have_mesh_D = False
         imgPath_info = dict()
@@ -236,10 +236,10 @@ class Mirror3DNet_Eval:
 
         if not self.cfg.OBJECT_CLS:
             Input_tag = "RGB"
-            method_tag = "PlaneRCNN"
+            method_tag = "PlaneRCNN-DE"
         else:
             Input_tag = "RGB"
-            method_tag = "\mnet"
+            method_tag = "\mnet-DE"
         
         if self.cfg.REFINED_DEPTH:
             train_with_refD = True
