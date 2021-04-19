@@ -73,7 +73,6 @@ if __name__ == '__main__':
     parser.add_argument('--masks_folder',  help='The Mask folder that consists of coarse and detailed masks')
     parser.add_argument('--output', help='The output folder', default="output")
     parser.add_argument('--alpha', help='The alpha value of overlays (0-255)', default=165, type=int)
-    parser.add_argument('--multi_processing', help='do multi-process or not', action='store_true')
     args = parser.parse_args()
 
     total_raw_filenames = os.listdir(args.raw_folder)

@@ -6,6 +6,39 @@ import bs4
 LABEL_COLOR_MAP = {"Complete": "rgb(221, 228, 57)", "Incomplete": "rgb(241, 80, 149)",
                    "Almost-complete": "rgb(108, 96, 74)"}
 
+html = '''
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+</head>
+
+<body>
+    <div>
+        <table style="width: 85%; margin: 0 auto; text-align: center; border-spacing: 35px;" >
+            <tr style="font-size: 28px; font-weight: bold; box-shadow: 0 2px 4px rgb(0 0 0 / 12%), 0 0 6px rgb(0 0 0 / 4%);">
+                <td style="width:20%;"><p>ID</p></td>
+                <td style="width:40%;"><p>Coarse Instance Mask Overlay</p></td>
+                <td style="width:40%;"><p>Detailed Instance Mask Overlay</p></td>
+            </tr>
+        </table>
+    </div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript">
+    // Save scroll position
+    $(document).ready(function () {
+        if (localStorage.getItem("my_app_name_here-quote-scroll") != null) {
+            $(window).scrollTop(localStorage.getItem("my_app_name_here-quote-scroll"));
+        }
+        $(window).on("scroll", function () {
+            localStorage.setItem("my_app_name_here-quote-scroll", $(window).scrollTop());
+        });
+    });
+</script>
+</html>
+'''
+
 
 def generate_html(args_obj):
     """
@@ -40,9 +73,7 @@ def generate_html(args_obj):
 
     for page in range(page_num):
 
-        with open(args_obj.html_template_path) as inf:
-            txt = inf.read()
-            soup = bs4.BeautifulSoup(txt, features="html.parser")
+        soup = bs4.BeautifulSoup(html, features="html.parser")
 
         for i in range(args_obj.instance_num_per_page):
             index = i + (page * args_obj.instance_num_per_page)
@@ -50,44 +81,42 @@ def generate_html(args_obj):
                 break
             one_line = one_line_mask_info[index]
 
-            new_div = soup.new_tag("div")
-            new_div['class'] = "one-instance"
-            soup.body.append(new_div)
+            new_div = soup.new_tag("tr")
+            new_div["style"] = "box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%); margin-bottom: 10px;"
+            soup.body.div.table.append(new_div)
 
             # Append text to one line in HTML
-            id_box = soup.new_tag("div")
-            id_box["style"] = "text-align:center;"
-            id_text = soup.new_tag("div")
-            id_text["class"] = "one-item"
-            id_text['style'] = "padding-top: 170px;"
+            id_box = soup.new_tag("td")
+            id_box["style"] = "width: 20%; padding: 30px 0"
+            id_text = soup.new_tag("p")
             id_text.string = one_line[0]
             id_box.append(id_text)
-            id_label = soup.new_tag("div")
-            id_label["style"] = "font-size: 20px; font-weight: bold; color: " + LABEL_COLOR_MAP[one_line[5]]
+            id_label = soup.new_tag("p")
+            id_label["style"] = "font-weight: bold; color: " + LABEL_COLOR_MAP[one_line[5]]
             id_label.string = "Label: " + one_line[5]
             id_box.append(id_label)
             new_div.append(id_box)
 
             # Append coarse instance mask overlay to one line in HTML
-            coarse_mask_box = soup.new_tag("div")
-            coarse_mask_box["style"] = "text-align:center;"
-            coarse_mask = soup.new_tag("div")
-            coarse_mask["class"] = "one-item"
-            coarse_mask.append(soup.new_tag('img', src=one_line[3]))
-            coarse_mask_box.append(coarse_mask)
-            instance_id = soup.new_tag("span")
+            coarse_mask_box = soup.new_tag("td")
+            coarse_mask_box["style"] = "width: 40%; padding: 30px 0"
+            coarse_mask_img = soup.new_tag('img', src=one_line[3])
+            coarse_mask_img["style"] = "max-width: 600px; max-height: 600px; width: 100%; height: auto; object-fit: contain;"
+            coarse_mask_box.append(coarse_mask_img)
+            instance_id = soup.new_tag("p")
+            instance_id["style"] = "font-size: 15px;"
             instance_id.string = one_line[1]
             coarse_mask_box.append(instance_id)
             new_div.append(coarse_mask_box)
 
             # Append detailed instance mask overlay to one line in HTML
-            detailed_mask_box = soup.new_tag("div")
-            detailed_mask_box["style"] = "text-align:center;"
-            detailed_mask = soup.new_tag("div")
-            detailed_mask["class"] = "one-item"
-            detailed_mask.append(soup.new_tag('img', src=one_line[4]))
-            detailed_mask_box.append(detailed_mask)
-            instance_id = soup.new_tag("span")
+            detailed_mask_box = soup.new_tag("td")
+            detailed_mask_box["style"] = "width: 40%; padding: 30px 0"
+            detailed_mask_img = soup.new_tag('img', src=one_line[4])
+            detailed_mask_img["style"] = "max-width: 600px; max-height: 600px; width: 100%; height: auto; object-fit: contain;"
+            detailed_mask_box.append(detailed_mask_img)
+            instance_id = soup.new_tag("p")
+            instance_id["style"] = "margin-top: 5px; font-size: 16px;"
             instance_id.string = one_line[2]
             detailed_mask_box.append(instance_id)
             new_div.append(detailed_mask_box)
@@ -100,10 +129,9 @@ def generate_html(args_obj):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--data', help='The data main folder')
-    parser.add_argument('-o', '--output', help='The output folder', default="output")
-    parser.add_argument('-i', '--instance_num_per_page', help='The number of mask instances per html page',
+    parser.add_argument('--data', help='The data main folder')
+    parser.add_argument('--output', help='The output folder', default="output")
+    parser.add_argument('--instance_num_per_page', help='The number of mask instances per html page',
                         default=100, type=int)
-    parser.add_argument('-t', '--html_template_path', help='The html template')
     args = parser.parse_args()
     generate_html(args)
