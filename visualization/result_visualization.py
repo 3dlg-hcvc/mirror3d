@@ -244,7 +244,8 @@ class Dataset_visulization(Dataset_visulization):
         if self.is_matterport3d:
             method_folder_list = ["GT", "meshD", "meshD_Mirror3DNet", "BTS_refD", "BTS_rawD", "BTS_Mirror3DNet", "VNL_refD", "VNL_rawD", "VNL_Mirror3DNet", "SAIC_refD", "SAIC_rawD", "SAIC_Mirror3DNet"]
         else:
-            method_folder_list = ["GT", "sensorD", "sensorD_Mirror3DNet", "BTS_refD", "BTS_rawD", "BTS_Mirror3DNet", "VNL_refD", "VNL_rawD", "VNL_Mirror3DNet", "SAIC_refD", "SAIC_rawD", "SAIC_Mirror3DNet"]
+             method_folder_list = ["sensor-D","sensor-D+Mirror3DNet-NYUv2_ft","sensor-D+Mirror3DNet-m3d","saic-ref","PlaneRCNN-ref-NYUv2_ft","PlaneRCNN-ref-m3d","Mirror3DNet-NYUv2_ft-ref","Mirror3DNet-m3d-ref","saic-raw","saic+Mirror3DNet-NYUv2_ft","saic+Mirror3DNet-m3d","PlaneRCNN-raw-NYUv2_ft","PlaneRCNN-raw-m3d","Mirror3DNet-NYUv2_ft-raw","Mirror3DNet-m3d-raw","BTS-ref","VNL-ref","BTS-raw","BTS+Mirror3DNet-NYUv2_ft","BTS+Mirror3DNet-m3d","VNL-raw","VNL+Mirror3DNet-NYUv2_ft","VNL+Mirror3DNet-m3d"]
+            # method_folder_list = ["GT", "sensorD", "sensorD_Mirror3DNet", "BTS_refD", "BTS_rawD", "BTS_Mirror3DNet", "VNL_refD", "VNL_rawD", "VNL_Mirror3DNet", "SAIC_refD", "SAIC_rawD", "SAIC_Mirror3DNet"]
         colorImgSubset_list = [self.color_img_list[x:x+sample_num_per_page] for x in range(0, len(self.color_img_list), sample_num_per_page)]
 
         for html_index, one_colorSubset in enumerate(colorImgSubset_list):
@@ -421,7 +422,7 @@ class Dataset_visulization(Dataset_visulization):
 
         for exp_index, method_tag in enumerate(method_order_list):
             
-            one_latex_lines = [item for item in methodTag_info[method_tag][0].items()] # TODO -1 is nyu normal 0 is m3d normal
+            one_latex_lines = [item for item in methodTag_info[method_tag][-1].items()] # TODO -1 is nyu normal 0 is m3d normal
             main_table_lines_sub.append(one_latex_lines[0][1] +"\\")
             main_table_lines_metrics_list.append(one_latex_lines[0][0])
 
