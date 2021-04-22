@@ -11,4 +11,5 @@ parallel -j 8 --eta "python visualization/result_visualization.py \
 --f 537 \
 --pred_w 640 \
 --pred_h 512 \
+--test_json /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
 --output_folder /project/3dlg-hcvc/mirrors/www/cr_vis/debug_m3d_0418 >& ${log_folder}/m3d_vis_0408.log" ::: {0..660}
