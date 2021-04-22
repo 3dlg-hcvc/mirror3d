@@ -11,4 +11,4 @@ parallel -j 8 --eta "python visualization/result_visualization.py \
 --f 537 \
 --pred_w 640 \
 --pred_h 512 \
---output_folder /project/3dlg-hcvc/mirrors/www/cr_vis/debug_0418 >& ${log_folder}/m3d_vis_0408.log" ::: {0..660}
+--output_folder /project/3dlg-hcvc/mirrors/www/cr_vis/debug_m3d_0418 >& ${log_folder}/m3d_vis_0408.log" ::: {0..660}
