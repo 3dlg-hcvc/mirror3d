@@ -502,7 +502,6 @@ class Dataset_visulization(Dataset_visulization):
 
 
                 mirror3d_eval.compute_and_update_mirror3D_metrics(pred_depth/depth_shift, depth_shift, color_image_path)
-                break
             mirror3d_eval.print_mirror3D_score()
             mirror3d_eval.save_sampleScore(method_output_folder=method_output_folder)
 
