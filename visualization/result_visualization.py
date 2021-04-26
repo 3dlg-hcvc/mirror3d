@@ -13,6 +13,10 @@ import json
 import shutil
 from annotation.plane_annotation.plane_annotation_tool import *
 from visualization.dataset_visualization import Dataset_visulization
+from tqdm import tqdm
+
+
+
 
 class Dataset_visulization(Dataset_visulization):
 
@@ -242,7 +246,8 @@ class Dataset_visulization(Dataset_visulization):
             6. Topdown view
         """
         if self.is_matterport3d:
-            method_folder_list = ["GT", "meshD", "meshD_Mirror3DNet", "BTS_refD", "BTS_rawD", "BTS_Mirror3DNet", "VNL_refD", "VNL_rawD", "VNL_Mirror3DNet", "SAIC_refD", "SAIC_rawD", "SAIC_Mirror3DNet"]
+            method_folder_list = ["VNL+Mirror3DNet","VNL-raw","BTS+Mirror3DNet","BTS-raw","VNL-ref","BTS-ref","Mirror3DNet-raw","Mirror3DNet-DE-raw","PlaneRCNN-raw","PlaneRCNN-DE-raw","saic+Mirror3DNet","saic-raw","Mirror3DNet-ref","Mirror3DNet-DE-ref","PlaneRCNN-ref","PlaneRCNN-DE-ref","saic-ref","mesh-D+Mirror3DNet","sensor-D+Mirror3DNet","mesh-D","sensor-D"]
+            # method_folder_list = ["GT", "meshD", "meshD_Mirror3DNet", "BTS_refD", "BTS_rawD", "BTS_Mirror3DNet", "VNL_refD", "VNL_rawD", "VNL_Mirror3DNet", "SAIC_refD", "SAIC_rawD", "SAIC_Mirror3DNet"]
         else:
              method_folder_list = ["sensor-D","sensor-D+Mirror3DNet-NYUv2_ft","sensor-D+Mirror3DNet-m3d","saic-ref","PlaneRCNN-ref-NYUv2_ft","PlaneRCNN-ref-m3d","Mirror3DNet-NYUv2_ft-ref","Mirror3DNet-m3d-ref","saic-raw","saic+Mirror3DNet-NYUv2_ft","saic+Mirror3DNet-m3d","PlaneRCNN-raw-NYUv2_ft","PlaneRCNN-raw-m3d","Mirror3DNet-NYUv2_ft-raw","Mirror3DNet-m3d-raw","BTS-ref","VNL-ref","BTS-raw","BTS+Mirror3DNet-NYUv2_ft","BTS+Mirror3DNet-m3d","VNL-raw","VNL+Mirror3DNet-NYUv2_ft","VNL+Mirror3DNet-m3d"]
             # method_folder_list = ["GT", "sensorD", "sensorD_Mirror3DNet", "BTS_refD", "BTS_rawD", "BTS_Mirror3DNet", "VNL_refD", "VNL_rawD", "VNL_Mirror3DNet", "SAIC_refD", "SAIC_rawD", "SAIC_Mirror3DNet"]
@@ -434,7 +439,6 @@ class Dataset_visulization(Dataset_visulization):
 
             if ((exp_index + 1) in midrule_index) or (exp_index == len(method_order_list)-1):
                 
-
                 if "*" not in method_tag:
                     main_table_lines_sub = identify_best_for_subLines(main_table_lines_sub, main_table_lines_metrics_list)
                     # sup_table_part1_lines_sub = identify_best_for_subLines(sup_table_part1_lines_sub, sup_table_part1_lines_metrics_list)
@@ -461,19 +465,214 @@ class Dataset_visulization(Dataset_visulization):
         for line in main_table_lines:
             print(line)
 
+
+    def get_std_score(self, args):
+        from utils.mirror3d_metrics import Mirror3d_eval
+        for item_index, item in enumerate(self.method_predFolder.items()):
+            if args.multi_processing and item_index!=args.process_index:
+                continue
+            pred_folder = item[1]
+            method_output_folder = os.path.split(pred_folder)[0]
+            method_tag_long = item[0]
+            if pred_folder.find("with_mirror/precise") > 0:
+                continue
+            if method_tag_long.find("ref") > 0:
+                refined_depth = True
+            else:
+                refined_depth = False
+            if method_tag_long[:4] == "saic" or method_tag_long.find("saic") > 0 :
+                Input_tag = "RGBD"
+            else:
+                Input_tag = "RGB"
+            method_tag = method_tag_long.replace("-{}".format(method_tag_long.split("-")[-1]),"")
+            method_tag.replace("+Mirror3DNet"," + \\mnet")
+
+            if "sensor" in method_tag:
+                method_tag = "sensor-D"
+                Input_tag = "*"
+                refined_depth = None
+            if "mesh" in method_tag:
+                method_tag = "mesh-D"
+                Input_tag = "*"
+                refined_depth = None
+
+            if "m3d" in self.dataset_main_folder:
+                dataset_name = "m3d"
+            elif "sacnnet" in self.dataset_main_folder:
+                dataset_name = "sacnnet"
+            else:
+                dataset_name = "nyu"
+            mirror3d_eval = Mirror3d_eval(refined_depth,logger=None, Input_tag=Input_tag, method_tag=method_tag, dataset=dataset_name)
+            mirror3d_eval.set_cal_std(True)
+            mirror3d_eval.set_save_score_per_sample(True)
+            for one_pred_name in tqdm(os.listdir(pred_folder)):
+                one_pred_path = os.path.join(pred_folder, one_pred_name)
+                if self.is_matterport3d:
+                    depth_shift = 4000
+                    color_image_path = os.path.join(self.dataset_main_folder, "raw", rreplace(one_pred_name, "d", "i"))
+                else:
+                    depth_shift = 1000
+                    color_image_path = os.path.join(self.dataset_main_folder, "raw", one_pred_name)
+                pred_depth = cv2.imread(one_pred_path, cv2.IMREAD_ANYDEPTH)
+
+
+                mirror3d_eval.compute_and_update_mirror3D_metrics(pred_depth/depth_shift, depth_shift, color_image_path)
+            mirror3d_eval.print_mirror3D_score()
+            mirror3d_eval.save_sampleScore(method_output_folder=method_output_folder)
+
+
+    def generate_paper_html(self, vis_saved_main_folder="", sample_num_per_page=50, template_path=""):
+        """
+        (1) under vis_saved_folder there should only be the vislization output sub-folders and nothing else
+
+        Each line will show:
+            1. Sample ID & method name 
+            2. Color image
+            3. Colored RMSE map
+            4. Colored predict depth
+            5. Front view
+            6. Topdown view
+        """
+
+        html = '''
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+        </head>
+
+        <body>
+            <div>
+                <table style="width: 85%; margin: 0 auto; text-align: center; border-spacing: 35px;" >
+                    <tr style="font-size: 28px; font-weight: bold; box-shadow: 0 2px 4px rgb(0 0 0 / 12%), 0 0 6px rgb(0 0 0 / 4%);">
+                    </tr>
+                </table>
+            </div>
+        </body>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script type="text/javascript">
+            // Save scroll position
+            $(document).ready(function () {
+                if (localStorage.getItem("my_app_name_here-quote-scroll") != null) {
+                    $(window).scrollTop(localStorage.getItem("my_app_name_here-quote-scroll"));
+                }
+                $(window).on("scroll", function () {
+                    localStorage.setItem("my_app_name_here-quote-scroll", $(window).scrollTop());
+                });
+            });
+        </script>
+        </html>
+        '''
+
         
+        if self.is_matterport3d:
+            method_folder_list = ["VNL+Mirror3DNet","VNL-raw","BTS+Mirror3DNet","BTS-raw","VNL-ref","BTS-ref","Mirror3DNet-raw","Mirror3DNet-DE-raw","PlaneRCNN-raw","PlaneRCNN-DE-raw","saic+Mirror3DNet","saic-raw","Mirror3DNet-ref","Mirror3DNet-DE-ref","PlaneRCNN-ref","PlaneRCNN-DE-ref","saic-ref","mesh-D+Mirror3DNet","sensor-D+Mirror3DNet","mesh-D","sensor-D"]
+            # method_folder_list = ["GT", "meshD", "meshD_Mirror3DNet", "BTS_refD", "BTS_rawD", "BTS_Mirror3DNet", "VNL_refD", "VNL_rawD", "VNL_Mirror3DNet", "SAIC_refD", "SAIC_rawD", "SAIC_Mirror3DNet"]
+        else:
+             method_folder_list = ["sensor-D","sensor-D+Mirror3DNet-NYUv2_ft","sensor-D+Mirror3DNet-m3d","saic-ref","PlaneRCNN-ref-NYUv2_ft","PlaneRCNN-ref-m3d","Mirror3DNet-NYUv2_ft-ref","Mirror3DNet-m3d-ref","saic-raw","saic+Mirror3DNet-NYUv2_ft","saic+Mirror3DNet-m3d","PlaneRCNN-raw-NYUv2_ft","PlaneRCNN-raw-m3d","Mirror3DNet-NYUv2_ft-raw","Mirror3DNet-m3d-raw","BTS-ref","VNL-ref","BTS-raw","BTS+Mirror3DNet-NYUv2_ft","BTS+Mirror3DNet-m3d","VNL-raw","VNL+Mirror3DNet-NYUv2_ft","VNL+Mirror3DNet-m3d"]
+            # method_folder_list = ["GT", "sensorD", "sensorD_Mirror3DNet", "BTS_refD", "BTS_rawD", "BTS_Mirror3DNet", "VNL_refD", "VNL_rawD", "VNL_Mirror3DNet", "SAIC_refD", "SAIC_rawD", "SAIC_Mirror3DNet"]
+        colorImgSubset_list = [self.color_img_list[x:x+sample_num_per_page] for x in range(0, len(self.color_img_list), sample_num_per_page)]
+
+        for html_index, one_colorSubset in enumerate(colorImgSubset_list):
+            with open(template_path) as inf:
+                soup = bs4.BeautifulSoup(html, features="html.parser")
+            for one_color_img_path in self.color_img_list:
+                sample_name = os.path.split(one_color_img_path)[-1]
+                sample_id = sample_name.split(".")[0]
+                if self.is_matterport3d:
+                    one_depth_sample_name = rreplace(sample_name, "i", "d")
+                else:
+                    one_depth_sample_name = sample_name
+                for one_method_name in method_folder_list:
+                    one_method_folder_path = os.path.join(vis_saved_main_folder, one_method_name)
+                    one_RMSE_map = os.path.join(one_method_folder_path, "colored_pred_error_map", one_depth_sample_name)
+                    one_predD_map = os.path.join(one_method_folder_path, "colored_pred_depth", one_depth_sample_name)
+                    one_front_view_img = os.path.join(one_method_folder_path, "pred_depth_ply", "front_{}".format(sample_name))
+                    one_topdown_view_img = os.path.join(one_method_folder_path, "pred_depth_ply", "topdown_{}".format(sample_name))
+
+                    new_div = soup.new_tag("tr")
+                    new_div['class'] = "one-sample"
+                    soup.body.div.table.append(new_div)
+
+                    one_text = soup.new_tag("div")
+                    one_text["class"] = "one-item"
+                    if not self.is_matterport3d:
+                        one_text['style'] = "padding-top: 100px;font-size: 25pt;"
+                    else:
+                        one_text['style'] = "padding-top: 100px;"
+                    one_text.string = sample_id
+                    new_div.append(one_text)
+
+                    one_text = soup.new_tag("div")
+                    one_text["class"] = "one-item"
+                    if not self.is_matterport3d:
+                        one_text['style'] = "padding-top: 100px;font-size: 25pt;"
+                    else:
+                        one_text['style'] = "padding-top: 100px;"
+                    one_text.string = one_method_name
+                    new_div.append(one_text)
+
+                    # Append color image to one line in HTML
+                    one_color_img = soup.new_tag("div")
+                    color_img = soup.new_tag("div")
+                    color_img["class"] = "one-item"
+                    color_img_path = os.path.relpath(one_color_img_path, self.output_folder)
+                    color_img.append(soup.new_tag('img', src=color_img_path))
+                    one_color_img.append(color_img)
+                    new_div.append(one_color_img)
+
+                    # Append color image to one line in HTML
+                    one_color_img = soup.new_tag("div")
+                    color_img = soup.new_tag("div")
+                    color_img["class"] = "one-item"
+                    one_RMSE_map = os.path.relpath(one_RMSE_map, self.output_folder)
+                    color_img.append(soup.new_tag('img', src=one_RMSE_map))
+                    one_color_img.append(color_img)
+                    new_div.append(one_color_img)
+
+                    # Append color image to one line in HTML
+                    one_color_img = soup.new_tag("div")
+                    color_img = soup.new_tag("div")
+                    color_img["class"] = "one-item"
+                    one_predD_map = os.path.relpath(one_predD_map, self.output_folder)
+                    color_img.append(soup.new_tag('img', src=one_predD_map))
+                    one_color_img.append(color_img)
+                    new_div.append(one_color_img)
+
+                    # Append color image to one line in HTML
+                    one_color_img = soup.new_tag("div")
+                    color_img = soup.new_tag("div")
+                    color_img["class"] = "one-item"
+                    one_front_view_img = os.path.relpath(one_front_view_img, self.output_folder)
+                    color_img.append(soup.new_tag('img', src=one_front_view_img))
+                    one_color_img.append(color_img)
+                    new_div.append(one_color_img)
+
+                    # Append color image to one line in HTML
+                    one_color_img = soup.new_tag("div")
+                    color_img = soup.new_tag("div")
+                    color_img["class"] = "one-item"
+                    one_topdown_view_img = os.path.relpath(one_topdown_view_img, self.output_folder)
+                    color_img.append(soup.new_tag('img', src=one_topdown_view_img))
+                    one_color_img.append(color_img)
+                    new_div.append(one_color_img)
+                
+            html_path = os.path.join(self.output_folder, "{}.html".format(html_index))
+            save_html(html_path, soup)
             
+            print("result visulisation saved in link {}".format(html_path.replace("/project/3dlg-hcvc/mirrors/www","http://aspis.cmpt.sfu.ca/projects/mirrors")))
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
-        '--stage', default="4")
+        '--stage', default="5")
     parser.add_argument(
         '--test_json', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json")
     parser.add_argument(
-        '--method_predFolder_txt', default="cr_output/result_vis_debug.txt")
+        '--method_predFolder_txt', default="/project/3dlg-hcvc/mirrors/www/notes/nyu_vis_0418.txt")
     parser.add_argument(
-        '--dataset_main_folder', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu")
+        '--dataset_main_folder', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/")
     parser.add_argument(
         '--process_index', default=0, type=int, help="process index")
     parser.add_argument('--multi_processing', help='do multi-process or not',action='store_true')
@@ -504,7 +703,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--method_order_txt', default="", type=str)
     parser.add_argument(
-        '--all_info_json', default="output/ref_nyu_result.json", type=str)
+        '--all_info_json', default="output/ref_m3d_result.json", type=str)
     args = parser.parse_args()
 
     vis_tool = Dataset_visulization(pred_w = args.pred_w, pred_h = args.pred_h, dataset_main_folder=args.dataset_main_folder, process_index=args.process_index, \
@@ -522,3 +721,6 @@ if __name__ == "__main__":
         vis_tool.gen_latex_table_sep(args.method_predFolder_txt, args.midrule_index)
     elif args.stage == "4":
         vis_tool.gen_latex_table_whole(args.method_order_txt, args.all_info_json, args.midrule_index)
+    elif args.stage == "5":
+        vis_tool.generate_method_pred(args.method_predFolder_txt)
+        vis_tool.get_std_score(args)

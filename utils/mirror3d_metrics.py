@@ -37,6 +37,15 @@ class Mirror3d_eval():
             self.Train_tag = "*"
         self.main_output_folder = ""
         self.method_logFile_json_save_folder = "output"
+        self.cal_std = False
+        self.sample_name = []
+        self.sample_score = dict()
+
+    def set_cal_std(self, cal_std):
+        self.cal_std = cal_std
+
+    def set_save_score_per_sample(self, save_score_per_sample):
+        self.save_score_per_sample = save_score_per_sample
     
     def set_method_logFile_json_save_folder(self, folder):
         self.method_logFile_json_save_folder = folder
@@ -66,7 +75,7 @@ class Mirror3d_eval():
         else:
             self.Train_tag = "*"
 
-    def save_as_table_format(self, eval_measures_cpu, compare_with_raw=False):
+    def save_as_table_format(self, eval_measures_cpu, compare_with_raw=False, compute_std=False):
         latex_method_tag = self.method_tag
         latex_method_tag.replace("BTS", "BTS~\cite{lee2019big}") 
         latex_method_tag.replace("VNL", "VNL~\cite{yin2019enforcing}") 
@@ -86,7 +95,7 @@ class Mirror3d_eval():
                 eval_measures_cpu[2], eval_measures_cpu[11], eval_measures_cpu[20], \
                 eval_measures_cpu[3], eval_measures_cpu[12], eval_measures_cpu[21]
         )
-        table_one_line_result["$d_{1.05}$,$d_{1.12}$,$d_{1.25}$,$d_{1.25^2}$,$d_{1.25^3}$"] = \
+        table_one_line_result["$d_{1.05}$,$d_{1.10}$,$d_{1.25}$,$d_{1.25^2}$,$d_{1.25^3}$"] = \
                 "{:>5} & {:>10} & {:>45} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f}\\".format(
                 self.Input_tag, self.Train_tag, latex_method_tag, \
                 eval_measures_cpu[4], eval_measures_cpu[13], eval_measures_cpu[22], \
@@ -103,6 +112,9 @@ class Mirror3d_eval():
         else:
             one_name = "ref_result.json"
             save_name = "ref_{}_result.json".format(self.dataset)
+
+        if compute_std:
+            save_name = "std_" + save_name
 
         os.makedirs(self.method_logFile_json_save_folder, exist_ok=True)
         method_logFile_json_save_path = os.path.join(self.method_logFile_json_save_folder, save_name)
@@ -131,10 +143,10 @@ class Mirror3d_eval():
 
             # print title
             print("{:>12}& {:>12}& {:>18}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12} \\\\".format(
-            'Input', "Train", "Method", "Region", "RMSE", "s-RMSE", "Rel", "SSIM", '$d_{1.05}$', '$d_{1.12}$', '$d_{1.25}$', '$d_{1.25^2','$d_{1.25^3}$', "Count"))
+            'Input', "Train", "Method", "Region", "RMSE", "s-RMSE", "Rel", "SSIM", '$d_{1.05}$', '$d_{1.10}$', '$d_{1.25}$', '$d_{1.25^2','$d_{1.25^3}$', "Count"))
             if self.logger:
                 self.logger.info("{:>12}& {:>12}& {:>18}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12}& {:>12} \\\\".format(
-            'Input', "Train", "Method", "Region", "RMSE", "s-RMSE", "Rel", "SSIM", '$d_{1.05}$', '$d_{1.12}$', '$d_{1.25}$', '$d_{1.25^2}$','$d_{1.25^3}$', "Count"))
+            'Input', "Train", "Method", "Region", "RMSE", "s-RMSE", "Rel", "SSIM", '$d_{1.05}$', '$d_{1.10}$', '$d_{1.25}$', '$d_{1.25^2}$','$d_{1.25^3}$', "Count"))
 
             # print mirror area score
             print_line = "{:>12}& {:>12}& {:>18}& {:>12}& ".format(self.Input_tag, self.Train_tag, self.method_tag, "mirror")
@@ -163,20 +175,39 @@ class Mirror3d_eval():
             if self.logger:
                 self.logger.info(print_line)
             print("result saved to : ", self.main_output_folder)
-
-
-
-        self.logger.info("######################################## {:>20} ########################################".format("compared with refD"))
+        if self.logger:
+            self.logger.info("######################################## {:>20} ########################################".format("compared with refD"))
         print("######################################## {:>20} ########################################".format("compared with refD"))
         print_all_scores(self.m_nm_all_refD/ self.ref_cnt, self.ref_cnt)
         self.save_as_table_format(self.m_nm_all_refD/ self.ref_cnt, compare_with_raw=False)
-        self.logger.info("######################################## {:>20} ########################################".format("compared with rawD"))
+        if self.logger:
+            self.logger.info("######################################## {:>20} ########################################".format("compared with rawD"))
         print("######################################## {:>20} ########################################".format("compared with rawD"))
         print_all_scores(self.m_nm_all_rawD/ self.raw_cnt, self.raw_cnt)
         self.save_as_table_format(self.m_nm_all_rawD/ self.raw_cnt, compare_with_raw=True)
 
+        if self.cal_std:
+            self.cal_std_for_all(self.m_nm_all_refD/ self.ref_cnt, compare_with_raw=False)
+            self.cal_std_for_all(self.m_nm_all_rawD/ self.raw_cnt, compare_with_raw=True)
 
+    def save_sampleScore(self, method_output_folder):
+        one_output_path = os.path.join(method_output_folder, "score_per_sample.json")
+        save_json(one_output_path, self.sample_score) 
 
+    def cal_std_for_all(self, avg_score, compare_with_raw):
+        eval_measures_std = []
+        for one_score_index, one_score in enumerate(avg_score):
+            scores = []
+            for item in self.sample_score.items():
+                try:
+                    if compare_with_raw:
+                        scores.append(item[1]["raw"][one_score_index])
+                    else:
+                        scores.append(item[1]["ref"][one_score_index])
+                except:
+                    continue
+            eval_measures_std.append(np.std(scores))
+        self.save_as_table_format(eval_measures_std, compare_with_raw=compare_with_raw, compute_std=True)
 
 
 
@@ -186,7 +217,8 @@ class Mirror3d_eval():
             self.Train_tag = self.Train_tag.replace("raw","mesh")
 
         def compute_errors(gt, pred, eval_area, mirror_mask, include_mirror): #! gt and pred are in m
-
+            gt = np.array(gt, dtype="f")
+            pred = np.array(pred, dtype="f")
             min_depth_eval = 1e-3
             max_depth_eval = 10
 
@@ -303,7 +335,6 @@ class Mirror3d_eval():
                 return 
             one_m_nm_all = mirror_error + non_mirror_error + all_image_error
             return one_m_nm_all
-        
         self.m_nm_all_refD += torch.tensor(get_refD_scores(np.array(pred_depth).copy(), depth_shift, color_image_path))
         self.m_nm_all_rawD += torch.tensor(get_rawD_scores(np.array(pred_depth).copy(), depth_shift, color_image_path))
         self.raw_cnt += 1 # TODO to be update later 
@@ -316,17 +347,21 @@ class Mirror3d_eval():
             self.Train_tag = self.Train_tag.replace("raw","mesh")
 
         def compute_errors(gt, pred, eval_area): #! gt and pred are in m
-
+            
+            gt = np.array(gt, dtype="f")
+            pred = np.array(pred, dtype="f")
+            
             min_depth_eval = 1e-3
             max_depth_eval = 10
-
+        
             pred[pred < min_depth_eval] = min_depth_eval
             pred[np.isinf(pred)] = max_depth_eval
 
             gt[np.isinf(gt)] = 0
             gt[np.isnan(gt)] = 0
             
-            valid_mask = gt >  min_depth_eval #  np.logical_and(gt > min_depth_eval)#, gt < max_depth_eval
+            valid_mask = True # TODO del and uncomment later
+            # valid_mask = gt >  min_depth_eval #  np.logical_and(gt > min_depth_eval)#, gt < max_depth_eval
             scale = np.sum(pred[valid_mask]*gt[valid_mask])/np.sum(pred[valid_mask]**2)
             valid_mask = np.logical_and(valid_mask, eval_area)
 
@@ -433,18 +468,28 @@ class Mirror3d_eval():
                 return 
             one_m_nm_all = mirror_error + non_mirror_error + all_image_error
             return one_m_nm_all
+        
+        one_ref_m_nm_all = []
+        one_raw_m_nm_all = []
         try:
-            self.m_nm_all_refD += torch.tensor(get_refD_scores(np.array(pred_depth).copy(), depth_shift, color_image_path))
+            one_ref_m_nm_all = torch.tensor(get_refD_scores(np.array(pred_depth).copy(), depth_shift, color_image_path))
+            self.m_nm_all_refD += one_ref_m_nm_all
             self.ref_cnt += 1
+            one_ref_m_nm_all = one_ref_m_nm_all.tolist()
         except:
             print(color_image_path, "can't calculate ref error")
 
         try:
-            self.m_nm_all_rawD += torch.tensor(get_rawD_scores(np.array(pred_depth).copy(), depth_shift, color_image_path))
+            one_raw_m_nm_all = torch.tensor(get_rawD_scores(np.array(pred_depth).copy(), depth_shift, color_image_path))
+            self.m_nm_all_rawD += one_raw_m_nm_all
             self.raw_cnt += 1
+            one_raw_m_nm_all = one_raw_m_nm_all.tolist()
         except:
             print(color_image_path, "can't calculate raw error")
 
+        if self.save_score_per_sample:
+            img_name = color_image_path.split("/")[-1]
+            self.sample_score[img_name] = {"ref":one_ref_m_nm_all, "raw":one_raw_m_nm_all}
         return 
 
 

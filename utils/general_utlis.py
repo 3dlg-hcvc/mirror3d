@@ -159,3 +159,31 @@ def save_heatmap_no_border(image, save_path=""):
     print("image saved to : {}".format(save_path))
 
 
+
+def get_filtered_percantage(dataset="scannet"):
+    from tqdm import tqdm
+    data_main_path = "/project/3dlg-hcvc/mirrors/www/Mirror3D_final/{}".format(dataset)
+    test_json = "/project/3dlg-hcvc/mirrors/www/Mirror3D_final/{}/with_mirror/precise/network_input_json/test_10_normal_mirror.json".format(dataset)
+    test_info = read_json(test_json)
+
+    ref_filtered = []
+    raw_filtered = []
+
+    for item in tqdm(test_info["images"]):
+        ref_depth = cv2.imread(os.path.join(data_main_path, item["mesh_refined_path"]), cv2.IMREAD_ANYDEPTH)
+        raw_depth = cv2.imread(os.path.join(data_main_path, item["mesh_raw_path"]), cv2.IMREAD_ANYDEPTH)
+        
+        instance_mask = cv2.imread(os.path.join(data_main_path, item["img_path"].replace("raw", "instance_mask")), cv2.IMREAD_ANYDEPTH) > 0
+        ref_filtered.append(((ref_depth < 1e-3)*instance_mask).sum() / instance_mask.sum() )
+        raw_filtered.append(((raw_depth < 1e-3)*instance_mask).sum() / instance_mask.sum() )
+    
+    print("ref filtered : {:.3f}".format(np.array(ref_filtered).mean()))
+    print("raw filtered : {:.3f}".format(np.array(raw_filtered).mean()))
+
+
+        
+
+
+
+if __name__ == "__main__":
+    get_filtered_percantage()
