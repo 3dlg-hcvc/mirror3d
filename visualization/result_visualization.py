@@ -474,28 +474,12 @@ class Dataset_visulization(Dataset_visulization):
             pred_folder = item[1]
             method_output_folder = os.path.split(pred_folder)[0]
             method_tag_long = item[0]
-            if pred_folder.find("with_mirror/precise") > 0:
-                continue
-            if method_tag_long.find("ref") > 0:
+            Input_tag, refined_depth, method_tag = method_tag_long.split(",")
+            if refined_depth == "ref":
                 refined_depth = True
-            else:
+            elif refined_depth == "raw":
                 refined_depth = False
-            if method_tag_long[:4] == "saic" or method_tag_long.find("saic") > 0 :
-                Input_tag = "RGBD"
-            else:
-                Input_tag = "RGB"
-            method_tag = method_tag_long.replace("-{}".format(method_tag_long.split("-")[-1]),"")
-            method_tag.replace("+Mirror3DNet"," + \\mnet")
-
-            if "sensor" in method_tag:
-                method_tag = "sensor-D"
-                Input_tag = "*"
-                refined_depth = None
-            if "mesh" in method_tag:
-                method_tag = "mesh-D"
-                Input_tag = "*"
-                refined_depth = None
-
+            
             if "m3d" in self.dataset_main_folder:
                 dataset_name = "m3d"
             elif "sacnnet" in self.dataset_main_folder:
@@ -518,6 +502,7 @@ class Dataset_visulization(Dataset_visulization):
 
 
                 mirror3d_eval.compute_and_update_mirror3D_metrics(pred_depth/depth_shift, depth_shift, color_image_path)
+                break
             mirror3d_eval.print_mirror3D_score()
             mirror3d_eval.save_sampleScore(method_output_folder=method_output_folder)
 
