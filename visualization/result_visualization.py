@@ -468,6 +468,12 @@ class Dataset_visulization(Dataset_visulization):
 
     def get_std_score(self, args):
         from utils.mirror3d_metrics import Mirror3d_eval
+        
+        test_sample_name_list = []
+        input_images = read_json(args.test_json)["images"]
+        for one_info in input_images: 
+            test_sample_name_list.append(one_info["hole_raw_path"].split("/")[-1])
+
         for item_index, item in enumerate(self.method_predFolder.items()):
             if args.multi_processing and item_index!=args.process_index:
                 continue
@@ -490,7 +496,9 @@ class Dataset_visulization(Dataset_visulization):
             mirror3d_eval.set_cal_std(True)
             mirror3d_eval.set_min_threshold_filter(args.min_threshold_filter)
             mirror3d_eval.set_save_score_per_sample(True)
-            for one_pred_name in tqdm(os.listdir(pred_folder)):
+            for one_pred_name in tqdm(test_sample_name_list):
+                if one_pred_name not in os.listdir(pred_folder):
+                    continue
                 one_pred_path = os.path.join(pred_folder, one_pred_name)
                 if self.is_matterport3d:
                     depth_shift = 4000
