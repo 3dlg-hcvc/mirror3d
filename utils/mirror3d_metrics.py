@@ -40,6 +40,10 @@ class Mirror3d_eval():
         self.cal_std = False
         self.sample_name = []
         self.sample_score = dict()
+        self.min_threshold_filter = True
+
+    def set_min_threshold_filter(self, min_threshold_filter):
+        self.min_threshold_filter = min_threshold_filter
 
     def set_cal_std(self, cal_std):
         self.cal_std = cal_std
@@ -107,11 +111,11 @@ class Mirror3d_eval():
         table_one_line_result["main_output_folder"] = "{}_{}_{} {}".format(self.Input_tag, self.Train_tag, latex_method_tag, os.path.abspath(self.main_output_folder))
 
         if compare_with_raw:
-            one_name = "raw_result.json"
-            save_name = "raw_{}_result.json".format(self.dataset)
+            one_name = "raw_result_minFilter_{}.json".format(self.min_threshold_filter)
+            save_name = "raw_{}_minFilter_{}_result.json".format(self.dataset, self.min_threshold_filter)
         else:
-            one_name = "ref_result.json"
-            save_name = "ref_{}_result.json".format(self.dataset)
+            one_name = "ref_result_minFilter_{}.json".format(self.min_threshold_filter)
+            save_name = "ref_{}_minFilter_{}_result.json".format(self.dataset, self.min_threshold_filter)
 
         if compute_std:
             save_name = "std_" + save_name
@@ -241,7 +245,7 @@ class Mirror3d_eval():
             gt = gt[valid_mask]
             pred = pred[valid_mask]
 
-            if valid_mask.sum() == 0 :
+            if valid_mask.sum() == 0 or sum(gt[valid_mask]) == 0:
                 return False
 
             thresh = np.maximum((gt / pred), (pred / gt))
@@ -360,8 +364,14 @@ class Mirror3d_eval():
             gt[np.isinf(gt)] = 0
             gt[np.isnan(gt)] = 0
             
-            valid_mask = True # TODO del and uncomment later
-            # valid_mask = gt >  min_depth_eval #  np.logical_and(gt > min_depth_eval)#, gt < max_depth_eval
+
+            
+            
+            if self.min_threshold_filter:
+                valid_mask = gt >  min_depth_eval #  np.logical_and(gt > min_depth_eval)#, gt < max_depth_eval
+            else:
+                valid_mask = True 
+                
             scale = np.sum(pred[valid_mask]*gt[valid_mask])/np.sum(pred[valid_mask]**2)
             valid_mask = np.logical_and(valid_mask, eval_area)
 

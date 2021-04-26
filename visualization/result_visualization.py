@@ -504,6 +504,7 @@ class Dataset_visulization(Dataset_visulization):
                 dataset_name = "nyu"
             mirror3d_eval = Mirror3d_eval(refined_depth,logger=None, Input_tag=Input_tag, method_tag=method_tag, dataset=dataset_name)
             mirror3d_eval.set_cal_std(True)
+            mirror3d_eval.set_min_threshold_filter(args.min_threshold_filter)
             mirror3d_eval.set_save_score_per_sample(True)
             for one_pred_name in tqdm(os.listdir(pred_folder)):
                 one_pred_path = os.path.join(pred_folder, one_pred_name)
@@ -704,6 +705,7 @@ if __name__ == "__main__":
         '--method_order_txt', default="", type=str)
     parser.add_argument(
         '--all_info_json', default="output/ref_m3d_result.json", type=str)
+    parser.add_argument('--min_threshold_filter', help='do multi-process or not',action='store_true')
     args = parser.parse_args()
 
     vis_tool = Dataset_visulization(pred_w = args.pred_w, pred_h = args.pred_h, dataset_main_folder=args.dataset_main_folder, process_index=args.process_index, \
