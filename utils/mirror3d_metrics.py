@@ -35,7 +35,8 @@ class Mirror3d_eval():
                 self.Train_tag = "mesh"
         else:
             self.Train_tag = "*"
-        self.main_output_folder = ""
+        self.main_output_folder = "output/{}_{}_{}".format(self.Train_tag, self.Train_tag, self.method_tag)
+        os.makedirs(self.main_output_folder, exist_ok=True)
         self.method_logFile_json_save_folder = "output"
         self.cal_std = False
         self.sample_name = []

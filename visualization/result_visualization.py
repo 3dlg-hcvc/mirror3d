@@ -514,7 +514,7 @@ class Dataset_visulization(Dataset_visulization):
             mirror3d_eval.save_sampleScore(method_output_folder=method_output_folder)
 
 
-    def generate_paper_html(self, vis_saved_main_folder="", sample_num_per_page=50, template_path=""):
+    def generate_html_with_score(self, vis_saved_main_folder="", sample_num_per_page=50, template_path=""):
         """
         (1) under vis_saved_folder there should only be the vislization output sub-folders and nothing else
 
