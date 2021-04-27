@@ -496,11 +496,11 @@ class Dataset_visulization(Dataset_visulization):
             method_output_folder = os.path.split(pred_folder)[0]
             method_tag_long = item[0]
             Input_tag, refined_depth, method_tag = method_tag_long.split(",")
-            if refined_depth == "ref":
+            if "ref" in refined_depth :
                 refined_depth = True
-            elif refined_depth == "raw":
+            elif refined_depth == "raw" or refined_depth== "mesh" :
                 refined_depth = False
-            
+            method_tag.replace('\\\\','\\')
             if "m3d" in self.dataset_main_folder:
                 dataset_name = "m3d"
             elif "sacnnet" in self.dataset_main_folder:
