@@ -220,7 +220,7 @@ class Mirror3d_eval():
             self.Train_tag = self.Train_tag.replace("ref","mesh-ref")
             self.Train_tag = self.Train_tag.replace("raw","mesh")
 
-        def compute_errors(gt, pred, eval_area) or sum(gt[valid_mask]) == 0: #! gt and pred are in m
+        def compute_errors(gt, pred, eval_area): #! gt and pred are in m
             
             gt = np.array(gt, dtype="f")
             pred = np.array(pred, dtype="f")
@@ -252,7 +252,7 @@ class Mirror3d_eval():
             gt = gt[valid_mask]
             pred = pred[valid_mask]
 
-            if valid_mask.sum() == 0 or gt.sum() == 0:
+            if valid_mask.sum() == 0 or sum(gt):
                 return np.array(False)
 
             thresh = np.maximum((gt / pred), (pred / gt))
