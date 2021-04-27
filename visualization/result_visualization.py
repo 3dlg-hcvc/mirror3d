@@ -481,6 +481,8 @@ class Dataset_visulization(Dataset_visulization):
             method_output_folder = os.path.split(pred_folder)[0]
             method_tag_long = item[0]
             Input_tag, refined_depth, method_tag = method_tag_long.split(",")
+            method_tag.replace("+"," + ")
+            method_tag.replace('\\\\','\\')
             if refined_depth == "ref":
                 refined_depth = True
             elif refined_depth == "raw":
@@ -507,8 +509,6 @@ class Dataset_visulization(Dataset_visulization):
                     depth_shift = 1000
                     color_image_path = os.path.join(self.dataset_main_folder, "raw", one_pred_name)
                 pred_depth = cv2.imread(one_pred_path, cv2.IMREAD_ANYDEPTH)
-
-
                 mirror3d_eval.compute_and_update_mirror3D_metrics(pred_depth/depth_shift, depth_shift, color_image_path)
             mirror3d_eval.print_mirror3D_score()
             mirror3d_eval.save_sampleScore(method_output_folder=method_output_folder)
