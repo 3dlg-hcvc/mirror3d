@@ -125,6 +125,7 @@ class Mirror3d_DatasetMapper:
             # Crop around an instance if there are instances in the image.
             # USER: Remove if you don't use cropping
             if self.crop_gen:
+
                 crop_tfm = utils.gen_crop_transform_with_instance(
                     self.crop_gen.get_crop_size(image.shape[:2]),
                     image.shape[:2],
@@ -132,7 +133,6 @@ class Mirror3d_DatasetMapper:
                 )
                 image = crop_tfm.apply_image(image)
             image, transforms = T.apply_transform_gens(self.tfm_gens, image)
-            
  
             if self.crop_gen:
                 transforms = crop_tfm + transforms

@@ -12,7 +12,6 @@ OUTPUT_DIR : "output"
 
 
 ############## network configure ##############
-
 MODEL:
   WEIGHTS : "checkpoint/R-50.pkl" # "checkpoint/R-50.pkl"
   DEVICE : "cuda:0" 
@@ -44,6 +43,10 @@ INPUT:
   MAX_SIZE_TRAIN : 640
   MIN_SIZE_TEST : (480)
   MAX_SIZE_TEST : 640
+  RANDOM_FLIP : "none"
+TEST:
+  AUG:
+    FLIP : False
 
 ############## planeRCNN configure ##############
 DEPTH_EST : True  # TODO ori & new(optional)

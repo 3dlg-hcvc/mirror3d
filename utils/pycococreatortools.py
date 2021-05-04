@@ -7,7 +7,6 @@ import numpy as np
 from itertools import groupby
 from skimage import measure
 from PIL import Image
-from pycocotools import mask
 
 convert = lambda text: int(text) if text.isdigit() else text.lower()
 natrual_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ]
@@ -78,6 +77,7 @@ def create_image_info(image_id, file_name, image_size,
 
 def create_annotation_info(annotation_id, image_id, category_info, binary_mask, 
                            image_size=None, tolerance=2, bounding_box=None):
+    from pycocotools import mask
 
     if image_size is not None:
         binary_mask = resize_binary_mask(binary_mask, image_size)

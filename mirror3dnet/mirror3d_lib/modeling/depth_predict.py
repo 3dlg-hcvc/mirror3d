@@ -102,7 +102,6 @@ class Depth(nn.Module):
         x = self.deconv4(torch.cat([self.conv4(feature_maps["p3"]), x], dim=1))
         x = self.deconv5(torch.cat([self.conv5(feature_maps["p2"]), x], dim=1))
         x = self.depth_pred(x) #  torch.Size([1, 1, 240, 320])
-
         x = torch.nn.functional.interpolate(x, size=gt_depths[0].shape, mode='bilinear')
 
         depth_loss = sum([torch.sum(torch.abs(x[idx].squeeze() - gt_depths[idx]) ) / torch.clamp(((gt_depths[idx] > 1e-4).float()).sum(), min=1) for idx , one_gt in enumerate(gt_depths)]) / len(gt_depths)

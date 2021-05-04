@@ -527,6 +527,7 @@ class Dataset_visulization(Dataset_visulization):
                 mirror3d_eval.compute_and_update_mirror3D_metrics(pred_depth/depth_shift, depth_shift, color_image_path)
             mirror3d_eval.print_mirror3D_score()
             mirror3d_eval.save_sampleScore(method_output_folder=method_output_folder)
+            
 
     def generate_paper_html(self, vis_saved_main_folder="", sample_num_per_page=50, template_path=""):
         """
@@ -545,7 +546,7 @@ class Dataset_visulization(Dataset_visulization):
             method_folder_list = ["GT","mesh-D","mesh-D+Mirror3DNet","saic-ref","saic-raw","saic+Mirror3DNet","BTS-ref","BTS-raw","BTS+Mirror3DNet","VNL-ref","VNL-raw","VNL+Mirror3DNet"]
         else:
             method_folder_list = ["GT","sensor-D","sensor-D+Mirror3DNet-m3d","saic-ref","saic-raw","saic+Mirror3DNet-m3d","BTS-ref","BTS-raw","BTS+Mirror3DNet-m3d","VNL-ref","VNL-raw","VNL+Mirror3DNet-m3d"]
-        
+        # TODO if want to sort by RMSE can sort the self.color_img_list by RMSE score here 
         colorImgSubset_list = [self.color_img_list[x:x+sample_num_per_page] for x in range(0, len(self.color_img_list), sample_num_per_page)]
         for html_index, one_colorSubset in enumerate(colorImgSubset_list):
             
@@ -796,11 +797,11 @@ if __name__ == "__main__":
     parser.add_argument(
         '--window_h', default=800, type=int, help="height of the visilization window")
     parser.add_argument(
-        '--sample_num_per_page', default=5, type=int, help="height of the visilization window")
+        '--sample_num_per_page', default=100, type=int, help="height of the visilization window")
     parser.add_argument(
         '--vis_saved_folder', default="/project/3dlg-hcvc/mirrors/www/cr_vis/nyu_result_vis")
     parser.add_argument(
-        '--output_folder', default="/project/3dlg-hcvc/mirrors/www/cr_vis/waste/html")
+        '--output_folder', default="/project/3dlg-hcvc/mirrors/www/cr_vis/nyu_html")
     parser.add_argument(
         '--method_folder_list', nargs='+', default="", type=str)
     parser.add_argument("--midrule_index", nargs="+", type=int, help="add /midrule in after these liens; index start from 1") 
@@ -821,8 +822,8 @@ if __name__ == "__main__":
                                     output_folder=args.output_folder, overwrite=args.overwrite, \
                                     window_w=args.window_w, window_h=args.window_h, view_mode=args.view_mode)
     if args.stage == "1":
-        vis_tool.generate_method_pred(args.method_predFolder_txt)
-        vis_tool.generate_pcd_for_whole_dataset()
+        # vis_tool.generate_method_pred(args.method_predFolder_txt)
+        # vis_tool.generate_pcd_for_whole_dataset()
         vis_tool.generate_method_pred(args.method_predFolder_txt)
         vis_tool.generate_color_depth_for_all_pred()
     elif args.stage == "2":

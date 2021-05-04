@@ -181,9 +181,15 @@ def get_filtered_percantage(dataset="scannet"):
     print("raw filtered : {:.3f}".format(np.array(raw_filtered).mean()))
 
 
+
+
+def check_converge(tb_path, metrics):
+    
+    pass
         
 
 
 
 if __name__ == "__main__":
-    get_filtered_percantage()
+    # get_filtered_percantage()
+    check_converge()

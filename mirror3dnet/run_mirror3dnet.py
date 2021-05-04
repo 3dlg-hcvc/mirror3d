@@ -18,7 +18,7 @@ from contextlib import redirect_stdout
 import argparse
 import torch.multiprocessing
 torch.multiprocessing.set_sharing_strategy('file_system')
-
+torch.backends.cudnn.deterministic = True
 
 def main(args):
 

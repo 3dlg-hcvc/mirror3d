@@ -38,10 +38,11 @@ class Mirror3d_eval():
         self.main_output_folder = "output/{}_{}_{}".format(self.Train_tag, self.Train_tag, self.method_tag)
         os.makedirs(self.main_output_folder, exist_ok=True)
         self.method_logFile_json_save_folder = "output"
-        self.cal_std = False
+        self.cal_std = True
         self.sample_name = []
         self.sample_score = dict()
         self.min_threshold_filter = True
+        self.save_score_per_sample = True
 
     def set_min_threshold_filter(self, min_threshold_filter):
         self.min_threshold_filter = min_threshold_filter
@@ -196,7 +197,7 @@ class Mirror3d_eval():
             self.cal_std_for_all(self.m_nm_all_rawD/ self.raw_cnt, compare_with_raw=True)
 
     def save_sampleScore(self, method_output_folder):
-        one_output_path = os.path.join(method_output_folder, "score_per_sample.json")
+        one_output_path = os.path.join(method_output_folder, "minFilter_{}_score_per_sample.json".format(self.min_threshold_filter))
         save_json(one_output_path, self.sample_score) 
 
     def cal_std_for_all(self, avg_score, compare_with_raw):
@@ -234,9 +235,6 @@ class Mirror3d_eval():
             gt[np.isinf(gt)] = 0
             gt[np.isnan(gt)] = 0
             
-
-            
-            
             if self.min_threshold_filter:
                 valid_mask = gt >  min_depth_eval #  np.logical_and(gt > min_depth_eval)#, gt < max_depth_eval
             else:
@@ -252,7 +250,7 @@ class Mirror3d_eval():
             gt = gt[valid_mask]
             pred = pred[valid_mask]
 
-            if valid_mask.sum() == 0 or sum(gt):
+            if valid_mask.sum() == 0 or sum(gt) == 0:
                 return np.array(False)
 
             thresh = np.maximum((gt / pred), (pred / gt))
@@ -370,10 +368,10 @@ class Mirror3d_eval():
             one_raw_m_nm_all = one_raw_m_nm_all.tolist()
         except:
             print(color_image_path, "can't calculate raw error")
-
         if self.save_score_per_sample:
             img_name = color_image_path.split("/")[-1]
             self.sample_score[img_name] = {"ref":one_ref_m_nm_all, "raw":one_raw_m_nm_all}
+
         return 
 
 
