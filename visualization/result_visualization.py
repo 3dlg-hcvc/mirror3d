@@ -447,17 +447,19 @@ class Dataset_visulization(Dataset_visulization):
             main_table_lines_metrics_list.append(one_latex_lines[0][0])
 
             sup_table_part1_lines_sub.append(one_latex_lines[1][1] +"\\")
-            sup_table_part1_lines_metrics_list.append(one_latex_lines[0][0])
+            sup_table_part1_lines_metrics_list.append(one_latex_lines[1][0])
 
             sup_table_part2_lines_sub.append(one_latex_lines[2][1] +"\\")
-            sup_table_part2_lines_metrics_list.append(one_latex_lines[0][0])
+            sup_table_part2_lines_metrics_list.append(one_latex_lines[2][0])
 
+            
             if ((exp_index + 1) in midrule_index) or (exp_index == len(method_order_list)-1):
                 
                 if "*" not in method_tag:
+                    # import pdb;pdb.set_trace()
                     main_table_lines_sub = identify_best_for_subLines(main_table_lines_sub, main_table_lines_metrics_list)
-                    # sup_table_part1_lines_sub = identify_best_for_subLines(sup_table_part1_lines_sub, sup_table_part1_lines_metrics_list)
-                    # sup_table_part2_lines_sub = identify_best_for_subLines(sup_table_part2_lines_sub, sup_table_part2_lines_metrics_list)
+                    sup_table_part1_lines_sub = identify_best_for_subLines(sup_table_part1_lines_sub, sup_table_part1_lines_metrics_list)
+                    sup_table_part2_lines_sub = identify_best_for_subLines(sup_table_part2_lines_sub, sup_table_part2_lines_metrics_list)
                     
                 main_table_lines += main_table_lines_sub
                 sup_table_part1_lines += sup_table_part1_lines_sub
@@ -473,11 +475,19 @@ class Dataset_visulization(Dataset_visulization):
                 
         
         main_table_lines.append("\\bottomrule\end{tabular}} \caption{" + caption + "}\end{table}")
-        sup_table_part1_lines.append("\\bottomrule\end{tabular}}\caption{" + caption + "}\end{table}")
-        sup_table_part2_lines.append("\\bottomrule\end{tabular}}\caption{" + caption + "}\end{table}")
+        sup_table_part1_lines.append("\\bottomrule\end{tabular}}")
+        sup_table_part2_lines.append("\\bottomrule\end{tabular}}\caption{ Additional quantitative metrics for " + caption + "}\end{table*}")
 
         print(" ##################### main latex table ##################### ")
         for line in main_table_lines:
+            print(line)
+
+        print(" ##################### supplemental latex table ##################### ")
+        for line in sup_table_part1_lines:
+            print(line)
+        
+        # print(" ##################### supplemental latex table part 2 ##################### ")
+        for line in sup_table_part2_lines:
             print(line)
 
 
