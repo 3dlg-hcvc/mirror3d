@@ -169,7 +169,9 @@ class Mirror3dTrainer(DefaultTrainer):
             return evaluator_list[0]
         return DatasetEvaluators(evaluator_list)
 
-
+    def init_IOU(cls):
+        cls.IOU_list = []
+        cls.checkpoint_save_list = []
 
     @classmethod
     def build_train_loader(cls, cfg):
@@ -236,8 +238,9 @@ class Mirror3dTrainer(DefaultTrainer):
             output_list= mirror3d_inference_on_dataset(model, data_loader, evaluator)
             mirror3d_eval = Mirror3DNet_Eval(output_list, cfg)
             mirror3d_eval.eval_main()
-
+            
         cls.output_list = output_list
+        cls.IOU_list.append(mirror3d_eval.mean_IOU) 
         return OrderedDict()
 
     @classmethod

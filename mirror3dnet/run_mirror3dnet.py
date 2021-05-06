@@ -108,6 +108,7 @@ def main(args):
     """
 
     trainer = Mirror3dTrainer(cfg)
+    trainer.init_IOU()
     trainer.resume_or_load(resume=args.resume)
 
     yml_save_path = os.path.join(cfg.OUTPUT_DIR, "training_config.yml")

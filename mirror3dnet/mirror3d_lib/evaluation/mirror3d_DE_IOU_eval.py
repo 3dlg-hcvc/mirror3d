@@ -25,6 +25,7 @@ class Mirror3DNet_Eval:
     def __init__(self, output_list, cfg):
         self.output_list = output_list
         self.cfg = cfg
+        self.mean_IOU = 0
         print("########## cfg.SEED ##########", cfg.SEED)
         log_file_save_path = os.path.join(self.cfg.OUTPUT_DIR, "eval_result.log")
         logging.basicConfig(filename=log_file_save_path, filemode="w", format="%(asctime)s %(name)s:%(levelname)s:%(message)s", datefmt="%d-%m-%Y %H:%M:%S", level=logging.INFO)
@@ -411,7 +412,7 @@ class Mirror3DNet_Eval:
 
         eval_seg_fun.print_seg_score()
         IOU_list, f_measure_list, MAE_list = eval_seg_fun.get_results()
-        
+        self.mean_IOU = np.mean(IOU_list)
         if not self.cfg.EVAL:
             storage = get_event_storage()
             storage.put_scalar("mean IOU",np.mean(IOU_list))

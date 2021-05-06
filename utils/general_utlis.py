@@ -13,6 +13,22 @@ import matplotlib.pyplot as plt
 from utils.algorithm import *
 import shutil
 
+def check_converge(rmse_list=[], check_freq=1, change_ratio_threshold=0.03):# TODO check_freq = 2
+    if len(rmse_list) < check_freq*2:
+        return False
+
+    for rmse_index in range(len(rmse_list)):
+        if rmse_index <= check_freq -1:
+             continue
+        check_back_loss = rmse_list[rmse_index+1-check_freq:rmse_index+1]
+        check_forward_loss = rmse_list[rmse_index+1:rmse_index+1+check_freq]
+        change_ratio =(np.abs(np.average(check_forward_loss) - np.average(check_back_loss)))/np.average(check_back_loss) 
+        print("######################### change_ratio {} #########################".format(change_ratio))
+        if change_ratio <= change_ratio_threshold: # TODO 0.03
+            return True
+    return False
+
+
 
 def list_diff(list1, list2):
     """
@@ -181,15 +197,3 @@ def get_filtered_percantage(dataset="scannet"):
     print("raw filtered : {:.3f}".format(np.array(raw_filtered).mean()))
 
 
-
-
-def check_converge(tb_path, metrics):
-    
-    pass
-        
-
-
-
-if __name__ == "__main__":
-    # get_filtered_percantage()
-    check_converge()
