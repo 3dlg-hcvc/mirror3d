@@ -2,7 +2,7 @@ from utils.general_utlis import *
 import os
 import argparse
 
-def sh_to_sbatch(train_sh_path, log_config, sh_output_foler, sbatch_config, env_config):
+def sh_to_sbatch(train_sh_path, log_config, sh_output_foler, sbatch_config, env_config, run_time):
     """
     Args:
         train_sh_path : the .sh file
@@ -38,7 +38,7 @@ def sh_to_sbatch(train_sh_path, log_config, sh_output_foler, sbatch_config, env_
                 anchor_num = item.split("m3d_kmeans_normal_")[-1].split(".")[0]
                 method_name = method_name + "_" + anchor_num
         
-        job_name = "{}_{}_{}_{}".format(method_name, depth_tag, resume_tag, have_mirror_tag)
+        job_name = "{}_{}_{}_{}_{}".format(run_time, method_name, depth_tag, resume_tag, have_mirror_tag)
         return job_name
 
     os.makedirs(sh_output_foler, exist_ok=True)
@@ -80,6 +80,8 @@ if __name__ == "__main__":
         '--log_config', default="/home/jiaqit/projects/rrg-msavva/jiaqit/cr_result/log/%x-%j.out", type=str) 
     parser.add_argument(
         '--sh_output_foler', default="", type=str) 
+    parser.add_argument(
+        '--run_time', default="3", type=str) 
 
     args = parser.parse_args()
 
@@ -89,10 +91,11 @@ if __name__ == "__main__":
                     "#SBATCH --account=rrg-msavva", \
                     "#SBATCH --gres=gpu:v100l:1", \
                     "#SBATCH --mem=48000", \
-                    "#SBATCH --time=0-23:45"]
+                    "#SBATCH --time=0-10:45"]
     # TODO 
     env_config = ["source /home/jiaqit/projects/rrg-msavva/jiaqit/setup/anaconda3/bin/activate", \
                   "conda activate mirror3d", \
                   'export PYTHONPATH="/home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D"'] 
 
-    sh_to_sbatch(args.train_sh_path, args.log_config, args.sh_output_foler, sbatch_config, env_config)
+    for run_index in range(int(args.run_time)):
+        sh_to_sbatch(args.train_sh_path, args.log_config, args.sh_output_foler, sbatch_config, env_config, run_index)
