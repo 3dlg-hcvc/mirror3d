@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from utils.algorithm import *
 import shutil
 
-def check_converge(rmse_list=[], check_freq=1, change_ratio_threshold=0.03):# TODO check_freq = 2
+def check_converge(rmse_list=[], check_freq=2, change_ratio_threshold=0.03):
     if len(rmse_list) < check_freq*2:
         return False
 
@@ -24,7 +24,7 @@ def check_converge(rmse_list=[], check_freq=1, change_ratio_threshold=0.03):# TO
         check_forward_loss = rmse_list[rmse_index+1:rmse_index+1+check_freq]
         change_ratio =(np.abs(np.average(check_forward_loss) - np.average(check_back_loss)))/np.average(check_back_loss) 
         print("######################### change_ratio {} #########################".format(change_ratio))
-        if change_ratio <= change_ratio_threshold: # TODO 0.03
+        if change_ratio <= change_ratio_threshold: 
             return True
     return False
 
