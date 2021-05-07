@@ -44,6 +44,7 @@ class Mirror3d_eval():
         self.min_threshold_filter = True
         self.save_score_per_sample = True
         self.get_full_set = False
+        
 
     def set_min_threshold_filter(self, min_threshold_filter):
         self.min_threshold_filter = min_threshold_filter
@@ -123,19 +124,20 @@ class Mirror3d_eval():
         if compute_std:
             save_name = "std_" + save_name
 
-        os.makedirs(self.method_logFile_json_save_folder, exist_ok=True)
-        method_logFile_json_save_path = os.path.join(self.method_logFile_json_save_folder, save_name)
-        if os.path.exists(method_logFile_json_save_path):
-            logFile_json = read_json(method_logFile_json_save_path)
-        else:
-            logFile_json = dict()
-        if tag in logFile_json:
-            if table_one_line_result not in logFile_json[tag]:
-                logFile_json[tag].append(table_one_line_result)
-        else:
-            logFile_json[tag] = [table_one_line_result]
-        save_json(method_logFile_json_save_path, logFile_json)
-        print("update info file : {}".format(method_logFile_json_save_path))
+        # TODO uncommnet during inference 
+        # os.makedirs(self.method_logFile_json_save_folder, exist_ok=True)
+        # method_logFile_json_save_path = os.path.join(self.method_logFile_json_save_folder, save_name)
+        # if os.path.exists(method_logFile_json_save_path):
+        #     logFile_json = read_json(method_logFile_json_save_path)
+        # else:
+        #     logFile_json = dict()
+        # if tag in logFile_json:
+        #     if table_one_line_result not in logFile_json[tag]:
+        #         logFile_json[tag].append(table_one_line_result)
+        # else:
+        #     logFile_json[tag] = [table_one_line_result]
+        # save_json(method_logFile_json_save_path, logFile_json)
+        # print("update info file : {}".format(method_logFile_json_save_path))
 
         
         latex_temp_save_path = os.path.join(self.main_output_folder, one_name)
