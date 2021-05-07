@@ -13,20 +13,18 @@ import matplotlib.pyplot as plt
 from utils.algorithm import *
 import shutil
 
-def check_converge(rmse_list=[], check_freq=2, change_ratio_threshold=0.03):
-    if len(rmse_list) < check_freq*2:
+def check_converge(score_list=[], check_freq=2, change_ratio_threshold=0.03):
+    if len(score_list) < check_freq*2:
         return False
 
-    for rmse_index in range(len(rmse_list)):
-        if rmse_index <= check_freq -1:
-             continue
-        check_back_loss = rmse_list[rmse_index+1-check_freq:rmse_index+1]
-        check_forward_loss = rmse_list[rmse_index+1:rmse_index+1+check_freq]
-        change_ratio =(np.abs(np.average(check_forward_loss) - np.average(check_back_loss)))/np.average(check_back_loss) 
-        print("######################### change_ratio {} #########################".format(change_ratio))
-        if change_ratio <= change_ratio_threshold: 
-            return True
-    return False
+    check_back_loss = score_list[-check_freq*2:-check_freq]
+    check_forward_loss = score_list[-check_freq:]
+    change_ratio =(np.abs(np.average(check_forward_loss) - np.average(check_back_loss)))/np.average(check_back_loss) 
+    print("######################### change_ratio {} #########################".format(change_ratio))
+    if change_ratio <= change_ratio_threshold: 
+        return True
+    else:
+        return False
 
 
 
@@ -176,7 +174,7 @@ def save_heatmap_no_border(image, save_path=""):
 
 
 
-def get_filtered_percantage(dataset="scannet"):
+def get_filtered_percantage(dataset="m3d"):
     from tqdm import tqdm
     data_main_path = "/project/3dlg-hcvc/mirrors/www/Mirror3D_final/{}".format(dataset)
     test_json = "/project/3dlg-hcvc/mirrors/www/Mirror3D_final/{}/with_mirror/precise/network_input_json/test_10_normal_mirror.json".format(dataset)
@@ -190,16 +188,18 @@ def get_filtered_percantage(dataset="scannet"):
 
     for item in tqdm(test_info["images"]):
         ref_depth = cv2.imread(os.path.join(data_main_path, item["mesh_refined_path"]), cv2.IMREAD_ANYDEPTH)
-        raw_depth = cv2.imread(os.path.join(data_main_path, item["mesh_raw_path"]), cv2.IMREAD_ANYDEPTH)
-        colored_depth_path = os.path.join(data_main_path,item["img_path"].replace("raw", "hole_refined_ply/hole_refined_colored_depth"))
+        raw_depth = cv2.imread(os.path.join(data_main_path, item["hole_raw_path"]), cv2.IMREAD_ANYDEPTH)
 
         instance_mask = cv2.imread(os.path.join(data_main_path, item["img_path"].replace("raw", "instance_mask")), cv2.IMREAD_ANYDEPTH) > 0
         none_mirror_mask =  (instance_mask==False)
         ref_mirror_area_filtered.append(((ref_depth < 1e-3)*instance_mask).sum() / instance_mask.sum() )
         raw_mirror_area_filtered.append(((raw_depth < 1e-3)*instance_mask).sum() / instance_mask.sum() )
 
-        if ((raw_depth < 1e-3)*instance_mask).sum() / instance_mask.sum() > 0.5:
-            print(colored_depth_path)
+        # if ((raw_depth < 1e-3)*instance_mask).sum() / instance_mask.sum() > 0.5:
+        #     sample_name = item["mesh_raw_path"].split("/")[-1]
+        #     colored_depth_path = "/project/3dlg-hcvc/mirrors/www/cr_vis/scannet_result_vis/sensor-D/colored_pred_depth/{}".format(sample_name)
+        #     color_img_path = os.path.join(data_main_path, item["img_path"])
+        #     print(colored_depth_path, color_img_path)
 
         ref_none_mirror_filtered.append(((ref_depth < 1e-3)*none_mirror_mask).sum() / none_mirror_mask.sum() )
         raw_none_mirror_filtered.append(((raw_depth < 1e-3)*none_mirror_mask).sum() / none_mirror_mask.sum() )

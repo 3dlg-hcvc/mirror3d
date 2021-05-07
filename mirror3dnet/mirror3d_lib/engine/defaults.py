@@ -16,13 +16,13 @@ import itertools
 import torch.utils.data
 from collections import OrderedDict
 import os
+from utils.general_utlis import check_converge
 
 from detectron2.engine.defaults import DefaultTrainer
 from detectron2.evaluation import (
     DatasetEvaluator,
     inference_on_dataset,
 )
-from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.utils.registry import Registry
 from detectron2.data import (
     build_detection_train_loader, 
@@ -167,11 +167,10 @@ class Mirror3dTrainer(DefaultTrainer):
             )
         elif len(evaluator_list) == 1:
             return evaluator_list[0]
+        
         return DatasetEvaluators(evaluator_list)
 
-    def init_IOU(cls):
-        cls.IOU_list = []
-        cls.checkpoint_save_list = []
+        
 
     @classmethod
     def build_train_loader(cls, cfg):
@@ -182,6 +181,8 @@ class Mirror3dTrainer(DefaultTrainer):
         It now calls :func:`detectron2.data.build_detection_train_loader`.
         Overwrite it if you'd like a different data loader.
         """
+        cls.IOU_list = []
+        cls.checkpoint_save_list = []
         train_mapper = Mirror3d_DatasetMapper(cfg, True)
         return build_detection_train_loader(cfg, mapper= train_mapper)
 
@@ -238,9 +239,12 @@ class Mirror3dTrainer(DefaultTrainer):
             output_list= mirror3d_inference_on_dataset(model, data_loader, evaluator)
             mirror3d_eval = Mirror3DNet_Eval(output_list, cfg)
             mirror3d_eval.eval_main()
-            
         cls.output_list = output_list
         cls.IOU_list.append(mirror3d_eval.mean_IOU) 
+        if check_converge(score_list=cls.IOU_list):
+            print("model converged")
+            exit()
+
         return OrderedDict()
 
     @classmethod
