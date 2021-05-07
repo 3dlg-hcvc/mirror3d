@@ -113,7 +113,7 @@ class Dataset_visulization(Dataset_visulization):
                 colored_pred_error_map_save_path = os.path.join(one_colored_pred_error_map_folder,  sample_name)
                 gt_depth_img_path = color_img_path.replace("raw","hole_refined_depth")
             
-            info_save_path = os.path.join(one_info_folder, sample_name)
+            info_save_path = os.path.join(one_info_folder, "{}.json".format(sample_name.split(".")[0]))
             gt_depth = cv2.imread(gt_depth_img_path, cv2.IMREAD_ANYDEPTH)
             pred_depth = cv2.imread(pred_depth_img_path, cv2.IMREAD_ANYDEPTH)
             if self.is_matterport3d:
