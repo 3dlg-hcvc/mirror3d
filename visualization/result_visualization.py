@@ -124,10 +124,9 @@ class Dataset_visulization(Dataset_visulization):
             pred_depth = np.asarray(cv2.resize(pred_depth, dsize=(self.pred_w, self.pred_h), interpolation=cv2.INTER_NEAREST), dtype=np.float32) / depth_shift
             
             rmse = (gt_depth - pred_depth) ** 2
-            
-            
-            if os.path.exists(info_json_path):
-                info = read_json(info_json_path)
+            score = float(np.mean(rmse))
+            if os.path.exists(info_save_path):
+                info = read_json(info_save_path)
             else:
                 info = dict()
 
