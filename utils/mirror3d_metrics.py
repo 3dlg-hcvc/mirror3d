@@ -41,7 +41,7 @@ class Mirror3d_eval():
         self.cal_std = True
         self.sample_name = []
         self.sample_score = dict()
-        self.min_threshold_filter = False
+        self.min_threshold_filter = True
         self.save_score_per_sample = True
         self.get_full_set = False
 
