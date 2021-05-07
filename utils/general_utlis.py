@@ -182,18 +182,36 @@ def get_filtered_percantage(dataset="scannet"):
     test_json = "/project/3dlg-hcvc/mirrors/www/Mirror3D_final/{}/with_mirror/precise/network_input_json/test_10_normal_mirror.json".format(dataset)
     test_info = read_json(test_json)
 
-    ref_filtered = []
-    raw_filtered = []
+    ref_mirror_area_filtered = []
+    raw_mirror_area_filtered = []
+
+    ref_none_mirror_filtered = []
+    raw_none_mirror_filtered = []
 
     for item in tqdm(test_info["images"]):
         ref_depth = cv2.imread(os.path.join(data_main_path, item["mesh_refined_path"]), cv2.IMREAD_ANYDEPTH)
         raw_depth = cv2.imread(os.path.join(data_main_path, item["mesh_raw_path"]), cv2.IMREAD_ANYDEPTH)
-        
+        colored_depth_path = os.path.join(data_main_path,item["img_path"].replace("raw", "hole_refined_ply/hole_refined_colored_depth"))
+
         instance_mask = cv2.imread(os.path.join(data_main_path, item["img_path"].replace("raw", "instance_mask")), cv2.IMREAD_ANYDEPTH) > 0
-        ref_filtered.append(((ref_depth < 1e-3)*instance_mask).sum() / instance_mask.sum() )
-        raw_filtered.append(((raw_depth < 1e-3)*instance_mask).sum() / instance_mask.sum() )
+        none_mirror_mask =  (instance_mask==False)
+        ref_mirror_area_filtered.append(((ref_depth < 1e-3)*instance_mask).sum() / instance_mask.sum() )
+        raw_mirror_area_filtered.append(((raw_depth < 1e-3)*instance_mask).sum() / instance_mask.sum() )
+
+        if ((raw_depth < 1e-3)*instance_mask).sum() / instance_mask.sum() > 0.5:
+            print(colored_depth_path)
+
+        ref_none_mirror_filtered.append(((ref_depth < 1e-3)*none_mirror_mask).sum() / none_mirror_mask.sum() )
+        raw_none_mirror_filtered.append(((raw_depth < 1e-3)*none_mirror_mask).sum() / none_mirror_mask.sum() )
+
     
-    print("ref filtered : {:.3f}".format(np.array(ref_filtered).mean()))
-    print("raw filtered : {:.3f}".format(np.array(raw_filtered).mean()))
+    print("ref mirror area filtered : {}".format(np.array(ref_mirror_area_filtered).mean()))
+    print("raw mirror area filtered : {}".format(np.array(raw_mirror_area_filtered).mean()))
 
 
+    print("ref none-mirror area filtered : {}".format(np.array(ref_none_mirror_filtered).mean()))
+    print("raw none-mirror area filtered : {}".format(np.array(raw_none_mirror_filtered).mean()))
+
+
+if __name__ == "__main__":
+    get_filtered_percantage()

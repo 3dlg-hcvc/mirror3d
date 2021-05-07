@@ -41,7 +41,7 @@ class Mirror3d_eval():
         self.cal_std = True
         self.sample_name = []
         self.sample_score = dict()
-        self.min_threshold_filter = True
+        self.min_threshold_filter = False
         self.save_score_per_sample = True
         self.get_full_set = False
 
@@ -239,7 +239,7 @@ class Mirror3d_eval():
             if self.min_threshold_filter:
                 valid_mask = gt >  min_depth_eval #  np.logical_and(gt > min_depth_eval)#, gt < max_depth_eval
             else:
-                valid_mask = True 
+                valid_mask =  np.ones(gt.shape).astype(bool)
                 
             scale = np.sum(pred[valid_mask]*gt[valid_mask])/np.sum(pred[valid_mask]**2)
             valid_mask = np.logical_and(valid_mask, eval_area)
@@ -265,10 +265,6 @@ class Mirror3d_eval():
             rmse = np.sqrt(rmse.mean())
 
             rel = np.mean((abs(gt - pred)) / gt)
-
-            if np.isinf(rel):
-                print("rel inf")
-                return np.array(False)
 
             err = np.log(pred) - np.log(gt)
             silog = np.sqrt(np.mean(err ** 2) - np.mean(err) ** 2) * 100

@@ -96,7 +96,9 @@ class Dataset_visulization(Dataset_visulization):
             os.makedirs(one_colored_pred_depth_folder, exist_ok=True)
             one_colored_pred_error_map_folder =  os.path.join(self.output_folder, method_tag, "colored_pred_error_map")
             os.makedirs(one_colored_pred_error_map_folder, exist_ok=True)
-            info_json_path = os.path.join(self.output_folder, method_tag, "info.json")
+
+            one_info_folder =  os.path.join(self.output_folder, method_tag, "info")
+            os.makedirs(one_info_folder, exist_ok=True)
 
             sample_name = color_img_path.split("/")[-1]
 
@@ -110,7 +112,8 @@ class Dataset_visulization(Dataset_visulization):
                 colored_pred_depth_save_path = os.path.join(one_colored_pred_depth_folder,  sample_name)
                 colored_pred_error_map_save_path = os.path.join(one_colored_pred_error_map_folder,  sample_name)
                 gt_depth_img_path = color_img_path.replace("raw","hole_refined_depth")
-
+            
+            info_save_path = os.path.join(one_info_folder, sample_name)
             gt_depth = cv2.imread(gt_depth_img_path, cv2.IMREAD_ANYDEPTH)
             pred_depth = cv2.imread(pred_depth_img_path, cv2.IMREAD_ANYDEPTH)
             if self.is_matterport3d:
@@ -122,15 +125,16 @@ class Dataset_visulization(Dataset_visulization):
             
             rmse = (gt_depth - pred_depth) ** 2
             
-            score = float(np.mean(rmse))
+            
             if os.path.exists(info_json_path):
                 info = read_json(info_json_path)
             else:
                 info = dict()
 
-            info[sample_name] = score
+            info["RMSE"] = score
 
-            save_json(info_json_path, info)
+
+            save_json(info_save_path, info)
             save_heatmap_no_border(pred_depth, colored_pred_depth_save_path)
             save_heatmap_no_border(rmse, colored_pred_error_map_save_path)
 

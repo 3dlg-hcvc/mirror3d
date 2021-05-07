@@ -15,7 +15,7 @@ def get_cfg() -> CfgNode:
     _C.OBJECT_SEG = True
     _C.OBJECT_BBOX_REG = True
     _C.RGBD_INPUT = False
-
+    _C.TEST.AUG.ENABLED = False
     # ---- DEPTH_EST -----
     _C.DEPTH_SHIFT = 1000.0
     _C.FOCAL_LENGTH = 320
