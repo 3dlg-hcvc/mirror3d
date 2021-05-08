@@ -148,7 +148,6 @@ class Mirror3d_GeneralizedRCNN(nn.Module):
             assert "proposals" in batched_inputs[0]
             proposals = [x["proposals"].to(self.device) for x in batched_inputs]
             proposal_losses = {}
-
         _, detector_losses = self.roi_heads(images, features, proposals, gt_instances, self.anchor_normal_class_num)#  changed !!! proposals : 16*1000 , self.anchor_normal_class_num 
         if not self.ANCHOR_CLS:
             detector_losses.pop("anchor_cls")

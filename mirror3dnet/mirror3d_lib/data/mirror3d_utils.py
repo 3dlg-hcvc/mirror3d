@@ -67,7 +67,6 @@ def transform_instance_annotations(
         anchor_normal_class, anchor_normal_residual = transfor_anchor_annotation(anchor_normals, annotation["mirror_normal_camera"],transforms)
         annotation["anchor_normal_class"] = anchor_normal_class
         annotation["anchor_normal_residual"] = anchor_normal_residual
-
     return annotation
 
 

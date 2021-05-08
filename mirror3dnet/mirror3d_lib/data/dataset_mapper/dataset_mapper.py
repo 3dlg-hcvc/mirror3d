@@ -171,7 +171,6 @@ class Mirror3d_DatasetMapper:
                     anno.pop("segmentation", None)
                 if not self.keypoint_on:
                     anno.pop("keypoints", None)
-
             # USER: Implement additional transformations if you have other types of data
             annos = [
                 transform_instance_annotations(

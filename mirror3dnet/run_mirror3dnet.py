@@ -24,6 +24,7 @@ def main(args):
 
     cfg = get_cfg() 
     cfg.merge_from_file(args.config)
+
     train_name = args.coco_train.split("/")[-1].split(".")[0]
     val_name = args.coco_val.split("/")[-1].split(".")[0]
     register_mirror3d_coco_instances(train_name, {}, args.coco_train, args.coco_train_root) 
@@ -122,7 +123,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", default="mirror3dnet/config/mirror3dnet_config.yml", type=str , help="path to config file")
+    parser.add_argument("--config", default="mirror3dnet/config/mirror3dnet_normal_config.yml", type=str , help="path to config file")
     parser.add_argument("--resume", default=True, type=bool)
     parser.add_argument("--eval-only", action="store_true", help="perform evaluation only")
     parser.add_argument("--num-gpus", type=int, default=1, help="number of gpus *per machine*")

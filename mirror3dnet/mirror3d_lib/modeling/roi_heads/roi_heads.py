@@ -277,7 +277,7 @@ class Mirror3d_StandardROIHeads(StandardROIHeads):
         # examples from the start of training. For RPN, this augmentation improves
         # convergence and empirically improves box AP on COCO by about 0.5
         # points (under one tested configuration).
-        if self.proposal_append_gt: # TODO_ add gt anchor gt anchor reisidual here
+        if self.proposal_append_gt:
             proposals = add_ground_truth_to_proposals(gt_boxes, proposals)
 
         proposals_with_gt = []

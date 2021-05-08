@@ -138,7 +138,6 @@ class Mirror3d_eval():
         #     logFile_json[tag] = [table_one_line_result]
         # save_json(method_logFile_json_save_path, logFile_json)
         # print("update info file : {}".format(method_logFile_json_save_path))
-
         
         latex_temp_save_path = os.path.join(self.main_output_folder, one_name)
         save_json(latex_temp_save_path, table_one_line_result)
@@ -294,17 +293,17 @@ class Mirror3d_eval():
                     refD_gt_depth_path = refD_gt_depth_path.replace("jpg","png")
             else:
                 if color_image_path.find("m3d") > 0:
-                    if os.path.exists(rreplace(color_image_path.replace("raw", "mesh_raw_depth"),"i","d")):
-                        refD_gt_depth_path = rreplace(color_image_path.replace("raw", "mesh_raw_depth"),"i","d")
-                    elif os.path.exists(rreplace(color_image_path.replace("raw", "hole_raw_depth"),"i","d")):
-                        refD_gt_depth_path = rreplace(color_image_path.replace("raw", "hole_raw_depth"),"i","d")
+                    if os.path.exists(rreplace(color_image_path.replace("raw", "mesh_refined_depth"),"i","d")):
+                        refD_gt_depth_path = rreplace(color_image_path.replace("raw", "mesh_refined_depth"),"i","d")
+                    elif os.path.exists(rreplace(color_image_path.replace("raw", "hole_refined_depth"),"i","d")):
+                        refD_gt_depth_path = rreplace(color_image_path.replace("raw", "hole_refined_depth"),"i","d")
                     else:
                         return
                 else:
-                    if os.path.exists(color_image_path.replace("raw", "mesh_raw_depth")):
-                        refD_gt_depth_path = color_image_path.replace("raw", "mesh_raw_depth")
-                    elif os.path.exists(color_image_path.replace("raw", "hole_raw_depth")):
-                        refD_gt_depth_path = color_image_path.replace("raw", "hole_raw_depth")
+                    if os.path.exists(color_image_path.replace("raw", "mesh_refined_depth")):
+                        refD_gt_depth_path = color_image_path.replace("raw", "mesh_refined_depth")
+                    elif os.path.exists(color_image_path.replace("raw", "hole_refined_depth")):
+                        refD_gt_depth_path = color_image_path.replace("raw", "hole_refined_depth")
                     else:
                         return
             
@@ -318,6 +317,7 @@ class Mirror3d_eval():
             refD_gt_depth = cv2.resize(refD_gt_depth, (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
 
             if "no_mirror" in color_image_path:
+                print("###### no mirror #####")
                 mirror_error = tuple([0,0,0,0,1,1,1,1,1])
                 all_image_error = compute_errors(refD_gt_depth, pred_depth, True)
                 non_mirror_error = all_image_error
