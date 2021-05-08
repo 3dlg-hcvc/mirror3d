@@ -14,6 +14,7 @@ from utils.algorithm import *
 import shutil
 
 def check_converge(score_list=[], check_freq=2, change_ratio_threshold=0.03):
+    print("######################### check_converge #########################")
     if len(score_list) < check_freq*2:
         return False
 
