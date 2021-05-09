@@ -43,6 +43,7 @@ def get_cfg() -> CfgNode:
     _C.EVAL_INPUT_REF_DEPTH = False
     _C.EVAL_HEIGHT = 480
     _C.EVAL_WIDTH = 640
+    _C.FLIP = True
 
     # ---- eval output ----
     _C.EVAL_SAVE_MASKED_IMG = True

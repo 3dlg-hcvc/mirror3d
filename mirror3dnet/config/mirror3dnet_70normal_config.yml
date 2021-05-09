@@ -44,6 +44,7 @@ INPUT:
   MAX_SIZE_TRAIN : 640
   MIN_SIZE_TEST : (480)
   MAX_SIZE_TEST : 640
+  RANDOM_FLIP : "horizontal"
 
 ############## planeRCNN configure ##############
 DEPTH_EST : False  # TODO ori & new(optional)

@@ -28,7 +28,6 @@ def check_converge(score_list=[], check_freq=2, change_ratio_threshold=0.03):
         return False
 
 
-
 def list_diff(list1, list2):
     """
     Get a list exist in list1 but don't exisit in list2

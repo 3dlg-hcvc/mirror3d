@@ -64,7 +64,7 @@ def transform_instance_annotations(
         annotation["keypoints"] = keypoints
     
     if "anchor_normal_class" in annotation and not sum(isinstance(t, T.NoOpTransform) for t in transforms.transforms):
-        anchor_normal_class, anchor_normal_residual = transfor_anchor_annotation(anchor_normals, annotation["mirror_normal_camera"],transforms)
+        anchor_normal_class, anchor_normal_residual = transform_anchor_annotation(anchor_normals, annotation["mirror_normal_camera"],transforms)
         annotation["anchor_normal_class"] = anchor_normal_class
         annotation["anchor_normal_residual"] = anchor_normal_residual
     return annotation
@@ -142,11 +142,10 @@ def annotations_to_instances(annos, image_size, mask_format="polygon"):
     return target 
 
 
-def transfor_anchor_annotation(anchor_normals, mirror_normal_camera, transforms):
-
+def transform_anchor_annotation(anchor_normals, mirror_normal_camera, transforms):
     hor_flip = sum(isinstance(t, T.HFlipTransform) for t in transforms.transforms)
     ver_flip = sum(isinstance(t, T.VFlipTransform) for t in transforms.transforms)
-
+    print("mirror_normal_camera",mirror_normal_camera, -mirror_normal_camera[0])
     if hor_flip: # x = -x
         mirror_normal_camera[0] = -mirror_normal_camera[0]
     elif ver_flip:
@@ -160,6 +159,5 @@ def transfor_anchor_annotation(anchor_normals, mirror_normal_camera, transforms)
             cloest_distance = distance
             anchor_normal_class = i #! the last class is background
             anchor_normal_residual = distance_anchor
-    
     return anchor_normal_class, list(anchor_normal_residual)
 

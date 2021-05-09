@@ -11,7 +11,7 @@ from detectron2.utils.logger import log_first_n
 from detectron2.structures import Boxes, ImageList, Instances, pairwise_iou
 from detectron2.modeling.backbone import build_backbone
 from detectron2.modeling.postprocessing import detector_postprocess
-from detectron2.modeling.proposal_generator import build_proposal_generator
+from detectron2.modeliFalgorng.proposal_generator import build_proposal_generator
 from detectron2.modeling.roi_heads import build_roi_heads
 from detectron2.modeling.meta_arch.build import META_ARCH_REGISTRY
 from ..depth_predict import Depth
@@ -141,7 +141,8 @@ class Mirror3d_GeneralizedRCNN(nn.Module):
             depth_estimate_loss = self.depth_predictor(features, gt_depths, self.training) # changed 
             losses.update(depth_estimate_loss) 
     
-        
+        print("#########batched_inputs : ", batched_inputs[0]["img_path"],batched_inputs[0]["instances"]._fields["anchor_normal_residuals"], batched_inputs[0]["instances"]._fields["anchor_normal_classes"])
+        print("#########batched_inputs : ", batched_inputs[1]["img_path"],batched_inputs[1]["instances"]._fields["anchor_normal_residuals"], batched_inputs[1]["instances"]._fields["anchor_normal_classes"])
         if self.proposal_generator: #! get 1000/ 2000 proposals + use 256 proposals among thousands of proposals for rpn_loss;
             proposals, proposal_losses = self.proposal_generator(images, features, gt_instances) 
         else:

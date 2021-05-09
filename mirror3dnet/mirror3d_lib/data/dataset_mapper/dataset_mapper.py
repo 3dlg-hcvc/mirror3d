@@ -16,7 +16,6 @@ from detectron2.structures import (
 
 from ..mirror3d_utils import transform_instance_annotations, annotations_to_instances
 
-
 """
 This file contains the default mapping that's applied to "dataset dicts".
 """
@@ -49,7 +48,6 @@ class Mirror3d_DatasetMapper:
             self.crop_gen = None
 
         self.tfm_gens = utils.build_transform_gen(cfg, is_train)
-
         # fmt: off
         self.img_format     = cfg.INPUT.FORMAT
         self.mask_on        = cfg.MODEL.MASK_ON
@@ -116,7 +114,7 @@ class Mirror3d_DatasetMapper:
             noisy_depth_image, _ = T.apply_transform_gens(self.tfm_gens, noisy_depth_image.astype(np.float32))
 
         utils.check_image_size(dataset_dict, image)
-
+        
         if "annotations" not in dataset_dict:
             image, transforms = T.apply_transform_gens(
                 ([self.crop_gen] if self.crop_gen else []) + self.tfm_gens, image
@@ -124,6 +122,7 @@ class Mirror3d_DatasetMapper:
         else:
             # Crop around an instance if there are instances in the image.
             # USER: Remove if you don't use cropping
+
             if self.crop_gen:
 
                 crop_tfm = utils.gen_crop_transform_with_instance(
@@ -132,13 +131,13 @@ class Mirror3d_DatasetMapper:
                     np.random.choice(dataset_dict["annotations"]),
                 )
                 image = crop_tfm.apply_image(image)
+            test = image.copy()
             image, transforms = T.apply_transform_gens(self.tfm_gens, image)
  
             if self.crop_gen:
                 transforms = crop_tfm + transforms
 
         image_shape = image.shape[:2]  # h, w
-
         # Pytorch's dataloader is efficient on torch.Tensor due to shared-memory,
         # but not efficient on large generic data structures due to the use of pickle & mp.Queue.
         # Therefore it's important to use torch.Tensor.
