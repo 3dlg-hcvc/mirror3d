@@ -19,9 +19,9 @@ import argparse
 import torch.multiprocessing
 torch.multiprocessing.set_sharing_strategy('file_system')
 torch.backends.cudnn.deterministic = True
+torch.multiprocessing.set_start_method('forkserver', force=True)
 
 def main(args):
-
     cfg = get_cfg() 
     cfg.merge_from_file(args.config)
 
