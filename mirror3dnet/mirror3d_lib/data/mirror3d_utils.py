@@ -145,7 +145,6 @@ def annotations_to_instances(annos, image_size, mask_format="polygon"):
 def transform_anchor_annotation(anchor_normals, mirror_normal_camera, transforms):
     hor_flip = sum(isinstance(t, T.HFlipTransform) for t in transforms.transforms)
     ver_flip = sum(isinstance(t, T.VFlipTransform) for t in transforms.transforms)
-    print("mirror_normal_camera",mirror_normal_camera, -mirror_normal_camera[0])
     if hor_flip: # x = -x
         mirror_normal_camera[0] = -mirror_normal_camera[0]
     elif ver_flip:
