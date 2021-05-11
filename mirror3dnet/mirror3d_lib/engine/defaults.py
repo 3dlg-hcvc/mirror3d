@@ -239,11 +239,12 @@ class Mirror3dTrainer(DefaultTrainer):
             output_list= mirror3d_inference_on_dataset(model, data_loader, evaluator)
             mirror3d_eval = Mirror3DNet_Eval(output_list, cfg)
             mirror3d_eval.eval_main()
-        cls.output_list = output_list
-        cls.IOU_list.append(mirror3d_eval.mean_IOU) 
-        if check_converge(score_list=cls.IOU_list):
-            print("model converged")
-            exit()
+        if not cfg.EVAL:
+            cls.output_list = output_list
+            cls.IOU_list.append(mirror3d_eval.mean_IOU) 
+            if check_converge(score_list=cls.IOU_list):
+                print("model converged")
+                exit()
 
         return OrderedDict()
 

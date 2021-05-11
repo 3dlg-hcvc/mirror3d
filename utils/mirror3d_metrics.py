@@ -125,19 +125,19 @@ class Mirror3d_eval():
             save_name = "std_" + save_name
 
         # TODO uncommnet during inference 
-        # os.makedirs(self.method_logFile_json_save_folder, exist_ok=True)
-        # method_logFile_json_save_path = os.path.join(self.method_logFile_json_save_folder, save_name)
-        # if os.path.exists(method_logFile_json_save_path):
-        #     logFile_json = read_json(method_logFile_json_save_path)
-        # else:
-        #     logFile_json = dict()
-        # if tag in logFile_json:
-        #     if table_one_line_result not in logFile_json[tag]:
-        #         logFile_json[tag].append(table_one_line_result)
-        # else:
-        #     logFile_json[tag] = [table_one_line_result]
-        # save_json(method_logFile_json_save_path, logFile_json)
-        # print("update info file : {}".format(method_logFile_json_save_path))
+        os.makedirs(self.method_logFile_json_save_folder, exist_ok=True)
+        method_logFile_json_save_path = os.path.join(self.method_logFile_json_save_folder, save_name)
+        if os.path.exists(method_logFile_json_save_path):
+            logFile_json = read_json(method_logFile_json_save_path)
+        else:
+            logFile_json = dict()
+        if tag in logFile_json:
+            if table_one_line_result not in logFile_json[tag]:
+                logFile_json[tag].append(table_one_line_result)
+        else:
+            logFile_json[tag] = [table_one_line_result]
+        save_json(method_logFile_json_save_path, logFile_json)
+        print("update info file : {}".format(method_logFile_json_save_path))
         
         latex_temp_save_path = os.path.join(self.main_output_folder, one_name)
         save_json(latex_temp_save_path, table_one_line_result)
@@ -198,6 +198,8 @@ class Mirror3d_eval():
             self.cal_std_for_all(self.m_nm_all_refD/ self.ref_cnt, compare_with_raw=False)
             self.cal_std_for_all(self.m_nm_all_rawD/ self.raw_cnt, compare_with_raw=True)
 
+        self.save_sampleScore(self.main_output_folder) # TODO maybe delete later
+
     def save_sampleScore(self, method_output_folder):
         one_output_path = os.path.join(method_output_folder, "minFilter_{}_full_{}_score_per_sample.json".format(self.min_threshold_filter,self.get_full_set))
         save_json(one_output_path, self.sample_score) 
@@ -214,7 +216,7 @@ class Mirror3d_eval():
                         scores.append(item[1]["ref"][one_score_index])
                 except:
                     continue
-            eval_measures_std.append(np.std(scores))
+            eval_measures_std.append(np.std(scores)/np.sqrt(len(scores)))
         self.save_as_table_format(eval_measures_std, compare_with_raw=compare_with_raw, compute_std=True)
 
 
@@ -317,7 +319,6 @@ class Mirror3d_eval():
             refD_gt_depth = cv2.resize(refD_gt_depth, (self.width, self.height), 0, 0, cv2.INTER_NEAREST)
 
             if "no_mirror" in color_image_path:
-                print("###### no mirror #####")
                 mirror_error = tuple([0,0,0,0,1,1,1,1,1])
                 all_image_error = compute_errors(refD_gt_depth, pred_depth, True)
                 non_mirror_error = all_image_error

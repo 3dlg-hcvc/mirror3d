@@ -398,7 +398,7 @@ class Mirror3DNet_Eval:
             one_output, one_input = item
             instances = one_output[0][0]["instances"]
             mask_path = one_input[0]["img_path"].replace("raw","instance_mask")
-            if not os.path.exists(mask_path):
+            if not os.path.exists(mask_path) or "no_mirror" in one_input[0]["img_path"]:
                 continue
             GT_mask = cv2.imread(mask_path, cv2.IMREAD_ANYDEPTH)
             GT_mask = GT_mask > 0
@@ -408,6 +408,7 @@ class Mirror3DNet_Eval:
                 for one_pred_mask in instances.to("cpu").pred_masks:
                     pred_mask = np.logical_or(pred_mask , one_pred_mask)
                     pred_mask = pred_mask.numpy().astype(bool)
+                
             eval_seg_fun.compute_and_update_seg_metrics(pred_mask, GT_mask)
 
         eval_seg_fun.print_seg_score()
