@@ -125,23 +125,23 @@ class Mirror3d_eval():
             save_name = "std_" + save_name
 
         # TODO uncommnet during inference 
-        os.makedirs(self.method_logFile_json_save_folder, exist_ok=True)
-        method_logFile_json_save_path = os.path.join(self.method_logFile_json_save_folder, save_name)
-        if os.path.exists(method_logFile_json_save_path):
-            logFile_json = read_json(method_logFile_json_save_path)
-        else:
-            logFile_json = dict()
-        if tag in logFile_json:
-            if table_one_line_result not in logFile_json[tag]:
-                logFile_json[tag].append(table_one_line_result)
-        else:
-            logFile_json[tag] = [table_one_line_result]
-        save_json(method_logFile_json_save_path, logFile_json)
-        print("update info file : {}".format(method_logFile_json_save_path))
+        # os.makedirs(self.method_logFile_json_save_folder, exist_ok=True)
+        # method_logFile_json_save_path = os.path.join(self.method_logFile_json_save_folder, save_name)
+        # if os.path.exists(method_logFile_json_save_path):
+        #     logFile_json = read_json(method_logFile_json_save_path)
+        # else:
+        #     logFile_json = dict()
+        # if tag in logFile_json:
+        #     if table_one_line_result not in logFile_json[tag]:
+        #         logFile_json[tag].append(table_one_line_result)
+        # else:
+        #     logFile_json[tag] = [table_one_line_result]
+        # save_json(method_logFile_json_save_path, logFile_json)
+        # print("update info file : {}".format(method_logFile_json_save_path))
         
-        latex_temp_save_path = os.path.join(self.main_output_folder, one_name)
-        save_json(latex_temp_save_path, table_one_line_result)
-        print("latex result saved to : {}".format(latex_temp_save_path))
+        # latex_temp_save_path = os.path.join(self.main_output_folder, one_name)
+        # save_json(latex_temp_save_path, table_one_line_result)
+        # print("latex result saved to : {}".format(latex_temp_save_path))
 
     def print_mirror3D_score(self):
 

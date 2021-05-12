@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from utils.algorithm import *
 import shutil
 
-def check_converge(score_list=[], check_freq=3, change_ratio_threshold=0.03, logger=None):
+def check_converge(score_list=[], check_freq=2, change_ratio_threshold=0.03, logger=None):
     if logger:
         logger.info("######################### check_converge {} #########################".format(len(score_list)))
     print("######################### check_converge {} #########################".format(len(score_list)))
