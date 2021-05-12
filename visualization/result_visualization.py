@@ -390,35 +390,98 @@ class Dataset_visulization(Dataset_visulization):
             print(line)
 
     def gen_latex_table_with_sample_std(self, method_order_txt, all_info_json, midrule_index):
-
-        def identify_best_for_subLines(sublines, metrics_list):
+        import re
+        def only_add_std(sublines, metrics_list):
             downmetrics = ['RMSE', 's-RMSE', 'Rel']
             upmetrics = ['SSIM','$d_{1.05}$','$d_{1.12}$','$d_{1.25}$','$d_{1.25^2','$d_{1.25^3}$']
-            col_num = len(sublines[0].split("&")) - 3
+            col_num = len(sublines[0][0].split("&")) - 3
             metrics_list = metrics_list[0].split(",")
 
-            subline_score = []
+            avg_subline_score = []
             for one_line in sublines:
-                subline_score.append([float(one_score.strip()) for one_score in one_line.replace('\\','').split("&")[3:]])
-            subline_score = np.array(subline_score)
+                avg_subline_score.append([float(one_score.strip()) for one_score in one_line[0].replace('\\','').split("&")[3:]])
+            avg_subline_score = np.array(avg_subline_score)
+
+
+            std_subline_score = []
+            for one_line in sublines:
+                std_subline_score.append([float(one_score.strip()) for one_score in one_line[1].replace('\\','').split("&")[3:]])
+            std_subline_score = np.array(std_subline_score)
             
             # identify the best score in a column
             best_score = np.zeros(col_num)
             for col_index in range(col_num):
                 metric = metrics_list[int(col_index/3)]
                 if metric in downmetrics:
-                    best_score[col_index] = subline_score[:,col_index].min()
+                    best_score[col_index] = avg_subline_score[:,col_index].min()
                 else:
-                    best_score[col_index] = subline_score[:,col_index].max()
+                    best_score[col_index] = avg_subline_score[:,col_index].max()
             
             # replace the best score with \best{}
             best_lines = []
             for one_line in sublines: 
-                ori_str_scores = [one_score.strip() for one_score in one_line.replace('\\','').split("&")[3:]]
-                one_best_line = one_line
-                
+                ori_str_scores = [one_score.strip() for one_score in one_line[0].replace('\\','').split("&")[3:]]
+                std_ori_str_scores = [one_score.strip() for one_score in one_line[1].replace('\\','').split("&")[3:]]
+                one_best_line = one_line[0]
+                # add std score 
                 for col_index in range(col_num):
-                    # TODO add sample std score here 
+                    pos_list = [m.start() for m in re.finditer(ori_str_scores[col_index], one_best_line)]
+                    occur_index = 0
+                    for one_pos in pos_list:
+                        occur_index += 1
+                        if one_best_line[one_pos+6] != "(" and one_best_line[one_pos+5] != ")":
+                            one_best_line = nth_replace(one_best_line, ori_str_scores[col_index], "{} ({})".format(ori_str_scores[col_index], std_ori_str_scores[col_index]), occur_index)
+                        if ori_str_scores[col_index] ==  std_ori_str_scores[col_index]:
+                            occur_index += 1
+                best_lines.append(one_best_line)
+
+            return best_lines
+
+
+        def identify_best_for_subLines(sublines, metrics_list):
+            downmetrics = ['RMSE', 's-RMSE', 'Rel']
+            upmetrics = ['SSIM','$d_{1.05}$','$d_{1.12}$','$d_{1.25}$','$d_{1.25^2','$d_{1.25^3}$']
+            col_num = len(sublines[0][0].split("&")) - 3
+            metrics_list = metrics_list[0].split(",")
+
+            avg_subline_score = []
+            for one_line in sublines:
+                avg_subline_score.append([float(one_score.strip()) for one_score in one_line[0].replace('\\','').split("&")[3:]])
+            avg_subline_score = np.array(avg_subline_score)
+
+
+            std_subline_score = []
+            for one_line in sublines:
+                std_subline_score.append([float(one_score.strip()) for one_score in one_line[1].replace('\\','').split("&")[3:]])
+            std_subline_score = np.array(std_subline_score)
+            
+            # identify the best score in a column
+            best_score = np.zeros(col_num)
+            for col_index in range(col_num):
+                metric = metrics_list[int(col_index/3)]
+                if metric in downmetrics:
+                    best_score[col_index] = avg_subline_score[:,col_index].min()
+                else:
+                    best_score[col_index] = avg_subline_score[:,col_index].max()
+            
+            # replace the best score with \best{}
+            best_lines = []
+            for one_line in sublines: 
+                ori_str_scores = [one_score.strip() for one_score in one_line[0].replace('\\','').split("&")[3:]]
+                std_ori_str_scores = [one_score.strip() for one_score in one_line[1].replace('\\','').split("&")[3:]]
+                one_best_line = one_line[0]
+                # add std score 
+                for col_index in range(col_num):
+                    pos_list = [m.start() for m in re.finditer(ori_str_scores[col_index], one_best_line)]
+                    occur_index = 0
+                    for one_pos in pos_list:
+                        occur_index += 1
+                        if one_best_line[one_pos+6] != "(" and one_best_line[one_pos+5] != ")":
+                            one_best_line = nth_replace(one_best_line, ori_str_scores[col_index], "{} ({})".format(ori_str_scores[col_index], std_ori_str_scores[col_index]), occur_index)
+                        if ori_str_scores[col_index] ==  std_ori_str_scores[col_index]:
+                            occur_index += 1
+                # identify best
+                for col_index in range(col_num):
                     if abs(float(ori_str_scores[col_index]) - best_score[col_index]) < 1e-5:
                         one_best_line = one_best_line.replace(ori_str_scores[col_index], "\\best{" + ori_str_scores[col_index] + "}")
                 best_lines.append(one_best_line)
@@ -426,8 +489,14 @@ class Dataset_visulization(Dataset_visulization):
             return best_lines
 
 
+
         method_order_list = [line.strip().replace('\\\\','\\') for line in read_txt(method_order_txt)]
         methodTag_info = read_json(all_info_json)
+        std_json_path = all_info_json.replace("output/", "output/std_")
+        if not os.path.exists(std_json_path):
+            print("{} not exist!".format(std_json_path))
+            return
+        std_methodTag_info= read_json(std_json_path) 
         caption = all_info_json.split("/")[-1].replace("_", "\_")
 
         main_table_lines = read_txt("./visualization/table_template/main_table_begin.txt")
@@ -445,23 +514,28 @@ class Dataset_visulization(Dataset_visulization):
         for exp_index, method_tag in enumerate(method_order_list):
             
             one_latex_lines = [item for item in methodTag_info[method_tag][-1].items()] # TODO -1 is nyu normal 0 is m3d normal
-            main_table_lines_sub.append(one_latex_lines[0][1] +"\\")
+            std_one_latex_lines = [item for item in std_methodTag_info[method_tag][-1].items()] # TODO -1 is nyu normal 0 is m3d normal
+            main_table_lines_sub.append([one_latex_lines[0][1] +"\\",std_one_latex_lines[0][1] +"\\"])
             main_table_lines_metrics_list.append(one_latex_lines[0][0])
 
-            sup_table_part1_lines_sub.append(one_latex_lines[1][1] +"\\")
+            sup_table_part1_lines_sub.append([one_latex_lines[1][1] +"\\",std_one_latex_lines[1][1] +"\\"])
             sup_table_part1_lines_metrics_list.append(one_latex_lines[1][0])
 
-            sup_table_part2_lines_sub.append(one_latex_lines[2][1] +"\\")
+            sup_table_part2_lines_sub.append([one_latex_lines[2][1] +"\\",std_one_latex_lines[2][1] +"\\"])
             sup_table_part2_lines_metrics_list.append(one_latex_lines[2][0])
 
             
             if ((exp_index + 1) in midrule_index) or (exp_index == len(method_order_list)-1):
                 
                 if "*" not in method_tag:
-                    # import pdb;pdb.set_trace()
                     main_table_lines_sub = identify_best_for_subLines(main_table_lines_sub, main_table_lines_metrics_list)
                     sup_table_part1_lines_sub = identify_best_for_subLines(sup_table_part1_lines_sub, sup_table_part1_lines_metrics_list)
                     sup_table_part2_lines_sub = identify_best_for_subLines(sup_table_part2_lines_sub, sup_table_part2_lines_metrics_list)
+
+                else:
+                    main_table_lines_sub = only_add_std(main_table_lines_sub, main_table_lines_metrics_list)
+                    sup_table_part1_lines_sub = only_add_std(sup_table_part1_lines_sub, sup_table_part1_lines_metrics_list)
+                    sup_table_part2_lines_sub = only_add_std(sup_table_part2_lines_sub, sup_table_part2_lines_metrics_list)
                     
                 main_table_lines += main_table_lines_sub
                 sup_table_part1_lines += sup_table_part1_lines_sub
@@ -478,7 +552,7 @@ class Dataset_visulization(Dataset_visulization):
         
         main_table_lines.append("\\bottomrule\end{tabular}} \caption{" + caption + "}\end{table}")
         sup_table_part1_lines.append("\\bottomrule\end{tabular}}")
-        sup_table_part2_lines.append("\\bottomrule\end{tabular}}\caption{ Additional quantitative metrics for " + caption + "}\end{table*}")
+        sup_table_part2_lines.append("\\bottomrule\end{tabular}}\caption{ Additional quantitative metrics for " + caption +" ; avg score (sample SE)}\end{table*}")
 
         print(" ##################### main latex table ##################### ")
         for line in main_table_lines:
@@ -546,7 +620,7 @@ class Dataset_visulization(Dataset_visulization):
 
         for exp_index, method_tag in enumerate(method_order_list):
             
-            one_latex_lines = [item for item in methodTag_info[method_tag][0].items()] # TODO -1 is nyu normal 0 is m3d normal
+            one_latex_lines = [item for item in methodTag_info[method_tag][-1].items()] # TODO -1 is nyu normal 0 is m3d normal
             main_table_lines_sub.append(one_latex_lines[0][1] +"\\")
             main_table_lines_metrics_list.append(one_latex_lines[0][0])
 
@@ -883,6 +957,202 @@ class Dataset_visulization(Dataset_visulization):
             print("result visulisation saved in link {}".format(html_path.replace("/project/3dlg-hcvc/mirrors/www","http://aspis.cmpt.sfu.ca/projects/mirrors")))
             break
 
+    def gen_latex_table_with_run_SE(self, method_order_txt, all_info_json, midrule_index):
+        import re
+        def only_add_std(sublines, metrics_list):
+            downmetrics = ['RMSE', 's-RMSE', 'Rel']
+            upmetrics = ['SSIM','$d_{1.05}$','$d_{1.12}$','$d_{1.25}$','$d_{1.25^2','$d_{1.25^3}$']
+            col_num = len(sublines[0][0].split("&")) - 3
+            metrics_list = metrics_list[0].split(",")
+
+            avg_subline_score = []
+            for one_line in sublines:
+                avg_subline_score.append([float(one_score.strip()) for one_score in one_line[0].replace('\\','').split("&")[3:]])
+            avg_subline_score = np.array(avg_subline_score)
+
+
+            std_subline_score = []
+            for one_line in sublines:
+                std_subline_score.append([float(one_score.strip()) for one_score in one_line[1].replace('\\','').split("&")[3:]])
+            std_subline_score = np.array(std_subline_score)
+            
+            # identify the best score in a column
+            best_score = np.zeros(col_num)
+            for col_index in range(col_num):
+                metric = metrics_list[int(col_index/3)]
+                if metric in downmetrics:
+                    best_score[col_index] = avg_subline_score[:,col_index].min()
+                else:
+                    best_score[col_index] = avg_subline_score[:,col_index].max()
+            
+            # replace the best score with \best{}
+            best_lines = []
+            for one_line in sublines: 
+                first_str_scores = [one_score.strip() for one_score in one_line[0].replace('\\','').split("&")[3:]]
+                second_str_scores = [one_score.strip() for one_score in one_line[1].replace('\\','').split("&")[3:]]
+                third_str_scores = [one_score.strip() for one_score in one_line[2].replace('\\','').split("&")[3:]]
+                one_best_line = one_line[0]
+                # add diff runs' std score 
+                for col_index in range(col_num):
+                    pos_list = [m.start() for m in re.finditer(first_str_scores[col_index], one_best_line)]
+                    occur_index = 0
+                    for one_pos in pos_list:
+                        occur_index += 1
+                        if one_best_line[one_pos+6] != "(" and one_best_line[one_pos+5] != ")":
+                            runs_score = np.array([float(first_str_scores[col_index]), float(second_str_scores[col_index]), float(third_str_scores[col_index])])
+                            avg_score = "{:.3f}".format(np.mean(runs_score))
+                            runs_std = "{:.3f}".format(np.std(runs_score) / np.sqrt(3))
+                            one_best_line = nth_replace(one_best_line, first_str_scores[col_index], "{} ({})".format(avg_score, runs_std), occur_index)
+                        if avg_score != first_str_scores[col_index]:
+                            occur_index -= 1
+                        if runs_std ==  first_str_scores[col_index]:
+                            occur_index += 1
+                best_lines.append(one_best_line)
+
+            return best_lines
+
+
+        def identify_best_for_subLines(sublines, metrics_list):
+            downmetrics = ['RMSE', 's-RMSE', 'Rel']
+            upmetrics = ['SSIM','$d_{1.05}$','$d_{1.12}$','$d_{1.25}$','$d_{1.25^2','$d_{1.25^3}$']
+            col_num = len(sublines[0][0].split("&")) - 3
+            metrics_list = metrics_list[0].split(",")
+
+
+            
+            # replace the best score with \best{}
+            lines_with_runs_std = []
+            for one_line in sublines: 
+                first_str_scores = [one_score.strip() for one_score in one_line[0].replace('\\','').split("&")[3:]]
+                second_str_scores = [one_score.strip() for one_score in one_line[1].replace('\\','').split("&")[3:]]
+                third_str_scores = [one_score.strip() for one_score in one_line[2].replace('\\','').split("&")[3:]]
+                one_best_line = one_line[0]
+                # add diff runs' std score 
+                for col_index in range(col_num):
+                    pos_list = [m.start() for m in re.finditer(first_str_scores[col_index], one_best_line)]
+                    occur_index = 0
+                    for one_pos in pos_list:
+                        occur_index += 1
+                        if one_best_line[one_pos+6] != "(" and one_best_line[one_pos+5] != ")":
+                            runs_score = np.array([float(first_str_scores[col_index]), float(second_str_scores[col_index]), float(third_str_scores[col_index])])
+                            avg_score = "{:.3f}".format(np.mean(runs_score))
+                            runs_std = "{:.3f}".format(np.std(runs_score) / np.sqrt(3))
+                            one_best_line = nth_replace(one_best_line, first_str_scores[col_index], "{} ({})".format(avg_score, runs_std), occur_index)
+                        if avg_score != first_str_scores[col_index]:
+                            occur_index -= 1
+                        if runs_std ==  first_str_scores[col_index]:
+                            occur_index += 1
+                lines_with_runs_std.append(one_best_line)
+
+            avg_subline_score = []
+            for one_line in lines_with_runs_std:
+                try:
+                    avg_subline_score.append([float(one_score.strip().split('(')[0]) for one_score in one_line.replace('\\','').split("&")[3:]])
+                except:
+                    print()
+            avg_subline_score = np.array(avg_subline_score)
+
+            # identify the best score in a column
+            best_score = np.zeros(col_num)
+            for col_index in range(col_num):
+                metric = metrics_list[int(col_index/3)]
+                if metric in downmetrics:
+                    best_score[col_index] = avg_subline_score[:,col_index].min()
+                else:
+                    best_score[col_index] = avg_subline_score[:,col_index].max()
+
+            # identify best
+            best_lines = []
+            for one_line in lines_with_runs_std: 
+                one_best_line = one_line
+                one_avg_score_list = [one_score.strip().split('(')[0] for one_score in one_line.replace('\\','').split("&")[3:]]
+                for col_index in range(col_num):
+                    if abs(float(one_avg_score_list[col_index]) - best_score[col_index]) < 1e-5:
+                        one_best_line = one_best_line.replace(one_avg_score_list[col_index], "\\best{" + one_avg_score_list[col_index] + "}")
+                best_lines.append(one_best_line)
+
+            return best_lines
+
+
+
+        method_order_list = [line.strip().replace('\\\\','\\') for line in read_txt(method_order_txt)]
+        methodTag_info = read_json(all_info_json)
+        caption = all_info_json.split("/")[-1].replace("_", "\_")
+
+        main_table_lines = read_txt("./visualization/table_template/main_table_begin.txt")
+        sup_table_part1_lines = read_txt("./visualization/table_template/sup1_table_begin.txt")
+        sup_table_part2_lines = read_txt("./visualization/table_template/sup2_table_begin.txt")
+
+        main_table_lines_sub = []
+        sup_table_part1_lines_sub = []
+        sup_table_part2_lines_sub = []
+
+        main_table_lines_metrics_list = []
+        sup_table_part1_lines_metrics_list = []
+        sup_table_part2_lines_metrics_list = []
+
+        for exp_index, method_tag in enumerate(method_order_list):
+            if len(methodTag_info[method_tag]) >= 3:
+                first_run_latex_lines = [item for item in methodTag_info[method_tag][-3].items()] 
+                second_run_latex_lines = [item for item in methodTag_info[method_tag][-2].items()] 
+                third_run_latex_lines = [item for item in methodTag_info[method_tag][-1].items()] 
+            else:
+                first_run_latex_lines = [item for item in methodTag_info[method_tag][-1].items()] 
+                second_run_latex_lines = [item for item in methodTag_info[method_tag][-1].items()] 
+                third_run_latex_lines = [item for item in methodTag_info[method_tag][-1].items()] 
+        
+            main_table_lines_sub.append([first_run_latex_lines[0][1] +"\\",second_run_latex_lines[0][1] +"\\",third_run_latex_lines[0][1] +"\\"])
+            main_table_lines_metrics_list.append(first_run_latex_lines[0][0])
+
+            sup_table_part1_lines_sub.append([first_run_latex_lines[1][1] +"\\",second_run_latex_lines[1][1] +"\\",third_run_latex_lines[1][1] +"\\"])
+            sup_table_part1_lines_metrics_list.append(first_run_latex_lines[1][0])
+
+            sup_table_part2_lines_sub.append([first_run_latex_lines[2][1] +"\\",second_run_latex_lines[2][1] +"\\",third_run_latex_lines[2][1] +"\\"])
+            sup_table_part2_lines_metrics_list.append(first_run_latex_lines[2][0])
+
+            
+            if ((exp_index + 1) in midrule_index) or (exp_index == len(method_order_list)-1):
+                
+                if "*" not in method_tag:
+                    main_table_lines_sub = identify_best_for_subLines(main_table_lines_sub, main_table_lines_metrics_list)
+                    sup_table_part1_lines_sub = identify_best_for_subLines(sup_table_part1_lines_sub, sup_table_part1_lines_metrics_list)
+                    sup_table_part2_lines_sub = identify_best_for_subLines(sup_table_part2_lines_sub, sup_table_part2_lines_metrics_list)
+
+                else:
+                    main_table_lines_sub = only_add_std(main_table_lines_sub, main_table_lines_metrics_list)
+                    sup_table_part1_lines_sub = only_add_std(sup_table_part1_lines_sub, sup_table_part1_lines_metrics_list)
+                    sup_table_part2_lines_sub = only_add_std(sup_table_part2_lines_sub, sup_table_part2_lines_metrics_list)
+                    
+                main_table_lines += main_table_lines_sub
+                sup_table_part1_lines += sup_table_part1_lines_sub
+                sup_table_part2_lines += sup_table_part2_lines_sub
+                if exp_index != len(method_order_list)-1:
+                    main_table_lines.append("\midrule")
+                    sup_table_part1_lines.append("\midrule")
+                    sup_table_part2_lines.append("\midrule")
+
+                main_table_lines_sub = []
+                sup_table_part1_lines_sub = []
+                sup_table_part2_lines_sub = []
+                
+        
+        main_table_lines.append("\\bottomrule\end{tabular}} \caption{" + caption + " ; avg score (3 run's SE)}\end{table}")
+        sup_table_part1_lines.append("\\bottomrule\end{tabular}}")
+        sup_table_part2_lines.append("\\bottomrule\end{tabular}}\caption{ Additional quantitative metrics for " + caption +" ; avg score (3 run's SE)}\end{table*}")
+
+        print(" ##################### main latex table ##################### ")
+        for line in main_table_lines:
+            print(line)
+
+        print(" ##################### supplemental latex table ##################### ")
+        for line in sup_table_part1_lines:
+            print(line)
+        
+        for line in sup_table_part2_lines:
+            print(line)
+
+
+
 
 
 if __name__ == "__main__":
@@ -950,3 +1220,9 @@ if __name__ == "__main__":
         vis_tool.get_std_score(args)
     elif args.stage == "6":
         vis_tool.generate_paper_html(vis_saved_main_folder=args.vis_saved_folder, sample_num_per_page=args.sample_num_per_page, template_path="visualization/paper_vis_template.html")
+    elif args.stage == "7":
+        vis_tool.gen_latex_table_with_sample_std(args.method_order_txt, args.all_info_json, args.midrule_index)
+    elif args.stage == "8":
+        vis_tool.gen_latex_table_with_run_SE(args.method_order_txt, args.all_info_json, args.midrule_index)
+
+        

@@ -160,6 +160,19 @@ def get_compose_image(output_save_path, img_list, mini_img_w=320, mini_img_h=240
     print("image saved to :", output_save_path)
 
 
+def nth_replace(s, sub, repl, n):
+    find = s.find(sub)
+    # If find is not -1 we have found at least one match for the substring
+    i = find != -1
+    # loop util we find the nth or we find no match
+    while find != -1 and i != n:
+        # find + 1 means we start searching from after the last match
+        find = s.find(sub, find + 1)
+        i += 1
+    # If i is equal to n we found nth match so replace
+    if i == n:
+        return s[:find] + repl + s[find+len(sub):]
+    return s
 
 def save_heatmap_no_border(image, save_path=""):
     """ 
