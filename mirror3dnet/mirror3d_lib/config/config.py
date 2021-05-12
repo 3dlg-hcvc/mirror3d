@@ -9,6 +9,7 @@ def get_cfg() -> CfgNode:
     """
     from detectron2.config.defaults import _C
     _C.DEPTH_EST = True
+    _C.SEED = 5
     _C.ANCHOR_REG = True
     _C.ANCHOR_CLS = True
     _C.OBJECT_CLS = True

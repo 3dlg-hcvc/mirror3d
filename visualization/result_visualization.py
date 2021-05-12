@@ -389,9 +389,7 @@ class Dataset_visulization(Dataset_visulization):
         for line in main_table_lines:
             print(line)
 
-    
-
-    def gen_latex_table_whole(self, method_order_txt, all_info_json, midrule_index):
+    def gen_latex_table_with_sample_std(self, method_order_txt, all_info_json, midrule_index):
 
         def identify_best_for_subLines(sublines, metrics_list):
             downmetrics = ['RMSE', 's-RMSE', 'Rel']
@@ -420,6 +418,7 @@ class Dataset_visulization(Dataset_visulization):
                 one_best_line = one_line
                 
                 for col_index in range(col_num):
+                    # TODO add sample std score here 
                     if abs(float(ori_str_scores[col_index]) - best_score[col_index]) < 1e-5:
                         one_best_line = one_best_line.replace(ori_str_scores[col_index], "\\best{" + ori_str_scores[col_index] + "}")
                 best_lines.append(one_best_line)
@@ -489,7 +488,108 @@ class Dataset_visulization(Dataset_visulization):
         for line in sup_table_part1_lines:
             print(line)
         
-        # print(" ##################### supplemental latex table part 2 ##################### ")
+        for line in sup_table_part2_lines:
+            print(line)
+
+
+    def gen_latex_table_whole(self, method_order_txt, all_info_json, midrule_index):
+
+        def identify_best_for_subLines(sublines, metrics_list):
+            downmetrics = ['RMSE', 's-RMSE', 'Rel']
+            upmetrics = ['SSIM','$d_{1.05}$','$d_{1.12}$','$d_{1.25}$','$d_{1.25^2','$d_{1.25^3}$']
+            col_num = len(sublines[0].split("&")) - 3
+            metrics_list = metrics_list[0].split(",")
+
+            subline_score = []
+            for one_line in sublines:
+                subline_score.append([float(one_score.strip()) for one_score in one_line.replace('\\','').split("&")[3:]])
+            subline_score = np.array(subline_score)
+            
+            # identify the best score in a column
+            best_score = np.zeros(col_num)
+            for col_index in range(col_num):
+                metric = metrics_list[int(col_index/3)]
+                if metric in downmetrics:
+                    best_score[col_index] = subline_score[:,col_index].min()
+                else:
+                    best_score[col_index] = subline_score[:,col_index].max()
+            
+            # replace the best score with \best{}
+            best_lines = []
+            for one_line in sublines: 
+                ori_str_scores = [one_score.strip() for one_score in one_line.replace('\\','').split("&")[3:]]
+                one_best_line = one_line
+                
+                for col_index in range(col_num):
+                    if abs(float(ori_str_scores[col_index]) - best_score[col_index]) < 1e-5:
+                        one_best_line = one_best_line.replace(ori_str_scores[col_index], "\\best{" + ori_str_scores[col_index] + "}")
+                best_lines.append(one_best_line)
+
+            return best_lines
+
+
+        method_order_list = [line.strip().replace('\\\\','\\') for line in read_txt(method_order_txt)]
+        methodTag_info = read_json(all_info_json)
+        caption = all_info_json.split("/")[-1].replace("_", "\_")
+
+        main_table_lines = read_txt("./visualization/table_template/main_table_begin.txt")
+        sup_table_part1_lines = read_txt("./visualization/table_template/sup1_table_begin.txt")
+        sup_table_part2_lines = read_txt("./visualization/table_template/sup2_table_begin.txt")
+
+        main_table_lines_sub = []
+        sup_table_part1_lines_sub = []
+        sup_table_part2_lines_sub = []
+
+        main_table_lines_metrics_list = []
+        sup_table_part1_lines_metrics_list = []
+        sup_table_part2_lines_metrics_list = []
+
+        for exp_index, method_tag in enumerate(method_order_list):
+            
+            one_latex_lines = [item for item in methodTag_info[method_tag][0].items()] # TODO -1 is nyu normal 0 is m3d normal
+            main_table_lines_sub.append(one_latex_lines[0][1] +"\\")
+            main_table_lines_metrics_list.append(one_latex_lines[0][0])
+
+            sup_table_part1_lines_sub.append(one_latex_lines[1][1] +"\\")
+            sup_table_part1_lines_metrics_list.append(one_latex_lines[1][0])
+
+            sup_table_part2_lines_sub.append(one_latex_lines[2][1] +"\\")
+            sup_table_part2_lines_metrics_list.append(one_latex_lines[2][0])
+
+            
+            if ((exp_index + 1) in midrule_index) or (exp_index == len(method_order_list)-1):
+                
+                if "*" not in method_tag:
+                    # import pdb;pdb.set_trace()
+                    main_table_lines_sub = identify_best_for_subLines(main_table_lines_sub, main_table_lines_metrics_list)
+                    sup_table_part1_lines_sub = identify_best_for_subLines(sup_table_part1_lines_sub, sup_table_part1_lines_metrics_list)
+                    sup_table_part2_lines_sub = identify_best_for_subLines(sup_table_part2_lines_sub, sup_table_part2_lines_metrics_list)
+                    
+                main_table_lines += main_table_lines_sub
+                sup_table_part1_lines += sup_table_part1_lines_sub
+                sup_table_part2_lines += sup_table_part2_lines_sub
+                if exp_index != len(method_order_list)-1:
+                    main_table_lines.append("\midrule")
+                    sup_table_part1_lines.append("\midrule")
+                    sup_table_part2_lines.append("\midrule")
+
+                main_table_lines_sub = []
+                sup_table_part1_lines_sub = []
+                sup_table_part2_lines_sub = []
+                
+        
+        main_table_lines.append("\\bottomrule\end{tabular}} \caption{" + caption + "}\end{table}")
+        sup_table_part1_lines.append("\\bottomrule\end{tabular}}")
+        sup_table_part2_lines.append("\\bottomrule\end{tabular}}\caption{ Additional quantitative metrics for " + caption + "}\end{table*}")
+
+        print(" ##################### main latex table ##################### ")
+        for line in main_table_lines:
+            print(line)
+
+        print(" ##################### supplemental latex table ##################### ")
+        for line in sup_table_part1_lines:
+            print(line)
+        
         for line in sup_table_part2_lines:
             print(line)
 
@@ -817,7 +917,7 @@ if __name__ == "__main__":
         '--output_folder', default="/project/3dlg-hcvc/mirrors/www/cr_vis/nyu_html")
     parser.add_argument(
         '--method_folder_list', nargs='+', default="", type=str)
-    parser.add_argument("--midrule_index", nargs="+", type=int, help="add /midrule in after these liens; index start from 1") 
+    parser.add_argument("--midrule_index", nargs="+", type=int, default=[2,5], help="add /midrule in after these liens; index start from 1") 
     parser.add_argument(
         '--template_path', default="visualization/result_vis_template.html", type=str)
     parser.add_argument(

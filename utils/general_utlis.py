@@ -13,7 +13,9 @@ import matplotlib.pyplot as plt
 from utils.algorithm import *
 import shutil
 
-def check_converge(score_list=[], check_freq=3, change_ratio_threshold=0.03):
+def check_converge(score_list=[], check_freq=3, change_ratio_threshold=0.03, logger=None):
+    if logger:
+        logger.info("######################### check_converge {} #########################".format(len(score_list)))
     print("######################### check_converge {} #########################".format(len(score_list)))
     if len(score_list) < check_freq*2:
         return False
@@ -22,6 +24,8 @@ def check_converge(score_list=[], check_freq=3, change_ratio_threshold=0.03):
     check_forward_loss = score_list[-check_freq:]
     change_ratio =(np.abs(np.average(check_forward_loss) - np.average(check_back_loss)))/np.average(check_back_loss) 
     print("######################### change_ratio {} #########################".format(change_ratio))
+    if logger:
+        logger.info("######################### change_ratio {} #########################".format(change_ratio))
     if change_ratio <= change_ratio_threshold: 
         return True
     else:

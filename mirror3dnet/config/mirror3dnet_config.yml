@@ -43,7 +43,7 @@ INPUT:
   MAX_SIZE_TRAIN : 640
   MIN_SIZE_TEST : (480)
   MAX_SIZE_TEST : 640
-  RANDOM_FLIP : "horizontal"
+  RANDOM_FLIP : "none"
 TEST:
   AUG:
     FLIP : False
