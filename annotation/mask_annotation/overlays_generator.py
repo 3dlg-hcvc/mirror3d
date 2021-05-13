@@ -96,7 +96,8 @@ if __name__ == '__main__':
     results = []
     print("CPU Logical Cores:", cpu_count)
     for i in range(0, len_raw, len_raw // cpu_count):
-        results.append(pool.apply_async(generate_overlay_masks_and_check, args=(args, total_raw_filenames[i:i + len_raw // cpu_count])))
+        results.append(pool.apply_async(generate_overlay_masks_and_check,
+                                        args=(args, total_raw_filenames[i:i + len_raw // cpu_count])))
     label_error_list = []
     for result in results:
         label_error_list += result.get()
