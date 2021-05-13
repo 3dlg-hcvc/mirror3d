@@ -27,6 +27,7 @@ TEST:
   EVAL_PERIOD: 100 # TODO
   AUG:
     ENABLED : False 
+    FLIP : False
 
 SOLVER:
   STEPS : (7000, 8000) # TODO

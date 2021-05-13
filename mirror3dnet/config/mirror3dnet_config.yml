@@ -26,6 +26,7 @@ TEST:
   EVAL_PERIOD: 100 # TODO
   AUG:
     ENABLED : False 
+    FLIP : False
 
 SOLVER:
   STEPS : (7000, 8000) # TODO
@@ -44,9 +45,6 @@ INPUT:
   MIN_SIZE_TEST : (480)
   MAX_SIZE_TEST : 640
   RANDOM_FLIP : "none"
-TEST:
-  AUG:
-    FLIP : False
 
 ############## planeRCNN configure ##############
 DEPTH_EST : True  # TODO ori & new(optional)
