@@ -17,7 +17,7 @@ Mirror3D dataset includes mirror segmentation masks, mirror plane parameters, an
 The downloaded mirror data are stored under the following structure:
 
 
-###NYUv2-small 
+### NYUv2-small 
 
 For NYUv2-small, the unzipped package's structure is: 
 
@@ -39,7 +39,7 @@ nyu
         └── raw
     
 ```
-###Matterport3d
+### Matterport3d
 For Matterport3d, the unzipped package's structure is: 
 
 ```
@@ -69,7 +69,7 @@ m3d
         ├── instance_mask
         └── raw
 ```
-###Scannet
+### Scannet
 
 For Scannet, the unzipped package's structure is: 
 
@@ -125,7 +125,7 @@ Here, one mirror sample's plane parameters information is saved in a single JSON
 
 To train or test the models with the .json input file we provided, you need to download the original data from the relevant dataset and store these original data under the following structure:
 
-###NYUv2-small
+### NYUv2-small
 
 ```
 nyu
@@ -136,7 +136,7 @@ nyu
         
 ```
 
-###Matterport3d
+### Matterport3d
 ```
 m3d
 ├── original_dataset # please create a folder named "original_dataset" and put the original dataset's data under this folder if you want to train our models.
@@ -148,7 +148,7 @@ m3d
         
 ```
 
-###Scannet
+### Scannet
 
 ```
 scannet
