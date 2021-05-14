@@ -101,19 +101,16 @@ scannet
 
 Here, one mirror sample's plane parameters information is saved in a single JSON file. The information is saved in a format:
 
-```
+```json
 {
     "0_0_128":{ # 0_0_128 is the instance id (R_G_B of the semantic mask)
-    	# mirror plane parameter in 3D; 
-    	# here y axis points upward, -z axis points to the front
-        "plane_parameter":[ 
+        "plane_parameter":[ # mirror plane parameter in 3D; here y axis points upward, -z axis points to the front
             0.00025589483339543795,
             6.575998812963738e-05,
             -0.00026007778514475276,
             0.9999999312764996
         ],
-        # mirror plane's normal 
-        "mirror_normal":[
+        "mirror_normal":[ # mirror plane's normal 
             0.00025589483339543795,
             6.575998812963738e-05,
             -0.00026007778514475276
