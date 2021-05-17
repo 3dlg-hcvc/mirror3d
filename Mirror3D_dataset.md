@@ -7,19 +7,18 @@ Please visit our [project website]() for updates and to browse the data.
 
 ## Mirror3D Data
 
-If you would like to use our data, you must obtain access to the [Matterpot3D](https://niessner.github.io/Matterport/) and [ScanNet](http://www.scan-net.org/)) dataset.  Please send an email to the dataset organizer(s) to confirm your agreement and cc Jiaqi Tan (jiaqit[at]sfu.ca). You will get download links for the data from the dataset that you got approval.
+If you would like to use our data, you must obtain access to the [Matterpot3D](https://niessner.github.io/Matterport/) dataset and the [ScanNet](http://www.scan-net.org/) dataset.  Please send an email to the dataset organizer(s) to confirm your agreement and cc Jiaqi Tan (jiaqit[at]sfu.ca). You will get the download links for the mirror data from the dataset that you got approval.
 
 ## Mirror3D Data Organization
 
 Mirror3D dataset includes mirror segmentation masks, mirror plane parameters, and refined mirror depth map over 4,852 RGBD images.
 
-
-The downloaded mirror data are stored under the following structure:
+The mirror data we provided are stored in the following structures:
 
 
 ### NYUv2-small 
 
-For NYUv2-small, the unzipped package's structure is: 
+For NYUv2-small, the unzipped data structure is: 
 
 
 ```
@@ -40,7 +39,7 @@ nyu
     
 ```
 ### Matterport3d
-For Matterport3d, the unzipped package's structure is: 
+For Matterport3d, the unzipped data structure is: 
 
 ```
 m3d
@@ -71,7 +70,7 @@ m3d
 ```
 ### Scannet
 
-For Scannet, the unzipped package's structure is: 
+For Scannet, the unzipped data structure is: 
 
 ```
 scannet
@@ -99,7 +98,7 @@ scannet
 
 #### JSON files for Mirror Plane Information
 
-Here, one mirror sample's plane parameters information is saved in a single JSON file. The information is saved in a format:
+Here, one sample's mirror 3D plane information is saved in a single JSON file. The information is saved as:
 
 ```python
 {
@@ -123,9 +122,11 @@ Here, one mirror sample's plane parameters information is saved in a single JSON
 
 ## Training Data Structure
 
-To train or test the models with the .json input file we provided, you need to download the original data from the relevant dataset and store these original data under the following structure:
+To train or test our models with the [network_input_json]() we provided, you need to download the original data from relevant source dataset and store these source data under the following structures:
 
 ### NYUv2-small
+
+For NYUv2-small you need to put the color and depth images under a folder named "original_dataset". This "original_dataset" folder is created by yourself.
 
 ```
 nyu
@@ -137,6 +138,9 @@ nyu
 ```
 
 ### Matterport3d
+
+For Matterport3d you need to put the color images, sensor depth maps and mesh depth maps under a folder named "original_dataset". This "original_dataset" folder is created by yourself. You can obatined the color images (undistorted_color_images) and sensor depth maps (undistorted_depth_images) from [Matterpot3D](https://niessner.github.io/Matterport/) and the mesh depth maps (matterport_render_depth) from [yindaz/DeepCompletionRelease](https://github.com/yindaz/DeepCompletionRelease).
+
 ```
 m3d
 ├── original_dataset # please create a folder named "original_dataset" and put the original dataset's data under this folder if you want to train our models.
@@ -149,6 +153,8 @@ m3d
 ```
 
 ### Scannet
+
+For Scannet, we use its 25k subset. You need to obatin the source data from [ScanNet](http://www.scan-net.org/) and store it under the following strusture.
 
 ```
 scannet
