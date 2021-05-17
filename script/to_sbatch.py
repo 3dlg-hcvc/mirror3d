@@ -124,7 +124,7 @@ def sh_to_sbatch_test(train_sh_path, log_config, sh_output_foler, sbatch_config,
         if (line_index+1) == len(sh_lines)  or to_break:
             # Update config
             job_name = get_config_from_pythonSetting(one_python_command)
-            sbatch_job_name = "#SBATCH --job-name={}".format(job_name)
+            sbatch_job_name = "#SBATCH --job-name={}".format(comment_line.replace(" ","_"))
             sbatch_lines.append(sbatch_job_name)
             sbatch_output = "#SBATCH --output={}".format(log_config)
             sbatch_lines.append(sbatch_output)
