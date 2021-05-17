@@ -7,7 +7,7 @@ import argparse
 import sys
 from utils.general_utlis import *
 import logging
-
+import time
 
 
 class Mirror3d_eval():
@@ -35,7 +35,7 @@ class Mirror3d_eval():
                 self.Train_tag = "mesh"
         else:
             self.Train_tag = "*"
-        self.main_output_folder = "output/{}_{}_{}".format(self.Train_tag, self.Train_tag, self.method_tag)
+        self.main_output_folder = "output/{}_{}_{}_{}_{}".format( time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()),self.Train_tag, self.Train_tag, self.method_tag, self.dataset)
         os.makedirs(self.main_output_folder, exist_ok=True)
         self.method_logFile_json_save_folder = "output"
         self.cal_std = True
