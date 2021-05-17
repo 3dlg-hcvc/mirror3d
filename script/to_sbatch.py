@@ -120,7 +120,7 @@ def sh_to_sbatch_test(train_sh_path, log_config, sh_output_foler, sbatch_config,
         
         if (line_index+1) != len(sh_lines) and len(sh_lines[line_index+1]) > 0:
             to_break = (sh_lines[line_index+1][0] == "#")
-            comment_line = sh_lines[line_index+1].strip()
+            
         if (line_index+1) == len(sh_lines)  or to_break:
             # Update config
             job_name = get_config_from_pythonSetting(one_python_command)
@@ -130,7 +130,7 @@ def sh_to_sbatch_test(train_sh_path, log_config, sh_output_foler, sbatch_config,
             sbatch_lines.append(sbatch_output)
 
             # Save the sbatch output
-            output_sh_path = os.path.join(sh_output_foler, "{}.sh".format(comment_line.replace("#","").replace(" ","_")))
+            output_sh_path = os.path.join(sh_output_foler, "{}.sh".format(comment_line.replace(" ","_")))
             output_sh_line = sbatch_lines + env_config +  one_python_command[1:]
             save_txt(output_sh_path, output_sh_line)
             print("sh file saved to : {}".format(output_sh_path))
@@ -138,6 +138,9 @@ def sh_to_sbatch_test(train_sh_path, log_config, sh_output_foler, sbatch_config,
             sbatch_lines = sbatch_config.copy()
             
         else:
+            if "#" in sh_lines[line_index]:
+                comment_line = sh_lines[line_index].strip().replace("#","").strip()
+
             if len(sh_lines[line_index]) > 0:
                 one_python_command.append(sh_lines[line_index].strip())
   
