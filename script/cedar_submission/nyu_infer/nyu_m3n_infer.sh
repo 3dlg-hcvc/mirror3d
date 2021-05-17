@@ -103,7 +103,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --ref_mode rawD_border
 
 
-# nyu rawD + Mirror3dNet 0
+# nyu rawD plus Mirror3dNet 0
 python mirror3dnet/run_mirror3dnet.py \
 --eval \
 --resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/checkpoint/m3d_final/m3n_normal_10_0.pth \
@@ -126,7 +126,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --ref_mode rawD_border
 
 
-# nyu rawD + Mirror3dNet 1
+# nyu rawD plus Mirror3dNet 1
 python mirror3dnet/run_mirror3dnet.py \
 --eval \
 --resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/checkpoint/m3d_final/m3n_normal_10_1.pth \
@@ -148,7 +148,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --log_directory /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/output/final_result/nyu_final \
 --ref_mode rawD_border
 
-# nyu rawD + Mirror3dNet 2
+# nyu rawD plus Mirror3dNet 2
 python mirror3dnet/run_mirror3dnet.py \
 --eval \
 --resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/checkpoint/m3d_final/m3n_normal_10_2.pth \
