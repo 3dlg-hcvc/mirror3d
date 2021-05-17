@@ -15,8 +15,8 @@ python mirror3dnet/run_mirror3dnet.py \
 --refined_depth \
 --coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
 --coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
---coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
---coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
+--coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu \
+--coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu \
 --anchor_normal_npyf \
 --coco_focal_len 519 \
 --depth_shift 1000 \

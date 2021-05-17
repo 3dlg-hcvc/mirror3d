@@ -9,8 +9,8 @@ for one_txt in $(cat $to_ref_txt_list); do
     --refined_depth \
     --coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
     --coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
-    --coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
-    --coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
+    --coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu \
+    --coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu \
     --coco_focal_len 519 \
     --depth_shift 1000 \
     --input_height 480 \
@@ -37,8 +37,8 @@ for one_txt in $(cat $to_ref_txt_list); do
     --refined_depth \
     --coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
     --coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
-    --coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
-    --coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
+    --coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu \
+    --coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu \
     --coco_focal_len 519 \
     --depth_shift 1000 \
     --input_height 480 \
@@ -64,8 +64,8 @@ for one_txt in $(cat $to_ref_txt_list); do
     --refined_depth \
     --coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
     --coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
-    --coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
-    --coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
+    --coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu \
+    --coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu \
     --coco_focal_len 519 \
     --depth_shift 1000 \
     --input_height 480 \
@@ -88,8 +88,8 @@ python mirror3dnet/run_mirror3dnet.py \
 --refined_depth \
 --coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
 --coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
---coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
---coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
+--coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu \
+--coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu \
 --anchor_normal_npyf \
 --coco_focal_len 519 \
 --depth_shift 1000 \
@@ -111,8 +111,8 @@ python mirror3dnet/run_mirror3dnet.py \
 --refined_depth \
 --coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
 --coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
---coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
---coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
+--coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu \
+--coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu \
 --anchor_normal_npy /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
 --coco_focal_len 519 \
 --depth_shift 1000 \
@@ -134,8 +134,8 @@ python mirror3dnet/run_mirror3dnet.py \
 --refined_depth \
 --coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
 --coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
---coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
---coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
+--coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu \
+--coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu \
 --anchor_normal_npy /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
 --coco_focal_len 519 \
 --depth_shift 1000 \
@@ -156,8 +156,8 @@ python mirror3dnet/run_mirror3dnet.py \
 --refined_depth \
 --coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
 --coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
---coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
---coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
+--coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu \
+--coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu \
 --anchor_normal_npy /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
 --coco_focal_len 519 \
 --depth_shift 1000 \
