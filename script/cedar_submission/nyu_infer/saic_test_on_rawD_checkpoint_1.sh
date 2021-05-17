@@ -18,4 +18,4 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_infer.py \
 --depth_shift 1000 \
 --input_height 480 \
 --input_width 640 \
---output_save_folder /project/3dlg-hcvc/mirrors/www/final_result/nyu_final
+--output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/output/final_result/nyu_final
