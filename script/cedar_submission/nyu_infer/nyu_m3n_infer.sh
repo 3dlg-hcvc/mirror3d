@@ -80,7 +80,7 @@ for one_txt in $(cat $to_ref_txt_list); do
     --to_ref_txt $one_txt
 done
 
-# nyu rawD + Mirror3dNet random
+# nyu rawD plus Mirror3dNet random
 python mirror3dnet/run_mirror3dnet.py \
 --eval \
 --resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/debug/m3n_normal_rawD_resume_2021-05-08-00-16-02/model_0014999.pth \
