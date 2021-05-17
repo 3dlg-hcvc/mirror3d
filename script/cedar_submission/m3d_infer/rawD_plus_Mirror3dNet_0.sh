@@ -3,7 +3,7 @@
 #SBATCH --gres=gpu:v100l:1
 #SBATCH --mem=48000
 #SBATCH --time=0-0:45
-#SBATCH --job-name=0_m3n_normal_10_refD_resume_mirror
+#SBATCH --job-name=rawD_plus_Mirror3dNet_0
 #SBATCH --output=/home/jiaqit/projects/rrg-msavva/jiaqit/cr_result/log/%x-%j.out
 source /home/jiaqit/projects/rrg-msavva/jiaqit/setup/anaconda3/bin/activate
 conda activate mirror3d
