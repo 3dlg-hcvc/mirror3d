@@ -3,7 +3,7 @@
 #SBATCH --gres=gpu:v100l:1
 #SBATCH --mem=48000
 #SBATCH --time=0-0:45
-#SBATCH --job-name=0_m3n_normal_10_refD_resume_mirror
+#SBATCH --job-name=nyu_txt_and_m3n_2
 #SBATCH --output=/home/jiaqit/projects/rrg-msavva/jiaqit/cr_result/log/%x-%j.out
 source /home/jiaqit/projects/rrg-msavva/jiaqit/setup/anaconda3/bin/activate
 conda activate mirror3d
@@ -16,8 +16,8 @@ python mirror3dnet/run_mirror3dnet.py \
 --resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/checkpoint/m3d_final/m3n_normal_10_2.pth \
 --config mirror3dnet/config/mirror3dnet_normal_config.yml \
 --refined_depth \
---coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
---coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+--coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
+--coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
 --coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
 --coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
 --coco_focal_len 519 \

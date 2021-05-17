@@ -7,8 +7,8 @@ for one_txt in $(cat $to_ref_txt_list); do
     --resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/checkpoint/m3d_final/m3n_normal_10_0.pth \
     --config mirror3dnet/config/mirror3dnet_normal_config.yml \
     --refined_depth \
-    --coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
-    --coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+    --coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
+    --coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
     --coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
     --coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
     --coco_focal_len 519 \
@@ -35,8 +35,8 @@ for one_txt in $(cat $to_ref_txt_list); do
     --resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/checkpoint/m3d_final/m3n_normal_10_1.pth \
     --config mirror3dnet/config/mirror3dnet_normal_config.yml \
     --refined_depth \
-    --coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
-    --coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+    --coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
+    --coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
     --coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
     --coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
     --coco_focal_len 519 \
@@ -62,8 +62,8 @@ for one_txt in $(cat $to_ref_txt_list); do
     --resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/checkpoint/m3d_final/m3n_normal_10_2.pth \
     --config mirror3dnet/config/mirror3dnet_normal_config.yml \
     --refined_depth \
-    --coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
-    --coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+    --coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
+    --coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
     --coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
     --coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
     --coco_focal_len 519 \
@@ -86,11 +86,11 @@ python mirror3dnet/run_mirror3dnet.py \
 --resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/debug/m3n_normal_rawD_resume_2021-05-08-00-16-02/model_0014999.pth \
 --config mirror3dnet/config/mirror3dnet_normal_config.yml \
 --refined_depth \
---coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
---coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+--coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
+--coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
 --coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
 --coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
---anchor_normal_npy /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
+--anchor_normal_npyf \
 --coco_focal_len 519 \
 --depth_shift 1000 \
 --input_height 480 \
@@ -99,7 +99,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100 \
 --learning_rate 1e-4 \
---log_directory /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/output/final_result/nyu_final \
+--log_directoryf\
 --ref_mode rawD_border
 
 
@@ -109,8 +109,8 @@ python mirror3dnet/run_mirror3dnet.py \
 --resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/checkpoint/m3d_final/m3n_normal_10_0.pth \
 --config mirror3dnet/config/mirror3dnet_normal_config.yml \
 --refined_depth \
---coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
---coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+--coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
+--coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
 --coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
 --coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
 --anchor_normal_npy /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
@@ -132,8 +132,8 @@ python mirror3dnet/run_mirror3dnet.py \
 --resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/checkpoint/m3d_final/m3n_normal_10_1.pth \
 --config mirror3dnet/config/mirror3dnet_normal_config.yml \
 --refined_depth \
---coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
---coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+--coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
+--coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
 --coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
 --coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
 --anchor_normal_npy /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
@@ -154,8 +154,8 @@ python mirror3dnet/run_mirror3dnet.py \
 --resume_checkpoint_path /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/checkpoint/m3d_final/m3n_normal_10_2.pth \
 --config mirror3dnet/config/mirror3dnet_normal_config.yml \
 --refined_depth \
---coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
---coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+--coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
+--coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/nyu/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
 --coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
 --coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final \
 --anchor_normal_npy /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
