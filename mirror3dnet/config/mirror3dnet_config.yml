@@ -75,7 +75,7 @@ EVAL_ANCHOR_AP : True # TODO
 EVAL_CLS_AP : True # TODO
 EVAL_MASK_IOU : True
 EVAL_NORMAL : True  # TODO angle diff & normal l2 loss
-EVAL_BRANCH_ORI_DEPTH : False # TODO mirror3d_eval matrics
+EVAL_BRANCH_ORI_DEPTH : True # TODO mirror3d_eval matrics
 EVAL_BRANCH_REF_DEPTH : True # TODO mirror3d_eval matrics
 EVAL_INPUT_REF_DEPTH : False # TODO REF_DEPTH_TO_REFINE
 EVAL_HEIGHT : 480
