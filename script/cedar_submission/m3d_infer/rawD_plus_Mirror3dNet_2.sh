@@ -2,7 +2,7 @@
 #SBATCH --account=rrg-msavva
 #SBATCH --gres=gpu:v100l:1
 #SBATCH --mem=48000
-#SBATCH --time=0-04:45
+#SBATCH --time=0-06:45
 #SBATCH --job-name=rawD_plus_Mirror3dNet_2
 #SBATCH --output=/home/jiaqit/projects/rrg-msavva/jiaqit/cr_result/log/%x-%j.out
 source /home/jiaqit/projects/rrg-msavva/jiaqit/setup/anaconda3/bin/activate
@@ -27,3 +27,4 @@ python mirror3dnet/run_mirror3dnet.py \
 --num_epochs 100 \
 --learning_rate 1e-4 \
 --log_directory /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/output/m3d_final \
+--ref_mode rawD_border
