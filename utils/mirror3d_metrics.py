@@ -415,9 +415,6 @@ class Mirror3d_eval():
     def save_result(self, main_output_folder, pred_depth, depth_shift, color_img_path):
         
         self.main_output_folder = main_output_folder
-        if os.path.exists(self.main_output_folder):
-            self.main_output_folder = self.main_output_folder + "_{}".format(random.randint(0,10000))
-            os.makedirs(self.main_output_folder, exist_ok=True)
 
         if os.path.exists(color_img_path.replace("raw", "mesh_refined_depth")):
             refD_gt_depth_path = color_img_path.replace("raw", "mesh_refined_depth")
