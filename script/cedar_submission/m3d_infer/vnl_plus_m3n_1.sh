@@ -24,7 +24,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100 \
 --learning_rate 1e-4 \
---log_directory /project/3dlg-hcvc/mirrors/www/final_result/debug_1st/m3d_infer \
+--log_directory /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/output/m3d_final \
 --ref_mode DE_border \
 --anchor_normal_npy /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
 --to_ref_txt /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final/upload/VNL_infer_2021-05-12-17-24-28/color_mask_gtD_predD.txt
