@@ -45,7 +45,7 @@ class Mirror3d_eval():
         self.min_threshold_filter = True
         self.save_score_per_sample = True
         self.get_full_set = False
-        self.rename_folder = False
+        self.to_create_folder = True
         
 
     def set_min_threshold_filter(self, min_threshold_filter):
@@ -416,10 +416,12 @@ class Mirror3d_eval():
     def save_result(self, main_output_folder, pred_depth, depth_shift, color_img_path):
         
         self.main_output_folder = main_output_folder
-        if os.path.exists(self.main_output_folder) and not self.rename_folder:
+        if os.path.exists(self.main_output_folder) and self.to_create_folder:
             self.main_output_folder = self.main_output_folder + "_{}".format(random.randint(0,10000))
             os.makedirs(self.main_output_folder, exist_ok=True)
-            self.rename_folder = True
+            self.to_create_folder = False
+        elif not os.path.exists(self.main_output_folder):
+            self.to_create_folder = False
 
         if os.path.exists(color_img_path.replace("raw", "mesh_refined_depth")):
             refD_gt_depth_path = color_img_path.replace("raw", "mesh_refined_depth")
