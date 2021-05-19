@@ -1578,8 +1578,8 @@ class Dataset_visulization(Dataset_visulization):
             avg_score = np.mean(score_list, axis=0)
             std_score = np.std(score_list, axis=0) / np.sqrt(sample_num)
 
-            single_avg_score = np.mean(score_list[:single_sample_num], axis=0)
-            single_std_score = np.std(score_list[:single_sample_num], axis=0) / np.sqrt(single_sample_num)
+            single_avg_score = np.mean(score_list[single_sample_num:2*single_sample_num], axis=0)
+            single_std_score = np.std(score_list[single_sample_num:2*single_sample_num], axis=0) / np.sqrt(single_sample_num)
 
             Input_tag , Train_tag , latex_method_tag = method_tag.split(",")
             tables["main_without_SE"].append("{:>5} & {:>10} & {:>45} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} \\\\".format(
@@ -1619,13 +1619,13 @@ class Dataset_visulization(Dataset_visulization):
                 single_avg_score[7], single_std_score[7], single_avg_score[16], single_std_score[16], single_avg_score[25], single_std_score[25], \
                 single_avg_score[8], single_std_score[8], single_avg_score[17], single_std_score[17], single_avg_score[26], single_std_score[26]
             ))
-            if 0 not in block:
-                tables["main_without_SE"][-1] = update_line_with_best(tables["main_without_SE"][-1], np.array(table_scores["main"])[block], is_up=[False, True])
-                tables["main_with_SE"][-1] = update_line_with_best(tables["main_with_SE"][-1], np.array(table_scores["main"])[block], is_up=[False, True])
-                tables["sup_multi_with_SE"][0][-1] = update_line_with_best(tables["sup_multi_with_SE"][0][-1], np.array(table_scores["sup_multi_run"][0])[block], is_up=[False, False, False, True])
-                tables["sup_multi_with_SE"][1][-1] = update_line_with_best(tables["sup_multi_with_SE"][1][-1], np.array(table_scores["sup_multi_run"][1])[block], is_up=[True, True, True, True, True])
-                tables["sup_single_with_SE"][0][-1] = update_line_with_best(tables["sup_single_with_SE"][0][-1], np.array(table_scores["sup_single_run"][0])[block], is_up=[False, False, False, True])
-                tables["sup_single_with_SE"][1][-1] = update_line_with_best(tables["sup_single_with_SE"][1][-1], np.array(table_scores["sup_single_run"][1])[block], is_up=[True, True, True, True, True])
+            # if 0 not in block:
+            tables["main_without_SE"][-1] = update_line_with_best(tables["main_without_SE"][-1], np.array(table_scores["main"])[block], is_up=[False, True])
+            tables["main_with_SE"][-1] = update_line_with_best(tables["main_with_SE"][-1], np.array(table_scores["main"])[block], is_up=[False, True])
+            tables["sup_multi_with_SE"][0][-1] = update_line_with_best(tables["sup_multi_with_SE"][0][-1], np.array(table_scores["sup_multi_run"][0])[block], is_up=[False, False, False, True])
+            tables["sup_multi_with_SE"][1][-1] = update_line_with_best(tables["sup_multi_with_SE"][1][-1], np.array(table_scores["sup_multi_run"][1])[block], is_up=[True, True, True, True, True])
+            tables["sup_single_with_SE"][0][-1] = update_line_with_best(tables["sup_single_with_SE"][0][-1], np.array(table_scores["sup_single_run"][0])[block], is_up=[False, False, False, True])
+            tables["sup_single_with_SE"][1][-1] = update_line_with_best(tables["sup_single_with_SE"][1][-1], np.array(table_scores["sup_single_run"][1])[block], is_up=[True, True, True, True, True])
 
             return tables
 
@@ -1649,7 +1649,7 @@ class Dataset_visulization(Dataset_visulization):
             score_list = np.array(score_list)
 
             avg_score = np.mean(score_list, axis=0)
-            single_avg_score = np.mean(score_list[:single_sample_num], axis=0)
+            single_avg_score = np.mean(score_list[single_sample_num:2*single_sample_num], axis=0)
 
             table_scores["main"].append([
             avg_score[0], avg_score[9], avg_score[18], \
@@ -1735,9 +1735,329 @@ class Dataset_visulization(Dataset_visulization):
             tables = update_latex_tables(tables, table_scores, methodTag_infoFile[method_tag],method_tag, compare_with_raw, block)
 
         if compare_with_raw:
-            input_tag = "ref"
-        else:
             input_tag = "raw"
+        else:
+            input_tag = "ref"
+
+        tables["main_without_SE"].append("\\bottomrule\end{tabular}} \caption{Result on " + "{}-{}".format(dataset_tag, input_tag) + "}\end{table}")
+        tables["main_with_SE"].append("\\bottomrule\end{tabular}} \caption{Result on " + "{}-{}".format(dataset_tag, input_tag) + " with SE}\end{table}")
+        tables["sup_single_with_SE"][1].append("\\bottomrule\end{tabular}}\caption{ Additional quantitative metrics for " + "{}-{}".format(dataset_tag, input_tag) + " across a single run}\end{table*}")
+        tables["sup_multi_with_SE"][1].append("\\bottomrule\end{tabular}}\caption{ Additional quantitative metrics for " + "{}-{}".format(dataset_tag, input_tag) + " across all runs}\end{table*}")
+        tables["sup_single_with_SE"][0].append("\\bottomrule\end{tabular}}")
+        tables["sup_multi_with_SE"][0].append("\\bottomrule\end{tabular}}")
+
+        output_lines = []
+        for one_table in tables.items():
+            print("%%%%%%%%s%%%%%%%%%%%%%%%%% {} %%%%%%%%%%%%%%%%%%%%%%%%%".format(one_table[0]))
+            output_lines.append("%%%%%%%%%%%%%%%%%%%%%%%%% {} %%%%%%%%%%%%%%%%%%%%%%%%%".format(one_table[0]))
+            if "sup" in one_table[0]:
+                for line in one_table[1][0]:
+                    print(line)
+                    output_lines.append(line)
+                for line in one_table[1][1]:
+                    print(line)
+                    output_lines.append(line)
+            else:
+                for line in one_table[1]:
+                    print(line)
+                    output_lines.append(line)
+            print()
+            output_lines.append("\n")
+        save_txt("output/temp.tex",output_lines)
+
+    def gen_latex_table_from_tagFolder_boldSeperate(self, method_order_txt, all_info_txt, midrule_index, compare_with_raw, dataset_tag="NYUv2"):
+        import re
+
+        def update_line_with_best_std(line, relevant_table_scores, is_up=[True, False]):
+            score_start_index = 3
+            scores =  line.replace("\\\\","").split("&")[score_start_index:]
+            best_line_info_list = line.replace("\\\\","").split("&")[:score_start_index]
+            for score_index, one_score_str in enumerate(scores):
+                one_score = float(one_score_str.split("$\pm$")[1])
+                is_best = np.abs(one_score - round(relevant_table_scores[:,score_index].min(),3)) < 1e-5
+                    
+                if is_best:
+                    if "pm" in one_score_str:
+                        metrics_score, se_score = one_score_str.strip().split("$\pm$")
+                        best_line_info_list.append(metrics_score.strip() + " $\pm$ \\best{" +  se_score.strip() + "}")
+                    else:
+                       best_line_info_list.append("\\best{"+ one_score_str.strip() + "}") 
+                else:
+                    best_line_info_list.append(one_score_str)
+            best_line = ""
+            for index, i in enumerate(best_line_info_list):
+                best_line += i
+                best_line += "&"
+            best_line = rreplace(best_line, "&", "\\\\")   
+            return best_line      
+
+        def update_line_with_best_metrics(line, relevant_table_scores, is_up=[True, False]):
+            score_start_index = 3
+            scores =  line.replace("\\\\","").split("&")[score_start_index:]
+            best_line_info_list = line.replace("\\\\","").split("&")[:score_start_index]
+            for score_index, one_score_str in enumerate(scores):
+                one_score = float(one_score_str.split("$\pm$")[0])
+                if is_up[int(score_index/3)]:
+                    is_best = np.abs(one_score - round(relevant_table_scores[:,score_index].max(),3)) < 1e-5
+                else:
+                    is_best = np.abs(one_score - round(relevant_table_scores[:,score_index].min(),3)) < 1e-5
+                
+                if is_best:
+                    if "pm" in one_score_str:
+                        metrics_score, se_score = one_score_str.strip().split("$\pm$")
+                        best_line_info_list.append("\\best{"+ metrics_score + "} $\pm$ " + se_score)
+                    else:
+                        best_line_info_list.append("\\best{"+ one_score_str.strip() + "}")
+                else:
+                    best_line_info_list.append(one_score_str)
+            best_line = ""
+            for index, i in enumerate(best_line_info_list):
+                best_line += i
+                best_line += "&"
+            best_line = rreplace(best_line, "&", "\\\\")   
+            return best_line        
+
+        # output table order : main without SE, main with SE, single-run sup with SE, multi-run sup with SE
+        def update_latex_tables(tables, table_scores, info_path_list,method_tag, compare_with_raw, block=[0,1]):
+            scores = []
+            
+            if compare_with_raw:
+                input_tag = "raw"
+            else:
+                input_tag = "ref"
+            score_list = []
+            sample_num = 0
+            single_sample_num = 0
+            for index, one_info_path in enumerate(info_path_list):
+                method_info = read_json(one_info_path)
+                for one_item in method_info.items():
+                    if len(one_item[1][input_tag]) == 27:
+                        score_list.append(one_item[1][input_tag])
+                        sample_num += 1
+                        if index == 0:
+                            single_sample_num = len(method_info)
+            score_list = np.array(score_list)
+
+            avg_score = np.mean(score_list, axis=0)
+            std_score = np.std(score_list, axis=0) / np.sqrt(sample_num)
+
+            single_avg_score = np.mean(score_list[single_sample_num:2*single_sample_num], axis=0)
+            single_std_score = np.std(score_list[single_sample_num:2*single_sample_num], axis=0) / np.sqrt(single_sample_num)
+
+            Input_tag , Train_tag , latex_method_tag = method_tag.split(",")
+            tables["main_without_SE"].append("{:>5} & {:>10} & {:>45} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} \\\\".format(
+            Input_tag, Train_tag, latex_method_tag, avg_score[0], avg_score[9], avg_score[18], \
+                avg_score[3], avg_score[12], avg_score[21]))
+            tables["main_with_SE"].append("{:>5} & {:>10} & {:>45} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} \\\\".format(
+            Input_tag, Train_tag, latex_method_tag, avg_score[0], std_score[0], avg_score[9], std_score[9], avg_score[18], std_score[18], \
+                avg_score[3], std_score[3], avg_score[12], std_score[12], avg_score[21], std_score[21]))
+            tables["sup_multi_with_SE"][0].append("{:>5} & {:>10} & {:>45} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f}\\\\".format(
+            Input_tag, Train_tag, latex_method_tag, \
+                avg_score[0], std_score[0], avg_score[9], std_score[9], avg_score[18], std_score[18], \
+                avg_score[1], std_score[1], avg_score[10], std_score[10], avg_score[19], std_score[19], \
+                avg_score[2], std_score[2], avg_score[11], std_score[11], avg_score[20], std_score[20], \
+                avg_score[3], std_score[3], avg_score[12], std_score[12], avg_score[21], std_score[21]
+            ))
+            tables["sup_multi_with_SE"][1].append("{:>5} & {:>10} & {:>45} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f}\\\\".format(
+                Input_tag, Train_tag, latex_method_tag, \
+                avg_score[4], std_score[4], avg_score[13], std_score[13], avg_score[22], std_score[22], \
+                avg_score[5], std_score[5], avg_score[14], std_score[14], avg_score[23], std_score[23], \
+                avg_score[6], std_score[6], avg_score[15], std_score[15], avg_score[24], std_score[24], \
+                avg_score[7], std_score[7], avg_score[16], std_score[16], avg_score[25], std_score[25], \
+                avg_score[8], std_score[8], avg_score[17], std_score[17], avg_score[26], std_score[26]
+            ))
+
+            tables["sup_single_with_SE"][0].append("{:>5} & {:>10} & {:>45} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f}\\\\".format(
+            Input_tag, Train_tag, latex_method_tag, \
+                single_avg_score[0], single_std_score[0], single_avg_score[9], single_std_score[9], single_avg_score[18], single_std_score[18], \
+                single_avg_score[1], single_std_score[1], single_avg_score[10], single_std_score[10], single_avg_score[19], single_std_score[19], \
+                single_avg_score[2], single_std_score[2], single_avg_score[11], single_std_score[11], single_avg_score[20], single_std_score[20], \
+                single_avg_score[3], single_std_score[3], single_avg_score[12], single_std_score[12], single_avg_score[21], single_std_score[21]
+            ))
+            tables["sup_single_with_SE"][1].append("{:>5} & {:>10} & {:>45} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f} & {:.3f} $\pm$ {:.3f}\\\\".format(
+                Input_tag, Train_tag, latex_method_tag, \
+                single_avg_score[4], single_std_score[4], single_avg_score[13], single_std_score[13], single_avg_score[22], single_std_score[22], \
+                single_avg_score[5], single_std_score[5], single_avg_score[14], single_std_score[14], single_avg_score[23], single_std_score[23], \
+                single_avg_score[6], single_std_score[6], single_avg_score[15], single_std_score[15], single_avg_score[24], single_std_score[24], \
+                single_avg_score[7], single_std_score[7], single_avg_score[16], single_std_score[16], single_avg_score[25], single_std_score[25], \
+                single_avg_score[8], single_std_score[8], single_avg_score[17], single_std_score[17], single_avg_score[26], single_std_score[26]
+            ))
+            # if 0 not in block:
+            tables["main_without_SE"][-1] = update_line_with_best_metrics(tables["main_without_SE"][-1], np.array(table_scores["metrics"]["main"])[block], is_up=[False, True])
+            tables["main_with_SE"][-1] = update_line_with_best_metrics(tables["main_with_SE"][-1], np.array(table_scores["metrics"]["main"])[block], is_up=[False, True])
+            tables["sup_multi_with_SE"][0][-1] = update_line_with_best_metrics(tables["sup_multi_with_SE"][0][-1], np.array(table_scores["metrics"]["sup_multi_run"][0])[block], is_up=[False, False, False, True])
+            tables["sup_multi_with_SE"][1][-1] = update_line_with_best_metrics(tables["sup_multi_with_SE"][1][-1], np.array(table_scores["metrics"]["sup_multi_run"][1])[block], is_up=[True, True, True, True, True])
+            tables["sup_single_with_SE"][0][-1] = update_line_with_best_metrics(tables["sup_single_with_SE"][0][-1], np.array(table_scores["metrics"]["sup_single_run"][0])[block], is_up=[False, False, False, True])
+            tables["sup_single_with_SE"][1][-1] = update_line_with_best_metrics(tables["sup_single_with_SE"][1][-1], np.array(table_scores["metrics"]["sup_single_run"][1])[block], is_up=[True, True, True, True, True])
+
+
+            tables["main_with_SE"][-1] = update_line_with_best_std(tables["main_with_SE"][-1], np.array(table_scores["se"]["main"])[block], is_up=[False, True])
+            tables["sup_multi_with_SE"][0][-1] = update_line_with_best_std(tables["sup_multi_with_SE"][0][-1], np.array(table_scores["se"]["sup_multi_run"][0])[block], is_up=[False, False, False, True])
+            tables["sup_multi_with_SE"][1][-1] = update_line_with_best_std(tables["sup_multi_with_SE"][1][-1], np.array(table_scores["se"]["sup_multi_run"][1])[block], is_up=[True, True, True, True, True])
+            tables["sup_single_with_SE"][0][-1] = update_line_with_best_std(tables["sup_single_with_SE"][0][-1], np.array(table_scores["se"]["sup_single_run"][0])[block], is_up=[False, False, False, True])
+            tables["sup_single_with_SE"][1][-1] = update_line_with_best_std(tables["sup_single_with_SE"][1][-1], np.array(table_scores["se"]["sup_single_run"][1])[block], is_up=[True, True, True, True, True])
+
+
+            return tables
+
+        def update_table_scores(table_scores, info_path_list, compare_with_raw):
+
+            if compare_with_raw:
+                input_tag = "raw"
+            else:
+                input_tag = "ref"
+
+            score_list = []
+            sample_num = 0
+            single_sample_num = 0
+            for index, one_info_path in enumerate(info_path_list):
+                method_info = read_json(one_info_path)
+                for one_item in method_info.items():
+                    if len(one_item[1][input_tag]) == 27:
+                        score_list.append(one_item[1][input_tag])
+                        sample_num += 1
+                        if index == 0:
+                            single_sample_num = len(method_info)
+            score_list =  np.array(score_list)
+
+            avg_score = np.mean(score_list, axis=0)
+            std_score = np.std(score_list, axis=0) / np.sqrt(sample_num)
+
+            single_avg_score = np.mean(score_list[single_sample_num:2*single_sample_num], axis=0)
+            single_std_score = np.std(score_list[single_sample_num:2*single_sample_num], axis=0) / np.sqrt(single_sample_num)
+
+            table_scores["metrics"]["main"].append([
+            avg_score[0], avg_score[9], avg_score[18], \
+                avg_score[3], avg_score[12], avg_score[21]])
+            table_scores["metrics"]["sup_single_run"][0].append([
+                single_avg_score[0], single_avg_score[9],   single_avg_score[18], \
+                single_avg_score[1], single_avg_score[10],  single_avg_score[19], \
+                single_avg_score[2], single_avg_score[11],  single_avg_score[20], \
+                single_avg_score[3], single_avg_score[12],  single_avg_score[21]
+            ])
+
+            table_scores["metrics"]["sup_single_run"][1].append([
+                single_avg_score[4],  single_avg_score[13], single_avg_score[22], \
+                single_avg_score[5],  single_avg_score[14], single_avg_score[23], \
+                single_avg_score[6],  single_avg_score[15], single_avg_score[24], \
+                single_avg_score[7],  single_avg_score[16], single_avg_score[25], \
+                single_avg_score[8],  single_avg_score[17], single_avg_score[26]
+            ])
+
+            table_scores["metrics"]["sup_multi_run"][0].append([
+                avg_score[0], avg_score[9],   avg_score[18], \
+                avg_score[1], avg_score[10],  avg_score[19], \
+                avg_score[2], avg_score[11],  avg_score[20], \
+                avg_score[3], avg_score[12],  avg_score[21]
+            ])
+
+
+            table_scores["metrics"]["sup_multi_run"][1].append([
+                avg_score[4],  avg_score[13], avg_score[22], \
+                avg_score[5],  avg_score[14], avg_score[23], \
+                avg_score[6],  avg_score[15], avg_score[24], \
+                avg_score[7],  avg_score[16], avg_score[25], \
+                avg_score[8],  avg_score[17], avg_score[26]
+            ])
+
+            # append se scores
+
+            table_scores["se"]["main"].append([
+            std_score[0], std_score[9], std_score[18], \
+                std_score[3], std_score[12], std_score[21]])
+            table_scores["se"]["sup_single_run"][0].append([
+                single_std_score[0], single_std_score[9],   single_std_score[18], \
+                single_std_score[1], single_std_score[10],  single_std_score[19], \
+                single_std_score[2], single_std_score[11],  single_std_score[20], \
+                single_std_score[3], single_std_score[12],  single_std_score[21]
+            ])
+
+            table_scores["se"]["sup_single_run"][1].append([
+                single_std_score[4],  single_std_score[13], single_std_score[22], \
+                single_std_score[5],  single_std_score[14], single_std_score[23], \
+                single_std_score[6],  single_std_score[15], single_std_score[24], \
+                single_std_score[7],  single_std_score[16], single_std_score[25], \
+                single_std_score[8],  single_std_score[17], single_std_score[26]
+            ])
+
+            table_scores["se"]["sup_multi_run"][0].append([
+                std_score[0], std_score[9],   std_score[18], \
+                std_score[1], std_score[10],  std_score[19], \
+                std_score[2], std_score[11],  std_score[20], \
+                std_score[3], std_score[12],  std_score[21]
+            ])
+
+
+            table_scores["se"]["sup_multi_run"][1].append([
+                std_score[4],  std_score[13], std_score[22], \
+                std_score[5],  std_score[14], std_score[23], \
+                std_score[6],  std_score[15], std_score[24], \
+                std_score[7],  std_score[16], std_score[25], \
+                std_score[8],  std_score[17], std_score[26]
+            ])
+
+
+            return table_scores
+
+
+
+        method_order_list = [line.strip().replace('\\\\','\\') for line in read_txt(method_order_txt)]
+        methodTag_infoFile = dict()
+        for one_line in read_txt(all_info_txt):
+            methodTag, infoFolder = one_line.split(":")
+            methodTag = methodTag.strip().replace('\\\\','\\')
+            if methodTag in methodTag_infoFile:
+                methodTag_infoFile[methodTag].append(os.path.join(infoFolder,"minFilter_True_full_False_score_per_sample.json"))
+            else:
+                methodTag_infoFile[methodTag] = [os.path.join(infoFolder,"minFilter_True_full_False_score_per_sample.json")]
+        
+        tables = dict()
+        main_table_lines = read_txt("./visualization/table_template/main_table_begin.txt")
+        sup_table_part1_lines = read_txt("./visualization/table_template/sup1_table_begin.txt")
+        sup_table_part2_lines = read_txt("./visualization/table_template/sup2_table_begin.txt")
+
+        tables["main_without_SE"] = main_table_lines.copy()
+        tables["main_with_SE"] = main_table_lines.copy()
+        tables["sup_single_with_SE"] = [sup_table_part1_lines.copy(), sup_table_part2_lines.copy()].copy()
+        tables["sup_multi_with_SE"] = [sup_table_part1_lines.copy(), sup_table_part2_lines.copy()].copy()
+
+
+        table_scores = dict()
+        table_scores["metrics"] = dict()
+        table_scores["se"] = dict()
+
+        table_scores["metrics"]["main"] = []
+        table_scores["metrics"]["sup_single_run"] = [[], []]
+        table_scores["metrics"]["sup_multi_run"] = [[], []]
+
+        table_scores["se"]["main"] = []
+        table_scores["se"]["sup_single_run"] = [[], []]
+        table_scores["se"]["sup_multi_run"] = [[], []]
+
+        for exp_index, method_tag in enumerate(method_order_list):
+            table_scores = update_table_scores(table_scores,  methodTag_infoFile[method_tag],compare_with_raw)
+        
+        midrule_count = 0
+        block = [i for i in range(midrule_index[midrule_count])]
+        for exp_index, method_tag in enumerate(method_order_list):
+            if (exp_index in midrule_index):
+                tables["main_without_SE"].append("\midrule")
+                tables["main_with_SE"].append("\midrule")
+                tables["sup_single_with_SE"][0].append("\midrule") 
+                tables["sup_single_with_SE"][1].append("\midrule") 
+                tables["sup_multi_with_SE"][0].append("\midrule") 
+                tables["sup_multi_with_SE"][1].append("\midrule") 
+                midrule_count += 1
+                if midrule_count == len(midrule_index):
+                    block = [i for i in range(midrule_index[midrule_count-1],len(method_order_list),1)]
+                else:
+                    block = [i for i in range(midrule_index[midrule_count-1],midrule_index[midrule_count],1)]
+            tables = update_latex_tables(tables, table_scores, methodTag_infoFile[method_tag],method_tag, compare_with_raw, block)
+
+        if compare_with_raw:
+            input_tag = "raw"
+        else:
+            input_tag = "ref"
 
         tables["main_without_SE"].append("\\bottomrule\end{tabular}} \caption{Result on " + "{}-{}".format(dataset_tag, input_tag) + "}\end{table}")
         tables["main_with_SE"].append("\\bottomrule\end{tabular}} \caption{Result on " + "{}-{}".format(dataset_tag, input_tag) + " with SE}\end{table}")
@@ -1766,7 +2086,6 @@ class Dataset_visulization(Dataset_visulization):
         save_txt("output/temp.tex",output_lines)
 
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
@@ -1780,6 +2099,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--process_index', default=0, type=int, help="process index")
     parser.add_argument('--multi_processing', help='do multi-process or not',action='store_true')
+    parser.add_argument('--compare_with_raw', help='do multi-process or not',action='store_true')
     parser.add_argument('--overwrite', help='overwrite files under --output_folder or not',action='store_true')
     parser.add_argument(
         '--f', default=537, type=int, help="camera focal length")
@@ -1806,6 +2126,8 @@ if __name__ == "__main__":
         '--view_mode', default="topdown", help="object view angle : (1) topdown (2) front")
     parser.add_argument(
         '--method_order_txt', default="", type=str)
+    parser.add_argument(
+        '--dataset_tag', default="NYUv2", type=str)
     parser.add_argument(
         '--all_info_json', default="output/ref_m3d_result.json", type=str)
     parser.add_argument('--min_threshold_filter', help='',action='store_true')
@@ -1842,7 +2164,10 @@ if __name__ == "__main__":
     elif args.stage == "10":
         vis_tool.gen_latex_table_without_run_SE(args.method_order_txt, args.all_info_json, args.midrule_index)
     elif args.stage == "11":
-        compare_with_raw = True
-        vis_tool.gen_latex_table_from_tagFolder(args.method_order_txt, args.all_info_json, args.midrule_index, compare_with_raw)
+        vis_tool.gen_latex_table_from_tagFolder(args.method_order_txt, args.all_info_json, args.midrule_index, args.compare_with_raw, args.dataset_tag)
+    elif args.stage == "12":
+        vis_tool.gen_latex_table_from_tagFolder_boldSeperate(args.method_order_txt, args.all_info_json, args.midrule_index, args.compare_with_raw, args.dataset_tag)
+
+    
     
         

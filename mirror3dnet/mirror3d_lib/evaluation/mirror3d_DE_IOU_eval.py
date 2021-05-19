@@ -181,56 +181,56 @@ class Mirror3DNet_Eval:
             os.makedirs(mesh_depth_to_ref_output_folder, exist_ok=True)
 
 
-            if instances.to("cpu").has("pred_masks"):
-                for index, one_pred_mask in enumerate(instances.to("cpu").pred_masks):
+            # if instances.to("cpu").has("pred_masks"):
+            #     for index, one_pred_mask in enumerate(instances.to("cpu").pred_masks):
                     
-                    to_refine_area = one_pred_mask.numpy().astype(bool)
-                    to_refine_area = np.logical_and(pred_mask==False, to_refine_area)
-                    if to_refine_area.sum() == 0:
-                        continue
-                    pred_mask = np.logical_or(pred_mask , one_pred_mask)
-                    if instances.to("cpu").pred_anchor_classes[index] >= anchor_normal.shape[0]:
-                        continue
-                    pred_normal = anchor_normal[instances.to("cpu").pred_anchor_classes[index]] +  instances.to("cpu").pred_residuals[index].numpy()
-                    pred_normal = unit_vector(pred_normal)
+            #         to_refine_area = one_pred_mask.numpy().astype(bool)
+            #         to_refine_area = np.logical_and(pred_mask==False, to_refine_area)
+            #         if to_refine_area.sum() == 0:
+            #             continue
+            #         pred_mask = np.logical_or(pred_mask , one_pred_mask)
+            #         if instances.to("cpu").pred_anchor_classes[index] >= anchor_normal.shape[0]:
+            #             continue
+            #         pred_normal = anchor_normal[instances.to("cpu").pred_anchor_classes[index]] +  instances.to("cpu").pred_residuals[index].numpy()
+            #         pred_normal = unit_vector(pred_normal)
 
-                    if mesh_raw_depth_path != hole_raw_depth_path:
-                        if "border" in self.cfg.REF_MODE :
-                            mesh_depth_to_ref = refine_depth_fun.refine_depth_by_mirror_border(one_pred_mask.numpy().astype(bool).squeeze(), pred_normal, mesh_depth_to_ref)
-                        else:
-                            mesh_depth_to_ref = refine_depth_fun.refine_depth_by_mirror_area(one_pred_mask.numpy().astype(bool).squeeze(), pred_normal, mesh_depth_to_ref)
+            #         if mesh_raw_depth_path != hole_raw_depth_path:
+            #             if "border" in self.cfg.REF_MODE :
+            #                 mesh_depth_to_ref = refine_depth_fun.refine_depth_by_mirror_border(one_pred_mask.numpy().astype(bool).squeeze(), pred_normal, mesh_depth_to_ref)
+            #             else:
+            #                 mesh_depth_to_ref = refine_depth_fun.refine_depth_by_mirror_area(one_pred_mask.numpy().astype(bool).squeeze(), pred_normal, mesh_depth_to_ref)
 
-                    if "border" in self.cfg.REF_MODE :
-                        hole_depth_to_ref = refine_depth_fun.refine_depth_by_mirror_border(one_pred_mask.numpy().astype(bool).squeeze(), pred_normal, hole_depth_to_ref)
-                    else:
-                        hole_depth_to_ref = refine_depth_fun.refine_depth_by_mirror_area(one_pred_mask.numpy().astype(bool).squeeze(), pred_normal, hole_depth_to_ref)
+            #         if "border" in self.cfg.REF_MODE :
+            #             hole_depth_to_ref = refine_depth_fun.refine_depth_by_mirror_border(one_pred_mask.numpy().astype(bool).squeeze(), pred_normal, hole_depth_to_ref)
+            #         else:
+            #             hole_depth_to_ref = refine_depth_fun.refine_depth_by_mirror_area(one_pred_mask.numpy().astype(bool).squeeze(), pred_normal, hole_depth_to_ref)
             
-            hole_depth_to_ref[hole_depth_to_ref<0] = 0
+            # hole_depth_to_ref[hole_depth_to_ref<0] = 0
             
-            mirror3d_eval_hole.compute_and_update_mirror3D_metrics(hole_depth_to_ref/self.cfg.DEPTH_SHIFT,  self.cfg.DEPTH_SHIFT, color_img_path)
+            # mirror3d_eval_hole.compute_and_update_mirror3D_metrics(hole_depth_to_ref/self.cfg.DEPTH_SHIFT,  self.cfg.DEPTH_SHIFT, color_img_path)
             mirror3d_eval_sensorD.compute_and_update_mirror3D_metrics(cv2.imread(hole_raw_depth_path, cv2.IMREAD_ANYDEPTH)/self.cfg.DEPTH_SHIFT,  self.cfg.DEPTH_SHIFT, color_img_path)
-            if self.cfg.EVAL_SAVE_DEPTH:
-                mirror3d_eval_hole.save_result(hole_depth_to_ref_output_folder, hole_depth_to_ref/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, color_img_path)
+        #     if self.cfg.EVAL_SAVE_DEPTH:
+        #         mirror3d_eval_hole.save_result(hole_depth_to_ref_output_folder, hole_depth_to_ref/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, color_img_path)
 
-            if mesh_raw_depth_path != hole_raw_depth_path:
-                have_mesh_D = True
-                mesh_depth_to_ref[mesh_depth_to_ref<0] = 0
-                mirror3d_eval_mesh.compute_and_update_mirror3D_metrics(mesh_depth_to_ref/self.cfg.DEPTH_SHIFT,  self.cfg.DEPTH_SHIFT, color_img_path)
-                mirror3d_eval_meshD.compute_and_update_mirror3D_metrics(cv2.imread(mesh_raw_depth_path, cv2.IMREAD_ANYDEPTH)/self.cfg.DEPTH_SHIFT,  self.cfg.DEPTH_SHIFT, color_img_path)
-                if self.cfg.EVAL_SAVE_DEPTH:
-                    mirror3d_eval_mesh.save_result(mesh_depth_to_ref_output_folder, mesh_depth_to_ref/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, color_img_path)
-            else:
-                os.rmdir(mesh_depth_to_ref_output_folder)
+        #     if mesh_raw_depth_path != hole_raw_depth_path:
+        #         have_mesh_D = True
+        #         mesh_depth_to_ref[mesh_depth_to_ref<0] = 0
+        #         mirror3d_eval_mesh.compute_and_update_mirror3D_metrics(mesh_depth_to_ref/self.cfg.DEPTH_SHIFT,  self.cfg.DEPTH_SHIFT, color_img_path)
+        #         mirror3d_eval_meshD.compute_and_update_mirror3D_metrics(cv2.imread(mesh_raw_depth_path, cv2.IMREAD_ANYDEPTH)/self.cfg.DEPTH_SHIFT,  self.cfg.DEPTH_SHIFT, color_img_path)
+        #         if self.cfg.EVAL_SAVE_DEPTH:
+        #             mirror3d_eval_mesh.save_result(mesh_depth_to_ref_output_folder, mesh_depth_to_ref/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, color_img_path)
+        #     else:
+        #         os.rmdir(mesh_depth_to_ref_output_folder)
         
-        print("############# hole raw depth + Mirror3dNet result #############")
-        mirror3d_eval_hole.print_mirror3D_score()
-        print("############# hole raw (sensor) depth result #############")
+        # print("############# hole raw depth + Mirror3dNet result #############")
+        # mirror3d_eval_hole.print_mirror3D_score()
+        # print("############# hole raw (sensor) depth result #############")
         mirror3d_eval_sensorD.print_mirror3D_score()
-        if have_mesh_D:
-            print("############# mesh raw depth + Mirror3dNet result #############")
-            mirror3d_eval_mesh.print_mirror3D_score()
-            print("############# mesh raw (meshD) depth refine result #############")
-            mirror3d_eval_meshD.print_mirror3D_score()
+        # if have_mesh_D:
+        #     print("############# mesh raw depth + Mirror3dNet result #############")
+        #     mirror3d_eval_mesh.print_mirror3D_score()
+        #     print("############# mesh raw (meshD) depth refine result #############")
+        #     mirror3d_eval_meshD.print_mirror3D_score()
 
     def eval_raw_DEbranch_predD(self, output_list):
 

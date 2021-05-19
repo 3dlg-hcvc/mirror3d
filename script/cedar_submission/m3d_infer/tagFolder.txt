@@ -24,4 +24,5 @@ RGBD,raw,saic + \\mnet:/project/3dlg-hcvc/mirrors/www/final_result/m3d_final/dow
 sensor-D,*,\\mnet:/project/3dlg-hcvc/mirrors/www/final_result/nyu_final/m3n_normal_refD_resume_2021-05-15-23-10-11/hole_raw_depth_mirror3d_refine
 sensor-D,*,\\mnet:/project/3dlg-hcvc/mirrors/www/final_result/nyu_final/m3n_normal_refD_resume_2021-05-17-09-53-32/hole_raw_depth_mirror3d_refine
 sensor-D,*,\\mnet:/project/3dlg-hcvc/mirrors/www/final_result/nyu_final/m3n_normal_refD_resume_2021-05-15-23-30-39/hole_raw_depth_mirror3d_refine
-sensor-D,*,*:/local-scratch/jiaqit/exp/Mirror3D/output/2021-05-15-23-30-50_*_*_*_nyu
+sensor-D,*,*:/project/3dlg-hcvc/mirrors/www/final_result/m3d_final/2021-05-18-21-37-52_sensor-D_a_a_m3d
+mesh-D,*,*:/project/3dlg-hcvc/mirrors/www/final_result/m3d_final/2021-05-18-17-19-47_a_a_a_m3d
