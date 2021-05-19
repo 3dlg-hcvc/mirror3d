@@ -98,8 +98,6 @@ if __name__ == "__main__":
         parser.add_argument(
             '--stage', default="2")
         parser.add_argument(
-            '--color_img_path', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/raw/1003.png")
-        parser.add_argument(
             '--data_root_path', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu")
         parser.add_argument(
             '--json_path', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/img_info/1003.json")
