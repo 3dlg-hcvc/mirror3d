@@ -73,6 +73,10 @@ def main(args):
         method_name = "m3n_full"
     if args.config.find("planercnn_config.yml") > 0:
         method_name = "planercnn"
+    if args.config.find("mirror3dnet_30normal_config.yml") > 0:
+        method_name = "ablation_border_30"
+    if args.config.find("mirror3dnet_70normal_config.yml") > 0:
+        method_name = "ablation_border_70"
     if args.refined_depth:
         depth_tag = "refD"
     else:

@@ -27,6 +27,7 @@ TEST:
   EVAL_PERIOD: 100 # TODO
   AUG:
     ENABLED : False 
+    FLIP : False
 
 SOLVER:
   STEPS : (7000, 8000) # TODO
@@ -45,6 +46,8 @@ INPUT:
   MIN_SIZE_TEST : (480)
   MAX_SIZE_TEST : 640
   RANDOM_FLIP : "none"
+
+
 
 ############## planeRCNN configure ##############
 DEPTH_EST : False  # TODO ori & new(optional)
@@ -68,7 +71,7 @@ UNIT_ANCHOR_NORMAL : True
 
 # ---- ANCHOR_CLS -----
 # during evaluation : evaluate img_size & f should be the same as MODEL.WEIGHTS's img_size & f
-ANCHOR_NORMAL_NYP : "dataset/mirror_normal/m3d_kmeans_normal_10.npy"  #! TODO 
+ANCHOR_NORMAL_NYP : "/project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy"  #! TODO 
 
 #! ############# eval configure ##############
 EVAL_ANCHOR_AP : True # TODO
@@ -84,7 +87,7 @@ EVAL_WIDTH : 640
 # ---- eval output ----
 EVAL_SAVE_MASKED_IMG : False # TODO 
 EVAL_SAVE_NORMAL_VIS : False # TODO
-EVAL_SAVE_DEPTH : False # TODO
+EVAL_SAVE_DEPTH : True # TODO
 MASK_ON_OTHER_SIZE : True
 
 # --------- refine depth -----------

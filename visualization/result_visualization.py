@@ -266,7 +266,7 @@ class Dataset_visulization(Dataset_visulization):
             method_folder_list = ["VNL+Mirror3DNet","VNL-raw","BTS+Mirror3DNet","BTS-raw","VNL-ref","BTS-ref","Mirror3DNet-raw","Mirror3DNet-DE-raw","PlaneRCNN-raw","PlaneRCNN-DE-raw","saic+Mirror3DNet","saic-raw","Mirror3DNet-ref","Mirror3DNet-DE-ref","PlaneRCNN-ref","PlaneRCNN-DE-ref","saic-ref","mesh-D+Mirror3DNet","sensor-D+Mirror3DNet","mesh-D","sensor-D"]
             # method_folder_list = ["GT", "meshD", "meshD_Mirror3DNet", "BTS_refD", "BTS_rawD", "BTS_Mirror3DNet", "VNL_refD", "VNL_rawD", "VNL_Mirror3DNet", "SAIC_refD", "SAIC_rawD", "SAIC_Mirror3DNet"]
         else:
-             method_folder_list = ["sensor-D","sensor-D+Mirror3DNet-NYUv2_ft","sensor-D+Mirror3DNet-m3d","saic-ref","PlaneRCNN-ref-NYUv2_ft","PlaneRCNN-ref-m3d","Mirror3DNet-NYUv2_ft-ref","Mirror3DNet-m3d-ref","saic-raw","saic+Mirror3DNet-NYUv2_ft","saic+Mirror3DNet-m3d","PlaneRCNN-raw-NYUv2_ft","PlaneRCNN-raw-m3d","Mirror3DNet-NYUv2_ft-raw","Mirror3DNet-m3d-raw","BTS-ref","VNL-ref","BTS-raw","BTS+Mirror3DNet-NYUv2_ft","BTS+Mirror3DNet-m3d","VNL-raw","VNL+Mirror3DNet-NYUv2_ft","VNL+Mirror3DNet-m3d"]
+             method_folder_list = ["sensor-D+Mirror3DNet-m3d","saic+Mirror3DNet-m3d","VNL+Mirror3DNet-m3d","BTS+Mirror3DNet-m3d","saic-ref","saic-raw","VNL-ref","VNL-raw","BTS-ref","BTS-raw","sensor-D","GT"]
             # method_folder_list = ["GT", "sensorD", "sensorD_Mirror3DNet", "BTS_refD", "BTS_rawD", "BTS_Mirror3DNet", "VNL_refD", "VNL_rawD", "VNL_Mirror3DNet", "SAIC_refD", "SAIC_rawD", "SAIC_Mirror3DNet"]
         colorImgSubset_list = [self.color_img_list[x:x+sample_num_per_page] for x in range(0, len(self.color_img_list), sample_num_per_page)]
 
@@ -954,7 +954,7 @@ class Dataset_visulization(Dataset_visulization):
             html_path = os.path.join(self.output_folder, "{}.html".format(html_index))
             save_html(html_path, soup)
             print("result visulisation saved in link {}".format(html_path.replace("/project/3dlg-hcvc/mirrors/www","http://aspis.cmpt.sfu.ca/projects/mirrors")))
-            break
+      
 
     def gen_latex_table_with_run_SE(self, method_order_txt, all_info_json, midrule_index):
         import re
