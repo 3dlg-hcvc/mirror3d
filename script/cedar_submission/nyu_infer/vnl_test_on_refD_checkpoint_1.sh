@@ -2,8 +2,8 @@
 #SBATCH --account=rrg-msavva
 #SBATCH --gres=gpu:v100l:1
 #SBATCH --mem=48000
-#SBATCH --time=0-0:45
-#SBATCH --job-name=0_vnl_refD_resume_all
+#SBATCH --time=0-06:45
+#SBATCH --job-name=vnl_test_on_refD_checkpoint_1
 #SBATCH --output=/home/jiaqit/projects/rrg-msavva/jiaqit/cr_result/log/%x-%j.out
 source /home/jiaqit/projects/rrg-msavva/jiaqit/setup/anaconda3/bin/activate
 conda activate mirror3d
