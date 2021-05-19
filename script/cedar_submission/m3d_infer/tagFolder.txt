@@ -1,0 +1,27 @@
+RGB,raw,BTS:/project/3dlg-hcvc/mirrors/www/final_result/nyu_final/BTS_infer_2021-05-10-21-02-09
+RGB,ref,BTS:/project/3dlg-hcvc/mirrors/www/final_result/nyu_final/BTS_infer_2021-05-10-21-06-42
+RGB,ref,BTS:/project/3dlg-hcvc/mirrors/www/final_result/nyu_final/BTS_infer_2021-05-15-15-22-15
+RGB,ref,BTS:/project/3dlg-hcvc/mirrors/www/final_result/nyu_final/BTS_infer_2021-05-10-21-15-02
+RGB,raw,VNL:/project/3dlg-hcvc/mirrors/www/final_result/nyu_final/VNL_infer_2021-05-10-21-19-09
+RGB,ref,VNL:/project/3dlg-hcvc/mirrors/www/final_result/nyu_final/VNL_infer_2021-05-10-21-23-28
+RGB,ref,VNL:/project/3dlg-hcvc/mirrors/www/final_result/nyu_final/VNL_infer_2021-05-15-00-03-56
+RGB,ref,VNL:/project/3dlg-hcvc/mirrors/www/final_result/nyu_final/VNL_infer_2021-05-15-00-08-21
+RGBD,raw,saic:/project/3dlg-hcvc/mirrors/www/final_result/nyu_final/SAIC_infer_2021-05-13-06-32-56
+RGBD,raw,saic:/project/3dlg-hcvc/mirrors/www/final_result/nyu_final/SAIC_infer_2021-05-15-00-12-47
+RGBD,raw,saic:/project/3dlg-hcvc/mirrors/www/final_result/nyu_final/SAIC_infer_2021-05-15-00-16-53
+RGBD,ref,saic:/project/3dlg-hcvc/mirrors/www/final_result/nyu_final/SAIC_infer_2021-05-10-21-48-21
+RGBD,ref,saic:/project/3dlg-hcvc/mirrors/www/final_result/nyu_final/SAIC_infer_2021-05-15-00-20-56
+RGBD,ref,saic:/project/3dlg-hcvc/mirrors/www/final_result/nyu_final/SAIC_infer_2021-05-15-00-24-58
+RGB,raw,BTS + \\mnet:/project/3dlg-hcvc/mirrors/www/final_result/nyu_final/m3n_normal_refD_resume_2021-05-15-22-29-12/BTS_infer_2021-05-10-21-02-09/refined_input_txt_pred_depth
+RGB,raw,BTS + \\mnet:/project/3dlg-hcvc/mirrors/www/final_result/m3d_final/download/BTS_infer_2021-05-16-22-30-20/refined_input_txt_pred_depth
+RGB,raw,BTS + \\mnet:/project/3dlg-hcvc/mirrors/www/final_result/nyu_final/m3n_normal_refD_resume_2021-05-15-22-56-44/BTS_infer_2021-05-10-21-02-09/refined_input_txt_pred_depth
+RGB,raw,VNL + \\mnet:/project/3dlg-hcvc/mirrors/www/final_result/nyu_final/m3n_normal_refD_resume_2021-05-15-22-33-51/VNL_infer_2021-05-10-21-19-09/refined_input_txt_pred_depth
+RGB,raw,VNL + \\mnet:/project/3dlg-hcvc/mirrors/www/final_result/m3d_final/download/VNL_infer_2021-05-16-22-28-37/refined_input_txt_pred_depth/
+RGB,raw,VNL + \\mnet:/project/3dlg-hcvc/mirrors/www/final_result/nyu_final/m3n_normal_refD_resume_2021-05-15-23-01-13/VNL_infer_2021-05-10-21-19-09/refined_input_txt_pred_depth
+RGBD,raw,saic + \\mnet:/project/3dlg-hcvc/mirrors/www/final_result/nyu_final/m3n_normal_refD_resume_2021-05-15-22-38-25/SAIC_infer_2021-05-13-06-32-56/refined_input_txt_pred_depth
+RGBD,raw,saic + \\mnet:/project/3dlg-hcvc/mirrors/www/final_result/m3d_final/download/m3n_normal_refD_resume_2021-05-17-13-13-05/SAIC_infer_2021-05-16-21-55-49/refined_input_txt_pred_depth
+RGBD,raw,saic + \\mnet:/project/3dlg-hcvc/mirrors/www/final_result/m3d_final/download/m3n_normal_refD_resume_2021-05-17-17-20-54/SAIC_infer_2021-05-16-21-58-49/refined_input_txt_pred_depth
+sensor-D,*,\\mnet:/project/3dlg-hcvc/mirrors/www/final_result/nyu_final/m3n_normal_refD_resume_2021-05-15-23-10-11/hole_raw_depth_mirror3d_refine
+sensor-D,*,\\mnet:/project/3dlg-hcvc/mirrors/www/final_result/nyu_final/m3n_normal_refD_resume_2021-05-17-09-53-32/hole_raw_depth_mirror3d_refine
+sensor-D,*,\\mnet:/project/3dlg-hcvc/mirrors/www/final_result/nyu_final/m3n_normal_refD_resume_2021-05-15-23-30-39/hole_raw_depth_mirror3d_refine
+sensor-D,*,*:/local-scratch/jiaqit/exp/Mirror3D/output/2021-05-15-23-30-50_*_*_*_nyu
