@@ -5,7 +5,6 @@ import shutil
 import time
 import warnings
 import numpy as np
-
 import sys
 import torch
 import torch.nn as nn
@@ -25,10 +24,9 @@ from annotation.classifier.classifier_Dataset import *
 import logging
 import datetime as d
 
-
 model_names = sorted(name for name in models.__dict__
-    if name.islower() and not name.startswith("__")
-    and callable(models.__dict__[name]))
+                     if name.islower() and not name.startswith("__")
+                     and callable(models.__dict__[name]))
 
 parser = argparse.ArgumentParser(description='PyTorch ImageNet Training')
 # TODO
@@ -43,39 +41,40 @@ parser.add_argument('-b', '--batch_size', default=4, type=int,
 parser.add_argument('--lr', '--learning-rate', default=0.001, type=float,
                     metavar='LR', help='initial learning rate', dest='lr')
 # TODO retrain
-parser.add_argument('--resume', default='', type=str, metavar='PATH', # TODO checkpoint/checkpoint.pth.tar
+parser.add_argument('--resume', default='', type=str, metavar='PATH',  # TODO checkpoint/checkpoint.pth.tar
                     help='path to latest checkpoint (default: none)')
 # TODO 
-parser.add_argument('-e', '--evaluate', action='store_true') 
+parser.add_argument('-e', '--evaluate', action='store_true')
 # TODO output checkpoint & log file save directory
-parser.add_argument('--log_directory',    type=str,   help='training output folder', default='')
+parser.add_argument('--log_directory', type=str, help='training output folder', default='')
 # TODO retrain
-parser.add_argument('--checkpoint_save_freq',      type=int,   help="classifier's save frequncy (measure in EPOCH), usually set as 10", default=1)
+parser.add_argument('--checkpoint_save_freq', type=int, help="classifier's save frequncy (measure in EPOCH), "
+                                                             "usually set as 10", default=1)
 # TODO if coda boom
-parser.add_argument('--input_height',              type=int,   help='input height', default=480) # 480
+parser.add_argument('--input_height', type=int, help='input height', default=480)  # 480
 # TODO  if coda boom
-parser.add_argument('--input_width',               type=int,   help='input width',  default=640) # 640
+parser.add_argument('--input_width', type=int, help='input width', default=640)  # 640
 # TODO 
 parser.add_argument('--world-size', default=-1, type=int,
                     help='number of nodes for distributed training')
 parser.add_argument('--train_pos_list',  # TODO retrain
-        default="",
-        type=str)
-parser.add_argument('--train_neg_list', # TODO retrain
-        default="",
-        type=str)
+                    default="",
+                    type=str)
+parser.add_argument('--train_neg_list',  # TODO retrain
+                    default="",
+                    type=str)
 
 parser.add_argument('--val_pos_list',  # TODO
-        default="",
-        type=str)
+                    default="",
+                    type=str)
 parser.add_argument('--val_neg_list',  # TODO
-        default="",
-        type=str)
+                    default="",
+                    type=str)
 parser.add_argument('-a', '--arch', metavar='ARCH', default='resnet50',
                     choices=model_names,
                     help='model architecture: ' +
-                        ' | '.join(model_names) +
-                        ' (default: resnet50)')
+                         ' | '.join(model_names) +
+                         ' (default: resnet50)')
 parser.add_argument('-j', '--workers', default=1, type=int, metavar='N',
                     help='number of data loading workers (default: 4)')
 # TODO retrain
@@ -114,14 +113,15 @@ checkpoint_save_folder = os.path.join(args.log_directory, "checkpoint")
 os.makedirs(checkpoint_save_folder, exist_ok=True)
 
 tb_writer_path = os.path.join(args.log_directory, "tb.log")
-writer = SummaryWriter(tb_writer_path,filename_suffix="annotation_classifier")
+writer = SummaryWriter(tb_writer_path, filename_suffix="annotation_classifier")
 
-log_file_save_path =  os.path.join(args.log_directory, "classifier.log")
-logging.basicConfig(filename=log_file_save_path, filemode="a", level=logging.INFO, format="%(asctime)s %(name)s:%(levelname)s:%(message)s")
+log_file_save_path = os.path.join(args.log_directory, "classifier.log")
+logging.basicConfig(filename=log_file_save_path, filemode="a", level=logging.INFO,
+                    format="%(asctime)s %(name)s:%(levelname)s:%(message)s")
 logging.info("output folder {}".format(args.log_directory))
 
+
 def main():
-    
     if args.seed is not None:
         random.seed(args.seed)
         torch.manual_seed(args.seed)
@@ -173,7 +173,6 @@ def main_worker(gpu, ngpus_per_node, args):
     # create model
     print("=> using pre-trained model '{}'".format(args.arch))
     model = resnet50()
-
 
     if args.distributed:
         # For multiprocessing distributed, DistributedDataParallel constructor
@@ -235,47 +234,45 @@ def main_worker(gpu, ngpus_per_node, args):
 
     cudnn.benchmark = True
 
-
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225])
 
     train_transform = transforms.Compose([
-                transforms.Resize((args.input_height, args.input_width)),
-                transforms.RandomHorizontalFlip(),
-                transforms.ToTensor(),
-                normalize,
-            ])
+        transforms.Resize((args.input_height, args.input_width)),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+        normalize,
+    ])
 
     # TODO change path
-    train_dataset = Pos_Neg_eql_Dataset(args.train_pos_list, args.train_neg_list,train_transform) 
-    
-    val_transform = transforms.Compose([
-                transforms.Resize((args.input_height, args.input_width)),
-                transforms.ToTensor(),
-                normalize,
-            ])
-    val_dataset = Pos_Neg_eql_Dataset(args.val_pos_list, args.val_neg_list,val_transform)
+    train_dataset = PosNegEqlDataset(args.train_pos_list, args.train_neg_list, train_transform)
 
+    val_transform = transforms.Compose([
+        transforms.Resize((args.input_height, args.input_width)),
+        transforms.ToTensor(),
+        normalize,
+    ])
+    val_dataset = PosNegEqlDataset(args.val_pos_list, args.val_neg_list, val_transform)
 
     if args.distributed:
         train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset)
     else:
         train_sampler = None
 
-
-    
     train_loader = torch.utils.data.DataLoader(
         train_dataset, batch_size=args.batch_size, shuffle=(train_sampler is None),
         num_workers=args.workers, pin_memory=True, sampler=train_sampler)
 
     val_loader = torch.utils.data.DataLoader(val_dataset,
-        batch_size=args.batch_size, shuffle=False,
-        num_workers=args.workers, pin_memory=True)
+                                             batch_size=args.batch_size, shuffle=False,
+                                             num_workers=args.workers, pin_memory=True)
 
     print("train_loader len :", len(train_loader))
     if args.evaluate:
-        val_acc, val_f_measure_0_3, val_f_measure_1, val_recall, val_precision = validate(val_loader, model, criterion, args) 
-        print("validate : val_acc {} val_f_measure_0_3 {} val_f_measure_1 {} val_recall {} val_precision {}".format(val_acc, val_f_measure_0_3, val_f_measure_1, val_recall, val_precision))
+        val_acc, val_f_measure_0_3, val_f_measure_1, val_recall, val_precision = validate(val_loader, model, criterion,
+                                                                                          args)
+        print("validate : val_acc {} val_f_measure_0_3 {} val_f_measure_1 {} val_recall {} val_precision {}".format(
+            val_acc, val_f_measure_0_3, val_f_measure_1, val_recall, val_precision))
         return
 
     print("tensorboard : ", tb_writer_path)
@@ -288,42 +285,45 @@ def main_worker(gpu, ngpus_per_node, args):
         train(train_loader, model, criterion, optimizer, epoch, args)
 
         # evaluate per epoch
-        val_acc, val_f_measure_0_3, val_f_measure_1, val_recall, val_precision = validate(val_loader, model, criterion, args) 
-        print("validate : val_acc {} val_f_measure_0_3 {} val_f_measure_1 {} val_recall {} val_precision {}".format(val_acc, val_f_measure_0_3, val_f_measure_1, val_recall, val_precision))
-        logging.info("validate : val_acc {} val_f_measure_0_3 {} val_f_measure_1 {} val_recall {} val_precision {}".format(val_acc, val_f_measure_0_3, val_f_measure_1, val_recall, val_precision))
+        val_acc, val_f_measure_0_3, val_f_measure_1, val_recall, val_precision = validate(val_loader, model, criterion,
+                                                                                          args)
+        print("validate : val_acc {} val_f_measure_0_3 {} val_f_measure_1 {} val_recall {} val_precision {}".format(
+            val_acc, val_f_measure_0_3, val_f_measure_1, val_recall, val_precision))
+        logging.info(
+            "validate : val_acc {} val_f_measure_0_3 {} val_f_measure_1 {} val_recall {} val_precision {}".format(
+                val_acc, val_f_measure_0_3, val_f_measure_1, val_recall, val_precision))
 
-        writer.add_scalars( "validation info",{
-                    'val_acc': val_acc,
-                    'val_f_measure_0_3': val_f_measure_0_3,
-                    'val_f_measure_1' : val_f_measure_1,
-                    'val_recall' : val_recall,
-                    'val_precision' : val_precision
-                }, epoch) 
-        
+        writer.add_scalars("validation info", {
+            'val_acc': val_acc,
+            'val_f_measure_0_3': val_f_measure_0_3,
+            'val_f_measure_1': val_f_measure_1,
+            'val_recall': val_recall,
+            'val_precision': val_precision
+        }, epoch)
+
         # save checkponit per checkpoint_save_freq
         if epoch > 0 and epoch % args.checkpoint_save_freq == 0:
             checkpoint_save_path = os.path.join(checkpoint_save_folder, "epoch_{}_checkpoint.pth.tar".format(epoch))
             torch.save({
-                        'epoch': epoch + 1,
-                        'arch': args.arch,
-                        'state_dict': model.state_dict(),
-                        'optimizer' : optimizer.state_dict(),
-                    }, checkpoint_save_path)
-            print("tensorboard : ", tb_writer_path, "checkpoint saved path : ",checkpoint_save_path)
+                'epoch': epoch + 1,
+                'arch': args.arch,
+                'state_dict': model.state_dict(),
+                'optimizer': optimizer.state_dict(),
+            }, checkpoint_save_path)
+            print("tensorboard : ", tb_writer_path, "checkpoint saved path : ", checkpoint_save_path)
 
     # save final checkponit
     checkpoint_save_path = os.path.join(checkpoint_save_folder, "checkpoint_final.pth.tar")
     torch.save({
-                'epoch': epoch + 1,
-                'arch': args.arch,
-                'state_dict': model.state_dict(),
-                'optimizer' : optimizer.state_dict(),
-            }, checkpoint_save_path)
-    print("FINAL tensorboard : ", tb_writer_path, "checkpoint saved path : ",checkpoint_save_path)
+        'epoch': epoch + 1,
+        'arch': args.arch,
+        'state_dict': model.state_dict(),
+        'optimizer': optimizer.state_dict(),
+    }, checkpoint_save_path)
+    print("FINAL tensorboard : ", tb_writer_path, "checkpoint saved path : ", checkpoint_save_path)
 
 
 def train(train_loader, model, criterion, optimizer, epoch, args):
-
     model.train()
 
     for i, (_, images, target) in enumerate(train_loader):
@@ -339,7 +339,8 @@ def train(train_loader, model, criterion, optimizer, epoch, args):
 
         _, predicted = output.max(1)
 
-        print( epoch*len(train_loader) + i, "batch mean loss : ", loss.item(), "correct num : ", (predicted == target).sum().item(),"pos_num : ", target.sum().item())
+        print(epoch * len(train_loader) + i, "batch mean loss : ", loss.item(), "correct num : ",
+              (predicted == target).sum().item(), "pos_num : ", target.sum().item())
 
         acc1 = accuracy(output, target, topk=(1,))
         f_measure_0_3, f_measure_1, recall, precision = f_measure(predicted, target)
@@ -349,28 +350,26 @@ def train(train_loader, model, criterion, optimizer, epoch, args):
         loss.backward()
         optimizer.step()
 
-        writer.add_scalars( "recall",{
-                    'recall': recall.item()
-                },  epoch*len(train_loader) + i) # i = iteration 
-        
-        writer.add_scalars( "precision",{
-                    'precision': precision.item()
-                },  epoch*len(train_loader) + i) # i = iteration 
-        
-        writer.add_scalars( "f_measure",{
-                    'f_measure_0.3': f_measure_0_3.item(),
-                    'f_measure_1': f_measure_1.item()
-                },  epoch*len(train_loader) + i) # i = iteration 
-        
+        writer.add_scalars("recall", {
+            'recall': recall.item()
+        }, epoch * len(train_loader) + i)  # i = iteration
 
-        writer.add_scalars( "training loss",{
-                    'training loss': loss.item()
-                },  epoch*len(train_loader) + i) # i = iteration 
+        writer.add_scalars("precision", {
+            'precision': precision.item()
+        }, epoch * len(train_loader) + i)  # i = iteration
 
-        writer.add_scalars( "training acc",{
-                    'training acc1': acc1[0]
-                },  epoch*len(train_loader) + i)
+        writer.add_scalars("f_measure", {
+            'f_measure_0.3': f_measure_0_3.item(),
+            'f_measure_1': f_measure_1.item()
+        }, epoch * len(train_loader) + i)  # i = iteration
 
+        writer.add_scalars("training loss", {
+            'training loss': loss.item()
+        }, epoch * len(train_loader) + i)  # i = iteration
+
+        writer.add_scalars("training acc", {
+            'training acc1': acc1[0]
+        }, epoch * len(train_loader) + i)
 
 
 def validate(val_loader, model, criterion, args):
@@ -389,13 +388,12 @@ def validate(val_loader, model, criterion, args):
 
             _, predicted = output.max(1)
 
-            predicted_all = torch.cat((predicted_all, predicted),0)
-            target_all = torch.cat((target_all, target),0)
-
+            predicted_all = torch.cat((predicted_all, predicted), 0)
+            target_all = torch.cat((target_all, target), 0)
 
     f_measure_0_3, f_measure_1, recall, precision = f_measure(predicted_all, target_all)
     acc = (predicted_all == target_all).sum().float() / float(len(target_all))
-    return acc , f_measure_0_3, f_measure_1, recall, precision
+    return acc, f_measure_0_3, f_measure_1, recall, precision
 
 
 def adjust_learning_rate(optimizer, epoch, args):
@@ -421,20 +419,21 @@ def accuracy(output, target, topk=(1,)):
             res.append(correct_k.mul_(100.0 / batch_size))
         return res
 
+
 def f_measure(predicted_all, target_all):
     predicted_all = predicted_all.cpu().detach().numpy()
     target_all = target_all.cpu().detach().numpy()
-    TP = np.logical_and((predicted_all==1),(target_all==1)).sum().astype(float)
-    FP = np.logical_and((predicted_all==1),(target_all==0)).sum().astype(float)
-    FN = np.logical_and((predicted_all==0),(target_all==1)).sum().astype(float)
+    TP = np.logical_and((predicted_all == 1), (target_all == 1)).sum().astype(float)
+    FP = np.logical_and((predicted_all == 1), (target_all == 0)).sum().astype(float)
+    FN = np.logical_and((predicted_all == 0), (target_all == 1)).sum().astype(float)
 
     precision = TP / (TP + FP)
     recall = TP / (TP + FN)
     beta = 0.3
-    f_measure_0_3 = ((1+beta**2)*precision*recall )/((beta**2) * precision + recall)
+    f_measure_0_3 = ((1 + beta ** 2) * precision * recall) / ((beta ** 2) * precision + recall)
 
     beta = 1
-    f_measure_1 = ((1+beta**2)*precision*recall )/((beta**2) * precision + recall)
+    f_measure_1 = ((1 + beta ** 2) * precision * recall) / ((beta ** 2) * precision + recall)
 
     return f_measure_0_3, f_measure_1, recall, precision
 

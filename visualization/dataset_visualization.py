@@ -12,14 +12,14 @@ import json
 import shutil
 from annotation.plane_annotation.plane_annotation_tool import *
 
- 
 
-class Dataset_visulization(Plane_annotation_tool):
+class DatasetVisualization(PlaneAnnotationTool):
 
-    def __init__(self, data_main_folder=None, process_index=0, multi_processing=False, 
-                f=519, output_folder=None, overwrite=True, window_w=800, window_h=800, view_mode="topdown", sensor_D_update=True):
+    def __init__(self, data_main_folder=None, process_index=0, multi_processing=False,
+                 f=519, output_folder=None, overwrite=True, window_w=800, window_h=800, view_mode="topdown",
+                 sensor_D_update=True):
         """
-        Initilization
+        Initialization
 
         Args:
             data_main_folder : Folder raw, hole_raw_depth/ mesh_raw_depth, instance_mask saved folder.
@@ -40,25 +40,26 @@ class Dataset_visulization(Plane_annotation_tool):
         self.window_h = window_h
         self.view_mode = view_mode
         self.sensor_D_update = sensor_D_update
-        
+
         if "m3d" not in self.data_main_folder:
             self.is_matterport3d = False
             # If it's not matterport3d; it only have sensorD
             self.sensor_D_update = True
         else:
             self.is_matterport3d = True
-        self.color_img_list = [os.path.join(self.data_main_folder, "raw", i) for i in os.listdir(os.path.join(self.data_main_folder, "raw"))]
+        self.color_img_list = [os.path.join(self.data_main_folder, "raw", i) for i in
+                               os.listdir(os.path.join(self.data_main_folder, "raw"))]
         self.color_img_list.sort()
         if multi_processing:
-            self.color_img_list = self.color_img_list[process_index:process_index+1]
+            self.color_img_list = self.color_img_list[process_index:process_index + 1]
         self.f = f
-        if output_folder == None or not os.path.exists(output_folder):
+        if output_folder is None or not os.path.exists(output_folder):
             self.output_folder = self.data_main_folder
-            print("########## NOTE output saved to {}, this may overwrite your current information ############".format(self.output_folder))
+            print("########## NOTE output saved to {}, this may overwrite your current information ############".format(
+                self.output_folder))
         else:
             self.output_folder = output_folder
         self.error_info_path = os.path.join(self.output_folder, "error_img_list.txt")
-
 
     def generate_colored_depth_for_whole_dataset(self):
         """
@@ -67,7 +68,6 @@ class Dataset_visulization(Plane_annotation_tool):
         """
         for one_color_img_path in self.color_img_list:
             self.generate_colored_depth_for_one_GTsample(one_color_img_path)
-    
 
     def generate_colored_depth_for_one_GTsample(self, color_img_path):
         """
@@ -83,7 +83,8 @@ class Dataset_visulization(Plane_annotation_tool):
             os.makedirs(colored_depth_save_folder, exist_ok=True)
             ori_depth = os.path.join(self.data_main_folder, "hole_refined_depth", sample_name)
             colored_depth_save_path = os.path.join(colored_depth_save_folder, sample_name)
-            if (self.overwrite and os.path.exists(colored_depth_save_path)) or (not os.path.exists(colored_depth_save_path)):
+            if (self.overwrite and os.path.exists(colored_depth_save_path)) or (
+                    not os.path.exists(colored_depth_save_path)):
                 save_heatmap_no_border(cv2.imread(ori_depth, cv2.IMREAD_ANYDEPTH), colored_depth_save_path)
 
             ply_folder = os.path.join(self.output_folder, "mesh_refined_ply")
@@ -91,7 +92,8 @@ class Dataset_visulization(Plane_annotation_tool):
             os.makedirs(colored_depth_save_folder, exist_ok=True)
             ori_depth = os.path.join(self.data_main_folder, "mesh_refined_depth", sample_name)
             colored_depth_save_path = os.path.join(colored_depth_save_folder, sample_name)
-            if (self.overwrite and os.path.exists(colored_depth_save_path)) or (not os.path.exists(colored_depth_save_path)):
+            if (self.overwrite and os.path.exists(colored_depth_save_path)) or (
+                    not os.path.exists(colored_depth_save_path)):
                 save_heatmap_no_border(cv2.imread(ori_depth, cv2.IMREAD_ANYDEPTH), colored_depth_save_path)
         else:
             ply_folder = os.path.join(self.output_folder, "hole_refined_ply")
@@ -100,11 +102,9 @@ class Dataset_visulization(Plane_annotation_tool):
             os.makedirs(colored_depth_save_folder, exist_ok=True)
             ori_depth = os.path.join(self.data_main_folder, "hole_refined_depth", sample_name)
             colored_depth_save_path = os.path.join(colored_depth_save_folder, sample_name)
-            if (self.overwrite and os.path.exists(colored_depth_save_path)) or (not os.path.exists(colored_depth_save_path)):
+            if (self.overwrite and os.path.exists(colored_depth_save_path)) or (
+                    not os.path.exists(colored_depth_save_path)):
                 save_heatmap_no_border(cv2.imread(ori_depth, cv2.IMREAD_ANYDEPTH), colored_depth_save_path)
-
-
-
 
     def generate_pcdMesh_for_whole_dataset(self):
         """
@@ -113,7 +113,6 @@ class Dataset_visulization(Plane_annotation_tool):
         """
         for one_color_img_path in self.color_img_list:
             self.generate_pcdMesh_for_one_GTsample(one_color_img_path)
-
 
     def generate_pcdMesh_for_one_GTsample(self, color_img_path):
         """
@@ -127,6 +126,7 @@ class Dataset_visulization(Plane_annotation_tool):
         """
 
         import open3d as o3d
+
         # Pack as a function to better support Matterport3d ply generation
         def generate_and_save_ply(depth_img_path, ply_save_folder):
             pcd_save_folder = os.path.join(ply_save_folder, "pcd")
@@ -134,22 +134,22 @@ class Dataset_visulization(Plane_annotation_tool):
             os.makedirs(pcd_save_folder, exist_ok=True)
             os.makedirs(mesh_save_folder, exist_ok=True)
 
-            mask_img_path = color_img_path.replace("raw","instance_mask")
+            mask_img_path = color_img_path.replace("raw", "instance_mask")
             mask = cv2.imread(mask_img_path)
-            img_info_path = color_img_path.replace("raw","img_info").replace("png","json")
+            img_info_path = color_img_path.replace("raw", "img_info").replace("png", "json")
             one_img_info = read_json(img_info_path)
-            
+
             #  Get pcd and masked RGB image for each instance
-            for instance_index in np.unique(np.reshape(mask,(-1,3)), axis = 0):
-                if sum(instance_index) == 0: # background
+            for instance_index in np.unique(np.reshape(mask, (-1, 3)), axis=0):
+                if sum(instance_index) == 0:  # background
                     continue
 
                 instance_tag = "_idx"
                 for i in instance_index:
                     instance_tag += "_{}".format(i)
                 instance_tag = color_img_path.split("/")[-1].split(".")[0] + instance_tag
-                mesh_save_path = os.path.join(mesh_save_folder,  "{}.ply".format(instance_tag))
-                pcd_save_path = os.path.join(pcd_save_folder,  "{}.ply".format(instance_tag))
+                mesh_save_path = os.path.join(mesh_save_folder, "{}.ply".format(instance_tag))
+                pcd_save_path = os.path.join(pcd_save_folder, "{}.ply".format(instance_tag))
                 binary_instance_mask = get_grayscale_instanceMask(mask, instance_index)
                 plane_parameter = one_img_info[instance_tag.split("_idx_")[1]]
 
@@ -157,16 +157,18 @@ class Dataset_visulization(Plane_annotation_tool):
                     return
 
                 # Get pcd for the instance
-                pcd = get_pcd_from_rgbd_depthPath(self.f, depth_img_path, color_img_path, mirror_mask=binary_instance_mask)
+                pcd = get_pcd_from_rgbd_depthPath(self.f, depth_img_path, color_img_path,
+                                                  mirror_mask=binary_instance_mask)
 
                 # Get mirror plane for the instance
-                mirror_points = get_points_in_mask(self.f, depth_img_path, color_img_path, mirror_mask=binary_instance_mask)
+                mirror_points = get_points_in_mask(self.f, depth_img_path, color_img_path,
+                                                   mirror_mask=binary_instance_mask)
                 mirror_pcd = o3d.geometry.PointCloud()
-                mirror_pcd.points = o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0))
-                mirror_bbox = o3d.geometry.OrientedBoundingBox.create_from_points(o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0)))
+                mirror_pcd.points = o3d.utility.Vector3dVector(np.stack(mirror_points, axis=0))
+                mirror_bbox = o3d.geometry.OrientedBoundingBox.create_from_points(
+                    o3d.utility.Vector3dVector(np.stack(mirror_points, axis=0)))
                 mirror_plane = get_mirror_init_plane_from_mirrorbbox(plane_parameter["plane_parameter"], mirror_bbox)
 
-                
                 o3d.io.write_point_cloud(pcd_save_path, pcd)
                 print("point cloud saved  to :", os.path.abspath(pcd_save_path))
 
@@ -175,31 +177,30 @@ class Dataset_visulization(Plane_annotation_tool):
 
         if self.is_matterport3d:
             if self.sensor_D_update:
-                depth_img_path = rreplace(color_img_path.replace("raw","hole_refined_depth"), "i", "d")
+                depth_img_path = rreplace(color_img_path.replace("raw", "hole_refined_depth"), "i", "d")
                 ply_save_folder = os.path.join(self.output_folder, "hole_refined_ply")
                 os.makedirs(ply_save_folder, exist_ok=True)
                 generate_and_save_ply(depth_img_path, ply_save_folder)
 
-            depth_img_path = rreplace(color_img_path.replace("raw","mesh_refined_depth"), "i", "d")
+            depth_img_path = rreplace(color_img_path.replace("raw", "mesh_refined_depth"), "i", "d")
             ply_save_folder = os.path.join(self.output_folder, "mesh_refined_ply")
             os.makedirs(ply_save_folder, exist_ok=True)
             generate_and_save_ply(depth_img_path, ply_save_folder)
         else:
-            depth_img_path = color_img_path.replace("raw","hole_refined_depth")
+            depth_img_path = color_img_path.replace("raw", "hole_refined_depth")
             ply_save_folder = os.path.join(self.output_folder, "hole_refined_ply")
             os.makedirs(ply_save_folder, exist_ok=True)
             generate_and_save_ply(depth_img_path, ply_save_folder)
 
-    
     def generate_screenshot_for_pcdMesh(self):
         """
         Call function self.generate_screenshot_for_pcdMesh_oneSample 
             to generate screenshot for all sample under ply_folder
         """
-        
+
         for color_img_path in self.color_img_list:
             self.generate_screenshot_for_pcdMesh_oneSample(color_img_path)
-    
+
     def generate_screenshot_for_pcdMesh_oneSample(self, color_img_path):
         """
         Generate "pcd + mesh"'s screenshot for one sample
@@ -211,19 +212,20 @@ class Dataset_visulization(Plane_annotation_tool):
             screenshots saved to : os.path.join(ply_folder, "screenshot_{}".format(self.view_mode))
         """
         import open3d as o3d
+
         def generate_screenshot(depth_img_path):
             # Pack as a function to better support Matterport3d ply generation
             pcd_folder = os.path.join(ply_folder, "pcd")
             mesh_folder = os.path.join(ply_folder, "mesh")
-            mirror_info = read_json(color_img_path.replace("raw","img_info").replace(".png",".json"))
-            mask_path = color_img_path.replace("raw","instance_mask")
+            mirror_info = read_json(color_img_path.replace("raw", "img_info").replace(".png", ".json"))
+            mask_path = color_img_path.replace("raw", "instance_mask")
 
             mirror_mask = cv2.imread(mask_path)
             if len(mirror_info) != (np.unique(mirror_mask).shape[0] - 1):
                 self.save_error_raw_name(color_img_path.split("/")[-1].split(".")[0])
 
-            for instance_index in np.unique(np.reshape(mirror_mask,(-1,3)), axis = 0):
-                if sum(instance_index) == 0: # background
+            for instance_index in np.unique(np.reshape(mirror_mask, (-1, 3)), axis=0):
+                if sum(instance_index) == 0:  # background
                     continue
                 try:
                     instance_tag = "_idx"
@@ -231,12 +233,13 @@ class Dataset_visulization(Plane_annotation_tool):
                         instance_tag += "_{}".format(i)
                     instance_tag = color_img_path.split("/")[-1].split(".")[0] + instance_tag
 
-                    pcd_path = os.path.join(pcd_folder,  "{}.ply".format(instance_tag))
-                    mesh_path = os.path.join(mesh_folder,  "{}.ply".format(instance_tag))
+                    pcd_path = os.path.join(pcd_folder, "{}.ply".format(instance_tag))
+                    mesh_path = os.path.join(mesh_folder, "{}.ply".format(instance_tag))
                     pcd = o3d.io.read_point_cloud(pcd_path)
                     mirror_plane = o3d.io.read_triangle_mesh(mesh_path)
                     # Screenshots are saved under "mesh_refined_ply" or "hole_refined_ply" folder
-                    self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode), instance_tag)
+                    self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode),
+                                                                 instance_tag)
                     os.makedirs(self.screenshot_output_folder, exist_ok=True)
                     if len(os.listdir(self.screenshot_output_folder)) == 37 and not self.overwrite:
                         return
@@ -250,16 +253,18 @@ class Dataset_visulization(Plane_annotation_tool):
 
         if color_img_path.find("m3d") > 0:
             if self.sensor_D_update:
-                depth_img_path = rreplace(color_img_path.replace("raw","hole_refined_depth").replace("json","png"),"i","d")
+                depth_img_path = rreplace(color_img_path.replace("raw", "hole_refined_depth").replace("json", "png"),
+                                          "i", "d")
                 ply_folder = os.path.join(self.output_folder, "hole_refined_ply")
                 generate_screenshot(depth_img_path)
 
-            depth_img_path = rreplace(color_img_path.replace("raw","mesh_refined_depth").replace("json","png"),"i","d")
+            depth_img_path = rreplace(color_img_path.replace("raw", "mesh_refined_depth").replace("json", "png"), "i",
+                                      "d")
             ply_folder = os.path.join(self.output_folder, "mesh_refined_ply")
             generate_screenshot(depth_img_path)
-            
+
         else:
-            depth_img_path = color_img_path.replace("raw","hole_refined_depth")
+            depth_img_path = color_img_path.replace("raw", "hole_refined_depth")
             ply_folder = os.path.join(self.output_folder, "hole_refined_ply")
             generate_screenshot(depth_img_path)
 
@@ -275,35 +280,36 @@ class Dataset_visulization(Plane_annotation_tool):
                           self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode)).
         """
         import open3d as o3d
-        
+
         screenshot_id = 0
         mesh_center = np.mean(np.array(plane.vertices), axis=0)
         rotation_step_degree = 10
-        start_rotation = get_extrinsic(90,0,0,[0,0,0])
+        start_rotation = get_extrinsic(90, 0, 0, [0, 0, 0])
         if self.is_matterport3d:
-            stage_tranlation = get_extrinsic(0,0,0,[-mesh_center[0],-mesh_center[1] + 9000,-mesh_center[2]])
+            stage_translation = get_extrinsic(0, 0, 0, [-mesh_center[0], -mesh_center[1] + 9000, -mesh_center[2]])
         else:
-            stage_tranlation = get_extrinsic(0,0,0,[-mesh_center[0],-mesh_center[1] + 3000,-mesh_center[2]])
-        start_position = np.dot(start_rotation, stage_tranlation)
+            stage_translation = get_extrinsic(0, 0, 0, [-mesh_center[0], -mesh_center[1] + 3000, -mesh_center[2]])
+        start_position = np.dot(start_rotation, stage_translation)
+
         def rotate_view(vis):
-            
+
             nonlocal screenshot_id
-            T_rotate = get_extrinsic(0,rotation_step_degree*(screenshot_id+1),0,[0,0,0])
+            T_rotate = get_extrinsic(0, rotation_step_degree * (screenshot_id + 1), 0, [0, 0, 0])
             cam = vis.get_view_control().convert_to_pinhole_camera_parameters()
-            cam.extrinsic = np.dot(np.dot(start_rotation, T_rotate), stage_tranlation)
+            cam.extrinsic = np.dot(np.dot(start_rotation, T_rotate), stage_translation)
             vis.get_view_control().convert_from_pinhole_camera_parameters(cam)
-            
+
             screenshot_id += 1
             screenshot_save_path = os.path.join(self.screenshot_output_folder, "{0:05d}.png".format(screenshot_id))
             vis.capture_screen_image(filename=screenshot_save_path, do_render=True)
             print("image saved to {}".format(screenshot_save_path))
-            if screenshot_id > (360/rotation_step_degree):
+            if screenshot_id > (360 / rotation_step_degree):
                 vis.destroy_window()
             return False
 
         vis = o3d.visualization.VisualizerWithKeyCallback()
         vis.register_animation_callback(rotate_view)
-        vis.create_window(width=self.window_w,height=self.window_h)
+        vis.create_window(width=self.window_w, height=self.window_h)
         vis.get_render_option().point_size = 1.0
         vis.add_geometry(pcd)
         vis.add_geometry(plane)
@@ -332,33 +338,32 @@ class Dataset_visulization(Plane_annotation_tool):
                           self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode), instance_tag)
         """
         import open3d as o3d
-        
+
         screenshot_id = 0
         mesh_center = np.mean(np.array(plane.vertices), axis=0)
         rotation_step_degree = 10
-        start_position = get_extrinsic(0,0,0,[0,0,3000])
+        start_position = get_extrinsic(0, 0, 0, [0, 0, 3000])
 
         def rotate_view(vis):
-            
             nonlocal screenshot_id
-            T_to_center = get_extrinsic(0,0,0,mesh_center)
-            T_rotate = get_extrinsic(0,rotation_step_degree*(screenshot_id+1),0,[0,0,0])
-            T_to_mesh = get_extrinsic(0,0,0,-mesh_center)
+            T_to_center = get_extrinsic(0, 0, 0, mesh_center)
+            T_rotate = get_extrinsic(0, rotation_step_degree * (screenshot_id + 1), 0, [0, 0, 0])
+            T_to_mesh = get_extrinsic(0, 0, 0, -mesh_center)
             cam = vis.get_view_control().convert_to_pinhole_camera_parameters()
-            cam.extrinsic = np.dot(start_position, np.dot(np.dot(T_to_center, T_rotate),T_to_mesh))
+            cam.extrinsic = np.dot(start_position, np.dot(np.dot(T_to_center, T_rotate), T_to_mesh))
             vis.get_view_control().convert_from_pinhole_camera_parameters(cam)
-            
+
             screenshot_id += 1
             screenshot_save_path = os.path.join(self.screenshot_output_folder, "{0:05d}.png".format(screenshot_id))
             vis.capture_screen_image(filename=screenshot_save_path, do_render=True)
             print("image saved to {}".format(screenshot_save_path))
-            if screenshot_id > (360/rotation_step_degree):
+            if screenshot_id > (360 / rotation_step_degree):
                 vis.destroy_window()
             return False
 
         vis = o3d.visualization.VisualizerWithKeyCallback()
         vis.register_animation_callback(rotate_view)
-        vis.create_window(width=self.window_w,height=self.window_h)
+        vis.create_window(width=self.window_w, height=self.window_h)
         vis.get_render_option().point_size = 1.0
         vis.add_geometry(pcd)
         vis.add_geometry(plane)
@@ -385,6 +390,7 @@ class Dataset_visulization(Plane_annotation_tool):
         Output: 
             .mp4 under video_saved_folder
         """
+
         def generate_video_function(ply_folder):
             # Pack as a function to better support Matterport3d ply generation
             # Videos are saved under "mesh_refined_ply" or "hole_refined_ply" folder
@@ -396,7 +402,8 @@ class Dataset_visulization(Plane_annotation_tool):
             for item in mirror_info.items():
                 id = item[0]
                 instance_tag = color_img_path.split("/")[-1].split(".")[0] + "_idx_" + id
-                one_screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode), instance_tag)
+                one_screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode),
+                                                            instance_tag)
                 one_video_save_path = os.path.join(video_saved_folder, "{}.mp4".format(instance_tag))
                 if not os.path.exists(one_screenshot_output_folder):
                     print("{} path not exists!")
@@ -424,7 +431,6 @@ class Dataset_visulization(Plane_annotation_tool):
         else:
             ply_folder = os.path.join(self.output_folder, "hole_refined_ply")
             generate_video_function(ply_folder)
-    
 
     def generate_analyze_info(self):
         """
@@ -438,40 +444,43 @@ class Dataset_visulization(Plane_annotation_tool):
 
         for color_img_path in self.color_img_list:
             img_name = color_img_path.split("/")[-1].split(".")[0]
-            mask_img_path = color_img_path.replace("raw","instance_mask")
+            mask_img_path = color_img_path.replace("raw", "instance_mask")
             mask = cv2.imread(mask_img_path)
-            img_info_path = color_img_path.replace("raw","img_info").replace("png","json")
+            img_info_path = color_img_path.replace("raw", "img_info").replace("png", "json")
             one_img_info = read_json(img_info_path)
             if self.is_matterport3d:
                 depth_2_m = 4000
-                raw_depth_path = os.path.join(self.data_main_folder, "mesh_raw_depth","{}.png".format(rreplace(img_name, "i", "d")))
-                refined_depth_path = os.path.join(self.data_main_folder, "mesh_refined_depth","{}.png".format(rreplace(img_name, "i", "d")))
+                raw_depth_path = os.path.join(self.data_main_folder, "mesh_raw_depth",
+                                              "{}.png".format(rreplace(img_name, "i", "d")))
+                refined_depth_path = os.path.join(self.data_main_folder, "mesh_refined_depth",
+                                                  "{}.png".format(rreplace(img_name, "i", "d")))
             else:
                 depth_2_m = 1000
-                raw_depth_path = os.path.join(self.data_main_folder, "hole_raw_depth","{}.png".format(img_name))
-                refined_depth_path = os.path.join(self.data_main_folder, "hole_refined_depth","{}.png".format(img_name))
+                raw_depth_path = os.path.join(self.data_main_folder, "hole_raw_depth", "{}.png".format(img_name))
+                refined_depth_path = os.path.join(self.data_main_folder, "hole_refined_depth",
+                                                  "{}.png".format(img_name))
 
             #  Get pcd and masked RGB image for each instance
-            for instance_index in np.unique(np.reshape(mask,(-1,3)), axis = 0):
-                if sum(instance_index) == 0: # background
+            for instance_index in np.unique(np.reshape(mask, (-1, 3)), axis=0):
+                if sum(instance_index) == 0:  # background
                     continue
                 object_info = dict()
                 instance_tag = "_idx"
                 for i in instance_index:
                     instance_tag += "_{}".format(i)
                 instance_tag = color_img_path.split("/")[-1].split(".")[0] + instance_tag
-                
+
                 binary_instance_mask = get_grayscale_instanceMask(mask, instance_index)
                 mirror_normal = one_img_info[instance_tag.split("_idx_")[1]]["mirror_normal"]
                 h, w = binary_instance_mask.shape
-                x_location = np.mean(np.where(binary_instance_mask>0)[1]) / w 
-                y_location = np.mean(np.where(binary_instance_mask>0)[0]) / h 
+                x_location = np.mean(np.where(binary_instance_mask > 0)[1]) / w
+                y_location = np.mean(np.where(binary_instance_mask > 0)[0]) / h
                 raw_depth = cv2.imread(raw_depth_path, cv2.IMREAD_ANYDEPTH)
                 refined_depth = cv2.imread(refined_depth_path, cv2.IMREAD_ANYDEPTH)
-                max_rawD_meter = (raw_depth*binary_instance_mask).max() / depth_2_m
-                max_refinedD_meter = (refined_depth*binary_instance_mask).max() / depth_2_m
-                hor_angle_degree, ver_angle_degree = get_angle_to_Azimuth(mirror_normal)
-                ratio = binary_instance_mask.sum() / (w*h)
+                max_rawD_meter = (raw_depth * binary_instance_mask).max() / depth_2_m
+                max_refinedD_meter = (refined_depth * binary_instance_mask).max() / depth_2_m
+                hor_angle_degree, ver_angle_degree = get_angle_to_azimuth(mirror_normal)
+                ratio = binary_instance_mask.sum() / (w * h)
                 object_info["x_location"] = float(x_location)
                 object_info["y_location"] = float(y_location)
                 object_info["max_rawD_meter"] = float(max_rawD_meter)
@@ -480,7 +489,7 @@ class Dataset_visulization(Plane_annotation_tool):
                 object_info["ver_angle_degree"] = float(ver_angle_degree)
                 object_info["ratio"] = float(ratio)
 
-                instance_da_info_save_path = os.path.join(da_info_output_folder,  "{}.json".format(instance_tag))
+                instance_da_info_save_path = os.path.join(da_info_output_folder, "{}.json".format(instance_tag))
                 save_json(instance_da_info_save_path, object_info)
 
     def generate_data_distribution_figure(self, main_folders, output_folder):
@@ -490,12 +499,12 @@ class Dataset_visulization(Plane_annotation_tool):
         import pandas as pd
         import seaborn as sns
         os.makedirs(output_folder, exist_ok=True)
-        
+
         # Define dataset_tag for caption 
         if len(main_folders) == 1:
             if main_folders[0].find("nyu") > 0:
                 dataset_tag = "NYUv2"
-            elif main_folders[0].find("m3d") > 0 :
+            elif main_folders[0].find("m3d") > 0:
                 dataset_tag = "Matterport3D"
             elif main_folders[0].find("scannet") > 0:
                 dataset_tag = "ScanNet"
@@ -523,8 +532,6 @@ class Dataset_visulization(Plane_annotation_tool):
                 one_da_info_path = os.path.join(da_info_folder, one_da_info_name)
                 one_da_info = read_json(one_da_info_path)
 
-
-
                 x_location_list.append(one_da_info["x_location"])
                 y_location_list.append(one_da_info["y_location"])
                 max_rawD_meter_list.append(one_da_info["max_rawD_meter"])
@@ -532,14 +539,13 @@ class Dataset_visulization(Plane_annotation_tool):
                 hor_angle_degree_list.append(one_da_info["hor_angle_degree"])
                 ver_angle_degree_list.append(one_da_info["ver_angle_degree"])
                 ratio_list.append(one_da_info["ratio"])
-            
 
         # Distribution of mirror mask centroids in image plane
-        pd_data = pd.DataFrame({"x location":x_location_list,"y location":y_location_list})
+        pd_data = pd.DataFrame({"x location": x_location_list, "y location": y_location_list})
         sns.set(font_scale=2, style="whitegrid")
-        plot = sns.jointplot(data=pd_data,x="x location",y="y location",alpha=.3,color="g")
-        plot.ax_marg_x.set_xlim(0,1)
-        plot.ax_marg_y.set_ylim(0,1)
+        plot = sns.jointplot(data=pd_data, x="x location", y="y location", alpha=.3, color="g")
+        plot.ax_marg_x.set_xlim(0, 1)
+        plot.ax_marg_y.set_ylim(0, 1)
         plot.ax_marg_y.set_ylim(plot.ax_marg_y.get_ylim()[::-1])
         figure_save_path = os.path.join(output_folder, "{}_pixel_location.png".format(dataset_tag))
         plt.savefig(figure_save_path)
@@ -549,10 +555,10 @@ class Dataset_visulization(Plane_annotation_tool):
         # Distribution of the maximum depth value per frame by source RGBD dataset
         plt.figure(figsize=(15, 12))
         if dataset_tag == "Matterport3D":
-            sns.distplot(max_rawD_meter_list, kde=False, label="mesh depth",color="purple") 
+            sns.distplot(max_rawD_meter_list, kde=False, label="mesh depth", color="purple")
         else:
-            sns.distplot(max_rawD_meter_list, kde=False, label="raw depth",color="purple") 
-        plot = sns.distplot(max_refinedD_meter_list, kde=False, label="refined depth") 
+            sns.distplot(max_rawD_meter_list, kde=False, label="raw depth", color="purple")
+        plot = sns.distplot(max_refinedD_meter_list, kde=False, label="refined depth")
         plt.xticks(fontsize=35)
         plt.yticks(fontsize=35)
         plt.legend(fontsize=50)
@@ -565,11 +571,11 @@ class Dataset_visulization(Plane_annotation_tool):
         print("figure saved to :", figure_save_path)
 
         # Distribution of mirror normals by source RGBD dataset (a through c) and overall
-        pd_data = pd.DataFrame({"horizontal angle":hor_angle_degree_list,"vertical angle":ver_angle_degree_list})
+        pd_data = pd.DataFrame({"horizontal angle": hor_angle_degree_list, "vertical angle": ver_angle_degree_list})
         sns.set(font_scale=2, style="whitegrid")
-        plot = sns.jointplot(data=pd_data,x="horizontal angle",y="vertical angle",alpha=.3,color="darkorange")
-        plot.ax_marg_x.set_xlim(-90,90)
-        plot.ax_marg_y.set_ylim(-90,90)
+        plot = sns.jointplot(data=pd_data, x="horizontal angle", y="vertical angle", alpha=.3, color="darkorange")
+        plot.ax_marg_x.set_xlim(-90, 90)
+        plot.ax_marg_y.set_ylim(-90, 90)
         figure_save_path = os.path.join(output_folder, "{}_normal_dis.png".format(dataset_tag))
         plt.savefig(figure_save_path)
         plt.close()
@@ -577,7 +583,7 @@ class Dataset_visulization(Plane_annotation_tool):
 
         # Distribution of the ratio of mirror pixels to total pixels
         plt.figure(figsize=(15, 12))
-        plot = sns.distplot(ratio_list, kde=False) 
+        plot = sns.distplot(ratio_list, kde=False)
         plt.xticks(fontsize=35)
         plt.yticks(fontsize=35)
         plt.grid()
@@ -589,9 +595,6 @@ class Dataset_visulization(Plane_annotation_tool):
         print("figure saved to :", figure_save_path)
 
 
-
-
-
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Get Setting :D')
@@ -601,10 +604,10 @@ if __name__ == "__main__":
         '--data_main_folder', default="")
     parser.add_argument(
         '--process_index', default=0, type=int, help="process index")
-    parser.add_argument('--multi_processing', help='do multi-process or not',action='store_true')
+    parser.add_argument('--multi_processing', help='do multi-process or not', action='store_true')
     parser.add_argument('--sensor_D_update', help='For mattterport3d; True: generate result for sensorD and meshD; \
-                                                False : generate result only for meshD',action='store_true')
-    parser.add_argument('--overwrite', help='overwrite files under --output_folder or not',action='store_true')
+                                                False : generate result only for meshD', action='store_true')
+    parser.add_argument('--overwrite', help='overwrite files under --output_folder or not', action='store_true')
     parser.add_argument(
         '--f', default=519, type=int, help="camera focal length")
     parser.add_argument(
@@ -619,14 +622,14 @@ if __name__ == "__main__":
         '--main_folders', default="", nargs='+', help="folders to plot the final result")
     args = parser.parse_args()
 
-    vis_tool = Dataset_visulization(data_main_folder=args.data_main_folder, process_index=args.process_index, \
-                                    multi_processing=args.multi_processing, f=args.f, \
-                                    output_folder = args.output_folder, overwrite=args.overwrite, \
-                                    window_w=args.window_w, window_h=args.window_h, view_mode=args.view_mode, sensor_D_update=args.sensor_D_update)
-    
+    vis_tool = DatasetVisualization(data_main_folder=args.data_main_folder, process_index=args.process_index,
+                                    multi_processing=args.multi_processing, f=args.f,
+                                    output_folder=args.output_folder, overwrite=args.overwrite,
+                                    window_w=args.window_w, window_h=args.window_h, view_mode=args.view_mode,
+                                    sensor_D_update=args.sensor_D_update)
 
     if args.stage == "1":
-        vis_tool.generate_pcdMesh_for_whole_dataset()    
+        vis_tool.generate_pcdMesh_for_whole_dataset()
     elif args.stage == "2":
         vis_tool.set_view_mode("topdown")
         vis_tool.generate_screenshot_for_pcdMesh()
@@ -662,4 +665,3 @@ if __name__ == "__main__":
         vis_tool.generate_analyze_info()
     elif args.stage == "8":
         vis_tool.generate_data_distribution_figure(args.main_folders, args.output_folder)
-

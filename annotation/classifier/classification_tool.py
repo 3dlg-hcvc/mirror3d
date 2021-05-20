@@ -13,7 +13,8 @@ import operator
 Implementation based on https://github.com/Nestak2/image-sorter2
 """
 
-class Classification_GUI:
+
+class ClassificationGUI:
     """
     GUI for iFind1 image sorting. This draws the GUI and handles all the events.
     Useful, for sorting views into sub views or for removing outliers from the data.
@@ -28,9 +29,8 @@ class Classification_GUI:
         :return:
         """
 
-        self.dataset = dataset # m3d; scannet; nyu
+        self.dataset = dataset  # m3d; scannet; nyu
         self.whole_path_list = whole_path_list
-
 
         self.anno_output_folder = anno_output_folder
 
@@ -40,8 +40,7 @@ class Classification_GUI:
 
         frame = tk.Frame(master)
         frame.grid()
-        
-        
+
         self.labels = ["mirror", "negative"]
         self.n_labels = 2
 
@@ -49,12 +48,18 @@ class Classification_GUI:
         self.set_image(whole_path_list[self.index])
 
         self.buttons = []
-        # for class_index, label in enumerate(labels):
-        #     self.buttons.append(tk.Button(frame, text=label, height=2, fg='blue', command=lambda l=label: self.vote(l)).grid(row=0, column=class_index, sticky='we'))
-        self.buttons.append(tk.Button(frame, text="mirror", height=2, fg='blue', command=lambda l="mirror": self.vote(l)).grid(row=0, column=0, sticky='we'))
-        self.buttons.append(tk.Button(frame, text="negative", height=2, fg='blue', command=lambda l="negative": self.vote(l)).grid(row=0, column=1, sticky='we'))
-        self.buttons.append(tk.Button(frame, text="prev im", height=2, fg="green", command=lambda l="": self.move_prev_image()).grid(row=1, column=0, sticky='we'))
-        self.buttons.append(tk.Button(frame, text="next im", height=2, fg='green', command=lambda l="": self.move_next_image()).grid(row=1, column=1, sticky='we'))
+        self.buttons.append(
+            tk.Button(frame, text="mirror", height=2, fg='blue', command=lambda l="mirror": self.vote(l))
+            .grid(row=0, column=0, sticky='we'))
+        self.buttons.append(
+            tk.Button(frame, text="negative", height=2, fg='blue', command=lambda l="negative": self.vote(l)).grid(
+                row=0, column=1, sticky='we'))
+        self.buttons.append(
+            tk.Button(frame, text="prev im", height=2, fg="green", command=lambda l="": self.move_prev_image()).grid(
+                row=1, column=0, sticky='we'))
+        self.buttons.append(
+            tk.Button(frame, text="next im", height=2, fg='green', command=lambda l="": self.move_next_image()).grid(
+                row=1, column=1, sticky='we'))
 
         self.mirror_count_label = tk.Label(frame, text="Mirror count: {}".format(len(self.positive_list)))
         self.mirror_count_label.grid(row=2, column=self.n_labels, sticky='we')
@@ -64,24 +69,25 @@ class Classification_GUI:
 
         progress_string = "{}/{}".format(len(self.annotated_paths), len(self.whole_path_list))
         self.progress_label = tk.Label(frame, text=progress_string)
-        self.progress_label.grid(row=0, column=self.n_labels, sticky='we') 
+        self.progress_label.grid(row=0, column=self.n_labels, sticky='we')
 
         self.text_file_name = tk.StringVar()
-        self.sorting_label = tk.Entry(root, state='readonly', readonlybackground='white', fg='black', textvariable=self.text_file_name)
+        self.sorting_label = tk.Entry(root, state='readonly', readonlybackground='white', fg='black',
+                                      textvariable=self.text_file_name)
         self.text_file_name.set("index {} in folder: {}".format(self.index, self.whole_path_list[self.index]))
-        tk.Label(frame, text="Go to pic (0 ~ {}):".format(len(self.whole_path_list)-1)).grid(row=2, column=0)
+        tk.Label(frame, text="Go to pic (0 ~ {}):".format(len(self.whole_path_list) - 1)).grid(row=2, column=0)
 
-        self.return_ = tk.IntVar() # return_-> self.index
+        self.return_ = tk.IntVar()  # return_-> self.index
         self.return_entry = tk.Entry(frame, width=6, textvariable=self.return_)
         self.return_entry.grid(row=2, column=1, sticky='we')
         master.bind('<Return>', self.num_pic_type)
-        
-        self.sorting_label.grid(row=4, column=0, sticky='we',columnspan=self.n_labels+1)
-        self.image_panel.grid(row=3, column=0, sticky='we',columnspan=self.n_labels+1)
-        master.bind("q", self.press_key_event) # mirror
-        master.bind("w", self.press_key_event) # negative
-        master.bind('<Left>', self.press_key_event) 
-        master.bind('<Right>', self.press_key_event) 
+
+        self.sorting_label.grid(row=4, column=0, sticky='we', columnspan=self.n_labels + 1)
+        self.image_panel.grid(row=3, column=0, sticky='we', columnspan=self.n_labels + 1)
+        master.bind("q", self.press_key_event)  # mirror
+        master.bind("w", self.press_key_event)  # negative
+        master.bind('<Left>', self.press_key_event)
+        master.bind('<Right>', self.press_key_event)
 
     def get_tag(self):
         current_tag = "N/A"
@@ -92,10 +98,9 @@ class Classification_GUI:
             elif current_path in self.negative_list:
                 current_tag = "negative"
         return current_tag
-        
-            
+
     def num_pic_type(self, event):
-        self.index = self.return_.get() 
+        self.index = self.return_.get()
         progress_string = "{}/{}".format(len(self.annotated_paths), len(self.whole_path_list))
         self.progress_label.configure(text=progress_string)
         self.text_file_name.set("index {} in folder: {}".format(self.index, self.whole_path_list[self.index]))
@@ -116,7 +121,7 @@ class Classification_GUI:
         self.mirror_tag_label.configure(text="Mirror tag: {}".format(self.get_tag()))
 
         if self.index < len(self.whole_path_list):
-            self.set_image(self.whole_path_list[self.index]) # change path to be out of df
+            self.set_image(self.whole_path_list[self.index])  # change path to be out of df
         else:
             self.master.quit()
 
@@ -125,7 +130,7 @@ class Classification_GUI:
         Displays the next image in the paths list AFTER BUTTON CLICK,
         doesn't update the progress display
         """
-        if self.index == (len(self.whole_path_list)-1) :
+        if self.index == (len(self.whole_path_list) - 1):
             return
         if self.get_tag() == "N/A":
             messagebox.showerror("error", "please label this sample first!")
@@ -153,8 +158,8 @@ class Classification_GUI:
             self.move_prev_image()
         elif event.keysym == "Right":
             self.move_next_image()
-        
-    def vote(self, label): # TODO if have voeted then change the txt
+
+    def vote(self, label):  # TODO if have voeted then change the txt
         """
         Processes a vote for a label: Initiates the file copying and shows the next image
         :param label: The label that the user voted for
@@ -188,12 +193,12 @@ class Classification_GUI:
         self.mirror_tag_label.configure(text="Mirror tag: {}".format(self.get_tag()))
         self.text_file_name.set("index {} in folder: {}".format(self.index, self.whole_path_list[self.index]))
         if self.index < len(self.whole_path_list):
-            self.set_image(self.whole_path_list[self.index]) # TODO
+            self.set_image(self.whole_path_list[self.index])  # TODO
         else:
             self.master.quit()
 
     @staticmethod
-    def _load_image(path): # TODO to inhereate & delete
+    def _load_image(path):  # TODO to inhereate & delete
         """
         Loads and resizes an image from a given path using the Pillow library
         :param path: Path to image
@@ -201,13 +206,13 @@ class Classification_GUI:
         """
         image = Image.open(path)
         max_height = 500
-        img = image 
+        img = image
         s = img.size
         ratio = max_height / s[1]
-        image = img.resize((int(s[0]*ratio), int(s[1]*ratio)), Image.ANTIALIAS)
+        image = img.resize((int(s[0] * ratio), int(s[1] * ratio)), Image.ANTIALIAS)
         return image
 
-    def set_image(self, path): # TODO to inhereate & delete
+    def set_image(self, path):  # TODO to inhereate & delete
         """
         Helper function which sets a new image in the image view
         :param path: path to that image
@@ -216,7 +221,6 @@ class Classification_GUI:
         self.image_raw = image
         self.image = ImageTk.PhotoImage(image)
         self.image_panel.configure(image=self.image)
-
 
     def save_progress(self):
         """Save annotation progress"""
@@ -255,9 +259,9 @@ class Classification_GUI:
 
         if start_gui:
             self.index = len(self.annotated_paths) - 1
-            if self.index == -1 :
+            if self.index == -1:
                 self.index = 0
-        
+
         self.path_to_annotate = list_diff(self.whole_path_list, self.annotated_paths)
         return self.annotated_paths, self.path_to_annotate, self.negative_list, self.positive_list
 
@@ -275,32 +279,35 @@ def save_for_cavt(pos_list, cvat_folder, dataset_name):
     print("smaples for CVAT annotation are copied to : {}".format(cvat_folder))
 
 
-
-
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', '--data_root', help='Input folder where the *tif images should be', default="")
     parser.add_argument('-j', '--json_file_path', help='Json file consist of input file names', default="")
     parser.add_argument('-o', '--anno_output_folder', help='annotation result output folder', default="")
-    parser.add_argument('-s', '--stage', help='(1) annotation tool (2) generate retrain list (3) generate mirror package for CVAT annotation', default="1")
-    parser.add_argument('-ot', '--train_info_output_folder', help='stage 2 parameter : training information output folder', default="")
+    parser.add_argument('-s', '--stage',
+                        help='(1) annotation tool (2) generate retrain list (3) generate mirror package for CVAT '
+                             'annotation',
+                        default="1")
+    parser.add_argument('-ot', '--train_info_output_folder',
+                        help='stage 2 parameter : training information output folder', default="")
     parser.add_argument('-p', '--pos_txt', help='stage 2 parameter : previous all positive path list txt', default="")
     parser.add_argument('-n', '--neg_txt', help='stage 2 parameter : previous all negative path list txt', default="")
     parser.add_argument('-ocvat', '--cvat_output_folder', help='stage 2 parameter : output folder for cvat', default="")
     parser.add_argument('-d', '--dataset_name', help='stage 2 parameter : dataset name', default="scannet")
     args = parser.parse_args()
 
-    file_score_list = sorted(read_json(args.json_file_path).items(), key=operator.itemgetter(1),reverse=True)
+    file_score_list = sorted(read_json(args.json_file_path).items(), key=operator.itemgetter(1), reverse=True)
     file_path_abv = [i[0] for i in file_score_list]
-    paths = [os.path.join(args.data_root,file_name) for file_name in file_path_abv]
+    paths = [os.path.join(args.data_root, file_name) for file_name in file_path_abv]
 
     if args.stage == "1":
-        
+
         root = tk.Tk()
         root.title("Mirror Classification Tool")
         root.protocol('WM_DELETE_WINDOW')
-        app = Classification_GUI(master=root, whole_path_list=paths, anno_output_folder=args.anno_output_folder, dataset=args.dataset_name)
+        app = ClassificationGUI(master=root, whole_path_list=paths, anno_output_folder=args.anno_output_folder,
+                                dataset=args.dataset_name)
         root.mainloop()
     elif args.stage == "2":
 
@@ -316,11 +323,7 @@ if __name__ == "__main__":
         new_neg_txt_savepath = os.path.join(args.train_info_output_folder, "train_negative.txt")
         new_pos_txt_savepath = os.path.join(args.train_info_output_folder, "train_positive.txt")
         to_anno_txt_savepath = os.path.join(args.train_info_output_folder, "to_anno_positive.txt")
-        save_txt(new_neg_txt_savepath,neg_new)
-        save_txt(new_pos_txt_savepath,pos_new)
-        save_txt(to_anno_txt_savepath,to_anno)
-
+        save_txt(new_neg_txt_savepath, neg_new)
+        save_txt(new_pos_txt_savepath, pos_new)
+        save_txt(to_anno_txt_savepath, to_anno)
         save_for_cavt(pos_anno, args.cvat_output_folder, args.dataset_name)
-
-
-        
