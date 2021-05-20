@@ -63,10 +63,8 @@ def generate_html(args_obj):
                 coarse_instance_id = coarse_instance_mask[:-20]
                 one_line_mask_info.append(
                     (img_id, coarse_instance_id, detailed_instance_mask[:-22],
-                     os.path.join(img_folder_path, coarse_instance_mask).replace("/project/3dlg-hcvc/mirrors/www",
-                                                                                 "/projects/mirrors"),
-                     os.path.join(img_folder_path, detailed_instance_mask).replace("/project/3dlg-hcvc/mirrors/www",
-                                                                                   "/projects/mirrors"),
+                     os.path.join(img_folder_path, coarse_instance_mask).replace("/project/3dlg-hcvc/mirrors/www", "/projects/mirrors"),
+                     os.path.join(img_folder_path, detailed_instance_mask).replace("/project/3dlg-hcvc/mirrors/www", "/projects/mirrors"),
                      labels[coarse_instance_id + "_coarse_instance"]
                      )
                 )
@@ -103,8 +101,7 @@ def generate_html(args_obj):
             coarse_mask_box = soup.new_tag("td")
             coarse_mask_box["style"] = "width: 40%; padding: 30px 0"
             coarse_mask_img = soup.new_tag('img', src=one_line[3])
-            coarse_mask_img["style"] = "max-width: 600px; max-height: 600px; width: 100%; height: auto; object-fit: " \
-                                       "contain; "
+            coarse_mask_img["style"] = "max-width: 600px; max-height: 600px; width: 100%; height: auto; object-fit: contain;"
             coarse_mask_box.append(coarse_mask_img)
             instance_id = soup.new_tag("p")
             instance_id["style"] = "font-size: 15px;"
@@ -116,8 +113,7 @@ def generate_html(args_obj):
             detailed_mask_box = soup.new_tag("td")
             detailed_mask_box["style"] = "width: 40%; padding: 30px 0"
             detailed_mask_img = soup.new_tag('img', src=one_line[4])
-            detailed_mask_img["style"] = "max-width: 600px; max-height: 600px; width: 100%; height: auto; object-fit: " \
-                                         "contain; "
+            detailed_mask_img["style"] = "max-width: 600px; max-height: 600px; width: 100%; height: auto; object-fit: contain;"
             detailed_mask_box.append(detailed_mask_img)
             instance_id = soup.new_tag("p")
             instance_id["style"] = "margin-top: 5px; font-size: 16px;"

@@ -4,6 +4,7 @@ import argparse
 import zipfile
 from shutil import copyfile, rmtree
 
+
 LATEX_HEADER = '''
 \\documentclass{article}
 \\usepackage{tabularx}
@@ -74,8 +75,7 @@ def convert_html_tables_to_latex(html_path, tables, ids, output_path):
                 img_path = os.path.join(html_path, img['src'])
                 dest_img_path = os.path.join(output_new_path, str(img_index) + ".png")
                 copyfile(img_path, dest_img_path)
-                latex_str = latex_str.replace('example-image', os.path.join("figure", "result_vis_imgs", folder_name,
-                                                                            str(img_index) + ".png"), 1)
+                latex_str = latex_str.replace('example-image', os.path.join("figure", "result_vis_imgs", folder_name, str(img_index) + ".png"), 1)
 
             titles = table.findAll('p')
             del titles[3]
@@ -105,3 +105,4 @@ if __name__ == "__main__":
     tables = extract_table_tags_from_html_and_merge(args.html_folder)
     convert_html_tables_to_latex(args.html_folder, tables, args.image_ids, "output")
     print("Done. Latex project saved at " + os.path.abspath("latex_tables.zip"))
+

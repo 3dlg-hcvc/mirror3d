@@ -9,31 +9,27 @@ from skimage import measure
 from PIL import Image
 
 convert = lambda text: int(text) if text.isdigit() else text.lower()
-natrual_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
-
+natrual_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ]
 
 def resize_binary_mask(array, new_size):
-    image = Image.fromarray(array.astype(np.uint8) * 255)
+    image = Image.fromarray(array.astype(np.uint8)*255)
     image = image.resize(new_size)
     return np.asarray(image).astype(np.bool_)
-
 
 def close_contour(contour):
     if not np.array_equal(contour[0], contour[-1]):
         contour = np.vstack((contour, contour[0]))
     return contour
 
-
 def binary_mask_to_rle(binary_mask):
     rle = {'counts': [], 'size': list(binary_mask.shape)}
     counts = rle.get('counts')
     for i, (value, elements) in enumerate(groupby(binary_mask.ravel(order='F'))):
         if i == 0 and value == 1:
-            counts.append(0)
+                counts.append(0)
         counts.append(len(list(elements)))
 
     return rle
-
 
 def binary_mask_to_polygon(binary_mask, tolerance=0):
     """Converts a binary mask to COCO polygon representation
@@ -62,25 +58,24 @@ def binary_mask_to_polygon(binary_mask, tolerance=0):
 
     return polygons
 
-
-def create_image_info(image_id, file_name, image_size,
+def create_image_info(image_id, file_name, image_size, 
                       date_captured=datetime.datetime.utcnow().isoformat(' '),
                       license_id=1, coco_url="", flickr_url=""):
+
     image_info = {
-        "id": image_id,
-        "file_name": file_name,
-        "width": image_size[0],
-        "height": image_size[1],
-        "date_captured": date_captured,
-        "license": license_id,
-        "coco_url": coco_url,
-        "flickr_url": flickr_url
+            "id": image_id,
+            "file_name": file_name,
+            "width": image_size[0],
+            "height": image_size[1],
+            "date_captured": date_captured,
+            "license": license_id,
+            "coco_url": coco_url,
+            "flickr_url": flickr_url
     }
 
     return image_info
 
-
-def create_annotation_info(annotation_id, image_id, category_info, binary_mask,
+def create_annotation_info(annotation_id, image_id, category_info, binary_mask, 
                            image_size=None, tolerance=2, bounding_box=None):
     from pycocotools import mask
 
@@ -99,7 +94,7 @@ def create_annotation_info(annotation_id, image_id, category_info, binary_mask,
     if category_info["is_crowd"]:
         is_crowd = 1
         segmentation = binary_mask_to_rle(binary_mask)
-    else:
+    else :
         is_crowd = 0
         segmentation = binary_mask_to_polygon(binary_mask, tolerance)
         if not segmentation:
@@ -115,6 +110,6 @@ def create_annotation_info(annotation_id, image_id, category_info, binary_mask,
         "segmentation": segmentation,
         "width": binary_mask.shape[1],
         "height": binary_mask.shape[0],
-    }
+    } 
 
     return annotation_info

@@ -18,14 +18,14 @@ def check_mirror_normal_in_one_json(data_root_path, json_path, f):
     with open(json_path, 'r') as j:
         anno_info = json.loads(j.read())
 
-    color_img_path = json_path.replace("img_info", "raw").replace("json", "png")
-    mask_img_path = json_path.replace("img_info", "instance_mask").replace("json", "png")
+    color_img_path = json_path.replace("img_info","raw").replace("json","png")
+    mask_img_path =  json_path.replace("img_info","instance_mask").replace("json","png")
     if "m3d" in color_img_path:
-        depth_img_path = json_path.replace("img_info", "mesh_refined_depth").replace("json", "png")
-        depth_img_path = rreplace(depth_img_path, "i", "d")
+        depth_img_path = json_path.replace("img_info","mesh_refined_depth").replace("json","png")
+        depth_img_path = rreplace(depth_img_path,"i","d")
     else:
-        depth_img_path = json_path.replace("img_info", "hole_refined_depth").replace("json", "png")
-
+        depth_img_path = json_path.replace("img_info","hole_refined_depth").replace("json","png")
+    
     pcd = get_pcd_from_rgbd_depthPath(f, depth_img_path, color_img_path)
     for item in anno_info.items():
         index = item[0]
@@ -34,22 +34,22 @@ def check_mirror_normal_in_one_json(data_root_path, json_path, f):
         binary_instance_mask = get_grayscale_instanceMask(mask, instance_index)
         mirror_normal = np.array(item[1]["mirror_normal"])
 
+
         mirror_points = get_points_in_mask(f, depth_img_path, color_img_path, mirror_mask=binary_instance_mask)
         mirror_pcd = o3d.geometry.PointCloud()
-        mirror_pcd.points = o3d.utility.Vector3dVector(np.stack(mirror_points, axis=0))
-        mirror_bbox = o3d.geometry.OrientedBoundingBox.create_from_points(
-            o3d.utility.Vector3dVector(np.stack(mirror_points, axis=0)))
+        mirror_pcd.points = o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0))
+        mirror_bbox = o3d.geometry.OrientedBoundingBox.create_from_points(o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0)))
         mirror_plane = get_mirror_init_plane_from_mirrorbbox(item[1]["plane_parameter"], mirror_bbox)
         plane_center = np.mean(np.array(mirror_plane.vertices), axis=0)
         # get mirror normal 
         ratio = 1000 / mirror_normal[0]
         p1 = plane_center
-        p2 = [p1[0] + mirror_normal[0] * ratio, p1[1] + mirror_normal[1] * ratio, p1[2] + mirror_normal[2] * ratio]
+        p2 = [p1[0] + mirror_normal[0]*ratio, p1[1] + mirror_normal[1]*ratio, p1[2] + mirror_normal[2]*ratio]
         points = [
             p1,
             p2
-        ]
-        mirror_normal_line = [[0, 1]]
+            ]
+        mirror_normal_line = [[0,1]]
         line_set = o3d.geometry.LineSet(
             points=o3d.utility.Vector3dVector(points),
             lines=o3d.utility.Vector2iVector(mirror_normal_line),
@@ -63,6 +63,8 @@ def check_mirror_normal_in_one_json(data_root_path, json_path, f):
         vis.get_render_option().point_size = 1.0
         vis.run()
         vis.destroy_window()
+        
+
 
 
 def check_mirror_normal_in_cocoJson(data_root_path, json_path, f):
@@ -77,34 +79,33 @@ def check_mirror_normal_in_cocoJson(data_root_path, json_path, f):
         pcd = get_pcd_from_rgbd_depthPath(f, depth_img_path, color_img_path)
         mirror_normal = np.array(item["mirror_normal_camera"])
         p1 = [0, 0, 0]
-        p2 = list(mirror_normal * 1000)
+        p2 = list(mirror_normal*1000)
         points = [
             p1,
             p2
-        ]
-        mirror_normal_line = [[0, 1]]
+            ]
+        mirror_normal_line = [[0,1]]
         line_set = o3d.geometry.LineSet(
             points=o3d.utility.Vector3dVector(points),
             lines=o3d.utility.Vector2iVector(mirror_normal_line),
         )
 
+
         o3d.visualization.draw_geometries([line_set, pcd])
 
-
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Get Setting :D')
-    parser.add_argument(
-        '--stage', default="2")
-    parser.add_argument(
-        '--data_root_path', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu")
-    parser.add_argument(
-        '--json_path',
-        default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/img_info/1003.json")
-    parser.add_argument(
+        parser = argparse.ArgumentParser(description='Get Setting :D')
+        parser.add_argument(
+            '--stage', default="2")
+        parser.add_argument(
+            '--data_root_path', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu")
+        parser.add_argument(
+            '--json_path', default="/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/img_info/1003.json")
+        parser.add_argument(
         '--f', default=519, type=int, help="camera focal length")
-    args = parser.parse_args()
+        args = parser.parse_args()
 
-    if args.stage == "1":
-        check_mirror_normal_in_cocoJson(args.data_root_path, args.json_path, args.f)
-    elif args.stage == "2":
-        check_mirror_normal_in_one_json(args.data_root_path, args.json_path, args.f)
+        if args.stage == "1":
+            check_mirror_normal_in_cocoJson(args.data_root_path, args.json_path, args.f)
+        elif args.stage == "2":
+            check_mirror_normal_in_one_json(args.data_root_path, args.json_path, args.f)
