@@ -40,6 +40,9 @@ class Mirror3DNet_Eval:
 
     def eval_main(self):
 
+        if self.cfg.EVAL_SAVE_MASKED_IMG:
+            self.save_masked_image(self.output_list)
+
         if self.cfg.EVAL_MASK_IOU:
             print("calculate IOU, f_measure, MAE ..")
             self.eval_seg(self.output_list)
@@ -64,8 +67,7 @@ class Mirror3DNet_Eval:
     
         
 
-        if self.cfg.EVAL_SAVE_MASKED_IMG:
-            self.save_masked_image(self.output_list)
+
 
 
     def refine_input_txtD_and_eval(self, output_list):
@@ -325,71 +327,27 @@ class Mirror3DNet_Eval:
     def save_masked_image(self, output_list):
         masked_img_save_folder = os.path.join(self.cfg.OUTPUT_DIR, "masked_img")
         os.makedirs(masked_img_save_folder, exist_ok=True)
-        output_json_save_path = os.path.join(masked_img_save_folder, "output_info.json")
 
-        estimate_fail = 0
         for one_output, one_input in output_list:
             
             instances = one_output[0][0]["instances"]
-            img_path = one_input[0]["file_name"]
+            img_path = one_input[0]["img_path"]
             if instances.pred_boxes.tensor.shape[0] <= 0:
                 print("######## no detection :", img_path)
                 continue
-
-            img = cv2.resize(cv2.imread(img_path) , (self.cfg.EVAL_WIDTH, self.cfg.EVAL_HEIGHT), 0, 0, cv2.INTER_NEAREST)
-            v = Visualizer(img[:, :, ::-1], #  init result visulizer
-                metadata=MetadataCatalog.get("s3d_mirror_val"), 
+            img = cv2.imread(img_path)
+            v = Visualizer(img[:, :, ::-1], 
+                metadata=MetadataCatalog.get("test_10_normal_mirror"), 
                 scale=0.5, 
-                instance_mode=ColorMode.IMAGE_BW   # remove the colors of unsegmented pixels
+                instance_mode=ColorMode.IMAGE_BW  
                 )
-            v, colors = v.draw_instance_predictions(instances.to("cpu")) #  use result visualizer to show the result
-            
+            v = v.draw_instance_predictions(instances.to("cpu")) 
             output_img = v.get_image()[:, :, ::-1]
-            output_img, predict_correct = draw_gt_bbox(one_input[0]["annotations"] ,output_img,instances.pred_anchor_classes)
-
-            raw_input_img_path = one_input[0]["file_name"] 
-            for one_test_img_root in self.cfg.TEST_IMG_ROOT:
-                    if  os.path.abspath(raw_input_img_path.replace(os.path.relpath(raw_input_img_path, one_test_img_root),"")) == os.path.abspath(one_test_img_root):
-                        current_test_root = one_test_img_root
-                        break
+            img_save_path = os.path.join(masked_img_save_folder, img_path.split("/")[-1])
+            cv2.imwrite(img_save_path, output_img)
+            print("masked image saved to : ", img_save_path)
             
 
-            if predict_correct:
-                correct_save_folder = os.path.join(masked_img_save_folder, "correct_sample")
-                os.makedirs(correct_save_folder, exist_ok=True)
-
-                if "scannet" not in img_save_path:
-                    img_save_path = os.path.join(false_save_folder, "masked_img_{}".format(img_path.split("/")[-1]))
-                    noraml_vis_save_path = os.path.join(false_save_folder, "normal_vis_{}".format(img_path.split("/")[-1]))
-                else:
-                    img_save_path = os.path.join(false_save_folder, "masked_img_{}_{}".format(img_path.split("/")[-2], img_path.split("/")[-1]))
-                    noraml_vis_save_path = os.path.join(false_save_folder, "normal_vis_{}_{}".format(img_path.split("/")[-2], img_path.split("/")[-1]))
-                
-
-                if self.cfg.EVAL_SAVE_NORMAL_VIS:
-                    normal_vis_image = get_normal_vis(self.cfg, colors, one_input[0]["annotations"], instances, noraml_vis_save_path)
-            else:
-                false_save_folder = os.path.join(masked_img_save_folder, "false_sample")
-                os.makedirs(false_save_folder, exist_ok=True)
-
-                if "scannet" not in img_save_path:
-                    img_save_path = os.path.join(false_save_folder, "masked_img_{}".format(img_path.split("/")[-1]))
-                    noraml_vis_save_path = os.path.join(false_save_folder, "normal_vis_{}".format(img_path.split("/")[-1]))
-                else:
-                    img_save_path = os.path.join(false_save_folder, "masked_img_{}_{}".format(img_path.split("/")[-2], img_path.split("/")[-1]))
-                    noraml_vis_save_path = os.path.join(false_save_folder, "normal_vis_{}_{}".format(img_path.split("/")[-2], img_path.split("/")[-1]))
-                
-                cv2.imwrite(img_save_path, output_img)
-                print("masked image saved to :", img_save_path )
-
-                estimate_fail += 1
-                if self.cfg.EVAL_SAVE_NORMAL_VIS:
-                    normal_vis_image = get_normal_vis(self.cfg, colors, one_input[0]["annotations"], instances, noraml_vis_save_path)
-
-
-        print("sample may fail : " ,estimate_fail , "sample must corret : ", len(output_list) - estimate_fail)
-        print("##################### main output folder #################### {}".format(masked_img_save_folder))
-   
     def eval_seg(self, output_list):
 
         eval_seg_fun = Mirror_seg_eval(self.cfg.EVAL_WIDTH, self.cfg.EVAL_HEIGHT)

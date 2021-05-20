@@ -1695,9 +1695,9 @@ class Dataset_visulization(Dataset_visulization):
             methodTag, infoFolder = one_line.split(":")
             methodTag = methodTag.strip().replace('\\\\','\\')
             if methodTag in methodTag_infoFile:
-                methodTag_infoFile[methodTag].append(os.path.join(infoFolder,"minFilter_True_full_False_score_per_sample.json"))
+                methodTag_infoFile[methodTag].append(os.path.join(infoFolder,"minFilter_True_full_True_score_per_sample.json"))
             else:
-                methodTag_infoFile[methodTag] = [os.path.join(infoFolder,"minFilter_True_full_False_score_per_sample.json")]
+                methodTag_infoFile[methodTag] = [os.path.join(infoFolder,"minFilter_True_full_True_score_per_sample.json")]
         
         tables = dict()
         main_table_lines = read_txt("./visualization/table_template/main_table_begin.txt")
@@ -2007,9 +2007,9 @@ class Dataset_visulization(Dataset_visulization):
             methodTag, infoFolder = one_line.split(":")
             methodTag = methodTag.strip().replace('\\\\','\\')
             if methodTag in methodTag_infoFile:
-                methodTag_infoFile[methodTag].append(os.path.join(infoFolder,"minFilter_True_full_False_score_per_sample.json"))
+                methodTag_infoFile[methodTag].append(os.path.join(infoFolder,"minFilter_True_full_True_score_per_sample.json"))
             else:
-                methodTag_infoFile[methodTag] = [os.path.join(infoFolder,"minFilter_True_full_False_score_per_sample.json")]
+                methodTag_infoFile[methodTag] = [os.path.join(infoFolder,"minFilter_True_full_True_score_per_sample.json")]
         
         tables = dict()
         main_table_lines = read_txt("./visualization/table_template/main_table_begin.txt")
@@ -2085,6 +2085,30 @@ class Dataset_visulization(Dataset_visulization):
             output_lines.append("\n")
         save_txt("output/temp.tex",output_lines)
 
+    def get_RMSE_distrubution(self, output_folder, sample_score_json_path):
+        import seaborn as sns
+
+        rmse_list = []
+        json_folder_tag =  sample_score_json_path.split("/")[-4] + sample_score_json_path.split("/")[-3] + "_" + sample_score_json_path.split("/")[-2]
+        sample_info = read_json(sample_score_json_path)
+        for item in sample_info.items():
+            rmse_list.append(item[1]["ref"][0])
+
+        os.makedirs(output_folder, exist_ok=True)
+
+        # TODO get ref RMSE list
+        plt.figure(figsize=(15, 12))
+        plot = sns.distplot(rmse_list, kde=False) 
+        plt.xticks(fontsize=35)
+        plt.yticks(fontsize=35)
+        plt.grid()
+        plt.ylabel('# mirror instances', fontsize=60)
+        plt.xlabel('mirror RMSE', fontsize=60)
+        plt.title(json_folder_tag)
+        figure_save_path = os.path.join(output_folder, "{}_RMSE_distribution.png".format(json_folder_tag))
+        plt.savefig(figure_save_path)
+        plt.close()
+        print("figure saved to :", figure_save_path)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Get Setting :D')
@@ -2167,7 +2191,10 @@ if __name__ == "__main__":
         vis_tool.gen_latex_table_from_tagFolder(args.method_order_txt, args.all_info_json, args.midrule_index, args.compare_with_raw, args.dataset_tag)
     elif args.stage == "12":
         vis_tool.gen_latex_table_from_tagFolder_boldSeperate(args.method_order_txt, args.all_info_json, args.midrule_index, args.compare_with_raw, args.dataset_tag)
+    elif args.stage == "13":
+        vis_tool.get_RMSE_distrubution(args.output_folder, args.all_info_json)
 
+    
     
     
         
