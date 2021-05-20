@@ -1,3 +1,3 @@
-/home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/output/final_result/nyu_final/BTS_infer_2021-05-16-22-30-20/color_mask_gtD_predD.txt
-/home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/exp_result/VNL_infer_2021-05-16-22-28-37/color_mask_gtD_predD.txt
-/home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/output/final_result/nyu_final/SAIC_infer_2021-05-16-21-55-49/color_mask_gtD_predD.txt
+/home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/output/final_result/nyu_final/BTS_infer_2021-05-19-04-05-08/color_mask_gtD_predD.txt
+/project/6049211/jiaqit/exp/Mirror3D/exp_result/VNL_infer_2021-05-19-04-37-04/color_mask_gtD_predD.txt
+/home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/output/final_result/nyu_final/SAIC_infer_2021-05-19-04-34-44/color_mask_gtD_predD.txt
