@@ -271,7 +271,7 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.
 # val rawD plus Mirror3dNet 0
 python mirror3dnet/run_mirror3dnet.py \
 --eval \
---resume_checkpoint_path /project/6049211/jiaqit/exp/Mirror3D/checkpoint/m3d_dt2_new/m3n_normal_10_0.pth \
+--resume_checkpoint_path /project/6049211/jiaqit/exp/Mirror3D/checkpoint/m3d_final/m3n_normal_10_0.pth \
 --config mirror3dnet/config/mirror3dnet_normal_config.yml \
 --refined_depth \
 --coco_train  /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
@@ -294,7 +294,7 @@ python mirror3dnet/run_mirror3dnet.py \
 # val bts plus m3n 0
 python mirror3dnet/run_mirror3dnet.py \
 --eval \
---resume_checkpoint_path /project/6049211/jiaqit/exp/Mirror3D/checkpoint/m3d_dt2_new/m3n_normal_10_0.pth \
+--resume_checkpoint_path /project/6049211/jiaqit/exp/Mirror3D/checkpoint/m3d_final/m3n_normal_10_0.pth \
 --config mirror3dnet/config/mirror3dnet_normal_config.yml \
 --coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
 --coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
@@ -317,7 +317,7 @@ python mirror3dnet/run_mirror3dnet.py \
 # val vnl plus m3n 0
 python mirror3dnet/run_mirror3dnet.py \
 --eval \
---resume_checkpoint_path /project/6049211/jiaqit/exp/Mirror3D/checkpoint/m3d_dt2_new/m3n_normal_10_0.pth \
+--resume_checkpoint_path /project/6049211/jiaqit/exp/Mirror3D/checkpoint/m3d_final/m3n_normal_10_0.pth \
 --config mirror3dnet/config/mirror3dnet_normal_config.yml \
 --coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
 --coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
@@ -340,7 +340,7 @@ python mirror3dnet/run_mirror3dnet.py \
 # val saic plus m3n 0
 python mirror3dnet/run_mirror3dnet.py \
 --eval \
---resume_checkpoint_path /project/6049211/jiaqit/exp/Mirror3D/checkpoint/m3d_dt2_new/m3n_normal_10_0.pth \
+--resume_checkpoint_path /project/6049211/jiaqit/exp/Mirror3D/checkpoint/m3d_final/m3n_normal_10_0.pth \
 --config mirror3dnet/config/mirror3dnet_normal_config.yml \
 --coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
 --coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
