@@ -1,166 +1,128 @@
 # Mirror3D 
 
-Mirror3D is a large-scale 3D mirror plane annotation dataset based on three popular RGBD datasets ([Matterpot3D](https://niessner.github.io/Matterport/),[NYUv2](https://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html), and [ScanNet](http://www.scan-net.org/)) containing 4,852 mirror instance masks and 3D planes.
+Mirror3D is a large-scale 3D mirror plane annotation dataset based on three popular RGBD datasets ([Matterpot3D](https://niessner.github.io/Matterport/),[NYUv2](https://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html), and [ScanNet](http://www.scan-net.org/)) containing 7,011 mirror instance masks and 3D planes.
 
 Please visit our [project website]() for updates and to browse the data.
 
 
-## Mirror3D Data
-
-If you would like to use our data, you must obtain access to the [Matterpot3D](https://niessner.github.io/Matterport/) dataset and the [ScanNet](http://www.scan-net.org/) dataset.  Please send an email to the dataset organizer(s) to confirm your agreement and cc Jiaqi Tan (jiaqit[at]sfu.ca). You will get the download links for the mirror data from the dataset that you got approval.
 
 ## Mirror3D Data Organization
 
-Mirror3D dataset includes mirror segmentation masks, mirror plane parameters, and refined mirror depth map over 4,852 RGBD images.
-
-The mirror data we provided are stored in the following structures:
+The unzipped mirror data we provided are stored in the following structures:
 
 
-### NYUv2-small 
-
-For NYUv2-small, the unzipped data structure is: 
+### NYUv2-small (nyu.zip) / ScanNet (scannet.zip) / Matterport3d (m3d.zip)
 
 
 ```
-nyu
-└── with_mirror # mirror data
-    ├── coarse
-    |   ├── hole_raw_depth # depth maps captured by the depth sensor
-    |   ├── hole_refined_depth # refined sensor depth maps
-    |   ├── img_info # .json file with mirror plane's information; name by mirror color image
-    |   ├── instance_mask # instance level mirror semantic mask
-    |   └── raw # mirror color images
-    └── precise
-        ├── hole_raw_depth
-        ├── hole_refined_depth
-        ├── img_info
-        ├── instance_mask
-        └── raw
-    
-```
-### Matterport3d
-For Matterport3d, the unzipped data structure is: 
-
-```
-m3d
-├── only_mask # mirror data that only contains mirror masks' information; depth images for these samples are too noisy to annotate. 
-│   ├── coarse
-│   |   ├── instance_mask # instance level mirror semantic mask
-│   |   └── raw # mirror color images
-│   └── precise
-│       ├── instance_mask
-│       └── raw
-└── with_mirror
-    ├── coarse
-    |   ├── hole_raw_depth # depth maps captured by the depth sensor
-    |   ├── hole_refined_depth # refined sensor depth maps
-    |   ├── mesh_raw_depth # mesh depth maps generated from the 3D mesh reconstruction
-    |   ├── mesh_refined_depth # refined mirror mesh depth maps
-    |   ├── img_info # .json file with mirror plane's information; name by mirror color image
-    |   ├── instance_mask # instance level mirror semantic mask
-    |   └── raw # mirror color images
-    └── precise
-        ├── hole_raw_depth
-        ├── hole_refined_depth
-        ├── mesh_raw_depth
-        ├── mesh_refined_depth
-        ├── img_info
-        ├── instance_mask
-        └── raw
-```
-### Scannet
-
-For Scannet, the unzipped data structure is: 
-
-```
-scannet
-├── only_mask # mirror data that only contains mirror masks' information; depth images for these samples are too noisy to annotate. 
-│   ├── coarse
-│   |   ├── instance_mask
-│   |   └── raw
-│   └── precise
-│       ├── instance_mask
-│       └── raw
-└── with_mirror
-    ├── coarse
-    |   ├── hole_raw_depth # depth maps captured by the depth sensor
-    |   ├── hole_refined_depth # refined sensor depth maps
-    |   ├── img_info # .json file with mirror plane's information; name by mirror color image
-    |   ├── instance_mask # instance level mirror semantic mask
-    |   └── raw # mirror color images
-    └── precise
-        ├── hole_raw_depth
-        ├── hole_refined_depth
-        ├── img_info
-        ├── instance_mask
-        └── raw
+nyu/scannet/m3d
+├── mirror_instance_mask_coarse # stores coarse instance-level mirror segmentation mask
+└── mirror_instance_mask_precise # stores precise instance-level mirror segmentation mask
+└── delta_image_coarse # stores delta image to generate the coarse refined depth map
+└── delta_image_precise # stores delta image to generate the precise refined depth map
+└── mirror_plane # stores the mirror plane parameter information 
 ```
 
-#### JSON files for Mirror Plane Information
+The sample's mirror 3D plane information is saved in a single JSON file. The data is saved as:
 
-Here, one sample's mirror 3D plane information is saved in a single JSON file. The information is saved as:
-
-```python
+```
 {
-    "0_0_128":{ # 0_0_128 is the instance id (R_G_B of the semantic mask)
+    "AF8080":{ # AF8080 is the instance id in hexadecimal on the semantic mask
         "plane_parameter":[ # mirror plane parameter in 3D; here y axis points upward, -z axis points to the front
             0.00025589483339543795,
             6.575998812963738e-05,
             -0.00026007778514475276,
             0.9999999312764996
         ],
-        "mirror_normal":[ # mirror plane's normal 
-            0.00025589483339543795,
-            6.575998812963738e-05,
-            -0.00026007778514475276
+        "mirror_normal":[ # mirror plane's normal (normalized to a unit vector)
+            0.025589483339543795,
+            6.575998812963738e-02,
+            -0.026007778514475276
         ]
     }
 }
 
 ```
 
+## Generate refined depth map
 
-## Training Data Structure
+To generate a refined depth map, please download the relevant source data and put it under the unzipped folder:
 
-To train or test our models with the [network_input_json]() we provided, you need to download the original data from relevant source dataset and store these source data under the following structures:
+- For Matterport3D dataset, please put the `matterport_render_depth`, `undistorted_color_images` and `undistorted_depth_images` folder under `m3d` folder
 
-### NYUv2-small
+- For NYUv2-small dataset, please put the `color` and `depth` folder under `nyu` folder
+  
+- For ScanNet dataset, please put the `scannet_frames_25k` folder under `scannet` folder
 
-For NYUv2-small you need to put the color and depth images under a folder named "original_dataset". This "original_dataset" folder is created by yourself.
+Then run:
 
-```
-nyu
-├── original_dataset # please create a folder named "original_dataset" and put the original dataset's data under this folder if you want to train our models.
-│   ├── color
-│   └── depth
-└── with_mirror # downloaded mirror data
-        
+```python
+python ***.py --zip_folder [the path to the m3d/ nyu/ scannet folder] 
 ```
 
-### Matterport3d
+Then you can get the generated refined depth map in the relevant folder.
 
-For Matterport3d you need to put the color images, sensor depth maps and mesh depth maps under a folder named "original_dataset". This "original_dataset" folder is created by yourself. You can obatined the color images (undistorted_color_images) and sensor depth maps (undistorted_depth_images) from [Matterpot3D](https://niessner.github.io/Matterport/) and the mesh depth maps (matterport_render_depth) from [yindaz/DeepCompletionRelease](https://github.com/yindaz/DeepCompletionRelease).
+The final data structure will be like:
 
-```
+- For **Matterport3D dataset**:
+
+```shell
 m3d
-├── original_dataset # please create a folder named "original_dataset" and put the original dataset's data under this folder if you want to train our models.
-│   ├── matterport_render_depth
-│   ├── undistorted_color_images
-│   └── undistorted_depth_images
-├── only_mask # downloaded mirror data
-└── with_mirror # downloaded mirror data
-        
+├── mirror_instance_mask_coarse
+└── mirror_instance_mask_precise
+└── delta_image_coarse
+└── delta_image_precise
+└── refined_sensorD_coarse # refined sensor depth map (coarse version)
+└── refined_sensorD_precise # refined sensor depth map (precise version)
+└── refined_meshD_coarse # refined mesh depth map (coarse version)
+└── refined_meshD_precise # refined mesh depth map (coarse version)
+└── mirror_plane
+└── matterport_render_depth # source data
+└── undistorted_color_images # source data
+└── undistorted_depth_images # source data
+
 ```
 
-### Scannet
 
-For Scannet, we use its 25k subset. You need to obatin the source data from [ScanNet](http://www.scan-net.org/) and store it under the following strusture.
+- For **NYUv2-small dataset**:
+
+```shell
+m3d
+├── mirror_instance_mask_coarse
+└── mirror_instance_mask_precise
+└── delta_image_coarse
+└── delta_image_precise
+└── refined_sensorD_coarse # refined sensor depth map (coarse version)
+└── refined_sensorD_precise # refined sensor depth map (precise version)
+└── mirror_plane
+└── color # source data
+└── depth # source data
 
 ```
-scannet
-├── original_dataset # please create a folder named "original_dataset" and put the original dataset's data under this folder if you want to train our models.
-│   └── scannet_frames_25k
-├── only_mask # downloaded mirror data
-└── with_mirror # downloaded mirror data
-        
+
+- For **ScanNet dataset**:
+
+```shell
+m3d
+├── mirror_instance_mask_coarse
+└── mirror_instance_mask_precise
+└── delta_image_coarse
+└── delta_image_precise
+└── refined_sensorD_coarse # refined sensor depth map (coarse version)
+└── refined_sensorD_precise # refined sensor depth map (precise version)
+└── mirror_plane
+└── scannet_frames_25k # source data
+
 ```
+
+
+To validate the correctness of the generated depth, you can run:
+
+```python
+python visualization/check_sample_info.py --data_root_path [path to the unzipped m3d/nyu/scannet folder] --json_path [any JSON file stored under the mirror_plane foler] --f [relevant focal length: 1074 for Matterport3D, 519 for NYUv2-small, 574 for ScanNet]
+
+```
+
+Demo: after running `python visualization/check_sample_info.py --data_root_path ./nyu --json_path ./nyu/mirror_plane/1003.json --f 519` , you can visulize the NYUV2 sample 1003 like:
+
+Here, the black line is the mirror normal (perpendicular to the mirror plane), the light blue mesh is the mirror plane.

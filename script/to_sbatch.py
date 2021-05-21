@@ -166,7 +166,7 @@ if __name__ == "__main__":
                     "#SBATCH --account=rrg-msavva", \
                     "#SBATCH --gres=gpu:v100l:1", \
                     "#SBATCH --mem=48000", \
-                    "#SBATCH --time=0-01:45"]
+                    "#SBATCH --time=0-02:45"]
     # TODO 
     env_config = ["source /home/jiaqit/projects/rrg-msavva/jiaqit/setup/anaconda3/bin/activate", \
                   "conda activate mirror3d", \

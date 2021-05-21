@@ -1695,9 +1695,9 @@ class Dataset_visulization(Dataset_visulization):
             methodTag, infoFolder = one_line.split(":")
             methodTag = methodTag.strip().replace('\\\\','\\')
             if methodTag in methodTag_infoFile:
-                methodTag_infoFile[methodTag].append(os.path.join(infoFolder,"minFilter_True_full_True_score_per_sample.json"))
+                methodTag_infoFile[methodTag].append(os.path.join(infoFolder,"minFilter_True_full_False_score_per_sample.json"))
             else:
-                methodTag_infoFile[methodTag] = [os.path.join(infoFolder,"minFilter_True_full_True_score_per_sample.json")]
+                methodTag_infoFile[methodTag] = [os.path.join(infoFolder,"minFilter_True_full_False_score_per_sample.json")]
         
         tables = dict()
         main_table_lines = read_txt("./visualization/table_template/main_table_begin.txt")
@@ -2007,9 +2007,9 @@ class Dataset_visulization(Dataset_visulization):
             methodTag, infoFolder = one_line.split(":")
             methodTag = methodTag.strip().replace('\\\\','\\')
             if methodTag in methodTag_infoFile:
-                methodTag_infoFile[methodTag].append(os.path.join(infoFolder,"minFilter_True_full_True_score_per_sample.json"))
+                methodTag_infoFile[methodTag].append(os.path.join(infoFolder,"minFilter_True_full_False_score_per_sample.json"))
             else:
-                methodTag_infoFile[methodTag] = [os.path.join(infoFolder,"minFilter_True_full_True_score_per_sample.json")]
+                methodTag_infoFile[methodTag] = [os.path.join(infoFolder,"minFilter_True_full_False_score_per_sample.json")]
         
         tables = dict()
         main_table_lines = read_txt("./visualization/table_template/main_table_begin.txt")
@@ -2110,6 +2110,86 @@ class Dataset_visulization(Dataset_visulization):
         plt.close()
         print("figure saved to :", figure_save_path)
 
+    
+    def vis_masked_image(self, output_folder, tag_Folder_txt, template_path, sample_num_per_page):
+        tag_folder = dict()
+        sample_num = 0
+        img_list = []
+        for index, line in enumerate(read_txt(tag_Folder_txt)):
+            tag, folder = line.strip().split()
+            tag_folder[tag] = folder
+            if index == 0:
+                img_list = os.listdir(folder)
+                sample_num = len(img_list)
+
+
+        colorImgSubset_list = [img_list[x:x+sample_num_per_page] for x in range(0, sample_num, sample_num_per_page)]
+        for html_index, one_colorSubset in enumerate(colorImgSubset_list):
+            
+            with open(template_path) as inf:
+                txt = inf.read()
+                soup = bs4.BeautifulSoup(txt, features="html.parser")
+            
+            new_table = soup.new_tag("table")
+            new_table["style"] = "width: 100%%; margin-left: auto; margin-right: auto;"
+            soup.body.div.append(new_table)
+            for color_img_index, one_color_img_path in enumerate(one_colorSubset):
+                sample_name = os.path.split(one_color_img_path)[-1]
+                sample_id = sample_name.split(".")[0]
+                
+                
+                
+                # TODO add heading 
+                if color_img_index == 0:
+                    heading = soup.new_tag("tr")
+
+                    heading["class"] = "one-item"
+                    one_hreading = soup.new_tag("td")
+                    text = soup.new_tag("p")
+                    text.string = "sample id"
+                    text["style"] = "text-align: center;"
+                    one_hreading.append(text)                       
+                    heading.append(one_hreading)
+                    for item_index, item in enumerate(tag_folder.items()):
+                        tag = item[0]
+
+                        heading["class"] = "one-item"
+                        one_hreading = soup.new_tag("td")
+                        text = soup.new_tag("p")
+                        text.string = tag
+                        text["style"] = "text-align: center;"
+                        one_hreading.append(text)                       
+                        heading.append(one_hreading)
+                    new_table.append(heading)
+
+                new_tr = soup.new_tag("tr")
+                for item_index, item in enumerate(tag_folder.items()):
+                    if item_index == 0:
+                        sample_id = soup.new_tag("td")
+                        text = soup.new_tag("p")
+                        text.string = sample_name
+                        text["style"] = "text-align: center; font-size: 50px;"
+                        sample_id.append(text)                       
+                        new_tr.append(sample_id)
+                    tag = item[0]
+                    masked_img_saved_folder = item[1]
+                    img_path = os.path.join(masked_img_saved_folder, sample_name)
+
+                    one_color_img = soup.new_tag("td")
+                    one_color_img["class"] = "one-item"
+                    img_rel_path = os.path.relpath(img_path, self.output_folder)
+                    img = soup.new_tag('img', src=img_rel_path)
+                    img["style"] = "max-height: 220px; width:100%;" 
+                    one_color_img.append(img)
+                    new_tr.append(one_color_img)
+                new_table.append(new_tr)
+
+                
+            html_path = os.path.join(self.output_folder, "{}.html".format(html_index))
+            save_html(html_path, soup)
+            print("result visulisation saved in link {}".format(html_path.replace("/project/3dlg-hcvc/mirrors/www","http://aspis.cmpt.sfu.ca/projects/mirrors")))
+      
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
@@ -2193,6 +2273,8 @@ if __name__ == "__main__":
         vis_tool.gen_latex_table_from_tagFolder_boldSeperate(args.method_order_txt, args.all_info_json, args.midrule_index, args.compare_with_raw, args.dataset_tag)
     elif args.stage == "13":
         vis_tool.get_RMSE_distrubution(args.output_folder, args.all_info_json)
+    elif args.stage == "14":
+        vis_tool.vis_masked_image(args.output_folder, args.all_info_json, template_path="visualization/mask_vis_template.html", sample_num_per_page=args.sample_num_per_page)
 
     
     

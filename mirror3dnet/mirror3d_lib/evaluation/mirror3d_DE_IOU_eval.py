@@ -39,13 +39,14 @@ class Mirror3DNet_Eval:
             self.dataset_name = "scannet"
 
     def eval_main(self):
-
+        
         if self.cfg.EVAL_SAVE_MASKED_IMG:
             self.save_masked_image(self.output_list)
-
+        
         if self.cfg.EVAL_MASK_IOU:
             print("calculate IOU, f_measure, MAE ..")
             self.eval_seg(self.output_list)
+
 
         # ----------- evaluate \mnet/ PlaneRCNN model's predicted depth + Mirror3d -----------
         if self.cfg.EVAL_BRANCH_REF_DEPTH:
@@ -325,6 +326,7 @@ class Mirror3DNet_Eval:
         mirror3d_eval.print_mirror3D_score()
 
     def save_masked_image(self, output_list):
+        import shutil
         masked_img_save_folder = os.path.join(self.cfg.OUTPUT_DIR, "masked_img")
         os.makedirs(masked_img_save_folder, exist_ok=True)
 
@@ -332,7 +334,9 @@ class Mirror3DNet_Eval:
             
             instances = one_output[0][0]["instances"]
             img_path = one_input[0]["img_path"]
+            img_save_path = os.path.join(masked_img_save_folder, img_path.split("/")[-1])
             if instances.pred_boxes.tensor.shape[0] <= 0:
+                shutil.copy(img_path, img_save_path)
                 print("######## no detection :", img_path)
                 continue
             img = cv2.imread(img_path)
@@ -343,9 +347,8 @@ class Mirror3DNet_Eval:
                 )
             v = v.draw_instance_predictions(instances.to("cpu")) 
             output_img = v.get_image()[:, :, ::-1]
-            img_save_path = os.path.join(masked_img_save_folder, img_path.split("/")[-1])
             cv2.imwrite(img_save_path, output_img)
-            print("masked image saved to : ", img_save_path)
+        print("masked image saved to : ", masked_img_save_folder)
             
 
     def eval_seg(self, output_list):
