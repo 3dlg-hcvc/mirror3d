@@ -26,5 +26,5 @@ python mirror3dnet/run_mirror3dnet.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100 \
 --learning_rate 1e-4 \
---log_directory /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/output/m3d_final0 \
+--log_directory /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/output/m3d_final \
 --ref_mode rawD_border

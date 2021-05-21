@@ -18,4 +18,4 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_infer.py \
 --depth_shift 4000 \
 --input_height 512 \
 --input_width 640 \
---output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final2
+--output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final2_raw

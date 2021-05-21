@@ -9,7 +9,7 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_infer.py \
 --depth_shift 4000 \
 --input_height 512 \
 --input_width 640 \
---output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final0
+--output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final0_raw
 
 
 # val saic test on rawD checkpoint 1
@@ -23,7 +23,7 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_infer.py \
 --depth_shift 4000 \
 --input_height 512 \
 --input_width 640 \
---output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final1
+--output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final1_raw
 
 
 # val saic test on rawD checkpoint 2
@@ -37,7 +37,7 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_infer.py \
 --depth_shift 4000 \
 --input_height 512 \
 --input_width 640 \
---output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final2
+--output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final2_raw
 
 
 
@@ -53,7 +53,7 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_infer.py \
 --depth_shift 4000 \
 --input_height 512 \
 --input_width 640 \
---output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final0
+--output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final0_ref
 
 
 # val saic test on refD checkpoint 1
@@ -68,7 +68,7 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_infer.py \
 --depth_shift 4000 \
 --input_height 512 \
 --input_width 640 \
---output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final1
+--output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final1_ref
 
 
 # val saic test on refD checkpoint 2
@@ -83,7 +83,7 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_infer.py \
 --depth_shift 4000 \
 --input_height 512 \
 --input_width 640 \
---output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final2
+--output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final2_ref
 
 # val bts test on rawD checkpoint 0
 python init_depth_generator/bts/pytorch/init_depth_gen_infer.py \
@@ -96,7 +96,7 @@ python init_depth_generator/bts/pytorch/init_depth_gen_infer.py \
 --depth_shift 4000 \
 --input_height 512 \
 --input_width 640 \
---output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final0
+--output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final0_raw
 
 
 
@@ -111,7 +111,7 @@ python init_depth_generator/bts/pytorch/init_depth_gen_infer.py \
 --depth_shift 4000 \
 --input_height 512 \
 --input_width 640 \
---output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final1
+--output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final1_raw
 
 
 # val bts test on rawD checkpoint 2
@@ -125,7 +125,7 @@ python init_depth_generator/bts/pytorch/init_depth_gen_infer.py \
 --depth_shift 4000 \
 --input_height 512 \
 --input_width 640 \
---output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final2
+--output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final2_raw
 
 
 # val bts test on refD checkpoint 0
@@ -140,7 +140,7 @@ python init_depth_generator/bts/pytorch/init_depth_gen_infer.py \
 --depth_shift 4000 \
 --input_height 512 \
 --input_width 640 \
---output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final0
+--output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final0_ref
 
 
 # val bts test on refD checkpoint 1
@@ -155,7 +155,7 @@ python init_depth_generator/bts/pytorch/init_depth_gen_infer.py \
 --depth_shift 4000 \
 --input_height 512 \
 --input_width 640 \
---output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final1
+--output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final1_ref
 
 
 # val bts test on refD checkpoint 2
@@ -170,7 +170,7 @@ python init_depth_generator/bts/pytorch/init_depth_gen_infer.py \
 --depth_shift 4000 \
 --input_height 512 \
 --input_width 640 \
---output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final2
+--output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final2_ref
 
 
 
@@ -185,7 +185,7 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.
 --depth_shift 4000 \
 --input_height 512 \
 --input_width 640 \
---output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final0
+--output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final0_raw
 
 
 
@@ -201,7 +201,7 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.
 --depth_shift 4000 \
 --input_height 512 \
 --input_width 640 \
---output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final1
+--output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final1_raw
 
 
 
@@ -217,7 +217,7 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.
 --depth_shift 4000 \
 --input_height 512 \
 --input_width 640 \
---output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final2
+--output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final2_raw
 
 
 # val vnl test on refD checkpoint 0
@@ -232,7 +232,7 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.
 --depth_shift 4000 \
 --input_height 512 \
 --input_width 640 \
---output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final0
+--output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final0_ref
 
 
 
@@ -248,7 +248,7 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.
 --depth_shift 4000 \
 --input_height 512 \
 --input_width 640 \
---output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final1
+--output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final1_ref
 
 
 # val vnl test on refD checkpoint 2
@@ -263,7 +263,7 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.
 --depth_shift 4000 \
 --input_height 512 \
 --input_width 640 \
---output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final2
+--output_save_folder /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final2_ref
 
 
 
@@ -287,7 +287,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100 \
 --learning_rate 1e-4 \
---log_directory /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/output/m3d_final0 \
+--log_directory /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/output/m3d_final \
 --ref_mode rawD_border
 
 
