@@ -60,9 +60,7 @@ Then run:
 python ***.py --zip_folder [the path to the m3d/ nyu/ scannet folder] 
 ```
 
-Then you can get the generated refined depth map in the relevant folder.
-
-The final data structure will be like:
+The generated refined depth map will be saved under the [zip_folder]. Finally, the data structure should be like:
 
 - For **Matterport3D dataset**:
 
@@ -116,15 +114,15 @@ m3d
 ```
 
 
-To validate the correctness of the generated depth, you can run:
+To validate the correctness of the generated depth map, you can run:
 
 ```python
 python visualization/check_sample_info.py --data_root_path [path to the unzipped m3d/nyu/scannet folder] --json_path [any JSON file stored under the mirror_plane foler] --f [relevant focal length: 1074 for Matterport3D, 519 for NYUv2-small, 574 for ScanNet]
 
 ```
 
-Demo: after running `python visualization/check_sample_info.py --data_root_path ./nyu --json_path ./nyu/mirror_plane/1003.json --f 519` , you can visulize the NYUV2 sample 1003 like:
+For example, here's a screemshot of the 3D visulization after running `python visualization/check_sample_info.py --data_root_path ./nyu --json_path ./nyu/mirror_plane/1003.json --f 519` , for the NYUV2 sample (smaple id : 1003):
 
 ![data-check](figure/check-demo.png)
 
-Here, the black line is the mirror normal (perpendicular to the mirror plane), the light blue mesh is the mirror plane.
+The black line is the mirror normal (perpendicular to the mirror plane), the light blue mesh is the mirror plane.
