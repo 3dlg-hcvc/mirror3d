@@ -125,4 +125,6 @@ python visualization/check_sample_info.py --data_root_path [path to the unzipped
 
 Demo: after running `python visualization/check_sample_info.py --data_root_path ./nyu --json_path ./nyu/mirror_plane/1003.json --f 519` , you can visulize the NYUV2 sample 1003 like:
 
+![data-check](figure/check-demo.png)
+
 Here, the black line is the mirror normal (perpendicular to the mirror plane), the light blue mesh is the mirror plane.
