@@ -34,7 +34,7 @@ The sample's mirror 3D plane information is saved in a single JSON file. The dat
             -0.00026007778514475276,
             0.9999999312764996
         ],
-        "mirror_normal":[ # mirror plane's normal (normalized to a unit vector)
+        "mirror_normal":[ # mirror plane's normal (normalized to unit length)
             0.025589483339543795,
             6.575998812963738e-02,
             -0.026007778514475276
