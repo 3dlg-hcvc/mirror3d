@@ -27,4 +27,4 @@ python mirror3dnet/run_mirror3dnet.py \
 --log_directory /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/output/m3d_final \
 --ref_mode DE_border \
 --anchor_normal_npy /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
---to_ref_txt /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final0/VNL_infer_2021-05-20-16-45-55/color_mask_gtD_predD.txt
+--to_ref_txt /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final0_raw/VNL_infer_2021-05-21-14-42-03/color_mask_gtD_predD.txt
