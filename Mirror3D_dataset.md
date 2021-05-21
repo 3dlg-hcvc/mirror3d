@@ -14,7 +14,7 @@ The unzipped mirror data we provided are stored in the following structures:
 ### NYUv2-small (nyu.zip) / ScanNet (scannet.zip) / Matterport3d (m3d.zip)
 
 
-```
+```shell
 nyu/scannet/m3d
 ├── mirror_instance_mask_coarse # stores coarse instance-level mirror segmentation mask
 └── mirror_instance_mask_precise # stores precise instance-level mirror segmentation mask
@@ -25,7 +25,7 @@ nyu/scannet/m3d
 
 The sample's mirror 3D plane information is saved in a single JSON file. The data is saved as:
 
-```
+```shell
 {
     "AF8080":{ # AF8080 is the instance id in hexadecimal on the semantic mask
         "plane_parameter":[ # mirror plane parameter in 3D; here y axis points upward, -z axis points to the front
