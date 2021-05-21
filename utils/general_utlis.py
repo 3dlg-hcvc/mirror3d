@@ -230,15 +230,15 @@ def get_filtered_percantage(dataset="m3d"):
     print("raw none-mirror area filtered : {}".format(np.array(raw_none_mirror_filtered).mean()))
 
 
-def AP_model():
+def AP_estimate():
     import random
     AP_list = []
     for run_time in range(10):
         # initialize 
-        all_TP_num = 149
-        all_detect_num = 294
+        all_TP_num = 15
+        all_detect_num = 29
         all_TP_num = int(all_detect_num*0.1)
-        all_GT_num = 340
+        all_GT_num = 34
         recall_max = all_TP_num/ all_GT_num
 
         # random spread the GT 
@@ -259,7 +259,10 @@ def AP_model():
         AP = 0
         last_recall = 0
         # get AP; after VOC 2010; 
-        # AP = (kth_recall_threshold - 1st_recall_threshold) * max_precision_from_1_to_k + ((k+x)th_recall_threshold - kth_recall_threshold) * max_precision_from_k_to_k+1 + ....
+        # assume we have n unique recall value, rank it from low to high (r1, r2, r3 ... rn=0.438)
+        # relevant precesion list (p1, p2, p3, ... pn) 
+        #          p1 is a precesion list which have k element, k is the index of the last occurance of r1 in recall list
+        # AP = (r2 - r1) * max(p1) + (r3 - r2) * max(p2) + ... (0.438 - rn-1) * max(pn)
         for recall_threshold in np.unique(recall_list):
             end = max(np.where(np.array(recall_list)==recall_threshold)[0])
             precision_sub_list = precision_list[start:end+1]
@@ -269,10 +272,3 @@ def AP_model():
         AP_list.append(AP)
         print("estimate AP : ",AP)
     print("avg estimate AP : ",np.mean(AP_list))
-
-
-
-
-
-if __name__ == "__main__":
-    AP_model()
