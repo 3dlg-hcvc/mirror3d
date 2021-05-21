@@ -230,5 +230,49 @@ def get_filtered_percantage(dataset="m3d"):
     print("raw none-mirror area filtered : {}".format(np.array(raw_none_mirror_filtered).mean()))
 
 
+def AP_model():
+    import random
+    AP_list = []
+    for run_time in range(10):
+        # initialize 
+        all_TP_num = 149
+        all_detect_num = 294
+        all_TP_num = int(all_detect_num*0.1)
+        all_GT_num = 340
+        recall_max = all_TP_num/ all_GT_num
+
+        # random spread the GT 
+        GT_index_list = random.sample(range(all_detect_num), all_TP_num)
+        recall_list = []
+        precision_list = []
+        TP_count = 0
+
+        # get precesion list and recall list
+        for index in range(all_detect_num):
+            if index in GT_index_list:
+                TP_count += 1
+            precision_list.append(TP_count/ (index + 1))
+            recall_list.append(TP_count/ all_GT_num) 
+        
+        start = 0
+        end = 0
+        AP = 0
+        last_recall = 0
+        # get AP; after VOC 2010; 
+        # AP = (kth_recall_threshold - 1st_recall_threshold) * max_precision_from_1_to_k + ((k+x)th_recall_threshold - kth_recall_threshold) * max_precision_from_k_to_k+1 + ....
+        for recall_threshold in np.unique(recall_list):
+            end = max(np.where(np.array(recall_list)==recall_threshold)[0])
+            precision_sub_list = precision_list[start:end+1]
+            AP += max(precision_sub_list)*(recall_threshold-last_recall)
+            last_recall = recall_threshold
+            start = max(np.where(np.array(recall_list)==recall_threshold)[0])
+        AP_list.append(AP)
+        print("estimate AP : ",AP)
+    print("avg estimate AP : ",np.mean(AP_list))
+
+
+
+
+
 if __name__ == "__main__":
-    get_filtered_percantage()
+    AP_model()

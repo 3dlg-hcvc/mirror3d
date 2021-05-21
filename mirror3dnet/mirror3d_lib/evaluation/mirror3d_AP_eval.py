@@ -380,7 +380,7 @@ class Mirror3dCOCOeval(COCOeval):
 
         #################################### print prediction situation ####################################  
         for iou in self.params.iouThrs:
-            print("| IOU {:.2f} : {:5}/{:5} have prediction|".format(iou, len(iou_predNum_noneNum[iou][0]), len( iou_predNum_noneNum[iou][0].union(iou_predNum_noneNum[iou][1]) )))
+            print("| IOU {:.2f} : {:5}/{:5} matched / all_detection|".format(iou, len(iou_predNum_noneNum[iou][0]), len( iou_predNum_noneNum[iou][0].union(iou_predNum_noneNum[iou][1]) )))
         
         if len(iou_predNum_noneNum[self.params.iouThrs[0]][0]) == 0:
             return
