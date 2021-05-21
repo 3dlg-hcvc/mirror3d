@@ -271,7 +271,7 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.
 # val rawD plus Mirror3dNet 0
 python mirror3dnet/run_mirror3dnet.py \
 --eval \
---resume_checkpoint_path /project/3dlg-hcvc/mirrors/www/final_result/checkpoint/m3d_final/m3n_normal_10_0.pth \
+--resume_checkpoint_path /project/6049211/jiaqit/exp/Mirror3D/checkpoint/m3d_dt2_new/m3n_normal_10_0.pth \
 --config mirror3dnet/config/mirror3dnet_normal_config.yml \
 --refined_depth \
 --coco_train  /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
@@ -291,47 +291,71 @@ python mirror3dnet/run_mirror3dnet.py \
 --ref_mode rawD_border
 
 
-# val rawD plus Mirror3dNet 1
+# val bts plus m3n 0
 python mirror3dnet/run_mirror3dnet.py \
 --eval \
---resume_checkpoint_path /project/3dlg-hcvc/mirrors/www/final_result/checkpoint/m3d_final/m3n_normal_10_1.pth \
+--resume_checkpoint_path /project/6049211/jiaqit/exp/Mirror3D/checkpoint/m3d_dt2_new/m3n_normal_10_0.pth \
 --config mirror3dnet/config/mirror3dnet_normal_config.yml \
---refined_depth \
---coco_train  /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
---coco_val  /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
---coco_train_root  /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d \
---coco_val_root  /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d \
---anchor_normal_npy  /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
+--coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
+--coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
+--coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d \
+--coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d \
 --coco_focal_len 537 \
 --depth_shift 4000 \
 --input_height 512 \
 --input_width 640 \
---batch_size 1 \
+--batch_size 8 \
 --checkpoint_save_freq 1500 \
 --num_epochs 100 \
 --learning_rate 1e-4 \
---log_directory /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/output/m3d_final1 \
---ref_mode rawD_border
+--log_directory /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/output/m3d_final \
+--ref_mode DE_border \
+--anchor_normal_npy /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
+--to_ref_txt /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final0/BTS_infer_2021-05-20-16-45-34/color_mask_gtD_predD.txt
 
 
-# val rawD plus Mirror3dNet 2
+# val vnl plus m3n 0
 python mirror3dnet/run_mirror3dnet.py \
 --eval \
---resume_checkpoint_path /project/3dlg-hcvc/mirrors/www/final_result/checkpoint/m3d_final/m3n_normal_10_2.pth \
+--resume_checkpoint_path /project/6049211/jiaqit/exp/Mirror3D/checkpoint/m3d_dt2_new/m3n_normal_10_0.pth \
 --config mirror3dnet/config/mirror3dnet_normal_config.yml \
---refined_depth \
---coco_train  /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
---coco_val  /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
---coco_train_root  /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d \
---coco_val_root  /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d \
---anchor_normal_npy  /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
+--coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
+--coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
+--coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d \
+--coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d \
 --coco_focal_len 537 \
 --depth_shift 4000 \
 --input_height 512 \
 --input_width 640 \
---batch_size 1 \
+--batch_size 8 \
 --checkpoint_save_freq 1500 \
 --num_epochs 100 \
 --learning_rate 1e-4 \
---log_directory /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/output/m3d_final2 \
---ref_mode rawD_border
+--log_directory /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/output/m3d_final \
+--ref_mode DE_border \
+--anchor_normal_npy /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
+--to_ref_txt /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final0/VNL_infer_2021-05-20-16-45-55/color_mask_gtD_predD.txt
+
+
+# val saic plus m3n 0
+python mirror3dnet/run_mirror3dnet.py \
+--eval \
+--resume_checkpoint_path /project/6049211/jiaqit/exp/Mirror3D/checkpoint/m3d_dt2_new/m3n_normal_10_0.pth \
+--config mirror3dnet/config/mirror3dnet_normal_config.yml \
+--coco_train /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
+--coco_val /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
+--coco_train_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d \
+--coco_val_root /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/m3d \
+--coco_focal_len 537 \
+--depth_shift 4000 \
+--input_height 512 \
+--input_width 640 \
+--batch_size 8 \
+--checkpoint_save_freq 1500 \
+--num_epochs 100 \
+--learning_rate 1e-4 \
+--log_directory /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/output/m3d_final \
+--ref_mode DE_border \
+--anchor_normal_npy /home/jiaqit/projects/rrg-msavva/jiaqit/data/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
+--to_ref_txt /home/jiaqit/projects/rrg-msavva/jiaqit/exp/Mirror3D/m3d_final0/SAIC_infer_2021-05-20-16-45-34/color_mask_gtD_predD.txt
+
