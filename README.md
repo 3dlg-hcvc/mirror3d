@@ -98,10 +98,15 @@ We use [cvat](https://github.com/dommorin/cvat) to annotate mirror mask manually
 ### Plane annoatation
 
 ```python
-python Mirror3D/annotation/plane_annotation/plane_annotation_tool.py --stage [all / 1 ~ 6] --data_main_folder [dataset main folder] --process_index [the process index during multi-processing] --border_width [mirror border width] --f [focal length of the dataset] --anno_output_folder [annotation result output folder]
+python Mirror3D/annotation/plane_annotation/plane_annotation_tool.py --stage [all / 1 ~ 6] \
+--data_main_folder [dataset main folder] \
+--process_index [the process index during multi-processing] \
+--border_width [mirror border width] \
+--f [focal length of the dataset] \
+--anno_output_folder [annotation result output folder]
 ```
 
-- `--stage 1`: Set up annotation environment 
+- `--stage 1`: Set up annotation environment (under `--data_main_folder` you should have folders `mirror_color_images and raw_meshD` or `mirror_color_images and raw_sensorD` that store the RGBD you want to correct)
 
 - `--stage 2`: Manually annotate the mirror plane based on our plane annotation tool, check [User Instruction](todo) for how to use the plane annotation tool.
 
