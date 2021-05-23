@@ -29,6 +29,9 @@ def reformat_json(input_folder, output_folder):
             new_info.append(new_one_info)
         json_save_path = os.path.join(output_folder, one_json_name)
         save_json(json_save_path,new_info)
+
+
+
         
 
 def reformat_json2(input_folder, output_folder):
@@ -104,15 +107,73 @@ def update_coco_json(ori_json_folder):
         # json_temp = read_json(json_file_path)
         # save_json(json_file_path, json_temp)
 
+def generate_symlinks_txt_mp3d():
+    output_lines = []
+    all_id = read_txt("/project/3dlg-hcvc/mirrors/www/dataset_release/temp/all.txt")
+    all_color_list = read_txt("/project/3dlg-hcvc/mirrors/www/dataset_release/temp/m3d_color.txt")
+    save_path = "/local-scratch/jiaqit/exp/Mirror3D/metadata/m3d_symlink.txt"
+    for one_path in all_color_list:
+        id = one_path.split("/")[-1].split(".")[0]
+        if id in all_id:
+            color_to_link = "mirror_color_images/{}".format(one_path.split("/")[-1])
+            sensorD_to_link = "raw_sensorD/{}".format(rreplace(one_path.replace("color","depth").replace("jpg","png"),"i","d").split("/")[-1])
+            meshD_to_link = "raw_meshD/{}".format(rreplace(one_path.replace("color","depth").replace("jpg","png"),"i","d").split("/")[-1])
+            output_lines.append("{} {}".format(one_path, color_to_link))
+            output_lines.append("{} {}".format(rreplace(one_path.replace("color","depth").replace("jpg","png"),"i","d"), sensorD_to_link))
+            hole_raw_path = rreplace(one_path.replace("color","depth").replace("jpg","png"),"i","d")
+            ori_meshD_path = ((rreplace(hole_raw_path, "undistorted_depth_images", "mesh_images")).replace("undistorted_depth_images", "matterport_render_depth")).split(".")[0] + "_mesh_depth.png"
+            output_lines.append("{} {}".format(ori_meshD_path, meshD_to_link))
+    save_txt(save_path, output_lines)
+
+def generate_symlinks_txt_nyu():
+    output_lines = []
+    all_id = read_txt("/project/3dlg-hcvc/mirrors/www/dataset_release/temp/nyu_all.txt")
+    save_path = "/local-scratch/jiaqit/exp/Mirror3D/metadata/nyu_symlink.txt"
+    all_color_list = read_txt("/project/3dlg-hcvc/mirrors/www/dataset_release/temp/nyu_color.txt")
+    for one_path in all_color_list:
+        id = one_path.split("/")[-1].split(".")[0]
+        if id in all_id:
+            color_to_link = "mirror_color_images/{}".format(one_path.split("/")[-1])
+            sensorD_to_link = "raw_sensorD/{}".format(one_path.replace("color","depth").replace("jpg","png").split("/")[-1])
+            output_lines.append("{} {}".format(one_path, color_to_link))
+            output_lines.append("{} {}".format(one_path.replace("color","depth").replace("jpg","png"), sensorD_to_link))
+    save_txt(save_path, output_lines)
+
+def generate_symlinks_txt_scannet():
+    output_lines = []
+    all_id = [i.split(".")[0] for i in read_txt("/project/3dlg-hcvc/mirrors/www/dataset_release/temp/scannet_all.txt")]
+    save_path = "/local-scratch/jiaqit/exp/Mirror3D/metadata/scannet_symlink.txt"
+    all_color_list = read_txt("/project/3dlg-hcvc/mirrors/www/dataset_release/temp/scannet_color.txt")
+    for one_id in all_id:
+        path = "scannet_frames_25k/{}/color/{}.jpg".format(one_id.rsplit("_", 1)[0], one_id.rsplit("_", 1)[1])
+        if path not in all_color_list:
+            print(path)
+    # for one_path in all_color_list:
+    #     id = "{}_{}".format(one_path.split("/")[-3], one_path.split("/")[-1].split(".")[0])
+    #     if id in all_id:
+    #         color_to_link = "mirror_color_images/{}.jpg".format(id)
+    #         sensorD_to_link = "raw_sensorD/{}.png".format(id)
+    #         output_lines.append("{} {}".format(one_path, color_to_link))
+    #         output_lines.append("{} {}".format(one_path.replace("color","depth").replace("jpg","png"), sensorD_to_link))
+    #     else:
+    #         print(id)
+    # save_txt(save_path, output_lines)
+
+    
 if __name__ == "__main__":
     # json_file_path = "/project/3dlg-hcvc/mirrors/www/dataset_release/network_input_json/nyu"
     # update_coco_json(json_file_path)
-    input_folder = "/project/3dlg-hcvc/mirrors/www/Mirror3D_final/scannet/with_mirror/precise/img_info"
-    output_folder = "/project/3dlg-hcvc/mirrors/www/dataset_release/scannet/mirror_plane"
-    reformat_json(input_folder, output_folder)
+    # input_folder = "/project/3dlg-hcvc/mirrors/www/Mirror3D_final/scannet/with_mirror/precise/img_info"
+    # output_folder = "/project/3dlg-hcvc/mirrors/www/dataset_release/scannet/mirror_plane"
+    # reformat_json(input_folder, output_folder)
 
     # refinedD_input_folder = "/project/3dlg-hcvc/mirrors/www/dataset_release/scannet/refined_sensorD_precise"
     # rawD_input_folder = "/project/3dlg-hcvc/mirrors/www/Mirror3D_final/scannet/with_mirror/precise/hole_raw_depth"
     # output_folder = "/project/3dlg-hcvc/mirrors/www/dataset_release/scannet/delta_image_precise"
     # get_delta_image(refinedD_input_folder, rawD_input_folder, output_folder)
+
+
+    ############# generate symlinks 
+    # generate_symlinks_txt_mp3d()
+    generate_symlinks_txt_scannet()
 
