@@ -195,7 +195,6 @@ class Input_Generator(Plane_annotation_tool):
                 anchor_normal_class, anchor_normal_residual = self.get_anchor_norma_info(annotation["mirror_normal_camera"])
                 annotation["anchor_normal_class"] = anchor_normal_class
                 annotation["anchor_normal_residual"] = anchor_normal_residual
-                annotation["depth_path"] = mesh_refined_path_abv
                 annotation["mesh_refined_path"] = mesh_refined_path_abv
                 annotation["hole_refined_path"] = hole_refined_path_abv
                 annotation["mesh_raw_path"] = mesh_raw_path_abv

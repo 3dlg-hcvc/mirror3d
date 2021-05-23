@@ -73,7 +73,7 @@ def check_mirror_normal_in_cocoJson(data_root_path, json_path, f):
         anno_info = json.loads(j.read())
     for item in anno_info["annotations"]:
         color_img_path = os.path.join(data_root_path, item["image_path"])
-        depth_img_path = os.path.join(data_root_path, item["depth_path"])
+        depth_img_path = os.path.join(data_root_path, item["mesh_refined_path"])
         mask_image_path = os.path.join(data_root_path, item["mask_path"])
         print(color_img_path, mask_image_path)
         pcd = get_pcd_from_rgbd_depthPath(f, depth_img_path, color_img_path)

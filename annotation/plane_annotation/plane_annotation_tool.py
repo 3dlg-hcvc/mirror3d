@@ -434,7 +434,6 @@ class Plane_annotation_tool():
         Output:
             Refined depth saved to hole_refined_depth or mesh_refined_depth (Matterport3d only).
         """
-        raw_image_save_folder = os.path.join(self.data_main_folder, "raw")
         img_info_save_folder = os.path.join(self.anno_output_folder, "img_info")
         error_id_path = os.path.join(self.anno_output_folder, "anno_progress", "error_id.txt")
         self.error_id = read_txt(error_id_path)

@@ -26,21 +26,37 @@ nyu/scannet/m3d
 The sample's mirror 3D plane information is saved in a single JSON file. The data is saved as:
 
 ```shell
-{
-    "AF8080":{ # AF8080 is the instance id in hexadecimal on the semantic mask
-        "plane_parameter":[ # mirror plane parameter in 3D; here y axis points upward, -z axis points to the front
-            0.00025589483339543795,
-            6.575998812963738e-05,
-            -0.00026007778514475276,
-            0.9999999312764996
+
+[
+    { # one instance's 3D plane annotation
+        "plane":[ # mirror plane parameter in 3D; here y axis points upward, -z axis points to the front
+            -8.45127360669912e-05,
+            -3.9755436110599056e-07,
+            -0.00010689417965837903,
+            0.9999999907155368
         ],
-        "mirror_normal":[ # mirror plane's normal (normalized to unit length)
-            0.025589483339543795,
-            6.575998812963738e-02,
-            -0.026007778514475276
-        ]
+        "normal":[ # mirror plane's normal (normalized to unit length)
+            -0.6201957221843089,
+            -0.0029174480151513255,
+            -0.784441683416532
+        ],
+        "mask_id":"008000" # 008000 is the instance id in hexadecimal on the semantic mask
+    },
+    { # the other instance's 3D plane annotation
+        "plane":[
+            0.0001230891443982547,
+            1.7867283127929448e-06,
+            -0.0001010830611631414,
+            0.9999999873140424
+        ],
+        "normal":[
+            0.7727573205745162,
+            0.011217133650074177,
+            -0.6346024735306119
+        ],
+        "mask_id":"000080"
     }
-}
+]
 
 ```
 
@@ -60,7 +76,15 @@ Then run:
 python ***.py --zip_folder [the path to the m3d/ nyu/ scannet folder] 
 ```
 
-The generated refined depth map will be saved under the [zip_folder]. Finally, the data structure should be like:
+The generated refined depth map will be saved under the [zip_folder]. 
+
+To generate our networks training input, please run ***.py to create symlinks to the mirror samples' original color image, sensor depth map and mesh depth map:
+
+```
+python ***.py --dataset_main_folder [the path to the m3d/ nyu/ scannet folder] 
+```
+
+Finally, the data structure should be like:
 
 - For **Matterport3D dataset**:
 
@@ -78,6 +102,9 @@ m3d
 └── matterport_render_depth # source data
 └── undistorted_color_images # source data
 └── undistorted_depth_images # source data
+└── raw_sensorD # mirror samples' sensor depth symlinks --- link to data under ./undistorted_depth_images
+└── raw_meshD # mirror samples' mesh depth symlinks --- link to data under ./matterport_render_depth
+└── mirror_color_images # mirror samples' color image symlinks --- link to data under ./undistorted_color_images
 
 ```
 
@@ -85,7 +112,7 @@ m3d
 - For **NYUv2-small dataset**:
 
 ```shell
-m3d
+nyu
 ├── mirror_instance_mask_coarse
 └── mirror_instance_mask_precise
 └── delta_image_coarse
@@ -95,13 +122,15 @@ m3d
 └── mirror_plane
 └── color # source data
 └── depth # source data
+└── raw_sensorD # mirror samples' sensor depth symlinks --- link to data under ./depth
+└── mirror_color_images # mirror samples' color image symlinks --- link to data under ./color
 
 ```
 
 - For **ScanNet dataset**:
 
 ```shell
-m3d
+scannet
 ├── mirror_instance_mask_coarse
 └── mirror_instance_mask_precise
 └── delta_image_coarse
@@ -110,7 +139,8 @@ m3d
 └── refined_sensorD_precise # refined sensor depth map (precise version)
 └── mirror_plane
 └── scannet_frames_25k # source data
-
+└── raw_sensorD # mirror samples' sensor depth symlinks --- link to data under ./scannet_frames_25k
+└── mirror_color_images # mirror samples' color image symlinks --- link to data under ./scannet_frames_25k
 ```
 
 

@@ -11,18 +11,108 @@ from utils.plane_pcd_utils import *
 import json
 import shutil
 from annotation.plane_annotation.plane_annotation_tool import *
-
+from tqdm import tqdm
  
 
- def reformat_json(input_folder, output_folder):
-     pass
+def reformat_json(input_folder, output_folder):
+    os.makedirs(output_folder, exist_ok=True)
+    for one_json_name in os.listdir(input_folder):
+        src_json_path =  os.path.join(input_folder, one_json_name)
+        ori_info = read_json(src_json_path)
+        new_info = []
+        for item in ori_info.items():
+            new_one_info = dict()
+            new_one_info["plane"] = item[1]["plane_parameter"]
+            new_one_info["normal"] = list(unit_vector(item[1]["mirror_normal"]))
+            R, G, B = [int(i) for i in item[0].split("_")]
+            new_one_info["mask_id"] = '%02x%02x%02x' % (R, G, B)
+            new_info.append(new_one_info)
+        json_save_path = os.path.join(output_folder, one_json_name)
+        save_json(json_save_path,new_info)
+        
+
+def reformat_json2(input_folder, output_folder):
+    test = read_json("waste/test.json")
+    for one_json_name in os.listdir(input_folder):
+        src_json_path =  os.path.join(input_folder, one_json_name)
+        ori_info = read_json(src_json_path)
+        new_info = dict()
+        if len(ori_info) == 1:
+            continue
+        for item in ori_info.items():
+            new_one_info = dict()
+            new_one_info["plane"] = item[1]["plane_parameter"]
+            new_one_info["normal"] = list(unit_vector(item[1]["mirror_normal"]))
+            R, G, B = [int(i) for i in item[0].split("_")]
+            new_one_info["mask_id"] = '%02x%02x%02x' % (R, G, B)
+            new_info['%02x%02x%02x' % (R, G, B)] = new_one_info
+
+        save_json("waste/test.json",new_info)
+        break
 
 
 
+def get_delta_image(refinedD_input_folder, rawD_input_folder, output_folder):
 
+    os.makedirs(output_folder, exist_ok=True)
+    for one_img_name in tqdm(os.listdir(refinedD_input_folder)):
+        refD_img_path = os.path.join(refinedD_input_folder, one_img_name)
+        rawD_img_path = os.path.join(rawD_input_folder, one_img_name)
+        delta_img_save_path = os.path.join(output_folder, one_img_name)
+        delta_img = cv2.imread(refD_img_path, cv2.IMREAD_ANYDEPTH) - cv2.imread(rawD_img_path, cv2.IMREAD_ANYDEPTH)
+        cv2.imwrite(delta_img_save_path, delta_img.astype(np.uint16))
+    print("delta image saved to : ", output_folder)
+
+
+def update_coco_json(ori_json_folder):
+    for one_name in os.listdir(ori_json_folder):
+        ori_json_file_path = os.path.join(ori_json_folder, one_name)
+        ori_info = read_json(ori_json_file_path)
+        new_info = dict()
+        new_info["annotations"] = []
+        new_info["images"] = []
+        new_info["categories"] = ori_info["categories"]
+        for item in ori_info["annotations"]:
+            new_item = item.copy()
+            new_item.pop("depth_path")
+            new_item.pop("mesh_refined_path")
+            new_item.pop("hole_refined_path")
+            new_item.pop("mesh_raw_path")
+            new_item.pop("hole_raw_path")
+            R, G, B = [int(i) for i in ori_info["instance_tag"].split("_")]
+            new_item["mask_id"] = '%02x%02x%02x' % (R, G, B)
+            new_item["refined_sensorD"] = item["hole_refined_path"].replace("with_mirror/precise/raw","mirror_color_image").replace(".png",".jpg")
+            new_item["raw_sensorD"] = item["hole_raw_path"].replace("with_mirror/precise/hole_raw_depth","raw_sensorD_precise")
+            new_item["refined_meshD"] = item["mesh_refined_path"]
+            new_item["raw_meshD"] = item["mesh_raw_path"]
+            new_info["annotations"].append(new_item)
+        for item in ori_info["images"]:
+            new_item = item.copy()
+            new_item.pop("mesh_refined_path")
+            new_item.pop("hole_refined_path")
+            new_item.pop("mesh_raw_path")
+            new_item.pop("hole_raw_path")
+            new_item["refined_sensorD"] = item["hole_refined_path"]
+            new_item["raw_sensorD"] = item["hole_raw_path"]
+            new_item["refined_meshD"] = item["mesh_refined_path"]
+            new_item["raw_meshD"] = item["mesh_raw_path"]
+        # ori_lines = read_txt(json_file_path)
+        # ori_string = "mirror_instance_mask_precise"
+        # to_replace_string = "mirror_instance_mask_precise/"
+        # new_lines = [line.replace(ori_string, to_replace_string) for line in ori_lines]
+        # save_txt(json_file_path, new_lines)
+        # json_temp = read_json(json_file_path)
+        # save_json(json_file_path, json_temp)
 
 if __name__ == "__main__":
-    input_folder = "/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/img_info"
-    output_folder = ""
+    # json_file_path = "/project/3dlg-hcvc/mirrors/www/dataset_release/network_input_json/nyu"
+    # update_coco_json(json_file_path)
+    input_folder = "/project/3dlg-hcvc/mirrors/www/Mirror3D_final/scannet/with_mirror/precise/img_info"
+    output_folder = "/project/3dlg-hcvc/mirrors/www/dataset_release/scannet/mirror_plane"
     reformat_json(input_folder, output_folder)
-    
+
+    # refinedD_input_folder = "/project/3dlg-hcvc/mirrors/www/dataset_release/scannet/refined_sensorD_precise"
+    # rawD_input_folder = "/project/3dlg-hcvc/mirrors/www/Mirror3D_final/scannet/with_mirror/precise/hole_raw_depth"
+    # output_folder = "/project/3dlg-hcvc/mirrors/www/dataset_release/scannet/delta_image_precise"
+    # get_delta_image(refinedD_input_folder, rawD_input_folder, output_folder)
+
