@@ -26,7 +26,7 @@ class Plane_annotation_tool():
         Initilization
 
         Args:
-            data_main_folder : Folder raw, hole_raw_depth/ mesh_raw_depth, instance_mask saved folder.
+            data_main_folder : Folder raw, raw_sensorD/ raw_meshD, instance_mask saved folder.
             anno_output_folder(optional) : Inital pcd, img_info, border_vis saved forder (default : data_main_folder).
             process_index : The process index of multi_processing.
             multi_processing : Use multi_processing or not (bool).
@@ -45,7 +45,7 @@ class Plane_annotation_tool():
         else:
             self.is_matterport3d = True
         self.check_file()
-        self.color_img_list = [os.path.join(data_main_folder, "raw", i) for i in os.listdir(os.path.join(data_main_folder, "raw"))]
+        self.color_img_list = [os.path.join(data_main_folder, "mirror_color_images", i) for i in os.listdir(os.path.join(data_main_folder, "mirror_color_images"))]
         self.color_img_list.sort()
         if multi_processing:
             self.color_img_list = self.color_img_list[process_index:process_index+1]
@@ -97,15 +97,15 @@ class Plane_annotation_tool():
         """Check whether files under self.data_main_folder are valid"""
 
         data_correct = True
-        raw_foler = os.path.join(self.data_main_folder, "raw")
+        raw_foler = os.path.join(self.data_main_folder, "mirror_color_images")
 
         if self.is_matterport3d:
-            depth_folder = os.path.join(self.data_main_folder, "mesh_raw_depth")
+            depth_folder = os.path.join(self.data_main_folder, "raw_meshD")
         else:
-            depth_folder = os.path.join(self.data_main_folder, "hole_raw_depth")
+            depth_folder = os.path.join(self.data_main_folder, "raw_sensorD")
 
-        mask_folder = os.path.join(self.data_main_folder, "instance_mask")
-        img_info_folder = os.path.join(self.data_main_folder, "img_info")
+        mask_folder = os.path.join(self.data_main_folder, "mirror_instance_mask_precise")
+        img_info_folder = os.path.join(self.data_main_folder, "mirror_plane")
 
         for file_name in os.listdir(raw_foler):
 
@@ -142,17 +142,17 @@ class Plane_annotation_tool():
         os.makedirs(pcd_save_folder, exist_ok=True)
         mirror_border_vis_save_folder = os.path.join(self.anno_output_folder, "border_vis")
         os.makedirs(mirror_border_vis_save_folder, exist_ok=True)
-        plane_parameter_save_folder = os.path.join(self.anno_output_folder, "img_info")
+        plane_parameter_save_folder = os.path.join(self.anno_output_folder, "mirror_plane")
         os.makedirs(plane_parameter_save_folder, exist_ok=True)
 
         for color_img_path in self.color_img_list:
             # Get paths
             smaple_name = os.path.split(color_img_path)[1].split(".")[0] 
-            mask_img_path = color_img_path.replace("raw","instance_mask")
+            mask_img_path = color_img_path.replace("mirror_color_images","mirror_instance_mask_precise")
             if self.is_matterport3d:
-                depth_img_path = rreplace(color_img_path.replace("raw","mesh_raw_depth"), "i", "d")
+                depth_img_path = rreplace(color_img_path.replace("mirror_color_images","raw_meshD"), "i", "d")
             else:
-                depth_img_path = color_img_path.replace("raw","hole_raw_depth")
+                depth_img_path = color_img_path.replace("mirror_color_images","raw_sensorD")
             mask = cv2.imread(mask_img_path)
 
             #  Get pcd and masked RGB image for each instance
@@ -239,12 +239,12 @@ class Plane_annotation_tool():
             img_name = pcd_name.split("_idx_")[0]
             instance_id = [int(i) for i in pcd_name.split("_idx_")[1].split("_")]
             if self.is_matterport3d:
-                depth_img_path = os.path.join(self.data_main_folder, "mesh_raw_depth","{}.png".format(rreplace(img_name, "i", "d")))
+                depth_img_path = os.path.join(self.data_main_folder, "raw_meshD","{}.png".format(rreplace(img_name, "i", "d")))
             else:
-                depth_img_path = os.path.join(self.data_main_folder, "hole_raw_depth","{}.png".format(img_name))
-            color_img_path = os.path.join(self.data_main_folder, "raw","{}.png".format(img_name))
-            mask_path = os.path.join(self.data_main_folder, "instance_mask","{}.png".format(img_name))
-            plane_parameter = read_json(os.path.join(self.anno_output_folder, "img_info","{}.json".format(img_name)))[pcd_name.split("_idx_")[1]]["plane_parameter"]
+                depth_img_path = os.path.join(self.data_main_folder, "raw_sensorD","{}.png".format(img_name))
+            color_img_path = os.path.join(self.data_main_folder, "mirror_color_images","{}.png".format(img_name))
+            mask_path = os.path.join(self.data_main_folder, "mirror_instance_mask_precise","{}.png".format(img_name))
+            plane_parameter = read_json(os.path.join(self.anno_output_folder, "mirror_plane","{}.json".format(img_name)))[pcd_name.split("_idx_")[1]]["plane_parameter"]
 
             if os.path.exists(masked_image_path):
                 print("sample index {} mirror to annotate {}".format(self.sample_index, masked_image_path))
@@ -336,7 +336,7 @@ class Plane_annotation_tool():
                 [p1, p2, p3] = get_picked_points(pcd)
                 plane_parameter = get_parameter_from_plane_adjustment(pcd, get_mirror_init_plane_from_3points(p1, p2, p3), init_step_size)
 
-                one_plane_para_save_path = os.path.join(os.path.join(self.anno_output_folder, "img_info"), "{}.json".format(img_name))
+                one_plane_para_save_path = os.path.join(os.path.join(self.anno_output_folder, "mirror_plane"), "{}.json".format(img_name))
                 save_plane_parameter_2_json(plane_parameter, one_plane_para_save_path, instance_id)
                 manual_adjust_num += 1
                 self.correct_list.append(current_pcd_path)
@@ -349,7 +349,7 @@ class Plane_annotation_tool():
                 init_step_size = ((np.max(np.array(pcd.points)[:,0])) - (np.min(np.array(pcd.points)[:,0])))/300
                 while 1:
                     min_adjust_option_list = Tool_Option()
-                    min_adjust_option_list.add_option("f", "FINISH : update hole_refined_depth/ mesh_refined_depth/ img_info and EXIT")
+                    min_adjust_option_list.add_option("f", "FINISH : update refined_sensorD_precise/ refined_meshD_precise/ img_info and EXIT")
                     min_adjust_option_list.add_option("a", "ADJUST : adjust the plane parameter based on current plane parameter")
                     min_adjust_option_list.add_option("i", "INIT : pick 3 points to initialize the plane")
                     min_adjust_option_list.print_option()
@@ -360,7 +360,7 @@ class Plane_annotation_tool():
                         continue
                     
                     if min_input_option == "f":
-                        one_plane_para_save_path = os.path.join(os.path.join(self.anno_output_folder, "img_info"), "{}.json".format(img_name))
+                        one_plane_para_save_path = os.path.join(os.path.join(self.anno_output_folder, "mirror_plane"), "{}.json".format(img_name))
                         save_plane_parameter_2_json(plane_parameter, one_plane_para_save_path, instance_id)
                         manual_adjust_num += 1
                         self.correct_list.append(current_pcd_path)
@@ -388,7 +388,7 @@ class Plane_annotation_tool():
         """
         Move invalid sample to "only_mask" folder
         """
-        raw_image_save_folder = os.path.join(self.data_main_folder, "raw")
+        raw_image_save_folder = os.path.join(self.data_main_folder, "mirror_color_images")
         error_id_path = os.path.join(self.anno_output_folder, "anno_progress", "error_id.txt")
         self.error_id = read_txt(error_id_path)
         for color_img_path in self.color_img_list:
@@ -429,17 +429,17 @@ class Plane_annotation_tool():
 
     def anno_update_depth_from_imgInfo(self):
         """
-        After plane annotation, update "hole_raw_depth/mesh_raw_depth" to "hole_refined_depth/mesh_refined_depth"
+        After plane annotation, update "raw_sensorD/raw_meshD" to "refined_sensorD_precise/refined_meshD_precise"
 
         Output:
-            Refined depth saved to hole_refined_depth or mesh_refined_depth (Matterport3d only).
+            Refined depth saved to refined_sensorD_precise or refined_meshD_precise (Matterport3d only).
         """
-        img_info_save_folder = os.path.join(self.anno_output_folder, "img_info")
+        img_info_save_folder = os.path.join(self.anno_output_folder, "mirror_plane")
         error_id_path = os.path.join(self.anno_output_folder, "anno_progress", "error_id.txt")
         self.error_id = read_txt(error_id_path)
         for color_img_path in self.color_img_list:
             smaple_name = os.path.split(color_img_path)[1].split(".")[0] 
-            mask_img_path = os.path.join(self.data_main_folder, "instance_mask","{}.png".format(smaple_name))
+            mask_img_path = os.path.join(self.data_main_folder, "mirror_instance_mask_precise","{}.png".format(smaple_name))
             mask = cv2.imread(mask_img_path)
 
             one_info_file_path = os.path.join(img_info_save_folder, "{}.json".format(smaple_name))
@@ -454,27 +454,27 @@ class Plane_annotation_tool():
                 # Refine mesh raw depth (only Matterport3d have mesh raw depth)
                 if self.is_matterport3d:
                     depth_file_name = "{}.png".format(rreplace(smaple_name,"i","d"))
-                    hole_raw_depth_path = os.path.join(self.data_main_folder, "hole_raw_depth",depth_file_name)
-                    hole_refined_depth_path = os.path.join(self.data_main_folder, "hole_refined_depth",depth_file_name)
-                    mesh_raw_depth_path = os.path.join(self.data_main_folder, "mesh_raw_depth",depth_file_name)
-                    mesh_refined_depth_path = os.path.join(self.data_main_folder, "mesh_refined_depth",depth_file_name)
-                    os.makedirs(os.path.split(mesh_refined_depth_path)[0], exist_ok=True)
+                    raw_sensorD_path = os.path.join(self.data_main_folder, "raw_sensorD",depth_file_name)
+                    refined_sensorD_precise_path = os.path.join(self.data_main_folder, "refined_sensorD_precise",depth_file_name)
+                    raw_meshD_path = os.path.join(self.data_main_folder, "raw_meshD",depth_file_name)
+                    refined_meshD_precise_path = os.path.join(self.data_main_folder, "refined_meshD_precise",depth_file_name)
+                    os.makedirs(os.path.split(refined_meshD_precise_path)[0], exist_ok=True)
                     # If there's refined depth; refine the refiend depth 
-                    if os.path.exists(mesh_refined_depth_path):
-                        mesh_raw_depth_path = mesh_refined_depth_path
-                    cv2.imwrite(mesh_refined_depth_path, refine_depth_with_plane_parameter_mask(plane_parameter, binary_instance_mask, cv2.imread(mesh_raw_depth_path,cv2.IMREAD_ANYDEPTH),self.f))
-                    print("update depth {}".format(mesh_refined_depth_path))
+                    if os.path.exists(refined_meshD_precise_path):
+                        raw_meshD_path = refined_meshD_precise_path
+                    cv2.imwrite(refined_meshD_precise_path, refine_depth_with_plane_parameter_mask(plane_parameter, binary_instance_mask, cv2.imread(raw_meshD_path,cv2.IMREAD_ANYDEPTH),self.f))
+                    print("update depth {}".format(refined_meshD_precise_path))
                 else:
                     depth_file_name = "{}.png".format(smaple_name)
                 # Refine hole raw depth
-                hole_raw_depth_path = os.path.join(self.data_main_folder, "hole_raw_depth",depth_file_name)
-                hole_refined_depth_path = os.path.join(self.data_main_folder, "hole_refined_depth",depth_file_name)
-                os.makedirs(os.path.split(hole_refined_depth_path)[0], exist_ok=True)
+                raw_sensorD_path = os.path.join(self.data_main_folder, "raw_sensorD",depth_file_name)
+                refined_sensorD_precise_path = os.path.join(self.data_main_folder, "refined_sensorD_precise",depth_file_name)
+                os.makedirs(os.path.split(refined_sensorD_precise_path)[0], exist_ok=True)
                 # If there's refined depth; refine the refiend depth
-                if os.path.exists(hole_refined_depth_path):
-                    hole_raw_depth_path = hole_refined_depth_path
-                cv2.imwrite(hole_refined_depth_path, refine_depth_with_plane_parameter_mask(plane_parameter, binary_instance_mask, cv2.imread(hole_raw_depth_path,cv2.IMREAD_ANYDEPTH),self.f))
-                print("update depth {}".format(hole_refined_depth_path))
+                if os.path.exists(refined_sensorD_precise_path):
+                    raw_sensorD_path = refined_sensorD_precise_path
+                cv2.imwrite(refined_sensorD_precise_path, refine_depth_with_plane_parameter_mask(plane_parameter, binary_instance_mask, cv2.imread(raw_sensorD_path,cv2.IMREAD_ANYDEPTH),self.f))
+                print("update depth {}".format(refined_sensorD_precise_path))
 
     def save_progress(self):
         """Save annotation progress"""
@@ -537,16 +537,16 @@ class Plane_annotation_tool():
 
         import open3d as o3d
         if self.is_matterport3d:
-            hole_raw_depth_path = os.path.join(self.data_main_folder, "hole_raw_depth","{}.png".format(rreplace(img_name, "i", "d")))
-            mesh_raw_depth_path = os.path.join(self.data_main_folder, "mesh_raw_depth","{}.png".format(rreplace(img_name, "i", "d")))
-            mesh_refined_depth_path = os.path.join(self.anno_output_folder, "mesh_refined_depth","{}.png".format(rreplace(img_name, "i", "d")))
-            hole_refined_depth_path = os.path.join(self.anno_output_folder, "hole_refined_depth","{}.png".format(rreplace(img_name, "i", "d")))
+            raw_sensorD_path = os.path.join(self.data_main_folder, "raw_sensorD","{}.png".format(rreplace(img_name, "i", "d")))
+            raw_meshD_path = os.path.join(self.data_main_folder, "raw_meshD","{}.png".format(rreplace(img_name, "i", "d")))
+            refined_meshD_precise_path = os.path.join(self.anno_output_folder, "refined_meshD_precise","{}.png".format(rreplace(img_name, "i", "d")))
+            refined_sensorD_precise_path = os.path.join(self.anno_output_folder, "refined_sensorD_precise","{}.png".format(rreplace(img_name, "i", "d")))
         else:
-            hole_raw_depth_path = os.path.join(self.data_main_folder, "hole_raw_depth","{}.png".format(img_name))
-            hole_refined_depth_path = os.path.join(self.anno_output_folder, "hole_refined_depth","{}.png".format(img_name))
+            raw_sensorD_path = os.path.join(self.data_main_folder, "raw_sensorD","{}.png".format(img_name))
+            refined_sensorD_precise_path = os.path.join(self.anno_output_folder, "refined_sensorD_precise","{}.png".format(img_name))
 
-        color_img_path = os.path.join(self.data_main_folder, "raw","{}.png".format(img_name))
-        mask_path = os.path.join(self.data_main_folder, "instance_mask","{}.png".format(img_name))
+        color_img_path = os.path.join(self.data_main_folder, "mirror_color_images","{}.png".format(img_name))
+        mask_path = os.path.join(self.data_main_folder, "mirror_instance_mask_precise","{}.png".format(img_name))
         instance_id = [int(i) for i in instance_index.split("_")]
         instance_mask = get_grayscale_instanceMask(cv2.imread(mask_path),instance_id)
 
@@ -555,7 +555,7 @@ class Plane_annotation_tool():
         pcd_path = os.path.join(pcd_save_folder, "{}.ply".format(instance_tag))
 
         
-        one_plane_para_save_path = os.path.join(os.path.join(self.anno_output_folder, "img_info"), "{}.json".format(img_name))
+        one_plane_para_save_path = os.path.join(os.path.join(self.anno_output_folder, "mirror_plane"), "{}.json".format(img_name))
         if os.path.exists(one_plane_para_save_path):
             plane_parameter = read_json(one_plane_para_save_path)[instance_index]["plane_parameter"]
 
@@ -567,7 +567,7 @@ class Plane_annotation_tool():
         while 1:
 
             option_list = Tool_Option()
-            option_list.add_option("f", "FINISH : update hole_refined_depth/ mesh_refined_depth/ img_info and EXIT")
+            option_list.add_option("f", "FINISH : update refined_sensorD_precise/ refined_meshD_precise/ img_info and EXIT")
             option_list.add_option("a", "ADJUST : need to adjust the plane parameter")
             option_list.add_option("i", "INIT : pick 3 points to initialize the plane")
             option_list.print_option()
@@ -581,9 +581,9 @@ class Plane_annotation_tool():
             
             if input_option == "f":
                 save_plane_parameter_2_json(plane_parameter, one_plane_para_save_path, instance_id)
-                cv2.imwrite(hole_refined_depth_path, refine_depth_with_plane_parameter_mask(plane_parameter, instance_mask, cv2.imread(hole_raw_depth_path, cv2.IMREAD_ANYDEPTH),self.f))
+                cv2.imwrite(refined_sensorD_precise_path, refine_depth_with_plane_parameter_mask(plane_parameter, instance_mask, cv2.imread(raw_sensorD_path, cv2.IMREAD_ANYDEPTH),self.f))
                 if self.is_matterport3d:
-                    cv2.imwrite(mesh_refined_depth_path, refine_depth_with_plane_parameter_mask(plane_parameter, instance_mask, cv2.imread(mesh_raw_depth_path, cv2.IMREAD_ANYDEPTH),self.f))
+                    cv2.imwrite(refined_meshD_precise_path, refine_depth_with_plane_parameter_mask(plane_parameter, instance_mask, cv2.imread(raw_meshD_path, cv2.IMREAD_ANYDEPTH),self.f))
                 print("annotation of {} finished !".format(img_name))
                 exit()
             elif input_option == "i":
@@ -617,14 +617,14 @@ class Plane_annotation_tool():
 
         import open3d as o3d
         if self.is_matterport3d:
-            hole_raw_depth_path = os.path.join(self.data_main_folder, "hole_raw_depth","{}.png".format(rreplace(img_name, "i", "d")))
-            hole_refined_depth_path = os.path.join(self.anno_output_folder, "hole_refined_depth","{}.png".format(rreplace(img_name, "i", "d")))
+            raw_sensorD_path = os.path.join(self.data_main_folder, "raw_sensorD","{}.png".format(rreplace(img_name, "i", "d")))
+            refined_sensorD_precise_path = os.path.join(self.anno_output_folder, "refined_sensorD_precise","{}.png".format(rreplace(img_name, "i", "d")))
         else:
-            hole_raw_depth_path = os.path.join(self.data_main_folder, "hole_raw_depth","{}.png".format(img_name))
-            hole_refined_depth_path = os.path.join(self.anno_output_folder, "hole_refined_depth","{}.png".format(img_name))
+            raw_sensorD_path = os.path.join(self.data_main_folder, "raw_sensorD","{}.png".format(img_name))
+            refined_sensorD_precise_path = os.path.join(self.anno_output_folder, "refined_sensorD_precise","{}.png".format(img_name))
 
-        color_img_path = os.path.join(self.data_main_folder, "raw","{}.png".format(img_name))
-        mask_path = os.path.join(self.data_main_folder, "instance_mask","{}.png".format(img_name))
+        color_img_path = os.path.join(self.data_main_folder, "mirror_color_images","{}.png".format(img_name))
+        mask_path = os.path.join(self.data_main_folder, "mirror_instance_mask_precise","{}.png".format(img_name))
         instance_id = [int(i) for i in instance_index.split("_")]
         instance_mask = get_grayscale_instanceMask(cv2.imread(mask_path),instance_id)
 
@@ -633,11 +633,11 @@ class Plane_annotation_tool():
         pcd_path = os.path.join(pcd_save_folder, "{}.ply".format(instance_tag))
 
         
-        one_plane_para_save_path = os.path.join(os.path.join(self.anno_output_folder, "img_info"), "{}.json".format(img_name))
+        one_plane_para_save_path = os.path.join(os.path.join(self.anno_output_folder, "mirror_plane"), "{}.json".format(img_name))
         if os.path.exists(one_plane_para_save_path):
             plane_parameter = read_json(one_plane_para_save_path)[instance_index]["plane_parameter"]
 
-        refined_depth_to_clamp = cv2.imread(hole_refined_depth_path, cv2.IMREAD_ANYDEPTH)
+        refined_depth_to_clamp = cv2.imread(refined_sensorD_precise_path, cv2.IMREAD_ANYDEPTH)
         h, w = refined_depth_to_clamp.shape
 
         while 1:
@@ -646,7 +646,7 @@ class Plane_annotation_tool():
             o3d.visualization.draw_geometries([pcd])
 
             option_list = Tool_Option()
-            option_list.add_option("f", "FINISH : update hole_refined_depth/ mesh_refined_depth/ img_info and EXIT")
+            option_list.add_option("f", "FINISH : update refined_sensorD_precise/ refined_meshD_precise/ img_info and EXIT")
             option_list.add_option("r", "REPAIR : pick points and refine the specific area")
             option_list.add_option("d", "DISTANCE : the clamping distance_threshold; distance over distance_threshold will be clamped")
             option_list.add_option("exit", "EXIT : exit without saving the result")
@@ -662,8 +662,8 @@ class Plane_annotation_tool():
             if input_option == "d":
                 clamp_dis = int(input("please input new clamping distace (default : 100)"))
             elif input_option == "f":
-                cv2.imwrite(hole_refined_depth_path, refined_depth_to_clamp)
-                print("annotation of {} finished !".format(hole_refined_depth_path))
+                cv2.imwrite(refined_sensorD_precise_path, refined_depth_to_clamp)
+                print("annotation of {} finished !".format(refined_sensorD_precise_path))
                 exit()
             elif input_option == "r":
                 three_points = get_picked_points(pcd)
@@ -683,7 +683,7 @@ class Data_post_processing(Plane_annotation_tool):
         Initilization
 
         Args:
-            data_main_folder : Folder raw, hole_raw_depth/ mesh_raw_depth, instance_mask saved folder.
+            data_main_folder : Folder raw, raw_sensorD/ raw_meshD, instance_mask saved folder.
             anno_output_folder(optional) : Inital pcd, img_info, border_vis saved forder (default : data_main_folder).
             process_index : The process index of multi_processing.
             multi_processing : Use multi_processing or not (bool).
@@ -703,7 +703,7 @@ class Data_post_processing(Plane_annotation_tool):
             self.is_matterport3d = True
 
         # self.check_file()
-        self.color_img_list = [os.path.join(data_main_folder, "raw", i) for i in os.listdir(os.path.join(data_main_folder, "raw"))]
+        self.color_img_list = [os.path.join(data_main_folder, "mirror_color_images", i) for i in os.listdir(os.path.join(data_main_folder, "mirror_color_images"))]
         self.color_img_list.sort()
         if multi_processing:
             self.color_img_list = self.color_img_list[process_index:process_index+1]
@@ -724,11 +724,11 @@ class Data_post_processing(Plane_annotation_tool):
         Clamp data based on 3D bbox
 
         Output:
-            Clamped depth : saved to hole_refined_depth or mesh_refined depth under self.data_main_folder
+            Clamped depth : saved to refined_sensorD_precise or mesh_refined depth under self.data_main_folder
         """
         import open3d as o3d
-        raw_image_save_folder = os.path.join(self.data_main_folder, "raw")
-        img_info_save_folder = os.path.join(self.data_main_folder, "img_info")
+        raw_image_save_folder = os.path.join(self.data_main_folder, "mirror_color_images")
+        img_info_save_folder = os.path.join(self.data_main_folder, "mirror_plane")
         for color_img_path in self.color_img_list:
             img_name = os.path.split(color_img_path)[1].split(".")[0] 
             one_info_file_path = os.path.join(img_info_save_folder, "{}.json".format(img_name))
@@ -739,14 +739,14 @@ class Data_post_processing(Plane_annotation_tool):
                 instance_index_tuple = [int(i) for i in instance_index_str]
 
                 # Get mask_img_path, depth_img_path, color_img_path
-                mask_img_path = os.path.join(self.data_main_folder, "instance_mask","{}.png".format(img_name))
+                mask_img_path = os.path.join(self.data_main_folder, "mirror_instance_mask_precise","{}.png".format(img_name))
                 if self.is_matterport3d: 
                     # matterport3d mesh depth don't need to be clamped 
-                    depth_img_path = os.path.join(self.data_main_folder, "hole_raw_depth","{}.png".format(rreplace(img_name, "i", "d")))
+                    depth_img_path = os.path.join(self.data_main_folder, "raw_sensorD","{}.png".format(rreplace(img_name, "i", "d")))
                 else:
-                    depth_img_path = os.path.join(self.data_main_folder, "hole_raw_depth","{}.png".format(img_name))
+                    depth_img_path = os.path.join(self.data_main_folder, "raw_sensorD","{}.png".format(img_name))
                 depth_file_name = depth_img_path.split("/")[-1]
-                color_img_path = os.path.join(self.data_main_folder, "raw","{}.png".format(img_name))
+                color_img_path = os.path.join(self.data_main_folder, "mirror_color_images","{}.png".format(img_name))
                 
                 # Get mirror_border_mask
                 instance_mask = get_grayscale_instanceMask(cv2.imread(mask_img_path), instance_index_tuple)
@@ -760,31 +760,31 @@ class Data_post_processing(Plane_annotation_tool):
                  
                 if self.is_matterport3d:
                     # Refine mesh raw depth (only Matterport3d have mesh raw depth)
-                    mesh_refined_depth_path = os.path.join(self.data_main_folder, "mesh_refined_depth", depth_file_name)
-                    cv2.imwrite(mesh_refined_depth_path, clamp_pcd_by_bbox(mirror_bbox=mirror_bbox, depth_img_path=mesh_refined_depth_path, f=self.f, mirror_border_mask=mirror_border_mask , plane_parameter=one_info[1]["plane_parameter"], expand_range = self.expand_range, clamp_dis = self.clamp_dis))
-                    print("update depth {}".format(mesh_refined_depth_path))
+                    refined_meshD_precise_path = os.path.join(self.data_main_folder, "refined_meshD_precise", depth_file_name)
+                    cv2.imwrite(refined_meshD_precise_path, clamp_pcd_by_bbox(mirror_bbox=mirror_bbox, depth_img_path=refined_meshD_precise_path, f=self.f, mirror_border_mask=mirror_border_mask , plane_parameter=one_info[1]["plane_parameter"], expand_range = self.expand_range, clamp_dis = self.clamp_dis))
+                    print("update depth {}".format(refined_meshD_precise_path))
 
                 # Refine hole raw depth
-                hole_refined_depth_path = os.path.join(self.data_main_folder, "hole_refined_depth", depth_file_name)
-                cv2.imwrite(hole_refined_depth_path, clamp_pcd_by_bbox(mirror_bbox=mirror_bbox, depth_img_path=hole_refined_depth_path, f=self.f, mirror_border_mask=mirror_border_mask ,plane_parameter=one_info[1]["plane_parameter"], expand_range = self.expand_range, clamp_dis = self.clamp_dis))
-                print("update depth {}".format(hole_refined_depth_path))
+                refined_sensorD_precise_path = os.path.join(self.data_main_folder, "refined_sensorD_precise", depth_file_name)
+                cv2.imwrite(refined_sensorD_precise_path, clamp_pcd_by_bbox(mirror_bbox=mirror_bbox, depth_img_path=refined_sensorD_precise_path, f=self.f, mirror_border_mask=mirror_border_mask ,plane_parameter=one_info[1]["plane_parameter"], expand_range = self.expand_range, clamp_dis = self.clamp_dis))
+                print("update depth {}".format(refined_sensorD_precise_path))
 
     def update_imgInfo_based_on_depth(self):
         """
         Updata img_info based on refined depth
 
         Output:
-            updated img_info : (1) Matterport3d's img_info are updated based on mesh_refined_depth
-                               (2) Other datasets img_info are updated based on hole_refined_depth
+            updated img_info : (1) Matterport3d's img_info are updated based on refined_meshD_precise
+                               (2) Other datasets img_info are updated based on refined_sensorD_precise
         """
         for color_img_path in self.color_img_list:
             img_name = os.path.split(color_img_path)[1].split(".")[0]
             if self.is_matterport3d:
-                depth_img_path = os.path.join(self.data_main_folder, "mesh_refined_depth","{}.png".format(rreplace(img_name, "i", "d")))
+                depth_img_path = os.path.join(self.data_main_folder, "refined_meshD_precise","{}.png".format(rreplace(img_name, "i", "d")))
             else:
-                depth_img_path = os.path.join(self.data_main_folder, "hole_refined_depth","{}.png".format(img_name))
-            mask_img_path = color_img_path.replace("raw", "instance_mask")
-            img_info_path = color_img_path.replace("raw", "img_info").replace(".png",".json")
+                depth_img_path = os.path.join(self.data_main_folder, "refined_sensorD_precise","{}.png".format(img_name))
+            mask_img_path = color_img_path.replace("mirror_color_images", "mirror_instance_mask_precise")
+            img_info_path = color_img_path.replace("mirror_color_images", "mirror_plane").replace(".png",".json")
             smaple_name = os.path.split(color_img_path)[1].split(".")[0] 
 
             mask = cv2.imread(mask_img_path)
@@ -821,7 +821,7 @@ class Data_post_processing(Plane_annotation_tool):
         """
         clean_up current folder based on raw image
         """
-        raw_folder = os.path.join(self.data_main_folder, "raw")
+        raw_folder = os.path.join(self.data_main_folder, "mirror_color_images")
         raw_id_list = [i.split(".")[0] for i in os.listdir(raw_folder)]
         command = "find {} -type f ".format(self.data_main_folder)
         for src_path in os.popen(command).readlines():

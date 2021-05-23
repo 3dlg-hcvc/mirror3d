@@ -938,7 +938,7 @@ class Dataset_visulization(Dataset_visulization):
                         if self.is_matterport3d:
                             text.string = "MP3D-mesh-raw "
                         else:
-                            text.string = "MP3D-mesh"
+                            text.string = "NYUv2-raw"
                         text["style"] = "text-align: center; margin-top:0"
                         one_blank.append(text)                       
                         heading.append(one_blank)
