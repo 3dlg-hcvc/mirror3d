@@ -855,7 +855,7 @@ def get_parameter_from_plane_adjustment(pcd, camera_plane, adjustment_init_step_
     option_list.add_option("s", "plane move down")
     option_list.add_option("d", "plane move right")
     option_list.add_option("e", "plane move closer")
-    option_list.add_option("r", "plane move futher")
+    option_list.add_option("r", "plane move further")
     option_list.add_option("i", "make the plane larger")
     option_list.add_option("k", "make the plane smaller")
     option_list.add_option("j", "rotate left")
