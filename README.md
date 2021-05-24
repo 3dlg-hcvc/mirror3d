@@ -71,14 +71,14 @@ bash script/nyu/m3n_nyu_test.sh
 - STEP 1: Train a classifier 
 
 	```python
-	python Mirror3D/annotation/classifier/classifier_train.py --log_directory [checkpoint and .log file saved directory] --train_pos_list [training positive_sample_path.txt] --train_neg_list [training negative_sample_path.txt] --val_pos_list [validation positive_sample_path.txt] --val_neg_list [validation negative_sample_path.txt]
+	python annotation/classifier/classifier_train.py --log_directory [checkpoint and .log file saved directory] --train_pos_list [training positive_sample_path.txt] --train_neg_list [training negative_sample_path.txt] --val_pos_list [validation positive_sample_path.txt] --val_neg_list [validation negative_sample_path.txt]
 	```
 Martterport3d pre-trained checkpoint for the classifier can be found on [checkpoint.pth.tar](http://aspis.cmpt.sfu.ca/projects/mirrors/checkpoint/classifier_checkpoint/checkpoint.pth.tar)
 
 - STEP 2: Get sorted img_list with scores (saved in .json file)
 
 	```python
-	python Mirror3D/annotation/classifier/classifier_train.py --unsort_img_list [img_path_to_be_sorted.txt] --resume_path [classifier_checkpoint_path] --output_save_folder [output_folder_path to save the output .json file]
+	python annotation/classifier/classifier_train.py --unsort_img_list [img_path_to_be_sorted.txt] --resume_path [classifier_checkpoint_path] --output_save_folder [output_folder_path to save the output .json file]
 	```
 	
 - STEP 3: Pick positive samples based on the .json file output by STEP 2 manually
@@ -88,7 +88,7 @@ Martterport3d pre-trained checkpoint for the classifier can be found on [checkpo
 
 
 	```python
-	python Mirror3D/annotation/classifier/classification_tool.py --data_root [root path of the dataset] --json_file_path [path of the .json file output by STEP 2] --anno_output_folder [annotation result output folder] 
+	python annotation/classifier/classification_tool.py --data_root [root path of the dataset] --json_file_path [path of the .json file output by STEP 2] --anno_output_folder [annotation result output folder] 
 	```
 -->
 
@@ -98,15 +98,17 @@ We use [cvat](https://github.com/dommorin/cvat) to annotate mirror mask manually
 ### Plane annoatation
 
 ```python
-python Mirror3D/annotation/plane_annotation/plane_annotation_tool.py --stage [all / 1 ~ 6] \
+python annotation/plane_annotation/plane_annotation_tool.py --stage [all / 1 ~ 6] \
 --data_main_folder [dataset main folder] \
---process_index [the process index during multi-processing] \
+--multi_processing [optional] --process_index [optional: the process index during multi-processing] \
 --border_width [mirror border width] \
 --f [focal length of the dataset] \
---anno_output_folder [annotation result output folder]
+--overwrite [optional : for --stage 1, overwrite the output result or not] \
+--mask_version [mirror mask version: precise (default) / coarse] \
+--anno_output_folder [optional : annotation result output folder; save annotation result under --data_main_folder by default ]
 ```
 
-- `--stage 1`: Set up annotation environment (under `--data_main_folder` you should have folders `mirror_color_images and raw_meshD` or `mirror_color_images and raw_sensorD` that store the RGBD you want to correct)
+- `--stage 1`: Set up annotation environment (You should have folders contrain the the mirror mask, mirror RGBD under `--data_main_folder`. Mirror color images should be stored under folder named `mirror_color_images`; mirror raw depth images should be stored under folder named `raw_meshD` or `raw_sensorD`; mirror masks images should be stored under folder named `mirror_instance_mask_precise` or `mirror_instance_mask_coarse`)
 
 - `--stage 2`: Manually annotate the mirror plane based on our plane annotation tool, check [User Instruction](todo) for how to use the plane annotation tool.
 
@@ -125,12 +127,11 @@ python Mirror3D/annotation/plane_annotation/plane_annotation_tool.py --stage [al
     - During training: If the image is resized by ratio x (w:h ratio does not change), f should also multiply ratio x
     - the --data_main_folder need to contain "scannet" if you are annotating Scannet dataset; "m3d" for Matterport3d dataset; "nyu" for NYUv2 dataset; only .png image is supported; Apart from Matterpot3d other dataset's color image name and depth image name should be the same. 
 
-
 ### Verification
 
 - STEP 1: Generate video for verification 
 	```python
-	python Mirror3D/visualization/dataset_visualization.py --stage all --data_main_folder [dataset main folder] --process_index [the process index during multi-processing]  --multi_processing --overwrite --f [focal length of the dataset] --output_folder [output point cloud/ mesh plane/ screenshot/ video saved folder] --view_mode [topdown/ front]
+	python visualization/dataset_visualization.py --stage all --data_main_folder [dataset main folder] --process_index [the process index during multi-processing]  --multi_processing --overwrite --f [focal length of the dataset] --output_folder [output point cloud/ mesh plane/ screenshot/ video saved folder] --view_mode [topdown/ front]
 	```
 
 	- `--stage 1`: Generate point cloud and mesh plane for visualization
@@ -148,7 +149,7 @@ python Mirror3D/annotation/plane_annotation/plane_annotation_tool.py --stage [al
 - STEP 2: Launch webpage to view the videos
 	
 	```python 
-	python Mirror3D/annotation/plane_annotation/verification.py --stage 1 --data_main_folder [folder that contains "video_front, video_topdown .. etc" folders] --output_folder [.html files output folder] --video_num_per_page [int: how many video to display in one .html]
+	python annotation/plane_annotation/verification.py --stage 1 --data_main_folder [folder that contains "video_front, video_topdown .. etc" folders] --output_folder [.html files output folder] --video_num_per_page [int: how many video to display in one .html]
 	```
 
 	Annotators should manually note down the error sample's path to a [error_sample].txt
@@ -156,5 +157,112 @@ python Mirror3D/annotation/plane_annotation/plane_annotation_tool.py --stage [al
 - STEP 3: Copy/ move out the error sample's data to another folder for reannotation
 
 	```python 
-	python Mirror3D/annotation/plane_annotation/verification.py --stage 2 --data_main_folder [dataset main folder] --output_folder [folder to save the copy of data] --error_list [.txt that contains the error samples' name] --move [bool, if ture it will move out all the error samples' information, if false, it will copy out all the error samples' information]
+	python annotation/plane_annotation/verification.py --stage 2 --data_main_folder [dataset main folder] --output_folder [folder to save the copy of data] --error_list [.txt that contains the error samples' name] --move [bool, if ture it will move out all the error samples' information, if false, it will copy out all the error samples' information]
 	```
+
+### User instruction
+
+This is an detailed instruction for our plane annotation tool. Here, we are going to annotate several samples from NYUv2:
+
+-STEP 1: Prepare data structure: after getting the annotated mirror mask, we store the orginal data in the following format:
+
+```shell
+├── mirror_color_images
+│   ├── 221.jpg
+│   ├── 45.jpg
+│   └── 686.jpg
+├── mirror_instance_mask_precise
+│   ├── 221.png
+│   ├── 45.png
+│   └── 686.png
+└── raw_sensorD
+    ├── 221.png
+    ├── 45.png
+    └── 686.png
+```
+
+--STEP 2: Set up annotation environment: please run the following command to set up the environment:
+
+```python
+python annotation/plane_annotation/plane_annotation_tool.py --stage 1 \
+--data_main_folder figure/anno-tool-example/nyu \
+--f 519
+```
+
+Then you will get the output pointclouds, RANSAC initialized mirror plane parameter information and masked image for each mirror instance. The output should be like:
+
+```shell
+├── anno_pcd
+│   ├── 221_idx_008000.ply # We set the hexadecimal of the instances' masks' RBD value as instances' id. 
+│   ├── 221_idx_800000.ply
+│   ├── 45_idx_800000.ply
+│   ├── 686_idx_008000.ply
+│   └── 686_idx_800000.ply
+├── border_vis # color images with visulized mirror mask
+│   ├── 221_idx_008000.jpg
+│   ├── 221_idx_800000.jpg
+│   ├── 45_idx_800000.jpg
+│   ├── 686_idx_008000.jpg
+│   └── 686_idx_800000.jpg
+├── mirror_plane
+│   ├── 221.json
+│   ├── 45.json
+│   └── 686.json
+```
+
+
+
+--STEP 3: Manully annotate the mirror plane: please run the following command to use the mirror plane annotation tool:
+
+```python
+python annotation/plane_annotation/plane_annotation_tool.py --stage 2 \
+--data_main_folder figure/anno-tool-example/nyu \
+--f 519
+```
+
+After running the command, it will open a window with a pointcloud, here the red points are the orginal depth at mirror region, the green points are the refined mirror points generated based on RANSAC algorithm. The annotation tool have the following options:
+
+```shell
+ OPTION : 
+(1) t        : TRUE : initial plane parameter is correct
+(2) w        : WASTE : sample have error, can not be used (e.g. point cloud too noisy)
+(3) r        : REFINE : need to refine the plane parameter
+(4) back n   : BACK : return n times (e.g. back 3 : give up the recent 3 annotated sample and go back)
+(5) goto n   : GOTO : goto the n th image (e.g. goto 3 : go to the third image
+(6) n        : NEXT : goto next image without annotation
+(7) a        : ADJUST: adjust one sample repeatedly
+(8) exit     : EXIT : save and exit
+```
+
+- `a` ADJUST: adjust one sample repeatedly. The ADJUST option have three more options:
+
+```shell
+OPTION : 
+(1) f        : FINISH : update refined_sensorD/ refined_meshD/ img_info and EXIT
+(2) a        : ADJUST : adjust the plane parameter based on current plane parameter
+(3) i        : INIT : pick 3 points to initialize the plane
+```
+
+Then you can get the window:
+
+# TODO add pic
+
+	- Adjust the plane 
+
+		```shell
+			OPTION : 
+			(1) a        : plane move left
+			(2) w        : plane move up
+			(3) s        : plane move down
+			(4) d        : plane move right
+			(5) e        : plane move closer
+			(6) r        : plane move futher
+			(7) i        : make the plane larger
+			(8) k        : make the plane smaller
+			(9) j        : rotate left
+			(10) l        : rotate right
+			(11) o        : rotate upwards
+			(12) p        : rotate downwards
+		```
+
+	- Pick three point to initialize the (light blue) plane
