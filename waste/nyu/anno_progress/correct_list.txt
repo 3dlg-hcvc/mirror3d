@@ -1,0 +1,5 @@
+figure/anno-tool-example/nyu/anno_pcd/686_idx_000080.ply
+figure/anno-tool-example/nyu/anno_pcd/45_idx_000080.ply
+figure/anno-tool-example/nyu/anno_pcd/221_idx_000080.ply
+figure/anno-tool-example/nyu/anno_pcd/221_idx_008000.ply
+figure/anno-tool-example/nyu/anno_pcd/686_idx_008000.ply
