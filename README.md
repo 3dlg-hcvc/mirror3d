@@ -59,7 +59,7 @@ bash script/nyu/m3n_nyu_train.sh
 
 To test the mirror3dnet and compare against planercnn module:
 
-"`shell
+```shell
 ### Test on NYUv2 refined dataset
 bash script/nyu/m3n_nyu_test.sh
 ```
@@ -166,7 +166,7 @@ This is a detailed instruction for our plane annotation tool. Here, we are going
 
 -STEP 1: Prepare data structure: after getting the annotated mirror mask, we store the original data in the following format:
 
-"`shell
+```shell
 ├── mirror_color_images
 │   ├── 221.jpg
 │   ├── 45.jpg
@@ -183,7 +183,7 @@ This is a detailed instruction for our plane annotation tool. Here, we are going
 
 - STEP 2: Set up annotation environment: please run the following command to set up the environment:
 
-"`python
+```python
 python annotation/plane_annotation/plane_annotation_tool.py --stage 1 \
 --data_main_folder figure/anno-tool-example/nyu \
 --f 519
@@ -191,7 +191,7 @@ python annotation/plane_annotation/plane_annotation_tool.py --stage 1 \
 
 Then you will get the output pointclouds, RANSAC initialized mirror plane parameter information, and masked image for each mirror instance. The output should be like this:
 
-"`shell
+```shell
 ├── anno_pcd
 │   ├── 221_idx_008000.ply # We set the hexadecimal of the instances' masks' RBD value as instances' id. 
 │   ├── 221_idx_800000.ply
@@ -214,7 +214,7 @@ Then you will get the output pointclouds, RANSAC initialized mirror plane parame
 
 - STEP 3: Manually annotate the mirror plane: please run the following command to use the mirror plane annotation tool:
 
-"`python
+```python
 python annotation/plane_annotation/plane_annotation_tool.py --stage 2 \
 --data_main_folder figure/anno-tool-example/nyu \
 --f 519
@@ -222,7 +222,7 @@ python annotation/plane_annotation/plane_annotation_tool.py --stage 2 \
 
 This command will open a window with an initialize pointcloud. (The red points in the pointcloud are the mirror reconstruction based on the orginal depth map, the green points are the mirror reconstruction based on the initial refined depth based on RANSAC algorithm.) After viewing the pointcloud you will get the following options:
 
-"`shell
+```shell
 ANNOTATION OPTION : 
 (1) t        : TRUE : initial plane parameter is correct
 (2) w        : WASTE : sample have error, can not be used (e.g. point cloud too noisy)
@@ -239,7 +239,7 @@ If you want to adjust the mirror plane, please input option `a' (ADJUST).
 'a ADJUST` has the following options:
 
 
-"`shell
+```shell
 ADJUST ONE SAMPLE OPTION : 
 (1) f        : FINISH : update refined_sensorD/ refined_meshD/ img_info and EXIT
 (2) a        : ADJUST : adjust the plane parameter based on the current plane parameter
@@ -254,7 +254,7 @@ This shows the user interface to pick 3 points to initialize the plane (option `
 # TODO add a blue plane pic
 This shows the user interface to adjust the plane parameter based on the current plane parameter (option `a'). To adjust the light blue plane, please follow:
 
-"`shell
+```shell
 ADJUST ONE PLANE OPTION : 
 (1) a        : plane move left
 (2) w        : plane move up
@@ -303,7 +303,7 @@ python annotation/plane_annotation/verification.py \
 -- STEP 7: Copy/ move out the error sample's data to another folder for reannotation. 
 
 
-"`shell
+```shell
 python annotation/plane_annotation/verification.py \
 --stage 2 \
 --data_main_folder figure/anno-tool-example/nyu \
