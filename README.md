@@ -273,7 +273,7 @@ ADJUST ONE PLANE OPTION :
 
 - STEP 4:  Generate refined depth map: please run the following command to generate refined depth map from original depth map
 
-```python
+```shell
 python annotation/plane_annotation/plane_annotation_tool.py --stage 3 \
 --data_main_folder figure/anno-tool-example/nyu \
 --f 519
@@ -281,7 +281,7 @@ python annotation/plane_annotation/plane_annotation_tool.py --stage 3 \
 
 - STEP 5: Generate video for verification: please run the following command to generate videos for verification. The videos contains the topdown view and front view of the refined pointcloud. The output refined pointcloud is generated based on the refiend depth we get in STEP 4 and the source color image.
 
-```python
+```shell
 python visualization/dataset_visualization.py --stage all \
 --data_main_folder figure/anno-tool-example/nyu \
 --f 519
@@ -290,7 +290,7 @@ python visualization/dataset_visualization.py --stage all \
 
 -- STEP 6: Launch webpage to view the videos: please run the following command to launch a webite to view the video generated in STEP 5.
 
-```python
+```shell
 python annotation/plane_annotation/verification.py \
 --stage 1 \
 --data_main_folder figure/anno-tool-example/nyu \
@@ -303,7 +303,7 @@ python annotation/plane_annotation/verification.py \
 -- STEP 7: Copy/ move out the error sample's data to another folder for reannotation. 
 
 
-```python
+```shell
 python annotation/plane_annotation/verification.py \
 --stage 2 \
 --data_main_folder figure/anno-tool-example/nyu \
