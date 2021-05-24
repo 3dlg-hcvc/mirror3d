@@ -144,29 +144,42 @@ def generate_symlinks_txt_scannet():
     output_lines = []
     all_id = [i.split(".")[0] for i in read_txt("/project/3dlg-hcvc/mirrors/www/dataset_release/temp/scannet_all.txt")]
     save_path = "/local-scratch/jiaqit/exp/Mirror3D/metadata/scannet_symlink.txt"
+    all_color_list_25k = read_txt("/project/3dlg-hcvc/mirrors/www/dataset_release/temp/scannet_color_25k.txt")
     all_color_list = read_txt("/project/3dlg-hcvc/mirrors/www/dataset_release/temp/scannet_color.txt")
     for one_id in all_id:
-        path = "scannet_frames_25k/{}/color/{}.jpg".format(one_id.rsplit("_", 1)[0], one_id.rsplit("_", 1)[1])
-        if path not in all_color_list:
-            print(path)
+        path_one = "scannet_frames_25k/{}/color/{}.jpg".format(one_id.rsplit("_", 1)[0], one_id.rsplit("_", 1)[1])
+        path_two = "scannet_extracted/raw_image/{}/color/{}.jpg".format(one_id.rsplit("_", 1)[0], str(int(one_id.rsplit("_", 1)[1])))
+        if path_two not in all_color_list and path_one not in all_color_list_25k:
+            print(one_id)
+        if path_two in all_color_list:
+            color_to_link = "mirror_color_images/{}.jpg".format(one_id)
+            sensorD_to_link = "raw_sensorD/{}.png".format(one_id)
+            output_lines.append("{} {}".format(path_two, color_to_link))
+            output_lines.append("{} {}".format(path_two.replace("color","depth").replace("jpg","png"), sensorD_to_link))
+        elif path_one in all_color_list_25k:
+            color_to_link = "mirror_color_images/{}.jpg".format(one_id)
+            sensorD_to_link = "raw_sensorD/{}.png".format(one_id)
+            output_lines.append("{} {}".format(path_one, color_to_link))
+            output_lines.append("{} {}".format(path_one.replace("color","depth").replace("jpg","png"), sensorD_to_link))
     # for one_path in all_color_list:
-    #     id = "{}_{}".format(one_path.split("/")[-3], one_path.split("/")[-1].split(".")[0])
+    #     id = "{}_{}".format(one_path.split("/")[-3], one_path.split("/")[-1].split(".")[0].zfill(6))
     #     if id in all_id:
-    #         color_to_link = "mirror_color_images/{}.jpg".format(id)
-    #         sensorD_to_link = "raw_sensorD/{}.png".format(id)
-    #         output_lines.append("{} {}".format(one_path, color_to_link))
-    #         output_lines.append("{} {}".format(one_path.replace("color","depth").replace("jpg","png"), sensorD_to_link))
-    #     else:
-    #         print(id)
+            # color_to_link = "mirror_color_images/{}.jpg".format(id)
+            # sensorD_to_link = "raw_sensorD/{}.png".format(id)
+            # output_lines.append("{} {}".format(one_path, color_to_link))
+            # output_lines.append("{} {}".format(one_path.rep ace("color","depth").replace("jpg","png"), sensorD_to_link))
+
     # save_txt(save_path, output_lines)
+
+    save_txt(save_path, output_lines)
 
     
 if __name__ == "__main__":
     # json_file_path = "/project/3dlg-hcvc/mirrors/www/dataset_release/network_input_json/nyu"
     # update_coco_json(json_file_path)
-    input_folder = "/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/img_info"
-    output_folder = "waste"
-    reformat_json(input_folder, output_folder)
+    # input_folder = "/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/img_info"
+    # output_folder = "waste"
+    # reformat_json(input_folder, output_folder)
 
     # refinedD_input_folder = "/project/3dlg-hcvc/mirrors/www/dataset_release/scannet/refined_sensorD_precise"
     # rawD_input_folder = "/project/3dlg-hcvc/mirrors/www/Mirror3D_final/scannet/with_mirror/precise/hole_raw_depth"
@@ -176,5 +189,5 @@ if __name__ == "__main__":
 
     ############# generate symlinks 
     # generate_symlinks_txt_mp3d()
-    # generate_symlinks_txt_scannet()
+    generate_symlinks_txt_scannet()
 

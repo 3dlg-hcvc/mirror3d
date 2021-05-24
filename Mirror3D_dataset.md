@@ -68,12 +68,12 @@ To generate a refined depth map, please download the relevant source data and pu
 
 - For NYUv2-small dataset, please put the `color` and `depth` folder under `nyu` folder
   
-- For ScanNet dataset, please put the `scannet_frames_25k` folder under `scannet` folder
+- For ScanNet dataset, please put the `scannet_extracted` folder under `scannet` folder
 
 Then run:
 
 ```python
-python ***.py --zip_folder [the path to the m3d/ nyu/ scannet folder] 
+python metadata/gen_synlink.py --zip_folder [the path to the m3d/ nyu/ scannet folder] 
 ```
 
 The generated refined depth map will be saved under the [zip_folder]. 
@@ -138,16 +138,19 @@ scannet
 └── refined_sensorD_coarse # refined sensor depth map (coarse version)
 └── refined_sensorD_precise # refined sensor depth map (precise version)
 └── mirror_plane
-└── scannet_frames_25k # source data
-└── raw_sensorD # mirror samples' sensor depth symlinks --- link to data under ./scannet_frames_25k
-└── mirror_color_images # mirror samples' color image symlinks --- link to data under ./scannet_frames_25k
+└── scannet_extracted # source data
+└── raw_sensorD # mirror samples' sensor depth symlinks --- link to data under ./scannet_extracted
+└── mirror_color_images # mirror samples' color image symlinks --- link to data under ./scannet_extracted
 ```
 
 
 To validate the correctness of the generated depth map, you can run:
 
 ```python
-python visualization/check_sample_info.py --data_root_path [path to the unzipped m3d/nyu/scannet folder] --json_path [any JSON file stored under the mirror_plane foler] --f [relevant focal length: 1074 for Matterport3D, 519 for NYUv2-small, 574 for ScanNet]
+python visualization/check_sample_info.py \
+--data_root_path [path to the unzipped m3d/nyu/scannet folder] \
+--json_path [any JSON file stored under the mirror_plane foler] \
+--f [relevant focal length: 1074 for Matterport3D, 519 for NYUv2-small, 574 for ScanNet]
 
 ```
 

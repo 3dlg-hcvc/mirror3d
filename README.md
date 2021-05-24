@@ -220,7 +220,7 @@ python annotation/plane_annotation/plane_annotation_tool.py --stage 2 \
 --f 519
 ```
 
-This command will open a window with an initialize pointcloud. (The red points in the pointcloud are the mirror reconstruction based on the orginal depth map, the green points are the mirror reconstruction based on the initial refined depth based on RANSAC algorithm.) After viewing the pointcloud you will get the following options:
+This command will open the annotation tool interface and show a pointcloud. (The red points in the pointcloud are the mirror reconstruction based on the orginal depth map, the green points are the mirror reconstruction based on the initial refined depth based on RANSAC algorithm.) After viewing the pointcloud you will get the following options:
 
 ```shell
 ANNOTATION OPTION : 

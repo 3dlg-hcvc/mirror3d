@@ -77,7 +77,7 @@ class Dataset_visulization(Plane_annotation_tool):
         """
 
         if self.is_matterport3d:
-            ply_folder = os.path.join(self.output_folder, "sensorD_ply")
+            ply_folder = os.path.join(self.output_folder, "refined_sensorD_ply_{}".format(self.mask_version))
             sample_name = rreplace(color_img_path.split("/")[-1], "i", "d").replace(".jpg",".png")
             colored_depth_save_folder = os.path.join(ply_folder, "refined_sensorD_colored_depth")
             os.makedirs(colored_depth_save_folder, exist_ok=True)
@@ -86,7 +86,7 @@ class Dataset_visulization(Plane_annotation_tool):
             if (self.overwrite and os.path.exists(colored_depth_save_path)) or (not os.path.exists(colored_depth_save_path)):
                 save_heatmap_no_border(cv2.imread(ori_depth, cv2.IMREAD_ANYDEPTH), colored_depth_save_path)
 
-            ply_folder = os.path.join(self.output_folder, "mesh_refined_ply")
+            ply_folder = os.path.join(self.output_folder, "refined_meshD_ply_{}".format(self.mask_version))
             colored_depth_save_folder = os.path.join(ply_folder, "refined_mesh_colored_depth")
             os.makedirs(colored_depth_save_folder, exist_ok=True)
             ori_depth = os.path.join(self.data_main_folder, "refined_meshD_{}".format(self.mask_version), sample_name)
@@ -94,7 +94,7 @@ class Dataset_visulization(Plane_annotation_tool):
             if (self.overwrite and os.path.exists(colored_depth_save_path)) or (not os.path.exists(colored_depth_save_path)):
                 save_heatmap_no_border(cv2.imread(ori_depth, cv2.IMREAD_ANYDEPTH), colored_depth_save_path)
         else:
-            ply_folder = os.path.join(self.output_folder, "sensorD_ply")
+            ply_folder = os.path.join(self.output_folder, "refined_sensorD_ply_{}".format(self.mask_version))
             sample_name = color_img_path.split("/")[-1].replace(".jpg",".png")
             colored_depth_save_folder = os.path.join(ply_folder, "refined_sensorD_colored_depth")
             os.makedirs(colored_depth_save_folder, exist_ok=True)
@@ -175,7 +175,7 @@ class Dataset_visulization(Plane_annotation_tool):
         if self.is_matterport3d:
             if self.sensor_D_update:
                 depth_img_path = rreplace(color_img_path.replace("mirror_color_images","refined_sensorD_{}".format(self.mask_version)), "i", "d").replace(".jpg",".png")
-                ply_save_folder = os.path.join(self.output_folder, "sensorD_ply")
+                ply_save_folder = os.path.join(self.output_folder, "refined_sensorD_ply_{}".format(self.mask_version))
                 os.makedirs(ply_save_folder, exist_ok=True)
                 generate_and_save_ply(depth_img_path, ply_save_folder)
 
@@ -185,7 +185,7 @@ class Dataset_visulization(Plane_annotation_tool):
             generate_and_save_ply(depth_img_path, ply_save_folder)
         else:
             depth_img_path = color_img_path.replace("mirror_color_images","refined_sensorD_{}".format(self.mask_version)).replace(".jpg",".png")
-            ply_save_folder = os.path.join(self.output_folder, "sensorD_ply")
+            ply_save_folder = os.path.join(self.output_folder, "refined_sensorD_ply_{}".format(self.mask_version))
             os.makedirs(ply_save_folder, exist_ok=True)
             generate_and_save_ply(depth_img_path, ply_save_folder)
 
@@ -232,7 +232,7 @@ class Dataset_visulization(Plane_annotation_tool):
                     mesh_path = os.path.join(mesh_folder,  "{}.ply".format(instance_tag))
                     pcd = o3d.io.read_point_cloud(pcd_path)
                     mirror_plane = o3d.io.read_triangle_mesh(mesh_path)
-                    # Screenshots are saved under "mesh_refined_ply" or "sensorD_ply" folder
+                    # Screenshots are saved under "mesh_refined_ply" or "refined_sensorD_ply_{}".format(self.mask_version) folder
                     self.screenshot_output_folder = os.path.join(ply_folder, "screenshot_{}".format(self.view_mode), instance_tag)
                     os.makedirs(self.screenshot_output_folder, exist_ok=True)
                     if len(os.listdir(self.screenshot_output_folder)) == 37 and not self.overwrite:
@@ -248,7 +248,7 @@ class Dataset_visulization(Plane_annotation_tool):
         if color_img_path.find("mp3d") > 0:
             if self.sensor_D_update:
                 depth_img_path = rreplace(color_img_path.replace("mirror_color_images","refined_sensorD_{}".format(self.mask_version)).replace("json","png"),"i","d").replace(".jpg",".png")
-                ply_folder = os.path.join(self.output_folder, "sensorD_ply")
+                ply_folder = os.path.join(self.output_folder, "refined_sensorD_ply_{}".format(self.mask_version))
                 generate_screenshot(depth_img_path)
 
             depth_img_path = rreplace(color_img_path.replace("mirror_color_images","refined_meshD_{}".format(self.mask_version)).replace("json","png"),"i","d").replace(".jpg",".png")
@@ -257,7 +257,7 @@ class Dataset_visulization(Plane_annotation_tool):
             
         else:
             depth_img_path = color_img_path.replace("mirror_color_images","refined_sensorD_{}".format(self.mask_version)).replace(".jpg",".png")
-            ply_folder = os.path.join(self.output_folder, "sensorD_ply")
+            ply_folder = os.path.join(self.output_folder, "refined_sensorD_ply_{}".format(self.mask_version))
             generate_screenshot(depth_img_path)
 
     def rotate_pcdMesh_topdown(self, pcd, plane):
@@ -384,7 +384,7 @@ class Dataset_visulization(Plane_annotation_tool):
         """
         def generate_video_function(ply_folder):
             # Pack as a function to better support Matterport3d ply generation
-            # Videos are saved under "mesh_refined_ply" or "sensorD_ply" folder
+            # Videos are saved under "mesh_refined_ply" or "refined_sensorD_ply_{}".format(self.mask_version) folder
             video_saved_folder = os.path.join(ply_folder, "video_{}".format(self.view_mode))
             os.makedirs(video_saved_folder, exist_ok=True)
             img_info = color_img_path.replace("mirror_color_images", "mirror_plane").replace("jpg", "json")
@@ -414,12 +414,12 @@ class Dataset_visulization(Plane_annotation_tool):
                     self.save_error_raw_name(color_img_path.split("/")[-1].split(".")[0])
 
         if color_img_path.find("mp3d") > 0:
-            ply_folder = os.path.join(self.output_folder, "sensorD_ply")
+            ply_folder = os.path.join(self.output_folder, "refined_sensorD_ply_{}".format(self.mask_version))
             generate_video_function(ply_folder)
             ply_folder = os.path.join(self.output_folder, "mesh_refined_ply")
             generate_video_function(ply_folder)
         else:
-            ply_folder = os.path.join(self.output_folder, "sensorD_ply")
+            ply_folder = os.path.join(self.output_folder, "refined_sensorD_ply_{}".format(self.mask_version))
             generate_video_function(ply_folder)
     
 

@@ -30,6 +30,6 @@ def generate_symlinks(unzip_folder_path):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
-        '--unzip_folder_path', default="/project/3dlg-hcvc/mirrors/www/dataset_release/mp3d")
+        '--unzip_folder_path', default="")
     args = parser.parse_args()
     generate_symlinks(args.unzip_folder_path)
