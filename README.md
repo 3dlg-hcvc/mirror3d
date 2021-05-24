@@ -246,23 +246,21 @@ OPTION :
 Then you can get the window:
 
 # TODO add pic
+- Adjust the plane 
 
-	- Adjust the plane 
-
-		```shell
-			OPTION : 
-			(1) a        : plane move left
-			(2) w        : plane move up
-			(3) s        : plane move down
-			(4) d        : plane move right
-			(5) e        : plane move closer
-			(6) r        : plane move futher
-			(7) i        : make the plane larger
-			(8) k        : make the plane smaller
-			(9) j        : rotate left
-			(10) l        : rotate right
-			(11) o        : rotate upwards
-			(12) p        : rotate downwards
-		```
-
-	- Pick three point to initialize the (light blue) plane
+```shell
+	OPTION : 
+	(1) a        : plane move left
+	(2) w        : plane move up
+	(3) s        : plane move down
+	(4) d        : plane move right
+	(5) e        : plane move closer
+	(6) r        : plane move futher
+	(7) i        : make the plane larger
+	(8) k        : make the plane smaller
+	(9) j        : rotate left
+	(10) l        : rotate right
+	(11) o        : rotate upwards
+	(12) p        : rotate downwards
+```
+- Pick three point to initialize the (light blue) plane
