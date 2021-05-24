@@ -41,9 +41,9 @@ def check_mirror_normal_in_one_json(data_root_path, json_path, f, mask_version):
         plane_center = np.mean(np.array(mirror_plane.vertices), axis=0)
         # get mirror normal 
         if "mp3d" in json_path:
-            vec_ratio = 1000
+            vec_len = 2
         else:
-            vec_ratio = 4000
+            vec_len = 0.5
         ratio = np.abs(1000 / mirror_normal[0])
         begin = plane_center
         end = [begin[0] + mirror_normal[0]*ratio, begin[1] + mirror_normal[1]*ratio, begin[2] + mirror_normal[2]*ratio]
@@ -51,7 +51,7 @@ def check_mirror_normal_in_one_json(data_root_path, json_path, f, mask_version):
         vis.create_window()
         vis.add_geometry(pcd)
         vis.add_geometry(mirror_plane)
-        vis.add_geometry(get_mesh_by_start_end(begin,end,vec_ratio=vec_ratio))
+        vis.add_geometry(get_mesh_by_start_end(begin,end,vec_len=vec_len))
         vis.get_render_option().point_size = 1.0
         vis.run()
         vis.destroy_window()

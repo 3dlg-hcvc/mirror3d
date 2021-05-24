@@ -49,17 +49,15 @@ def caculate_align_mat(pVec_Arr):
     return qTrans_Mat
 
 
-def get_mesh_by_start_end(begin, end, color=[0.6,0.6,1], vec_ratio=4000):
+def get_mesh_by_start_end(begin, end, color=[0.6,0.6,1], vec_len=1):
     import open3d as o3d
     vec_Arr = np.array(end) - np.array(begin)
-    vec_len = np.linalg.norm(vec_Arr)
     rot_mat = np.float32(caculate_align_mat(vec_Arr))
-    vec_len = vec_len / vec_ratio
     mesh_arrow = o3d.geometry.TriangleMesh.create_arrow(
     cone_height= 0.2 * vec_len, 
     cone_radius= 0.08 * vec_len, 
     cylinder_height= 0.8 * vec_len,
-    cylinder_radius=  0.04 * vec_len
+    cylinder_radius=  0.02 * vec_len
     )
     mesh_arrow.paint_uniform_color(color)
 
