@@ -122,7 +122,7 @@ class Plane_annotation_tool():
             else:
                 data_correct = False
                 self.save_error_raw_name(file_name)
-                print(" path not exisits : {} {} mask {} {}raw {} depth {} {}".format( file_name, os.path.exists(mask_file_path),mask_file_path , os.path.exists(raw_file_path),raw_file_path , os.path.exists(depth_file_path), depth_file_path, os.path.exists(img_info_file_path)))
+                print(" path not exists : {} {} mask {} {}raw {} depth {} {}".format( file_name, os.path.exists(mask_file_path),mask_file_path , os.path.exists(raw_file_path),raw_file_path , os.path.exists(depth_file_path), depth_file_path, os.path.exists(img_info_file_path)))
         
         assert data_correct, "sth wrong with data, please check data first"
 
@@ -378,7 +378,10 @@ class Plane_annotation_tool():
         """
         raw_image_save_folder = os.path.join(self.data_main_folder, "mirror_color_images")
         error_id_path = os.path.join(self.anno_output_folder, "anno_progress", "error_id.txt")
-        self.error_id = read_txt(error_id_path)
+        if os.path.exists(error_id_path):
+            self.error_id = read_txt(error_id_path)
+        else:
+            self.error_id = []
         for color_img_path in self.color_img_list:
             smaple_name = os.path.split(color_img_path)[1].split(".")[0] 
 
@@ -424,7 +427,10 @@ class Plane_annotation_tool():
         """
         img_info_save_folder = os.path.join(self.anno_output_folder, "mirror_plane")
         error_id_path = os.path.join(self.anno_output_folder, "anno_progress", "error_id.txt")
-        self.error_id = read_txt(error_id_path)
+        if os.path.exists(error_id_path):
+            self.error_id = read_txt(error_id_path)
+        else:
+            self.error_id = []
         for color_img_path in self.color_img_list:
             smaple_name = os.path.split(color_img_path)[1].split(".")[0] 
             mask_img_path = os.path.join(self.data_main_folder, "mirror_instance_mask_{}".format(self.mask_version),"{}.png".format(smaple_name))

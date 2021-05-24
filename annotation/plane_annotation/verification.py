@@ -153,7 +153,7 @@ class Verification():
                         one_path = os.path.join(self.video_main_folder, i, one_video_name)
                         if one_path.find("mesh") > 0 and self.is_matterport3d:
                             one_line_video.append(one_path)
-                        if one_path.find("hole") > 0 and not self.show_mesh_depth:
+                        if one_path.find("sensor") > 0 and not self.show_mesh_depth:
                             one_line_video.append(one_path)
 
                 else: 
@@ -183,7 +183,7 @@ class Verification():
                 one_video_path = one_line_video[0]
                 color_img = soup.new_tag("div")
                 color_img["class"] = "one-item"
-                color_img_path = os.path.relpath(os.path.join(self.data_main_folder, "raw", "{}.png".format(one_video_path.split("/")[-1].split("_idx_")[0])), self.output_folder)
+                color_img_path = os.path.relpath(os.path.join(self.data_main_folder, "mirror_color_images", "{}.jpg".format(one_video_path.split("/")[-1].split("_idx_")[0])), self.output_folder)
                 color_img.append(soup.new_tag('img', src=color_img_path))
                 one_color_img.append(color_img)
                 new_div.append(one_color_img)
@@ -193,14 +193,14 @@ class Verification():
                 colored_depth = soup.new_tag("div")
                 colored_depth["class"] = "one-item"
                 if self.is_matterport3d:
-                    sample_name = rreplace(color_img_path.split("/")[-1], "i", "d")
+                    sample_name = rreplace(color_img_path.split("/")[-1], "i", "d").replace(".jpg",".png")
                     if self.show_mesh_depth:
-                        colored_depth_path = os.path.relpath(os.path.join(self.video_main_folder,  "mesh_refined_colored_depth", sample_name),self.output_folder)
+                        colored_depth_path = os.path.relpath(os.path.join(self.video_main_folder,  "refined_mesh_colored_depth", sample_name),self.output_folder)
                     else:
-                        colored_depth_path = os.path.relpath(os.path.join(self.video_main_folder,  "hole_refined_colored_depth", sample_name),self.output_folder)
+                        colored_depth_path = os.path.relpath(os.path.join(self.video_main_folder,  "refined_sensorD_colored_depth", sample_name),self.output_folder)
                 else:
-                    sample_name = color_img_path.split("/")[-1]
-                    colored_depth_path = os.path.relpath(os.path.join(self.video_main_folder,  "hole_refined_colored_depth", sample_name),self.output_folder)
+                    sample_name = color_img_path.split("/")[-1].replace(".jpg",".png")
+                    colored_depth_path = os.path.relpath(os.path.join(self.video_main_folder,  "refined_sensorD_colored_depth", sample_name),self.output_folder)
                 colored_depth.append(soup.new_tag('img', src=colored_depth_path))
                 one_colored_depth.append(colored_depth)
                 new_div.append(one_colored_depth)

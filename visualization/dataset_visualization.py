@@ -79,7 +79,7 @@ class Dataset_visulization(Plane_annotation_tool):
         if self.is_matterport3d:
             ply_folder = os.path.join(self.output_folder, "sensorD_ply")
             sample_name = rreplace(color_img_path.split("/")[-1], "i", "d").replace(".jpg",".png")
-            colored_depth_save_folder = os.path.join(ply_folder, "sensorD_colored_depth")
+            colored_depth_save_folder = os.path.join(ply_folder, "refined_sensorD_colored_depth")
             os.makedirs(colored_depth_save_folder, exist_ok=True)
             ori_depth = os.path.join(self.data_main_folder, "refined_sensorD_{}".format(self.mask_version), sample_name)
             colored_depth_save_path = os.path.join(colored_depth_save_folder, sample_name)
@@ -87,7 +87,7 @@ class Dataset_visulization(Plane_annotation_tool):
                 save_heatmap_no_border(cv2.imread(ori_depth, cv2.IMREAD_ANYDEPTH), colored_depth_save_path)
 
             ply_folder = os.path.join(self.output_folder, "mesh_refined_ply")
-            colored_depth_save_folder = os.path.join(ply_folder, "mesh_refined_colored_depth")
+            colored_depth_save_folder = os.path.join(ply_folder, "refined_mesh_colored_depth")
             os.makedirs(colored_depth_save_folder, exist_ok=True)
             ori_depth = os.path.join(self.data_main_folder, "refined_meshD_{}".format(self.mask_version), sample_name)
             colored_depth_save_path = os.path.join(colored_depth_save_folder, sample_name)
@@ -96,7 +96,7 @@ class Dataset_visulization(Plane_annotation_tool):
         else:
             ply_folder = os.path.join(self.output_folder, "sensorD_ply")
             sample_name = color_img_path.split("/")[-1].replace(".jpg",".png")
-            colored_depth_save_folder = os.path.join(ply_folder, "sensorD_colored_depth")
+            colored_depth_save_folder = os.path.join(ply_folder, "refined_sensorD_colored_depth")
             os.makedirs(colored_depth_save_folder, exist_ok=True)
             ori_depth = os.path.join(self.data_main_folder, "refined_sensorD_{}".format(self.mask_version), sample_name)
             colored_depth_save_path = os.path.join(colored_depth_save_folder, sample_name)
