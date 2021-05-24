@@ -73,15 +73,16 @@ To generate a refined depth map, please download the relevant source data and pu
 Then run:
 
 ```python
-python metadata/gen_synlink.py --zip_folder [the path to the m3d/ nyu/ scannet folder] 
+python dataset/gen_refinedD_from_delta.py --zip_folder [the path to the m3d/ nyu/ scannet folder] \
+--mask_version [mirror mask version: precise (default) / coarse]
 ```
 
 The generated refined depth map will be saved under the [zip_folder]. 
 
-To generate our networks training input, please run ***.py to create symlinks to the mirror samples' original color image, sensor depth map and mesh depth map:
+To generate our networks training input, please run the following command to create symlinks to the mirror samples' original color image, sensor depth map and mesh depth map:
 
-```
-python ***.py --dataset_main_folder [the path to the m3d/ nyu/ scannet folder] 
+```python
+python metadata/gen_synlink.py --zip_folder [the path to the m3d/ nyu/ scannet folder] 
 ```
 
 Finally, the data structure should be like:

@@ -181,13 +181,13 @@ if __name__ == "__main__":
     # output_folder = "waste"
     # reformat_json(input_folder, output_folder)
 
-    # refinedD_input_folder = "/project/3dlg-hcvc/mirrors/www/dataset_release/scannet/refined_sensorD_precise"
-    # rawD_input_folder = "/project/3dlg-hcvc/mirrors/www/Mirror3D_final/scannet/with_mirror/precise/hole_raw_depth"
-    # output_folder = "/project/3dlg-hcvc/mirrors/www/dataset_release/scannet/delta_image_precise"
-    # get_delta_image(refinedD_input_folder, rawD_input_folder, output_folder)
+    refinedD_input_folder = "/project/3dlg-hcvc/mirrors/www/dataset_release/mp3d/refined_sensorD_coarse"
+    rawD_input_folder = "/project/3dlg-hcvc/mirrors/www/dataset_release/mp3d/raw_sensorD"
+    output_folder = "/project/3dlg-hcvc/mirrors/www/dataset_release/mp3d/delta_image_coarse"
+    get_delta_image(refinedD_input_folder, rawD_input_folder, output_folder)
 
 
     ############# generate symlinks 
     # generate_symlinks_txt_mp3d()
-    generate_symlinks_txt_scannet()
+    # generate_symlinks_txt_scannet()
 
