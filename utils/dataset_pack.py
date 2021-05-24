@@ -20,15 +20,16 @@ def reformat_json(input_folder, output_folder):
         src_json_path =  os.path.join(input_folder, one_json_name)
         ori_info = read_json(src_json_path)
         new_info = []
-        for item in ori_info.items():
-            new_one_info = dict()
-            new_one_info["plane"] = item[1]["plane_parameter"]
-            new_one_info["normal"] = list(unit_vector(item[1]["mirror_normal"]))
-            R, G, B = [int(i) for i in item[0].split("_")]
-            new_one_info["mask_id"] = '%02x%02x%02x' % (R, G, B)
-            new_info.append(new_one_info)
-        json_save_path = os.path.join(output_folder, one_json_name)
-        save_json(json_save_path,new_info)
+        if len(ori_info) > 1:
+            for item in ori_info.items():
+                new_one_info = dict()
+                new_one_info["plane"] = item[1]["plane_parameter"]
+                new_one_info["normal"] = list(unit_vector(item[1]["mirror_normal"]))
+                R, G, B = [int(i) for i in item[0].split("_")]
+                new_one_info["mask_id"] = '%02x%02x%02x' % (R, G, B)
+                new_info.append(new_one_info)
+            json_save_path = os.path.join(output_folder, one_json_name)
+            save_json(json_save_path,new_info)
 
 
 
@@ -163,9 +164,9 @@ def generate_symlinks_txt_scannet():
 if __name__ == "__main__":
     # json_file_path = "/project/3dlg-hcvc/mirrors/www/dataset_release/network_input_json/nyu"
     # update_coco_json(json_file_path)
-    # input_folder = "/project/3dlg-hcvc/mirrors/www/Mirror3D_final/scannet/with_mirror/precise/img_info"
-    # output_folder = "/project/3dlg-hcvc/mirrors/www/dataset_release/scannet/mirror_plane"
-    # reformat_json(input_folder, output_folder)
+    input_folder = "/project/3dlg-hcvc/mirrors/www/Mirror3D_final/nyu/with_mirror/precise/img_info"
+    output_folder = "waste"
+    reformat_json(input_folder, output_folder)
 
     # refinedD_input_folder = "/project/3dlg-hcvc/mirrors/www/dataset_release/scannet/refined_sensorD_precise"
     # rawD_input_folder = "/project/3dlg-hcvc/mirrors/www/Mirror3D_final/scannet/with_mirror/precise/hole_raw_depth"
@@ -175,5 +176,5 @@ if __name__ == "__main__":
 
     ############# generate symlinks 
     # generate_symlinks_txt_mp3d()
-    generate_symlinks_txt_scannet()
+    # generate_symlinks_txt_scannet()
 

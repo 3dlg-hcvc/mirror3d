@@ -161,7 +161,7 @@ class Plane_annotation_tool():
                     continue
 
                 instance_tag = "_idx_"
-                instance_tag += '%02x%02x%02x' % (instance_index[2],instance_index[1],instance_index[0]) # RGB
+                instance_tag += '%02x%02x%02x' % (instance_index[0],instance_index[1],instance_index[2]) # BGR
                 instance_tag = smaple_name + instance_tag
                 pcd_save_path = os.path.join(pcd_save_folder,  "{}.ply".format(instance_tag))
                 if os.path.isfile(pcd_save_path) and not self.overwrite:
@@ -238,6 +238,7 @@ class Plane_annotation_tool():
             img_name = pcd_name.split("_idx_")[0]
             instance_id = pcd_name.split("_idx_")[1]
             instance_id = ImageColor.getcolor("#{}".format(instance_id), "RGB")
+            instance_id = [instance_id[2], instance_id[1], instance_id[0]]# BGR
             if self.is_matterport3d:
                 depth_img_path = os.path.join(self.data_main_folder, "raw_meshD","{}.png".format(rreplace(img_name, "i", "d")))
             else:
@@ -272,7 +273,6 @@ class Plane_annotation_tool():
             option_list = Tool_Option()
             option_list.add_option("t", "TRUE : initial plane parameter is correct")
             option_list.add_option("w", "WASTE : sample have error, can not be used (e.g. point cloud too noisy)")
-            option_list.add_option("r", "REFINE : need to refine the plane parameter")
             option_list.add_option("back n", "BACK : return n times (e.g. back 3 : give up the recent 3 annotated sample and go back)")
             option_list.add_option("goto n", "GOTO : goto the n th image (e.g. goto 3 : go to the third image")
             option_list.add_option("n", "NEXT : goto next image without annotation")
@@ -329,22 +329,10 @@ class Plane_annotation_tool():
                     print("you can go to 0 ~ {}".format(len(self.pcd_path_list)-1))
                     continue
                 self.sample_index = n
-
-            elif input_option == "r":
-                
-                init_step_size = ((np.max(np.array(pcd.points)[:,0])) - (np.min(np.array(pcd.points)[:,0])))/300
-                [p1, p2, p3] = get_picked_points(pcd)
-                plane_parameter = get_parameter_from_plane_adjustment(pcd, get_mirror_init_plane_from_3points(p1, p2, p3), init_step_size)
-
-                one_plane_para_save_path = os.path.join(os.path.join(self.anno_output_folder, "mirror_plane"), "{}.json".format(img_name))
-                save_plane_parameter_2_json(plane_parameter, one_plane_para_save_path, instance_id)
-                manual_adjust_num += 1
-                self.correct_list.append(current_pcd_path)
-                self.save_progress()
-                self.get_progress()
             
             elif input_option == "a":
                 instance_mask = get_grayscale_instanceMask(cv2.imread(mask_path),instance_id)
+                import pdb;pdb.set_trace()
                 mirror_pcd = get_mirrorPoint_based_on_plane_parameter(f=self.f, plane_parameter=plane_parameter, mirror_mask=instance_mask, color_img_path=color_img_path, color=[1,1,0])
                 init_step_size = ((np.max(np.array(pcd.points)[:,0])) - (np.min(np.array(pcd.points)[:,0])))/300
                 while 1:
@@ -445,11 +433,11 @@ class Plane_annotation_tool():
             one_info_file_path = os.path.join(img_info_save_folder, "{}.json".format(smaple_name))
             info = read_json(one_info_file_path)
             valid_instance = False
-            # TODO change here
-            for one_info in info.items():
-                instance_index = [int(i) for i in one_info[0].split("_")]
+            for one_info in info:
+                instance_index = one_info["mask_id"]
+                instance_index = ImageColor.getcolor("#{}".format(instance_index), "RGB")
                 binary_instance_mask = get_grayscale_instanceMask(mask, instance_index)
-                plane_parameter = one_info[1]["plane_parameter"]
+                plane_parameter = one_info["plane"]
 
                 # Refine mesh raw depth (only Matterport3d have mesh raw depth)
                 if self.is_matterport3d:
@@ -556,7 +544,7 @@ class Plane_annotation_tool():
         
         one_plane_para_save_path = os.path.join(os.path.join(self.anno_output_folder, "mirror_plane"), "{}.json".format(img_name))
         if os.path.exists(one_plane_para_save_path):
-            plane_parameter = read_json(one_plane_para_save_path)[instance_index]["plane_parameter"]
+            plane_parameter = read_json(one_plane_para_save_path)[instance_index]["plane"]
 
         pcd = o3d.io.read_point_cloud(pcd_path)
         mirror_pcd = get_mirrorPoint_based_on_plane_parameter(f=self.f, plane_parameter=plane_parameter, mirror_mask=instance_mask, color_img_path=color_img_path, color=[0,0,1])
@@ -634,7 +622,7 @@ class Plane_annotation_tool():
         
         one_plane_para_save_path = os.path.join(os.path.join(self.anno_output_folder, "mirror_plane"), "{}.json".format(img_name))
         if os.path.exists(one_plane_para_save_path):
-            plane_parameter = read_json(one_plane_para_save_path)[instance_index]["plane_parameter"]
+            plane_parameter = read_json(one_plane_para_save_path)[instance_index]["plane"]
 
         refined_depth_to_clamp = cv2.imread(refined_sensorD_path, cv2.IMREAD_ANYDEPTH)
         h, w = refined_depth_to_clamp.shape
@@ -759,12 +747,12 @@ class Data_post_processing(Plane_annotation_tool):
                 if self.is_matterport3d:
                     # Refine mesh raw depth (only Matterport3d have mesh raw depth)
                     refined_meshD_path = os.path.join(self.data_main_folder, "refined_meshD_{}".format(self.mask_version), depth_file_name)
-                    cv2.imwrite(refined_meshD_path, clamp_pcd_by_bbox(mirror_bbox=mirror_bbox, depth_img_path=refined_meshD_path, f=self.f, mirror_border_mask=mirror_border_mask , plane_parameter=one_info[1]["plane_parameter"], expand_range = self.expand_range, clamp_dis = self.clamp_dis))
+                    cv2.imwrite(refined_meshD_path, clamp_pcd_by_bbox(mirror_bbox=mirror_bbox, depth_img_path=refined_meshD_path, f=self.f, mirror_border_mask=mirror_border_mask , plane_parameter=one_info[1]["plane"], expand_range = self.expand_range, clamp_dis = self.clamp_dis))
                     print("update depth {}".format(refined_meshD_path))
 
                 # Refine hole raw depth
                 refined_sensorD_path = os.path.join(self.data_main_folder, "refined_sensorD_{}".format(self.mask_version), depth_file_name)
-                cv2.imwrite(refined_sensorD_path, clamp_pcd_by_bbox(mirror_bbox=mirror_bbox, depth_img_path=refined_sensorD_path, f=self.f, mirror_border_mask=mirror_border_mask ,plane_parameter=one_info[1]["plane_parameter"], expand_range = self.expand_range, clamp_dis = self.clamp_dis))
+                cv2.imwrite(refined_sensorD_path, clamp_pcd_by_bbox(mirror_bbox=mirror_bbox, depth_img_path=refined_sensorD_path, f=self.f, mirror_border_mask=mirror_border_mask ,plane_parameter=one_info[1]["plane"], expand_range = self.expand_range, clamp_dis = self.clamp_dis))
                 print("update depth {}".format(refined_sensorD_path))
 
     def update_imgInfo_based_on_depth(self):

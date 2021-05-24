@@ -162,7 +162,7 @@ python annotation/plane_annotation/plane_annotation_tool.py --stage [all / 1 ~ 6
 
 ### User instruction
 
-This is an detailed instruction for our plane annotation tool. Here, we are going to annotate several samples from NYUv2:
+This is an detailed instruction for our plane annotation tool. Here, we are going to annotate several samples from NYUv2 and get the refined depth map based on the precise mask:
 
 -STEP 1: Prepare data structure: after getting the annotated mirror mask, we store the orginal data in the following format:
 
@@ -181,7 +181,7 @@ This is an detailed instruction for our plane annotation tool. Here, we are goin
     └── 686.png
 ```
 
---STEP 2: Set up annotation environment: please run the following command to set up the environment:
+- STEP 2: Set up annotation environment: please run the following command to set up the environment:
 
 ```python
 python annotation/plane_annotation/plane_annotation_tool.py --stage 1 \
@@ -212,7 +212,7 @@ Then you will get the output pointclouds, RANSAC initialized mirror plane parame
 
 
 
---STEP 3: Manully annotate the mirror plane: please run the following command to use the mirror plane annotation tool:
+- STEP 3: Manully annotate the mirror plane: please run the following command to use the mirror plane annotation tool:
 
 ```python
 python annotation/plane_annotation/plane_annotation_tool.py --stage 2 \
@@ -220,47 +220,95 @@ python annotation/plane_annotation/plane_annotation_tool.py --stage 2 \
 --f 519
 ```
 
-After running the command, it will open a window with a pointcloud, here the red points are the orginal depth at mirror region, the green points are the refined mirror points generated based on RANSAC algorithm. The annotation tool have the following options:
+This command will open a window with an initialize pointcloud. (The red points in the pointcloud are the mirror reconstruction based on orginal depth map, the green points are the mirror reconstruction based on the initial refined depth based on RANSAC algorithm.) After viewing the pointcloud you will get the following options:
 
 ```shell
- OPTION : 
+ANNOTATION OPTION : 
 (1) t        : TRUE : initial plane parameter is correct
 (2) w        : WASTE : sample have error, can not be used (e.g. point cloud too noisy)
-(3) r        : REFINE : need to refine the plane parameter
-(4) back n   : BACK : return n times (e.g. back 3 : give up the recent 3 annotated sample and go back)
-(5) goto n   : GOTO : goto the n th image (e.g. goto 3 : go to the third image
-(6) n        : NEXT : goto next image without annotation
-(7) a        : ADJUST: adjust one sample repeatedly
-(8) exit     : EXIT : save and exit
+(3) back n   : BACK : return n times (e.g. back 3 : give up the recent 3 annotated sample and go back)
+(4) goto n   : GOTO : goto the n th image (e.g. goto 3 : go to the third image
+(5) n        : NEXT : goto next image without annotation
+(6) a        : ADJUST: adjust one sample repeatedly
+(7) exit     : EXIT : save and exit
 ```
 
-- `a` ADJUST: adjust one sample repeatedly. The ADJUST option have three more options:
+
+If you want to further annotate the mirror plane, please input option `a` (ADJUST). 
+
+`a ADJUST` have the following options:
+
 
 ```shell
-OPTION : 
+ADJUST ONE SAMPLE OPTION : 
 (1) f        : FINISH : update refined_sensorD/ refined_meshD/ img_info and EXIT
 (2) a        : ADJUST : adjust the plane parameter based on current plane parameter
 (3) i        : INIT : pick 3 points to initialize the plane
 ```
 
-Then you can get the window:
+# TODO add pick point pic
+This shows the user interface to pick 3 points to initialize the plane (option `i`). Press `shift + left click` to select a point; press `shirt + right click` to unselect; for more detail please refer to [Open3d instruction](http://www.open3d.org/docs/release/tutorial/visualization/interactive_visualization.html).
 
-# TODO add pic
-- Adjust the plane 
+
+
+# TODO add blue plane pic
+This shows the user interface to adjust the plane parameter based on current plane parameter (option `a`). To adjust the light blue plane please follow:
 
 ```shell
-	OPTION : 
-	(1) a        : plane move left
-	(2) w        : plane move up
-	(3) s        : plane move down
-	(4) d        : plane move right
-	(5) e        : plane move closer
-	(6) r        : plane move futher
-	(7) i        : make the plane larger
-	(8) k        : make the plane smaller
-	(9) j        : rotate left
-	(10) l        : rotate right
-	(11) o        : rotate upwards
-	(12) p        : rotate downwards
+ADJUST ONE PLANE OPTION : 
+(1) a        : plane move left
+(2) w        : plane move up
+(3) s        : plane move down
+(4) d        : plane move right
+(5) e        : plane move closer
+(6) r        : plane move futher
+(7) i        : make the plane larger
+(8) k        : make the plane smaller
+(9) j        : rotate left
+(10) l       : rotate right
+(11) o       : rotate upwards
+(12) p       : rotate downwards
 ```
-- Pick three point to initialize the (light blue) plane
+
+
+- STEP 4:  Generate refined depth map: please run the following command to generate refined depth map from original depth map
+
+```python
+python annotation/plane_annotation/plane_annotation_tool.py --stage 3 \
+--data_main_folder figure/anno-tool-example/nyu \
+--f 519
+```
+
+- STEP 5: Generate video for verification: please run the following command to generate videos for verification. The videos contains the topdown view and front view of the refined pointcloud. The output refined pointcloud is generated based on the refiend depth we get in STEP 4 and the source color image.
+
+```python
+python visualization/dataset_visualization.py --stage all \
+--data_main_folder figure/anno-tool-example/nyu \
+--f 519
+```
+
+
+-- STEP 6: Launch webpage to view the videos: please run the following command to launch a webite to view the video generated in STEP 5.
+
+```python
+python annotation/plane_annotation/verification.py \
+--stage 1 \
+--data_main_folder figure/anno-tool-example/nyu \
+--video_main_folder [folder that contains "video_front, video_topdown .. etc" folders] \
+--output_folder figure/anno-tool-example/nyu/html \
+--video_num_per_page 10
+
+```
+
+-- STEP 7: Copy/ move out the error sample's data to another folder for reannotation. 
+
+
+```python
+python annotation/plane_annotation/verification.py \
+--stage 2 \
+--data_main_folder figure/anno-tool-example/nyu \
+--output_folder figure/anno-tool-example/nyu_reannoatate \
+--error_list [.txt that contains the error samples' name (without file name extension); error sample is the sample with wrong annotation] \
+--waste_list [.txt that contains the waste samples' name (without file name extension); waste sample is the sample to waste] \
+--move [bool, if ture it will move out all the error samples' information, if false, it will copy out all the error samples' information]
+```
