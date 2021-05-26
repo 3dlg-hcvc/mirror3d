@@ -6,12 +6,21 @@ import random
 import time
 import numpy as np
 import cv2
-import pdb
 import math
 from PIL import Image
 import matplotlib.pyplot as plt
 from utils.algorithm import *
 import shutil
+
+def read_plane_json(json_path):
+    with open(json_path, 'r') as j:
+        info = json.loads(j.read())
+    plane_info = dict()
+    for item in info:
+        plane_info[item["mask_id"]] = dict()
+        plane_info[item["mask_id"]]["plane_parameter"] = item["plane"]
+        plane_info[item["mask_id"]]["mirror_normal"] = item["normal"]
+    return plane_info
 
 def check_converge(score_list=[], check_freq=2, change_ratio_threshold=0.03, logger=None):
     if logger:
@@ -79,20 +88,17 @@ def save_html(save_path, content):
     print("html saved to {}".format(save_path))
 
 def save_plane_parameter_2_json(plane_parameter, one_plane_para_save_path, instance_index):
-
-    sample_id = "{}_{}_{}".format(instance_index[0], instance_index[1], instance_index[2])
+    sample_id = '%02x%02x%02x' % (instance_index[0],instance_index[1],instance_index[2]) # BGR
     if os.path.exists(one_plane_para_save_path):
         with open(one_plane_para_save_path, 'r') as j:
             img_info = json.loads(j.read())
     else:
-        img_info = dict()
-    img_info[str(sample_id)] = dict()
-    img_info[str(sample_id)]["plane_parameter"] = list(plane_parameter)
-    img_info[str(sample_id)]["mirror_normal"] = list(plane_parameter[:-1])
-    angle_degree = angle(np.array(plane_parameter[:-1]), np.array([0,0,1]))
-    if angle_degree > 90 and angle_degree <= 180:
-        angle_degree = 180 - angle_degree
-    img_info[str(sample_id)]["angle"] = angle_degree
+        img_info = []
+    one_info = dict()
+    one_info["plane"] = list(plane_parameter)
+    one_info["normal"] = list(unit_vector(list(plane_parameter[:-1])))
+    one_info["mask_id"] = sample_id
+    img_info.append(one_info)
     save_json(one_plane_para_save_path,img_info)
 
 def get_all_fileAbsPath_under_folder(folder_path):

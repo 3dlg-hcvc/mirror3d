@@ -14,6 +14,58 @@ from sympy import *
 from PIL import Image, ImageDraw
 
 # ---------------------------------------------------------------------------- #
+#                   get vector from begin to end                               #
+# ---------------------------------------------------------------------------- #
+
+def get_cross_prod_mat(pVec_Arr):
+    # pVec_Arr shape (3)
+    qCross_prod_mat = np.array([
+        [0, -pVec_Arr[2], pVec_Arr[1]], 
+        [pVec_Arr[2], 0, -pVec_Arr[0]],
+        [-pVec_Arr[1], pVec_Arr[0], 0],
+    ])
+    return qCross_prod_mat
+
+
+def caculate_align_mat(pVec_Arr):
+    scale = np.linalg.norm(pVec_Arr)
+    pVec_Arr = pVec_Arr/ scale
+    # must ensure pVec_Arr is also a unit vec. 
+    z_unit_Arr = np.array([0,0,1])
+    z_mat = get_cross_prod_mat(z_unit_Arr)
+
+    z_c_vec = np.matmul(z_mat, pVec_Arr)
+    z_c_vec_mat = get_cross_prod_mat(z_c_vec)
+
+    if np.dot(z_unit_Arr, pVec_Arr) == -1:
+        qTrans_Mat = -np.eye(3, 3)
+    elif np.dot(z_unit_Arr, pVec_Arr) == 1:   
+        qTrans_Mat = np.eye(3, 3)
+    else:
+        qTrans_Mat = np.eye(3, 3) + z_c_vec_mat + np.matmul(z_c_vec_mat,
+                                                    z_c_vec_mat)/(1 + np.dot(z_unit_Arr, pVec_Arr))
+
+    qTrans_Mat *= scale
+    return qTrans_Mat
+
+
+def get_mesh_by_start_end(begin, end, color=[0.6,0.6,1], vec_len=1):
+    import open3d as o3d
+    vec_Arr = np.array(end) - np.array(begin)
+    rot_mat = np.float32(caculate_align_mat(vec_Arr))
+    mesh_arrow = o3d.geometry.TriangleMesh.create_arrow(
+    cone_height= 0.2 * vec_len, 
+    cone_radius= 0.08 * vec_len, 
+    cylinder_height= 0.8 * vec_len,
+    cylinder_radius=  0.02 * vec_len
+    )
+    mesh_arrow.paint_uniform_color(color)
+
+    mesh_arrow.rotate(rot_mat, center=(0, 0, 0))
+    mesh_arrow.translate(np.array(begin)) 
+    return mesh_arrow
+
+# ---------------------------------------------------------------------------- #
 #                   get grayscale mask from 3 channels's mask                  #
 # ---------------------------------------------------------------------------- #
 def get_grayscale_instanceMask(mask, instance_index):
@@ -487,10 +539,7 @@ def get_pcd_from_rgbd_depthPath(f, depth_img_path, color_img_path, mirror_mask=N
                     colors.append([0,0,1])
                 xyz.append([(x - w/2) * (d[y][x]/f),(y - h/2) * (d[y][x]/f),d[y][x]])
             else:
-                if color is not None:
-                    colors.append(color)
-                else:
-                    colors.append(color_img[y][x])
+                colors.append(color_img[y][x])
                 xyz.append([(x - w/2) * (d[y][x]/f),(y - h/2) * (d[y][x]/f),d[y][x]])
 
     pcd = o3d.geometry.PointCloud()
@@ -855,7 +904,7 @@ def get_parameter_from_plane_adjustment(pcd, camera_plane, adjustment_init_step_
     option_list.add_option("s", "plane move down")
     option_list.add_option("d", "plane move right")
     option_list.add_option("e", "plane move closer")
-    option_list.add_option("r", "plane move futher")
+    option_list.add_option("r", "plane move further")
     option_list.add_option("i", "make the plane larger")
     option_list.add_option("k", "make the plane smaller")
     option_list.add_option("j", "rotate left")

@@ -882,13 +882,6 @@ class Dataset_visulization(Dataset_visulization):
                         new_tr.append(one_blank)
                         is_first_col = False
 
-                    # Append RMSE map to one line in HTML
-                    one_color_img = soup.new_tag("td")
-                    one_color_img["class"] = "one-item"
-                    one_RMSE_map = os.path.relpath(one_RMSE_map, self.output_folder)
-                    one_color_img.append(soup.new_tag('img', src=one_RMSE_map))
-                    new_tr.append(one_color_img)
-
                     # Append predict depth to one line in HTML
                     one_color_img = soup.new_tag("td")
                     one_color_img["class"] = "one-item"
@@ -896,6 +889,15 @@ class Dataset_visulization(Dataset_visulization):
                     one_color_img.append(soup.new_tag('img', src=one_predD_map))
                     new_tr.append(one_color_img)
 
+
+                    # Append RMSE map to one line in HTML
+                    one_color_img = soup.new_tag("td")
+                    one_color_img["class"] = "one-item"
+                    one_RMSE_map = os.path.relpath(one_RMSE_map, self.output_folder)
+                    one_color_img.append(soup.new_tag('img', src=one_RMSE_map))
+                    new_tr.append(one_color_img)
+
+                    
                     # Append one_topdown_view_img image to one line in HTML
                     one_color_img = soup.new_tag("td")
                     one_color_img["class"] = "one-item"
@@ -936,7 +938,7 @@ class Dataset_visulization(Dataset_visulization):
                         if self.is_matterport3d:
                             text.string = "MP3D-mesh-raw "
                         else:
-                            text.string = "MP3D-mesh"
+                            text.string = "NYUv2-raw"
                         text["style"] = "text-align: center; margin-top:0"
                         one_blank.append(text)                       
                         heading.append(one_blank)

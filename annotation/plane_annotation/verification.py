@@ -49,44 +49,42 @@ class Verification():
         re_anno_id_list = set(error_id_list) - set(invalid_id_list)
 
         # move invalid sample to "only_mask" folder
-        color_image_folder = os.path.join(self.data_main_folder, "raw")
+        color_image_folder = os.path.join(self.data_main_folder, "mirror_color_images")
         color_name_list = os.listdir(color_image_folder)
         color_name_list.sort()
         for one_color_img_name in color_name_list:
             color_img_path = os.path.join(color_image_folder, one_color_img_name)
             sample_id = color_img_path.split("/")[-1].split(".")[0]
             if sample_id in invalid_id_list:
-
                 if self.is_matterport3d:
                     depth_sample_id = "{}_{}_{}".format(sample_id.split("_")[0], sample_id.split("_")[1].replace("i", "d"), sample_id.split("_")[2])
                     command = "find {} -type f | grep {}".format(self.data_main_folder, depth_sample_id)
                     for src_path in os.popen(command).readlines():
                         src_path = src_path.strip()
-                        dst_path = src_path.replace("with_mirror", "only_mask")
                         dst_folder = os.path.split(dst_path)[0]
                         if os.path.exists(dst_path) and move:
                             continue
                         os.makedirs(dst_folder, exist_ok=True)
                         if move:
-                            print("moving {} to only_mask {}".format(src_path, dst_folder))
+                            print("moving {} to {}".format(src_path, dst_folder))
                             shutil.move(src_path, dst_folder)
                         else:
-                            print("copying {} to only_mask {}".format(src_path, dst_folder))
+                            print("copying {} to {}".format(src_path, dst_folder))
                             shutil.copy(src_path, dst_path)
 
                 command = "find {} -type f | grep {}".format(self.data_main_folder, sample_id)
                 for src_path in os.popen(command).readlines():
                     src_path = src_path.strip()
-                    dst_path = src_path.replace("with_mirror", "only_mask")
+                    dst_path = os.path.join(self.output_folder, src_path.split("/")[-2], src_path.split("/")[-1])
                     dst_folder = os.path.split(dst_path)[0]
                     if os.path.exists(dst_path) and move:
                         continue
                     os.makedirs(dst_folder, exist_ok=True)
                     if move:
-                        print("moving {} to only_mask {}".format(src_path, dst_folder))
+                        print("moving {} to {}".format(src_path, dst_folder))
                         shutil.move(src_path, dst_folder)
                     else:
-                        print("copying {} to only_mask {}".format(src_path, dst_folder))
+                        print("copying {} to {}".format(src_path, dst_folder))
                         shutil.copy(src_path, dst_path)
 
                 
@@ -155,7 +153,7 @@ class Verification():
                         one_path = os.path.join(self.video_main_folder, i, one_video_name)
                         if one_path.find("mesh") > 0 and self.is_matterport3d:
                             one_line_video.append(one_path)
-                        if one_path.find("hole") > 0 and not self.show_mesh_depth:
+                        if one_path.find("sensor") > 0 and not self.show_mesh_depth:
                             one_line_video.append(one_path)
 
                 else: 
@@ -185,7 +183,7 @@ class Verification():
                 one_video_path = one_line_video[0]
                 color_img = soup.new_tag("div")
                 color_img["class"] = "one-item"
-                color_img_path = os.path.relpath(os.path.join(self.data_main_folder, "raw", "{}.png".format(one_video_path.split("/")[-1].split("_idx_")[0])), self.output_folder)
+                color_img_path = os.path.relpath(os.path.join(self.data_main_folder, "mirror_color_images", "{}.jpg".format(one_video_path.split("/")[-1].split("_idx_")[0])), self.output_folder)
                 color_img.append(soup.new_tag('img', src=color_img_path))
                 one_color_img.append(color_img)
                 new_div.append(one_color_img)
@@ -195,14 +193,14 @@ class Verification():
                 colored_depth = soup.new_tag("div")
                 colored_depth["class"] = "one-item"
                 if self.is_matterport3d:
-                    sample_name = rreplace(color_img_path.split("/")[-1], "i", "d")
+                    sample_name = rreplace(color_img_path.split("/")[-1], "i", "d").replace(".jpg",".png")
                     if self.show_mesh_depth:
-                        colored_depth_path = os.path.relpath(os.path.join(self.video_main_folder,  "mesh_refined_colored_depth", sample_name),self.output_folder)
+                        colored_depth_path = os.path.relpath(os.path.join(self.video_main_folder,  "refined_mesh_colored_depth", sample_name),self.output_folder)
                     else:
-                        colored_depth_path = os.path.relpath(os.path.join(self.video_main_folder,  "hole_refined_colored_depth", sample_name),self.output_folder)
+                        colored_depth_path = os.path.relpath(os.path.join(self.video_main_folder,  "refined_sensorD_colored_depth", sample_name),self.output_folder)
                 else:
-                    sample_name = color_img_path.split("/")[-1]
-                    colored_depth_path = os.path.relpath(os.path.join(self.video_main_folder,  "hole_refined_colored_depth", sample_name),self.output_folder)
+                    sample_name = color_img_path.split("/")[-1].replace(".jpg",".png")
+                    colored_depth_path = os.path.relpath(os.path.join(self.video_main_folder,  "refined_sensorD_colored_depth", sample_name),self.output_folder)
                 colored_depth.append(soup.new_tag('img', src=colored_depth_path))
                 one_colored_depth.append(colored_depth)
                 new_div.append(one_colored_depth)
