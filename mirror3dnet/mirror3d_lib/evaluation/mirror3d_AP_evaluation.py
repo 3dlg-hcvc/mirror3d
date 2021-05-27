@@ -530,6 +530,12 @@ def _evaluate_predictions_on_coco(coco_gt, coco_results, iou_type, kpt_oks_sigma
 
 
     if cfg.EVAL_CLS_AP:
+
+        coco_eval.evaluate_degree_ap()
+        coco_eval.accumulate()
+        print("#################################### {:20} ####################################".format("10 degree mAP"))
+        coco_eval.chris_summarize("10 degree")
+
         coco_eval.evaluate()
         coco_eval.accumulate()
         print("#################################### {:20} ####################################".format("classification mAP"))

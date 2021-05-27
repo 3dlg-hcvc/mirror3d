@@ -23,7 +23,7 @@ class Plane_annotation_tool():
     """
     def __init__(self, data_main_folder=None, process_index=0, multi_processing=False, border_width=50, f=519, anno_output_folder=None, mask_version="precise"):
         """
-        Initilization
+        Initilizationse
 
         Args:
             data_main_folder : Folder raw, raw_sensorD/ raw_meshD, instance_mask saved folder.
@@ -46,7 +46,10 @@ class Plane_annotation_tool():
         else:
             self.is_matterport3d = True
         self.check_file()
+
+
         self.color_img_list = [os.path.join(data_main_folder, "mirror_color_images", i) for i in os.listdir(os.path.join(data_main_folder, "mirror_color_images"))]
+        
         self.color_img_list.sort()
         if multi_processing:
             self.color_img_list = self.color_img_list[process_index:process_index+1]
@@ -457,6 +460,8 @@ class Plane_annotation_tool():
                     if os.path.exists(refined_meshD_path):
                         raw_meshD_path = refined_meshD_path
                     cv2.imwrite(refined_meshD_path, refine_depth_with_plane_parameter_mask(plane_parameter, binary_instance_mask, cv2.imread(raw_meshD_path,cv2.IMREAD_ANYDEPTH),self.f))
+                    if os.path.exists(refined_meshD_path) and not self.overwrite:
+                        continue
                     print("update depth {}".format(refined_meshD_path))
                 else:
                     depth_file_name = "{}.png".format(smaple_name)
@@ -467,6 +472,8 @@ class Plane_annotation_tool():
                 # If there's refined depth; refine the refiend depth
                 if os.path.exists(refined_sensorD_path):
                     raw_sensorD_path = refined_sensorD_path
+                if os.path.exists(refined_sensorD_path) and not self.overwrite:
+                    continue
                 cv2.imwrite(refined_sensorD_path, refine_depth_with_plane_parameter_mask(plane_parameter, binary_instance_mask, cv2.imread(raw_sensorD_path,cv2.IMREAD_ANYDEPTH),self.f))
                 print("update depth {}".format(refined_sensorD_path))
 
@@ -879,9 +886,11 @@ if __name__ == "__main__":
     elif args.stage == "2":
         plane_anno_tool = Plane_annotation_tool(mask_version=args.mask_version, data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
         plane_anno_tool.set_show_plane(args.anno_show_plane)
+        plane_anno_tool.set_overwrite(args.overwrite)
         plane_anno_tool.anno_plane_update_imgInfo()
     elif args.stage == "3":
         plane_anno_tool = Plane_annotation_tool(mask_version=args.mask_version, data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
+        plane_anno_tool.set_overwrite(args.overwrite)
         plane_anno_tool.anno_update_depth_from_imgInfo()
     elif args.stage == "4": 
         plane_anno_tool = Data_post_processing(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder, expand_range=args.expand_range, clamp_dis=args.clamp_dis)

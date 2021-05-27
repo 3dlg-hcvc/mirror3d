@@ -3,7 +3,7 @@
 # # python init_depth_generator/saic_depth_completion/init_depth_gen_infer.py \
 # # --resume_checkpoint_path /local-scratch/jiaqit/exp/Mirror3D/checkpoint/m3d/val_converge/saic_rawD.pth \
 # # --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_all.json \
-# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
 # # --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_focal_len 537 \
@@ -17,7 +17,7 @@
 # # --refined_depth \
 # # --resume_checkpoint_path /local-scratch/jiaqit/exp/Mirror3D/checkpoint/m3d/val_converge/saic_refD.pth \
 # # --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_all.json \
-# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
 # # --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_focal_len 537 \
@@ -30,7 +30,7 @@
 # # python init_depth_generator/bts/pytorch/init_depth_gen_infer.py \
 # # --resume_checkpoint_path /local-scratch/jiaqit/exp/Mirror3D/checkpoint/m3d/val_converge/bts_rawD \
 # # --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_all.json \
-# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
 # # --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_focal_len 537 \
@@ -45,7 +45,7 @@
 # # --refined_depth \
 # # --resume_checkpoint_path /local-scratch/jiaqit/exp/Mirror3D/checkpoint/m3d/val_converge/bts_refD \
 # # --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_all.json \
-# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
 # # --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_focal_len 537 \
@@ -59,7 +59,7 @@
 # # python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.py \
 # # --resume_checkpoint_path /local-scratch/jiaqit/exp/Mirror3D/checkpoint/m3d/val_converge/vnl_rawD.pth \
 # # --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_all.json \
-# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
 # # --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_focal_len 537 \
@@ -74,7 +74,7 @@
 # # --refined_depth \
 # # --resume_checkpoint_path /local-scratch/jiaqit/exp/Mirror3D/checkpoint/m3d/val_converge/vnl_refD.pth \
 # # --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_all.json \
-# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
 # # --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_focal_len 537 \
@@ -95,7 +95,7 @@
 # #     --resume_checkpoint_path /local-scratch/jiaqit/exp/Mirror3D/checkpoint/m3d/m3d_noraml_10.pth \
 # #     --config mirror3dnet/config/mirror3dnet_normal_config.yml \
 # #     --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
-# #     --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+# #     --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
 # #     --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # #     --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # #     --coco_focal_len 537 \
@@ -112,27 +112,27 @@
 # #     --to_ref_txt $one_txt
 # # done
 
-# echo "PlaneRCNN rawD inference 0"
-# python mirror3dnet/run_mirror3dnet.py \
-# --eval \
-# --mesh_depth \
-# --eval_save_depth \
-# --resume_checkpoint_path /project/3dlg-hcvc/mirrors/www/final_result/checkpoint/m3d_dt2_new/planercnn_rawD_0.pth \
-# --config mirror3dnet/config/planercnn_config.yml \
-# --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
-# --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
-# --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
-# --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
-# --coco_focal_len 537 \
-# --depth_shift 4000 \
-# --input_height 512 \
-# --input_width 640 \
-# --batch_size 1 \
-# --checkpoint_save_freq 1500 \
-# --num_epochs 100 \
-# --learning_rate 1e-4 \
-# --log_directory /project/3dlg-hcvc/mirrors/www/final_result/m3d_final \
-# --anchor_normal_npy /project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy
+echo "PlaneRCNN rawD inference 0"
+python mirror3dnet/run_mirror3dnet.py \
+--eval \
+--mesh_depth \
+--eval_save_depth \
+--resume_checkpoint_path /project/3dlg-hcvc/mirrors/www/final_result/checkpoint/m3d_dt2_new/planercnn_rawD_0.pth \
+--config mirror3dnet/config/planercnn_config.yml \
+--coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
+--coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
+--coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+--coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+--coco_focal_len 537 \
+--depth_shift 4000 \
+--input_height 512 \
+--input_width 640 \
+--batch_size 1 \
+--checkpoint_save_freq 1500 \
+--num_epochs 100 \
+--learning_rate 1e-4 \
+--log_directory /project/3dlg-hcvc/mirrors/www/final_result/m3d_final \
+--anchor_normal_npy /project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy
 
 # # echo "PlaneRCNN rawD inference 1"
 # # python mirror3dnet/run_mirror3dnet.py \
@@ -142,7 +142,7 @@
 # # --resume_checkpoint_path /project/3dlg-hcvc/mirrors/www/final_result/checkpoint/m3d_dt2_new/planercnn_rawD_1.pth \
 # # --config mirror3dnet/config/planercnn_config.yml \
 # # --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
-# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
 # # --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_focal_len 537 \
@@ -164,7 +164,7 @@
 # # --resume_checkpoint_path /project/3dlg-hcvc/mirrors/www/final_result/checkpoint/m3d_dt2_new/planercnn_rawD_2.pth \
 # # --config mirror3dnet/config/planercnn_config.yml \
 # # --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
-# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
 # # --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_focal_len 537 \
@@ -179,28 +179,28 @@
 # # --anchor_normal_npy /project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy
 
 
-# # echo "PlaneRCNN refD inference 0"
-# python mirror3dnet/run_mirror3dnet.py \
-# --eval \
-# --mesh_depth \
-# --eval_save_depth \
-# --resume_checkpoint_path /project/3dlg-hcvc/mirrors/www/final_result/checkpoint/m3d_dt2_new/planercnn_refD_0.pth \
-# --config mirror3dnet/config/planercnn_config.yml \
-# --refined_depth \
-# --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
-# --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
-# --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
-# --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
-# --coco_focal_len 537 \
-# --depth_shift 4000 \
-# --input_height 512 \
-# --input_width 640 \
-# --batch_size 1 \
-# --checkpoint_save_freq 1500 \
-# --num_epochs 100 \
-# --learning_rate 1e-4 \
-# --log_directory /project/3dlg-hcvc/mirrors/www/final_result/m3d_final \
-# --anchor_normal_npy /project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy
+# echo "PlaneRCNN refD inference 0"
+python mirror3dnet/run_mirror3dnet.py \
+--eval \
+--mesh_depth \
+--eval_save_depth \
+--resume_checkpoint_path /project/3dlg-hcvc/mirrors/www/final_result/checkpoint/m3d_dt2_new/planercnn_refD_0.pth \
+--config mirror3dnet/config/planercnn_config.yml \
+--refined_depth \
+--coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
+--coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
+--coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+--coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+--coco_focal_len 537 \
+--depth_shift 4000 \
+--input_height 512 \
+--input_width 640 \
+--batch_size 1 \
+--checkpoint_save_freq 1500 \
+--num_epochs 100 \
+--learning_rate 1e-4 \
+--log_directory /project/3dlg-hcvc/mirrors/www/final_result/m3d_final \
+--anchor_normal_npy /project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy
 
 # # echo "PlaneRCNN refD inference 1"
 # # python mirror3dnet/run_mirror3dnet.py \
@@ -211,7 +211,7 @@
 # # --config mirror3dnet/config/planercnn_config.yml \
 # # --refined_depth \
 # # --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
-# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
 # # --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_focal_len 537 \
@@ -234,7 +234,7 @@
 # # --config mirror3dnet/config/planercnn_config.yml \
 # # --refined_depth \
 # # --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
-# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
 # # --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_focal_len 537 \
@@ -248,27 +248,27 @@
 # # --log_directory /project/3dlg-hcvc/mirrors/www/final_result/m3d_final \
 # # --anchor_normal_npy /project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy
 
-# echo "Mirror3DNet rawD inference 0"
-# python mirror3dnet/run_mirror3dnet.py \
-# --eval \
-# --mesh_depth \
-# --eval_save_depth \
-# --resume_checkpoint_path /project/3dlg-hcvc/mirrors/www/final_result/checkpoint/m3d_dt2_new/m3n_rawD_0.pth \
-# --config mirror3dnet/config/mirror3dnet_config.yml \
-# --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
-# --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
-# --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
-# --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
-# --coco_focal_len 537 \
-# --depth_shift 4000 \
-# --input_height 512 \
-# --input_width 640 \
-# --batch_size 1 \
-# --checkpoint_save_freq 1500 \
-# --num_epochs 100 \
-# --learning_rate 1e-4 \
-# --log_directory /project/3dlg-hcvc/mirrors/www/final_result/m3d_final \
-# --anchor_normal_npy /project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy
+echo "Mirror3DNet rawD inference 0"
+python mirror3dnet/run_mirror3dnet.py \
+--eval \
+--mesh_depth \
+--eval_save_depth \
+--resume_checkpoint_path /project/3dlg-hcvc/mirrors/www/final_result/checkpoint/m3d_dt2_new/m3n_rawD_0.pth \
+--config mirror3dnet/config/mirror3dnet_config.yml \
+--coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
+--coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
+--coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+--coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+--coco_focal_len 537 \
+--depth_shift 4000 \
+--input_height 512 \
+--input_width 640 \
+--batch_size 1 \
+--checkpoint_save_freq 1500 \
+--num_epochs 100 \
+--learning_rate 1e-4 \
+--log_directory /project/3dlg-hcvc/mirrors/www/final_result/m3d_final \
+--anchor_normal_npy /project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy
 
 
 # # echo "Mirror3DNet rawD inference 1"
@@ -279,7 +279,7 @@
 # # --resume_checkpoint_path /project/3dlg-hcvc/mirrors/www/final_result/checkpoint/m3d_dt2_new/m3n_rawD_1.pth \
 # # --config mirror3dnet/config/mirror3dnet_config.yml \
 # # --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
-# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
 # # --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_focal_len 537 \
@@ -301,7 +301,7 @@
 # # --resume_checkpoint_path /project/3dlg-hcvc/mirrors/www/final_result/checkpoint/m3d_dt2_new/m3n_rawD_2.pth \
 # # --config mirror3dnet/config/mirror3dnet_config.yml \
 # # --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
-# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
 # # --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_focal_len 537 \
@@ -315,28 +315,28 @@
 # # --log_directory /project/3dlg-hcvc/mirrors/www/final_result/m3d_final \
 # # --anchor_normal_npy /project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy
 
-# echo "Mirror3DNet refD inference 0"
-# python mirror3dnet/run_mirror3dnet.py \
-# --eval \
-# --mesh_depth \
-# --eval_save_depth \
-# --resume_checkpoint_path /project/3dlg-hcvc/mirrors/www/final_result/checkpoint/m3d_dt2_new/m3n_refD_0.pth \
-# --config mirror3dnet/config/mirror3dnet_config.yml \
-# --refined_depth \
-# --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
-# --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
-# --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
-# --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
-# --coco_focal_len 537 \
-# --depth_shift 4000 \
-# --input_height 512 \
-# --input_width 640 \
-# --batch_size 1 \
-# --checkpoint_save_freq 1500 \
-# --num_epochs 100 \
-# --learning_rate 1e-4 \
-# --log_directory /project/3dlg-hcvc/mirrors/www/final_result/m3d_final \
-# --anchor_normal_npy /project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy
+echo "Mirror3DNet refD inference 0"
+python mirror3dnet/run_mirror3dnet.py \
+--eval \
+--mesh_depth \
+--eval_save_depth \
+--resume_checkpoint_path /project/3dlg-hcvc/mirrors/www/final_result/checkpoint/m3d_dt2_new/m3n_refD_0.pth \
+--config mirror3dnet/config/mirror3dnet_config.yml \
+--refined_depth \
+--coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
+--coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
+--coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+--coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+--coco_focal_len 537 \
+--depth_shift 4000 \
+--input_height 512 \
+--input_width 640 \
+--batch_size 1 \
+--checkpoint_save_freq 1500 \
+--num_epochs 100 \
+--learning_rate 1e-4 \
+--log_directory /project/3dlg-hcvc/mirrors/www/final_result/m3d_final \
+--anchor_normal_npy /project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy
 
 
 # # echo "Mirror3DNet refD inference 1"
@@ -348,7 +348,7 @@
 # # --config mirror3dnet/config/mirror3dnet_config.yml \
 # # --refined_depth \
 # # --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
-# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
 # # --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_focal_len 537 \
@@ -371,7 +371,7 @@
 # # --config mirror3dnet/config/mirror3dnet_config.yml \
 # # --refined_depth \
 # # --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
-# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
 # # --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_focal_len 537 \
@@ -464,7 +464,7 @@
 # # --config mirror3dnet/config/mirror3dnet_normal_config.yml \
 # # --refined_depth \
 # # --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
-# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
 # # --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_focal_len 537 \
@@ -478,28 +478,28 @@
 # # --log_directory /project/3dlg-hcvc/mirrors/www/final_result/m3d_final \
 # # --anchor_normal_npy /project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy
 
-# # echo "Mirror3DNet 12 normal inference"
-# # python mirror3dnet/run_mirror3dnet.py \
-# # --eval \
-# # --mesh_depth \
-# # --eval_save_depth \
-# # --resume_checkpoint_path /local-scratch/jiaqit/exp/Mirror3D/checkpoint/m3d/m3d_noraml_12.pth \
-# # --config mirror3dnet/config/mirror3dnet_normal_config.yml \
-# # --refined_depth \
-# # --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_12_normal_mirror.json \
-# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_12_normal_mirror.json \
-# # --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
-# # --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
-# # --coco_focal_len 537 \
-# # --depth_shift 4000 \
-# # --input_height 512 \
-# # --input_width 640 \
-# # --batch_size 1 \
-# # --checkpoint_save_freq 1500 \
-# # --num_epochs 100 \
-# # --learning_rate 1e-4 \
-# # --log_directory /project/3dlg-hcvc/mirrors/www/final_result/m3d_final \
-# # --anchor_normal_npy /project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_12.npy
+# echo "Mirror3DNet 12 normal inference"
+# python mirror3dnet/run_mirror3dnet.py \
+# --eval \
+# --mesh_depth \
+# --eval_save_depth \
+# --resume_checkpoint_path /local-scratch/jiaqit/exp/Mirror3D/checkpoint/m3d/m3d_noraml_12.pth \
+# --config mirror3dnet/config/mirror3dnet_normal_config.yml \
+# --refined_depth \
+# --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_12_normal_mirror.json \
+# --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_12_normal_mirror.json \
+# --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+# --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+# --coco_focal_len 537 \
+# --depth_shift 4000 \
+# --input_height 512 \
+# --input_width 640 \
+# --batch_size 1 \
+# --checkpoint_save_freq 1500 \
+# --num_epochs 100 \
+# --learning_rate 1e-4 \
+# --log_directory /project/3dlg-hcvc/mirrors/www/final_result/m3d_final \
+# --anchor_normal_npy /project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_12.npy
 
 
 
@@ -511,7 +511,7 @@
 # # --config mirror3dnet/config/mirror3dnet_normal_config.yml \
 # # --refined_depth \
 # # --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
-# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
 # # --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --anchor_normal_npy /project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
@@ -534,7 +534,7 @@
 # # --config mirror3dnet/config/mirror3dnet_normal_config.yml \
 # # --refined_depth \
 # # --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
-# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
 # # --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --anchor_normal_npy /project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
@@ -557,7 +557,7 @@
 # # --config mirror3dnet/config/mirror3dnet_normal_config.yml \
 # # --refined_depth \
 # # --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
-# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
+# # --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
 # # --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
 # # --anchor_normal_npy /project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
@@ -619,24 +619,143 @@
 # # --log_directory /project/3dlg-hcvc/mirrors/www/final_result/m3d_final \
 # # --ref_mode rawD_border
 
-echo "rawD + Mirror3dNet 0 border 50"
-python mirror3dnet/run_mirror3dnet.py \
---eval \
---resume_checkpoint_path /project/3dlg-hcvc/mirrors/www/final_result/checkpoint/m3d_final/m3n_normal_10_0.pth \
---config mirror3dnet/config/mirror3dnet_normal_config.yml \
---refined_depth \
---coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
---coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/test_10_normal_mirror.json \
---coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
---coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
---anchor_normal_npy /project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
---coco_focal_len 537 \
---depth_shift 4000 \
---input_height 512 \
---input_width 640 \
---batch_size 1 \
---checkpoint_save_freq 1500 \
---num_epochs 100 \
---learning_rate 1e-4 \
---log_directory /project/3dlg-hcvc/mirrors/www/final_result/m3d_final \
---ref_mode rawD_border
+# echo "rawD + Mirror3dNet 0 border 50"
+# python mirror3dnet/run_mirror3dnet.py \
+# --eval \
+# --resume_checkpoint_path /project/3dlg-hcvc/mirrors/www/final_result/checkpoint/m3d_final/m3n_normal_10_0.pth \
+# --config mirror3dnet/config/mirror3dnet_normal_config.yml \
+# --refined_depth \
+# --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
+# --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
+# --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+# --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+# --anchor_normal_npy /project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
+# --coco_focal_len 537 \
+# --depth_shift 4000 \
+# --input_height 512 \
+# --input_width 640 \
+# --batch_size 1 \
+# --checkpoint_save_freq 1500 \
+# --num_epochs 100 \
+# --learning_rate 1e-4 \
+# --log_directory /project/3dlg-hcvc/mirrors/www/final_result/m3d_final \
+# --ref_mode rawD_border
+
+
+
+
+# echo "3 normal inference"
+# python mirror3dnet/run_mirror3dnet.py \
+# --eval \
+# --resume_checkpoint_path /project/3dlg-hcvc/mirrors/www/final_result/checkpoint/m3d_dt2_new/m3n_normal_3.pth \
+# --config mirror3dnet/config/mirror3dnet_normal_config.yml \
+# --refined_depth \
+# --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_3_normal_mirror.json \
+# --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_3_normal_mirror.json \
+# --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+# --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+# --anchor_normal_npy /project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_3.npy \
+# --coco_focal_len 537 \
+# --depth_shift 4000 \
+# --input_height 512 \
+# --input_width 640 \
+# --batch_size 1 \
+# --checkpoint_save_freq 1500 \
+# --num_epochs 100 \
+# --learning_rate 1e-4 \
+# --log_directory /project/3dlg-hcvc/mirrors/www/final_result/m3d_final \
+# --ref_mode none
+
+
+# echo "5 normal inference"
+# python mirror3dnet/run_mirror3dnet.py \
+# --eval \
+# --resume_checkpoint_path /project/3dlg-hcvc/mirrors/www/final_result/checkpoint/m3d_dt2_new/m3n_normal_5.pth \
+# --config mirror3dnet/config/mirror3dnet_normal_config.yml \
+# --refined_depth \
+# --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_5_normal_mirror.json \
+# --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_5_normal_mirror.json \
+# --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+# --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+# --anchor_normal_npy /project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_5.npy \
+# --coco_focal_len 537 \
+# --depth_shift 4000 \
+# --input_height 512 \
+# --input_width 640 \
+# --batch_size 1 \
+# --checkpoint_save_freq 1500 \
+# --num_epochs 100 \
+# --learning_rate 1e-4 \
+# --log_directory /project/3dlg-hcvc/mirrors/www/final_result/m3d_final \
+# --ref_mode none
+
+
+
+# echo "7 normal inference"
+# python mirror3dnet/run_mirror3dnet.py \
+# --eval \
+# --resume_checkpoint_path /project/3dlg-hcvc/mirrors/www/final_result/checkpoint/m3d_dt2_new/m3n_normal_7.pth \
+# --config mirror3dnet/config/mirror3dnet_normal_config.yml \
+# --refined_depth \
+# --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_7_normal_mirror.json \
+# --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_7_normal_mirror.json \
+# --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+# --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+# --anchor_normal_npy /project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_7.npy \
+# --coco_focal_len 537 \
+# --depth_shift 4000 \
+# --input_height 512 \
+# --input_width 640 \
+# --batch_size 1 \
+# --checkpoint_save_freq 1500 \
+# --num_epochs 100 \
+# --learning_rate 1e-4 \
+# --log_directory /project/3dlg-hcvc/mirrors/www/final_result/m3d_final \
+# --ref_mode none
+
+
+# echo "10 normal inference"
+# python mirror3dnet/run_mirror3dnet.py \
+# --eval \
+# --resume_checkpoint_path /project/3dlg-hcvc/mirrors/www/final_result/checkpoint/m3d_final/m3n_normal_10_0.pth \
+# --config mirror3dnet/config/mirror3dnet_normal_config.yml \
+# --refined_depth \
+# --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_10_normal_mirror.json \
+# --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_10_normal_mirror.json \
+# --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+# --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+# --anchor_normal_npy /project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy \
+# --coco_focal_len 537 \
+# --depth_shift 4000 \
+# --input_height 512 \
+# --input_width 640 \
+# --batch_size 1 \
+# --checkpoint_save_freq 1500 \
+# --num_epochs 100 \
+# --learning_rate 1e-4 \
+# --log_directory /project/3dlg-hcvc/mirrors/www/final_result/m3d_final \
+# --ref_mode none
+
+
+
+# echo "12 normal inference"
+# python mirror3dnet/run_mirror3dnet.py \
+# --eval \
+# --resume_checkpoint_path /project/3dlg-hcvc/mirrors/www/final_result/checkpoint/m3d_dt2_new/m3n_normal_12.pth \
+# --config mirror3dnet/config/mirror3dnet_normal_config.yml \
+# --refined_depth \
+# --coco_train /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/train_12_normal_mirror.json \
+# --coco_val /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d/with_mirror/precise/network_input_json/val_12_normal_mirror.json \
+# --coco_train_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+# --coco_val_root /project/3dlg-hcvc/mirrors/www/Mirror3D_final/m3d \
+# --anchor_normal_npy /project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_12.npy \
+# --coco_focal_len 537 \
+# --depth_shift 4000 \
+# --input_height 512 \
+# --input_width 640 \
+# --batch_size 1 \
+# --checkpoint_save_freq 1500 \
+# --num_epochs 100 \
+# --learning_rate 1e-4 \
+# --log_directory /project/3dlg-hcvc/mirrors/www/final_result/m3d_final \
+# --ref_mode none

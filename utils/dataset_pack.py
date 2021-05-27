@@ -60,9 +60,11 @@ def get_delta_image(refinedD_input_folder, rawD_input_folder, output_folder):
 
     os.makedirs(output_folder, exist_ok=True)
     for one_img_name in tqdm(os.listdir(refinedD_input_folder)):
+        delta_img_save_path = os.path.join(output_folder, one_img_name)
+        if os.path.exists(delta_img_save_path):
+            continue
         refD_img_path = os.path.join(refinedD_input_folder, one_img_name)
         rawD_img_path = os.path.join(rawD_input_folder, one_img_name)
-        delta_img_save_path = os.path.join(output_folder, one_img_name)
         delta_img = cv2.imread(refD_img_path, cv2.IMREAD_ANYDEPTH) - cv2.imread(rawD_img_path, cv2.IMREAD_ANYDEPTH)
         cv2.imwrite(delta_img_save_path, delta_img.astype(np.uint16))
     print("delta image saved to : ", output_folder)
@@ -110,9 +112,9 @@ def update_coco_json(ori_json_folder):
 
 def generate_symlinks_txt_mp3d():
     output_lines = []
-    all_id = read_txt("/project/3dlg-hcvc/mirrors/www/dataset_release/temp/all.txt")
+    all_id = read_txt("/project/3dlg-hcvc/mirrors/www/dataset_release/temp/mp3d_all.txt")
     all_color_list = read_txt("/project/3dlg-hcvc/mirrors/www/dataset_release/temp/m3d_color.txt")
-    save_path = "/local-scratch/jiaqit/exp/Mirror3D/metadata/m3d_symlink.txt"
+    save_path = "/local-scratch/jiaqit/exp/Mirror3D/dataset/metadata/m3d_symlink.txt"
     for one_path in all_color_list:
         id = one_path.split("/")[-1].split(".")[0]
         if id in all_id:
@@ -173,6 +175,58 @@ def generate_symlinks_txt_scannet():
 
     save_txt(save_path, output_lines)
 
+
+def sort_mp3d_data():
+    all_color_img_list = read_txt("/project/3dlg-hcvc/mirrors/www/dataset_release/temp/m3d_color.txt")
+    unzip_main_folder = "/project/3dlg-hcvc/mirrors/www/dataset_pack/mp3d"
+    id_sceneID = dict()
+
+    for one_path in all_color_img_list:
+        scene_id = one_path.split("/")[-3]
+        img_id = one_path.split("/")[-1].split(".")[0]
+        id_sceneID[img_id] = scene_id
+
+
+    for one_folder_name in os.listdir(unzip_main_folder):
+        one_folder_path = os.path.join(unzip_main_folder, one_folder_name)
+        for one_file_name in tqdm(os.listdir(one_folder_path)):
+            src_path = os.path.join(one_folder_path, one_file_name)
+            if "png" not in src_path and "jpg" not in src_path and  "json" not in src_path:
+                continue
+            img_id = one_file_name.split(".")[0]
+            if "delta" in src_path:
+                scene_id = id_sceneID[rreplace(img_id, "d", "i")]
+            else:
+                scene_id = id_sceneID[img_id]
+            dst_folder = os.path.join(one_folder_path, scene_id)
+            os.makedirs(dst_folder,exist_ok=True)
+            shutil.move(src_path, dst_folder)
+        print("finish", one_folder_path)
+            
+
+
+
+def sort_scannet_data():
+    unzip_main_folder = "/project/3dlg-hcvc/mirrors/www/dataset_pack/scannet"
+
+    for one_folder_name in os.listdir(unzip_main_folder):
+        one_folder_path = os.path.join(unzip_main_folder, one_folder_name)
+        for one_file_name in tqdm(os.listdir(one_folder_path)):
+            src_path = os.path.join(one_folder_path, one_file_name)
+            if "png" not in src_path and "jpg" not in src_path and  "json" not in src_path:
+                continue
+            img_id = one_file_name.split(".")[0]
+            scene_id = img_id.rsplit("_", 1)[0]
+            img_frame_name = "{}.{}".format(str(int(img_id.rsplit("_", 1)[1])),one_file_name.split(".")[1]) 
+            dst_folder = os.path.join(one_folder_path, scene_id)
+            os.makedirs(dst_folder,exist_ok=True)
+            dst_path = os.path.join(dst_folder, img_frame_name)
+            shutil.move(src_path, dst_path)
+        print("finish", one_folder_path)
+            
+
+
+
     
 if __name__ == "__main__":
     # json_file_path = "/project/3dlg-hcvc/mirrors/www/dataset_release/network_input_json/nyu"
@@ -181,13 +235,17 @@ if __name__ == "__main__":
     # output_folder = "waste"
     # reformat_json(input_folder, output_folder)
 
-    refinedD_input_folder = "/project/3dlg-hcvc/mirrors/www/dataset_release/mp3d/refined_sensorD_coarse"
-    rawD_input_folder = "/project/3dlg-hcvc/mirrors/www/dataset_release/mp3d/raw_sensorD"
-    output_folder = "/project/3dlg-hcvc/mirrors/www/dataset_release/mp3d/delta_image_coarse"
-    get_delta_image(refinedD_input_folder, rawD_input_folder, output_folder)
+    # refinedD_input_folder = "/project/3dlg-hcvc/mirrors/www/dataset_release/mp3d/refined_sensorD_coarse"
+    # rawD_input_folder = "/project/3dlg-hcvc/mirrors/www/dataset_release/mp3d/raw_sensorD"
+    # output_folder = "/project/3dlg-hcvc/mirrors/www/dataset_release/mp3d/delta_image_coarse"
+    # get_delta_image(refinedD_input_folder, rawD_input_folder, output_folder)
 
 
     ############# generate symlinks 
     # generate_symlinks_txt_mp3d()
     # generate_symlinks_txt_scannet()
+
+    ########## scort mp3d data into scene_image_id 
+    sort_mp3d_data()
+    # sort_scannet_data()
 

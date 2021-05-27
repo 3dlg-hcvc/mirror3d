@@ -8,6 +8,7 @@ from pycocotools.cocoeval import COCOeval, maskUtils
 import copy
 import numpy as np
 import math
+from utils.algorithm import *
 
 class Mirror3dCOCOeval(COCOeval):
     # Interface for evaluating detection on the Microsoft COCO dataset.
@@ -163,6 +164,138 @@ class Mirror3dCOCOeval(COCOeval):
                 self._anchor_dts[dt['image_id'], dt['anchor_normal_class']].append(dt)
 
 
+    def evaluateImg_degree(self, imgId, catId, aRng, maxDet):
+        '''
+        perform evaluation for single category and image
+        :return: dict (single image results)
+        '''
+        
+        p = self.params
+        if p.useCats:
+            gt = self._gts[imgId,catId]
+            dt = self._dts[imgId,catId]
+        else:
+            gt = [_ for cId in p.catIds for _ in self._gts[imgId,cId]]
+            dt = [_ for cId in p.catIds for _ in self._dts[imgId,cId]]
+        if len(gt) == 0 and len(dt) ==0:
+            return None
+
+        for g in gt:
+            if g['ignore'] or (g['area']<aRng[0] or g['area']>aRng[1]):
+                g['_ignore'] = 1
+            else:
+                g['_ignore'] = 0
+
+        # sort dt highest score first, sort gt ignore last
+        gtind = np.argsort([g['_ignore'] for g in gt], kind='mergesort')
+        gt = [gt[i] for i in gtind]
+        dtind = np.argsort([-d['score'] for d in dt], kind='mergesort')
+        dt = [dt[i] for i in dtind[0:maxDet]]
+        iscrowd = [int(o['iscrowd']) for o in gt]
+        # load computed ious
+        ious = self.ious[imgId, catId][:, gtind] if len(self.ious[imgId, catId]) > 0 else self.ious[imgId, catId]
+
+        T = len(p.iouThrs)
+        G = len(gt)
+        D = len(dt)
+        gtm  = np.zeros((T,G))
+        dtm  = np.zeros((T,D))
+        gtIg = np.array([g['_ignore'] for g in gt])
+        dtIg = np.zeros((T,D))
+        if not len(ious)==0:
+            for tind, t in enumerate(p.iouThrs):
+                for dind, d in enumerate(dt):
+                    # information about best match so far (m=-1 -> unmatched)
+                    iou = min([t,1-1e-10])
+                    m   = -1
+                    
+
+                    for gind, g in enumerate(gt):
+                        # if this gt already matched, and not a crowd, continue
+                        if gtm[tind,gind]>0 and not iscrowd[gind]:
+                            continue
+                        # if dt matched to reg gt, and on ignore gt, stop
+                        if m>-1 and gtIg[m]==0 and gtIg[gind]==1:
+                            break
+                        # continue to next gt unless better match made
+                        if ious[dind,gind] < iou or d["anchor_normal_class"] == self.anchor_normals.shape[0]:
+                            continue
+                        # if match successful and best so far, store appropriately
+                        mirror_GT_normal = unit_vector(self.anchor_normals[g["anchor_normal_class"]] + np.array(g["anchor_normal_residual"]))
+                        mirror_pred_normal = unit_vector(self.anchor_normals[d["anchor_normal_class"]] + np.array(d["anchor_normal_residual"])) #  pred mirror normal
+                        angle_diff = angle(mirror_GT_normal, mirror_pred_normal)
+                        if angle_diff > 10:
+                            continue
+                        iou=ious[dind,gind]
+                        m=gind
+                    # if match made store id of match for both dt and gt
+                    if m ==-1:
+                        continue
+                    dtIg[tind,dind] = gtIg[m]
+                    dtm[tind,dind]  = gt[m]['id']
+                    gtm[tind,m]     = d['id']
+        # set unmatched detections outside of area range to ignore
+        a = np.array([d['area']<aRng[0] or d['area']>aRng[1] for d in dt]).reshape((1, len(dt)))
+        dtIg = np.logical_or(dtIg, np.logical_and(dtm==0, np.repeat(a,T,0)))
+        # store results for given image and category
+        return {
+                'image_id':     imgId,
+                'category_id':  catId,
+                'aRng':         aRng,
+                'maxDet':       maxDet,
+                'dtIds':        [d['id'] for d in dt],
+                'gtIds':        [g['id'] for g in gt],
+                'dtMatches':    dtm,
+                'gtMatches':    gtm,
+                'dtScores':     [d['score'] for d in dt],
+                'gtIgnore':     gtIg,
+                'dtIgnore':     dtIg,
+            }
+
+    def evaluate_degree_ap(self):
+
+        '''
+        Run per image evaluation on given images and store results (a list of dict) in self.evalImgs
+        :return: None
+        '''
+        tic = time.time()
+        print('Running per image evaluation...')
+        p = self.params
+        # add backward compatibility if useSegm is specified in params
+        if not p.useSegm is None:
+            p.iouType = 'segm' if p.useSegm == 1 else 'bbox'
+            print('useSegm (deprecated) is not None. Running {} evaluation'.format(p.iouType))
+        print('Evaluate annotation type *{}*'.format(p.iouType))
+        p.imgIds = list(np.unique(p.imgIds))
+        if p.useCats:
+            p.catIds = list(np.unique(p.catIds))
+        p.maxDets = sorted(p.maxDets)
+        self.params=p
+
+        self._prepare()
+        # loop through images, area range, max detection number
+        catIds = p.catIds if p.useCats else [-1]
+
+        if p.iouType == 'segm' or p.iouType == 'bbox':
+            computeIoU = self.computeIoU
+        elif p.iouType == 'keypoints':
+            computeIoU = self.computeOks
+        self.ious = {(imgId, catId): computeIoU(imgId, catId) \
+                        for imgId in p.imgIds
+                        for catId in catIds}
+
+        evaluateImg = self.evaluateImg_degree
+        maxDet = p.maxDets[-1]
+        self.evalImgs = [evaluateImg(imgId, catId, areaRng, maxDet)
+                 for catId in catIds
+                 for areaRng in p.areaRng
+                 for imgId in p.imgIds
+             ]
+        self._paramsEval = copy.deepcopy(self.params)
+        toc = time.time()
+        print('DONE (t={:0.2f}s).'.format(toc-tic))
+
+
     def evaluate_anchor_ap(self):
 
         
@@ -214,9 +347,7 @@ class Mirror3dCOCOeval(COCOeval):
         import os
         import time
         import cv2
-        def unit_vector(vector):
-            """ Returns the unit vector of the vector.  """
-            return vector / np.linalg.norm(vector)
+    
         
         def cos_sim(vector_a, vector_b):
             vector_a = np.mat(vector_a)
@@ -228,15 +359,6 @@ class Mirror3dCOCOeval(COCOeval):
             if np.isnan(sim):
                 sim = 1
             return sim
-
-        def dotproduct(v1, v2):
-            return sum((a*b) for a, b in zip(v1, v2))
-
-        def length(v):
-            return math.sqrt(dotproduct(v, v))
-
-        def angle(v1, v2):
-            return ((math.acos(dotproduct(v1, v2) / (length(v1) * length(v2))))/np.pi)*180
 
         def save_txt(save_path, data):
             with open(save_path, "w") as file:
