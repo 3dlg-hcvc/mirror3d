@@ -18,10 +18,13 @@ The unzipped mirror data we provided are stored in the following structures:
 nyu/scannet/m3d
 ├── mirror_instance_mask_coarse # stores coarse instance-level mirror segmentation mask
 └── mirror_instance_mask_precise # stores precise instance-level mirror segmentation mask
-└── delta_image_coarse # stores delta image to generate the coarse refined depth map
-└── delta_image_precise # stores delta image to generate the precise refined depth map
+└── delta_depth_coarse # stores delta image to generate the coarse refined depth map
+└── delta_depth_precise # stores delta image to generate the precise refined depth map
 └── mirror_plane # stores the mirror plane parameter information 
 ```
+
+- For NYUv2 mirror data is stored as [data type; e.g. mirror_plane/delta_depth_precise/...] / [sample id].extension
+- For Scannet and Matterport3D mirror data is stored as [data type; e.g. mirror_plane/delta_depth_precise/...] / [scene_id] / [sample id].extension
 
 The sample's mirror 3D plane information is saved in a single JSON file. The data is saved as:
 
@@ -101,8 +104,8 @@ After STEP 1 ~ STEP 3, the data structure should be like:
 m3d
 ├── mirror_instance_mask_coarse
 └── mirror_instance_mask_precise
-└── delta_image_coarse
-└── delta_image_precise
+└── delta_depth_coarse
+└── delta_depth_precise
 └── refined_sensorD_coarse # refined sensor depth map (coarse version)
 └── refined_sensorD_precise # refined sensor depth map (precise version)
 └── refined_meshD_coarse # refined mesh depth map (coarse version)
@@ -124,8 +127,8 @@ m3d
 nyu
 ├── mirror_instance_mask_coarse
 └── mirror_instance_mask_precise
-└── delta_image_coarse
-└── delta_image_precise
+└── delta_depth_coarse
+└── delta_depth_precise
 └── refined_sensorD_coarse # refined sensor depth map (coarse version)
 └── refined_sensorD_precise # refined sensor depth map (precise version)
 └── mirror_plane
@@ -142,8 +145,8 @@ nyu
 scannet
 ├── mirror_instance_mask_coarse
 └── mirror_instance_mask_precise
-└── delta_image_coarse
-└── delta_image_precise
+└── delta_depth_coarse
+└── delta_depth_precise
 └── refined_sensorD_coarse # refined sensor depth map (coarse version)
 └── refined_sensorD_precise # refined sensor depth map (precise version)
 └── mirror_plane

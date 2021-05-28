@@ -24,7 +24,8 @@ def check_mirror_normal_in_one_json(data_root_path, json_path, f, mask_version):
     else:
         depth_img_path = json_path.replace("mirror_plane","refined_sensorD_{}".format(mask_version)).replace("json","png")
     print("instance mask path : ", mask_path)
-    print("color mirror image path : ", color_img_path)
+    print("color_img_path : ", color_img_path)
+    print("depth_img_path : ", depth_img_path)
     for item in anno_info:
         instance_index = item["mask_id"]
         instance_index = ImageColor.getcolor("#{}".format(instance_index), "RGB")

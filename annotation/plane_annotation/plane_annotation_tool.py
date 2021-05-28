@@ -132,6 +132,7 @@ class Plane_annotation_tool():
         print("dataset checking finished ~ ")
     
 
+
     def anno_env_setup(self):
         """
         Generate pcd for annotation and initlize plane parameter using ransac
@@ -142,23 +143,16 @@ class Plane_annotation_tool():
             border_vis : .png file (per instance).
         """
         import open3d as o3d
-        pcd_save_folder = os.path.join(self.anno_output_folder, "anno_pcd")
-        os.makedirs(pcd_save_folder, exist_ok=True)
-        mirror_border_vis_save_folder = os.path.join(self.anno_output_folder, "border_vis")
-        os.makedirs(mirror_border_vis_save_folder, exist_ok=True)
-        plane_parameter_save_folder = os.path.join(self.anno_output_folder, "mirror_plane")
-        os.makedirs(plane_parameter_save_folder, exist_ok=True)
-        for color_img_path in self.color_img_list:
-            # Get paths
-            smaple_name = os.path.split(color_img_path)[1].split(".")[0] 
-            mask_img_path = color_img_path.replace("mirror_color_images","mirror_instance_mask_{}".format(self.mask_version)).replace("jpg","png")
-            if self.is_matterport3d:
-                depth_img_path = rreplace(color_img_path.replace("mirror_color_images","raw_meshD"), "i", "d").replace("jpg","png")
-            else:
-                depth_img_path = color_img_path.replace("mirror_color_images","raw_sensorD").replace("jpg","png")
-            mask = cv2.imread(mask_img_path)
 
+        def gen_pcd(color_img_path, depth_img_path, mask_img_path):
             #  Get pcd and masked RGB image for each instance
+            pcd_save_folder = os.path.join(self.anno_output_folder, "anno_pcd")
+            os.makedirs(pcd_save_folder, exist_ok=True)
+            mirror_border_vis_save_folder = os.path.join(self.anno_output_folder, "border_vis")
+            os.makedirs(mirror_border_vis_save_folder, exist_ok=True)
+            plane_parameter_save_folder = os.path.join(self.anno_output_folder, "mirror_plane")
+            os.makedirs(plane_parameter_save_folder, exist_ok=True)
+            mask = cv2.imread(mask_img_path)
             for instance_index in np.unique(np.reshape(mask,(-1,3)), axis = 0):
                 if sum(instance_index) == 0: # background
                     continue
@@ -194,6 +188,15 @@ class Plane_annotation_tool():
                 o3d.io.write_point_cloud(pcd_save_path, pcd)
                 print("point cloud saved  to :", os.path.abspath(pcd_save_path))
 
+        for color_img_path in self.color_img_list:
+            # Get paths
+            smaple_name = os.path.split(color_img_path)[1].split(".")[0] 
+            mask_img_path = color_img_path.replace("mirror_color_images","mirror_instance_mask_{}".format(self.mask_version)).replace("jpg","png")
+            if self.is_matterport3d:
+                depth_img_path = rreplace(color_img_path.replace("mirror_color_images","raw_meshD"), "i", "d").replace("jpg","png")
+            else:
+                depth_img_path = color_img_path.replace("mirror_color_images","raw_sensorD").replace("jpg","png")
+            gen_pcd(color_img_path, depth_img_path, mask_img_path)
 
     def anno_plane_update_imgInfo(self):
         """
