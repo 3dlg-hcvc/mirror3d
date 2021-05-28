@@ -4,18 +4,22 @@ Mirror3D is a large-scale 3D mirror plane annotation dataset based on three popu
 
 Please visit our [project website]() for updates and to browse the data.
 
+## Download
 
+- [mp3d.zip](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/mp3d.zip)
+- [scannet.zip](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/scannet.zip)
+- [nyu.zip](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/nyu.zip)
 
 ## Mirror3D Data Organization
 
 The unzipped mirror data we provided are stored in the following structures:
 
 
-### NYUv2-small (nyu.zip) / ScanNet (scannet.zip) / Matterport3d (m3d.zip)
+### NYUv2-small (nyu.zip) / ScanNet (scannet.zip) / Matterport3d (mp3d.zip)
 
 
 ```shell
-nyu/scannet/m3d
+nyu/scannet/mp3d
 ├── mirror_instance_mask_coarse # stores coarse instance-level mirror segmentation mask
 └── mirror_instance_mask_precise # stores precise instance-level mirror segmentation mask
 └── delta_depth_coarse # stores delta image to generate the coarse refined depth map
@@ -70,7 +74,7 @@ The sample's mirror 3D plane information is saved in a single JSON file. The dat
 
 To generate a refined depth map, please download the relevant source data and put it under the unzipped folder:
 
-- For Matterport3D dataset, please put the `matterport_render_depth`, `undistorted_color_images` and `undistorted_depth_images` folder under `m3d` folder
+- For Matterport3D dataset, please put the `matterport_render_depth`, `undistorted_color_images` and `undistorted_depth_images` folder under `mp3d` folder
 
 - For NYUv2-small dataset, please put the `color` and `depth` folder under `nyu` folder
   
@@ -81,14 +85,14 @@ To generate a refined depth map, please download the relevant source data and pu
 Please run the following command to create symlinks to the mirror samples' original color image, sensor depth map and mesh depth map:
 
 ```python
-python dataset/gen_synlink.py --unzipped_folder_path [the path to the m3d/ nyu/ scannet folder] 
+python dataset/gen_synlink.py --unzipped_folder_path [the path to the mp3d/ nyu/ scannet folder] 
 ```
 
 ### STEP 3 : generate refined depth map based on delta image
 
 ```python
 python dataset/gen_refinedD_from_delta.py \
---unzipped_folder_path [the path to the m3d/ nyu/ scannet folder] \
+--unzipped_folder_path [the path to the mp3d/ nyu/ scannet folder] \
 --mask_version [mirror mask version: precise (default) / coarse]
 ```
 
@@ -101,7 +105,7 @@ After STEP 1 ~ STEP 3, the data structure should be like:
 - For **Matterport3D dataset**:
 
 ```shell
-m3d
+mp3d
 ├── mirror_instance_mask_coarse
 └── mirror_instance_mask_precise
 └── delta_depth_coarse
@@ -160,7 +164,7 @@ To validate the correctness of the generated depth map, you can run:
 
 ```python
 python visualization/check_sample_info.py \
---data_root_path [path to the unzipped m3d/nyu/scannet folder] \
+--data_root_path [path to the unzipped mp3d/nyu/scannet folder] \
 --json_path [any JSON file stored under the mirror_plane foler] \
 --mask_version [mirror mask version: precise (default) / coarse]
 --f [relevant focal length: 1074 for Matterport3D, 519 for NYUv2-small, 574 for ScanNet]
