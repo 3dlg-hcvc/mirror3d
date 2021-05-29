@@ -32,7 +32,7 @@ Please refer to [Mirror3D Dataset](https://github.com/3dlg-hcvc/mirror3d/blob/ma
 Mirror3DNet architecture can be used for either an RGB image or an RGBD image input. For an RGB input, we refine the depth of the predicted depth map D<sub>pred</sub> output by a depth estimation module. For RGBD input, we refine a noisy input depth D<sub>noisy</sub>.
 ![network-arch](docs/figure/network-arch-cr-new.png)
 
-Please check [Mirror3DNet](https://github.com/3dlg-hcvc/mirror3d/tree/main/mirror3dnet) for the network implementation. 
+Please check [Mirror3DNet](https://github.com/3dlg-hcvc/mirror3d/tree/main/mirror3dnet) for our network pytorch implementation. 
 
 ### Initial Depth Generator Implementation
 
@@ -43,6 +43,16 @@ We test three methods on our dataset:
 - [saic : Decoder Modulation for Indoor Depth Completion](https://github.com/saic-vul/saic_depth_completion/tree/94bececdf12bb9867ce52c970bb2d11dee948d37)
 
 We have updated the dataloader and the main train/test script to support our input format. 
+
+## Model Zoo
+
+| Source Dataset | Input | Train | Method                                                                                                  | Model Download |
+|----------------|-------|-------|---------------------------------------------------------------------------------------------------------|----------------|
+| NYUv2          | RGBD  |       | [saic](https://github.com/saic-vul/saic_depth_completion/tree/94bececdf12bb9867ce52c970bb2d11dee948d37) |                |
+| NYUv2          | RGBD  |       |                                                                                                         |                |
+| NYUv2          |       |       |                                                                                                         |                |
+|                |       |       |                                                                                                         |                |
+
 
 ## Training
 To train initial depth generator:
