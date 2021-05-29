@@ -110,7 +110,7 @@ python annotation/plane_annotation/plane_annotation_tool.py --stage [all / 1 ~ 6
 
 - `--stage 1`: Set up annotation environment (You should have folders contain the mirror mask, mirror RGBD under `--data_main_folder`. You should store mirror color images under a folder named `mirror_color_images`; You should store mirror raw depth images under a folder named `raw_meshD` or `raw_sensorD`; mirror masks images should be stored under a folder named `mirror_instance_mask_precise` or `mirror_instance_mask_coarse`)
 
-- `--stage 2`: Manually annotate the mirror plane based on our plane annotation tool, check [User Instruction](todo) for how to use the plane annotation tool.
+- `--stage 2`: Manually annotate the mirror plane based on our plane annotation tool, check [User Instruction](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/user_instruction.md) for how to use the plane annotation tool.
 
 - `--stage 3`: Get refined depth map from original depth map
 
