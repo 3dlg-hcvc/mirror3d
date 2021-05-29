@@ -21,7 +21,16 @@ $ git clone https://github.com/3dlg-hcvc/Mirror3D.git
 
 ```
 
-## Implement initial depth generator
+## Models
+
+### Mirror3DNet
+
+#### Framework
+![network-arch](docs/figure/network-arch-cr-new.png)
+
+Please check [Mirror3DNet](https://github.com/3dlg-hcvc/mirror3d/tree/main/mirror3dnet) for the network implementation. 
+
+### Implemented initial depth generator
 
 We test three methods on our dataset:
 
@@ -31,39 +40,26 @@ We test three methods on our dataset:
 
 We have updated the dataloader and the main train/test script to support our input format. 
 
-To train the three initial depth generator:
+## Training
+To train initial depth generator:
 
 ```shell
-### Train on NYUv2 refined dataset
-bash script/nyu/dg_nyu_train.sh
+### Train on NYUv2 mirror data
+bash script/nyu_train.sh
+### Train on Matterport3D mirror data
+bash script/mp3d_train.sh
 ```
 
+## Inference
 To test the three initial depth generator:
 
 ```shell
-### Test on NYUv2 refined dataset
-bash script/nyu/dg_nyu_test.sh
+### Run the inferece on NYUv2 mirror data
+script/nyu_infer.sh
+### Run the inferece on Matterport3D mirror data
+script/mp3d_infer.sh
 ```
 
-<!--## Implement Mirror3dNet
-
-We propose a simple architecture for 3D mirror plane estimation to refine depth estimates and produce more reliable reconstructions. Our module is based on [maskrcnn](https://github.com/facebookresearch/detectron2) and [planercnn](https://github.com/NVlabs/planercnn/tree/01e03fe5a97b7afc4c5c4c3090ddc9da41c071bd). 
-
-
-To train the Mirror3DNet and PlaneRCNN module:
-
-```shell
-### Train on NYUv2 refined dataset
-bash script/nyu/m3n_nyu_train.sh
-```
-
-To test the mirror3dnet and compare against planercnn module:
-
-```shell
-### Test on NYUv2 refined dataset
-bash script/nyu/m3n_nyu_test.sh
-```
--->
 ## Annotation Tool
 
 ### Classification
