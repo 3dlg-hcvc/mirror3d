@@ -705,7 +705,6 @@ class Data_post_processing(Plane_annotation_tool):
             self.is_matterport3d = False
         else:
             self.is_matterport3d = True
-        
         self.color_img_list = [os.path.join(data_main_folder, "mirror_color_images", i) for i in os.listdir(os.path.join(data_main_folder, "mirror_color_images"))]
         self.color_img_list.sort()
         if multi_processing:
@@ -718,9 +717,6 @@ class Data_post_processing(Plane_annotation_tool):
         self.expand_range = expand_range
         self.clamp_dis = clamp_dis
 
-
-
-    
 
     def data_clamping(self):
         """
@@ -736,7 +732,6 @@ class Data_post_processing(Plane_annotation_tool):
             img_name = os.path.split(color_img_path)[1].split(".")[0] 
             one_info_file_path = os.path.join(img_info_save_folder, "{}.json".format(img_name))
             info = read_json(one_info_file_path)
-            
             for one_info in info.items():
                 instance_index_str = one_info[0].split("_")
                 instance_index_tuple = [int(i) for i in instance_index_str]
