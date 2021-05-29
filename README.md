@@ -25,6 +25,10 @@ $ git clone https://github.com/3dlg-hcvc/Mirror3D.git
 
 Please refer to [Mirror3D Dataset](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/Mirror3D_dataset.md) for instruction on preparing mirror data.
 
+### Mirror annotation tool
+Please refer to [User Instruction](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/user_instruction.md) for instruction on how to annotate mirror data. 
+
+
 ## Models
 
 ### Mirror3DNet PyTorch Implementation
