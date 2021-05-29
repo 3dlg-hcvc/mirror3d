@@ -16,17 +16,18 @@ You can find Martterport3d pre-trained checkpoint for the classifier on [checkpo
     python annotation/classifier/classifier_train.py --unsort_img_list [img_path_to_be_sorted.txt] --resume_path [classifier_checkpoint_path] --output_save_folder [output_folder_path to save the output .json file]
     ```
     
-- STEP 3: Pick positive samples based on the .json file output by STEP 2 manually 
-    Tip: you can use Mirror3D/annotation/classifier/classification_tool.py` to manually annotate mirror images
+- STEP 3: Pick positive samples based on the .json file output by STEP 2 manually
+ 
+    **Tip**: you can use `Mirror3D/annotation/classifier/classification_tool.py` to manually annotate mirror images
     ```python
     python annotation/classifier/classification_tool.py --data_root [root path of the dataset] --json_file_path [path of the .json file output by STEP 2] --anno_output_folder [annotation result output folder] 
     ```
 
 
-## STAGE 1: Mirror mask annotation 
+## STAGE 2: Mirror Mask Annotation 
 
 We use [cvat](https://github.com/dommorin/cvat) to annotate mirror mask manually. Please refer to [cvat user guide](https://github.com/dommorin/cvat/blob/master/cvat/apps/documentation/user_guide.md) for guidance on mask annotation. 
-## Plane annoatation
+## STAGE 3: Plane Annoatation
 
 ```python
 python annotation/plane_annotation/plane_annotation_tool.py --stage [all / 1 ~ 6] \
@@ -58,7 +59,7 @@ python annotation/plane_annotation/plane_annotation_tool.py --stage [all / 1 ~ 6
     - During training: If the image is resized by ratio x (w:h ratio does not change), f should also multiply ratio x
     - the --data_main_folder need to contain "scannet" if you are annotating Scannet dataset; "mp3d" for Matterport3d dataset; "nyu" for NYUv2 dataset; only .png image is supported; Apart from Matterpot3d other dataset's color image name and depth image name should be the same. 
 
-## Verification
+## STAGE 4: Annotation Verification
 
 - STEP 1: Generate video for verification 
     ```python
@@ -93,9 +94,9 @@ python annotation/plane_annotation/plane_annotation_tool.py --stage [all / 1 ~ 6
 
 
 
-## User instruction
+## Getting Started
 
-This is a detailed instruction for our plane annotation tool. Here, we are going to annotate several samples from NYUv2 and get the refined depth map based on the precise mask:
+Here is quick example, we are going to annotate several samples from NYUv2 and get the refined depth map based on the precise mask:
 
 -STEP 1: Prepare data structure: after getting the annotated mirror mask, we store the original data in the following format:
 
