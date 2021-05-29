@@ -67,7 +67,7 @@ For [BTS](https://github.com/cogaplex-bts/bts) and [VNL](https://github.com/Yvan
 
 ## Network input
 
-Our network input are JSON files stored based on [coco annotation format](https://cocodataset.org/#home). Please download our [network input json]() to train and test our models. 
+Our network input are JSON files stored based on [coco annotation format](https://cocodataset.org/#home). Please download [network input json](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/network_input_json.zip) to train and test our models. 
 
 ## Training
 
