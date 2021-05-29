@@ -61,7 +61,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --depth_shift 1000 \
 --input_height 480 \
 --input_width 640 \
---anchor_normal_npy ./dataset/mirror_normal/mp3d_kmeans_normal_10.npy \
+--anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
 --log_directory output/nyu
 
 
@@ -76,7 +76,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --depth_shift 1000 \
 --input_height 480 \
 --input_width 640 \
---anchor_normal_npy ./dataset/mirror_normal/mp3d_kmeans_normal_10.npy \
+--anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
 --log_directory output/nyu
 
 
@@ -92,7 +92,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --depth_shift 1000 \
 --input_height 480 \
 --input_width 640 \
---anchor_normal_npy ./dataset/mirror_normal/mp3d_kmeans_normal_10.npy \
+--anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
 --log_directory output/nyu
 
 
@@ -107,7 +107,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --depth_shift 1000 \
 --input_height 480 \
 --input_width 640 \
---anchor_normal_npy ./dataset/mirror_normal/mp3d_kmeans_normal_10.npy \
+--anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
 --log_directory output/nyu
 
 # mirror3dnet only normal 10 anchor normal
@@ -122,5 +122,5 @@ python mirror3dnet/run_mirror3dnet.py \
 --depth_shift 1000 \
 --input_height 480 \
 --input_width 640 \
---anchor_normal_npy ./dataset/mirror_normal/mp3d_kmeans_normal_10.npy \
+--anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
 --log_directory output/nyu

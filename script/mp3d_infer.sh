@@ -88,7 +88,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --depth_shift 4000 \
 --input_height 1024 \
 --input_width 1280 \
---anchor_normal_npy ./dataset/mirror_normal/mp3d_kmeans_normal_10.npy \
+--anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
 --log_directory output/mp3d
 
 
@@ -103,7 +103,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --depth_shift 4000 \
 --input_height 1024 \
 --input_width 1280 \
---anchor_normal_npy ./dataset/mirror_normal/mp3d_kmeans_normal_10.npy \
+--anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
 --log_directory output/mp3d
 
 
@@ -119,7 +119,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --depth_shift 4000 \
 --input_height 1024 \
 --input_width 1280 \
---anchor_normal_npy ./dataset/mirror_normal/mp3d_kmeans_normal_10.npy \
+--anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
 --log_directory output/mp3d
 
 
@@ -134,7 +134,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --depth_shift 4000 \
 --input_height 1024 \
 --input_width 1280 \
---anchor_normal_npy ./dataset/mirror_normal/mp3d_kmeans_normal_10.npy \
+--anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
 --log_directory output/mp3d
 
 # mirror3dnet only normal 10 anchor normal
@@ -149,5 +149,5 @@ python mirror3dnet/run_mirror3dnet.py \
 --depth_shift 4000 \
 --input_height 1024 \
 --input_width 1280 \
---anchor_normal_npy ./dataset/mirror_normal/mp3d_kmeans_normal_10.npy \
+--anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
 --log_directory output/mp3d

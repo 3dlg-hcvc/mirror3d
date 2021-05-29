@@ -65,8 +65,11 @@ We have updated the dataloader and the main train/test script to support our inp
 
 For [BTS](https://github.com/cogaplex-bts/bts) and [VNL](https://github.com/YvanYin/VNL_Monocular_Depth_Prediction), please visit their official website to download the model trained on NYUv2 raw sensor depth.
 
+## Network input
+
+Our network input are JSON files stored based on [coco annotation format](https://cocodataset.org/#home). Please download our [network input json]() to train and test our models. 
+
 ## Training
-To train initial depth generator:
 
 ```shell
 ### Train on NYUv2 mirror data
@@ -76,7 +79,6 @@ bash script/mp3d_train.sh
 ```
 
 ## Inference
-To test the three initial depth generator:
 
 ```shell
 ### Run the inferece on NYUv2 mirror data
