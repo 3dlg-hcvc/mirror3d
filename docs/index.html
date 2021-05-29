@@ -67,7 +67,7 @@
                 <hr>
                 <p class="text">
                   Despite significant progress in depth sensing and 3D reconstruction, mirror surfaces are a significant source of errors. To address this problem, we create the Mirror3D dataset: a 
-                  large-scale 3D mirror plane annotation dataset based on three popular RGBD datasets Matterpot3D, NYUv2 and ScanNet containing 4,852 mirror instance masks and 3D planes.
+                  large-scale 3D mirror plane annotation dataset based on three popular RGBD datasets Matterpot3D, NYUv2 and ScanNet containing 7,011 mirror instance masks and 3D planes.
                   Armed with this data, we develop a simple Mirror3DNet module that can refine raw sensor depth or estimated depth output to correct errors on mirror surfaces.
                   The main idea of our architecture is to try to estimate the 3D mirror plane based on RGB input and surrounding depth context, and use this estimate to directly regress mirror surface depth.
                   Our experiments show that the Mirror3DNet module can significantly mitigate mirror depth errors from a variety of input depth data, including raw sensor depth and state-of-the-art depth estimation or completion methods.
@@ -191,9 +191,9 @@
             <div class="source-link">
               <p class="one-source"><a onclick="readySoon()" href="javascript:void(0)">[Source Code]</a></p>
               <p class="one-source"><a onclick="readySoon()" href="javascript:void(0)">[Paper]</a></p>
-              <p class="one-source"><a onclick="readySoon()" href="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/nyu.zip)">[NYUv2 Mirror]</a></p>
-              <p class="one-source"><a onclick="readySoon()" href="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/mp3d.zip">[Matterport3d Mirror]</a></p>
-              <p class="one-source"><a onclick="readySoon()" href="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/scannet.zip">[Scannet Mirror]</a></p>
+              <p class="one-source"><a href="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/nyu.zip)">[NYUv2 Mirror]</a></p>
+              <p class="one-source"><a href="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/mp3d.zip">[Matterport3d Mirror]</a></p>
+              <p class="one-source"><a href="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/scannet.zip">[Scannet Mirror]</a></p>
             </div>
 
             <!-- <div class="flex-row" style="width: 100%;">
