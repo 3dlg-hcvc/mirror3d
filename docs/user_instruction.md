@@ -254,7 +254,7 @@ python annotation/plane_annotation/verification.py \
 
 ```
 
-- **STEP 7** Copy/ move out the error sample's data to another folder for reannotation. 
+- **STEP 7** Copy or move out the error sample's data to another folder for reannotation. 
 
 
 ```shell
