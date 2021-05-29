@@ -245,13 +245,11 @@ ADJUST ONE SAMPLE OPTION :
 (2) a        : ADJUST : adjust the plane parameter based on the current plane parameter
 (3) i        : INIT : pick 3 points to initialize the plane
 ```
+![pick point pic](docs/figure/anno-tool-intro/anno-pick-point.png)
 
-# TODO add pick point pic
 This shows the user interface to pick 3 points to initialize the plane (option `i'). Press `shift + left click` to select a point; press `shift + right click` to unselect; for more detail please refer to [Open3d instruction](http://www.open3d.org/docs/release/tutorial/visualization/interactive_visualization.html).
 
-
-
-# TODO add a blue plane pic
+![blue_plane](docs/figure/anno-tool-intro/anno-mesh-plane.png)
 This shows the user interface to adjust the plane parameter based on the current plane parameter (option `a'). To adjust the light blue plane, please follow:
 
 ```shell
