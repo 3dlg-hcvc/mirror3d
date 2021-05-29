@@ -71,7 +71,7 @@ UNIT_ANCHOR_NORMAL : True
 
 # ---- ANCHOR_CLS -----
 # during evaluation : evaluate img_size & f should be the same as MODEL.WEIGHTS's img_size & f
-ANCHOR_NORMAL_NYP : "/project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy"  #! TODO 
+ANCHOR_NORMAL_NYP : "mirror3dnet/config/mp3d_kmeans_normal_10.npy"  #! TODO 
 
 #! ############# eval configure ##############
 EVAL_ANCHOR_AP : True # TODO
