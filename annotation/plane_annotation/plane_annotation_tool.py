@@ -45,10 +45,8 @@ class Plane_annotation_tool():
             self.is_matterport3d = False
         else:
             self.is_matterport3d = True
-        self.check_file()
 
-
-        self.color_img_list = [os.path.join(data_main_folder, "mirror_color_images", i) for i in os.listdir(os.path.join(data_main_folder, "mirror_color_images"))]
+        self.color_img_list = [i.strip() for i in os.popen("find -L {} -type f".format(os.path.join(data_main_folder, "mirror_color_images"))).readlines()]
         
         self.color_img_list.sort()
         if multi_processing:
@@ -76,6 +74,7 @@ class Plane_annotation_tool():
         """
         self.show_plane = show_plane
     
+
     def set_overwrite(self, overwrite):
         """
         For STEP 1 overwrite current environment setup or not
@@ -146,21 +145,23 @@ class Plane_annotation_tool():
 
         def gen_pcd(color_img_path, depth_img_path, mask_img_path):
             #  Get pcd and masked RGB image for each instance
-            pcd_save_folder = os.path.join(self.anno_output_folder, "anno_pcd")
+            pcd_save_folder = os.path.split(color_img_path.replace(self.data_main_folder, self.anno_output_folder).replace("mirror_color_images", "anno_pcd"))[0]
             os.makedirs(pcd_save_folder, exist_ok=True)
-            mirror_border_vis_save_folder = os.path.join(self.anno_output_folder, "border_vis")
+            mirror_border_vis_save_folder = pcd_save_folder.replace("anno_pcd", "border_vis")
             os.makedirs(mirror_border_vis_save_folder, exist_ok=True)
-            plane_parameter_save_folder = os.path.join(self.anno_output_folder, "mirror_plane")
+            plane_parameter_save_folder = pcd_save_folder.replace("anno_pcd", "mirror_plane")
             os.makedirs(plane_parameter_save_folder, exist_ok=True)
             mask = cv2.imread(mask_img_path)
+            import pdb;pdb.set_trace()
             for instance_index in np.unique(np.reshape(mask,(-1,3)), axis = 0):
                 if sum(instance_index) == 0: # background
                     continue
-
                 instance_tag = "_idx_"
                 instance_tag += '%02x%02x%02x' % (instance_index[0],instance_index[1],instance_index[2]) # BGR
+                smaple_name = os.path.split(color_img_path)[-1].split(".")[0]
                 instance_tag = smaple_name + instance_tag
                 pcd_save_path = os.path.join(pcd_save_folder,  "{}.ply".format(instance_tag))
+
                 if os.path.isfile(pcd_save_path) and not self.overwrite:
                     print(pcd_save_path , "exist! continue")
                     continue
@@ -190,7 +191,6 @@ class Plane_annotation_tool():
 
         for color_img_path in self.color_img_list:
             # Get paths
-            smaple_name = os.path.split(color_img_path)[1].split(".")[0] 
             mask_img_path = color_img_path.replace("mirror_color_images","mirror_instance_mask_{}".format(self.mask_version)).replace("jpg","png")
             if self.is_matterport3d:
                 depth_img_path = rreplace(color_img_path.replace("mirror_color_images","raw_meshD"), "i", "d").replace("jpg","png")
@@ -206,6 +206,7 @@ class Plane_annotation_tool():
         """
         import open3d as o3d
         import warnings
+        self.check_file()
         warnings.filterwarnings("ignore")
         anotation_progress_save_folder = os.path.join(self.anno_output_folder, "anno_progress")
         os.makedirs(anotation_progress_save_folder, exist_ok=True)
@@ -395,7 +396,7 @@ class Plane_annotation_tool():
 
             # If this is an invalid sample; only save the RGB image and instance_mask
             if smaple_name in self.error_id:
-                command = "find {} -type f | grep {}".format(self.data_main_folder, smaple_name)
+                command = "find -L {} -type f | grep {}".format(self.data_main_folder, smaple_name)
                 for src_path in os.popen(command).readlines():
                     src_path = src_path.strip()
                     dst_path = src_path.replace("with_mirror", "only_mask")
@@ -408,7 +409,7 @@ class Plane_annotation_tool():
                 
                 if self.is_matterport3d:
                     smaple_name = rreplace(smaple_name,"i","d")
-                    command = "find {} -type f | grep {}".format(self.data_main_folder, smaple_name)
+                    command = "find -L {} -type f | grep {}".format(self.data_main_folder, smaple_name)
                     for src_path in os.popen(command).readlines():
                         src_path = src_path.strip()
                         dst_path = src_path.replace("with_mirror", "only_mask")
@@ -704,7 +705,7 @@ class Data_post_processing(Plane_annotation_tool):
             self.is_matterport3d = False
         else:
             self.is_matterport3d = True
-
+        
         self.color_img_list = [os.path.join(data_main_folder, "mirror_color_images", i) for i in os.listdir(os.path.join(data_main_folder, "mirror_color_images"))]
         self.color_img_list.sort()
         if multi_processing:
@@ -790,8 +791,6 @@ class Data_post_processing(Plane_annotation_tool):
             smaple_name = os.path.split(color_img_path)[1].split(".")[0] 
 
             mask = cv2.imread(mask_img_path)
-
-            
             #  Get plane parameter for each instance (based on refined depth) 
             for instance_index in np.unique(np.reshape(mask,(-1,3)), axis = 0):
                 if sum(instance_index) == 0: # background
@@ -825,7 +824,7 @@ class Data_post_processing(Plane_annotation_tool):
         """
         raw_folder = os.path.join(self.data_main_folder, "mirror_color_images")
         raw_id_list = [i.split(".")[0] for i in os.listdir(raw_folder)]
-        command = "find {} -type f ".format(self.data_main_folder)
+        command = "find -L {} -type f ".format(self.data_main_folder)
         for src_path in os.popen(command).readlines():
             is_related_to_color = False
             for one_raw_id in raw_id_list:
@@ -855,6 +854,8 @@ if __name__ == "__main__":
         '--stage', default="4")
     parser.add_argument(
         '--data_main_folder', default="")
+    parser.add_argument(
+        '--dataset', default="mp3d", help="scannet / nyu/ mp3d")
     parser.add_argument(
         '--process_index', default=0, type=int, help="process index")
     parser.add_argument('--multi_processing', help='do multi-process or not',action='store_true')

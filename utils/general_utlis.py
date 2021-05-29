@@ -12,6 +12,12 @@ import matplotlib.pyplot as plt
 from utils.algorithm import *
 import shutil
 
+
+def get_fileList_uder_folder(folder_path):
+    command = "find -L {} -type f ".format(folder_path)
+    file_path_list = [i.strip() for i in os.popen(command).readlines()]
+    return file_path_list
+
 def read_plane_json(json_path):
     with open(json_path, 'r') as j:
         info = json.loads(j.read())

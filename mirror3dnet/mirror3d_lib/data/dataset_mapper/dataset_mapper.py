@@ -91,26 +91,26 @@ class Mirror3d_DatasetMapper:
         """
         dataset_dict = copy.deepcopy(dataset_dict)  # it will be modified by code below
         # USER: Write your own image loading if it's not from a file
-        image = utils.read_image(dataset_dict["img_path"], format=self.img_format) # changed : read depth image here
+        image = utils.read_image(dataset_dict["mirror_color_image_path"], format=self.img_format) # changed : read depth image here
 
         if self.mesh_depth:
-            if "mesh_refined_path" in dataset_dict and self.REFINED_DEPTH:
-                depth_image = cv2.imread(dataset_dict["mesh_refined_path"], cv2.IMREAD_ANYDEPTH) / self.depth_shift
+            if "refined_meshD_path" in dataset_dict and self.REFINED_DEPTH:
+                depth_image = cv2.imread(dataset_dict["refined_meshD_path"], cv2.IMREAD_ANYDEPTH) / self.depth_shift
                 depth_image, _ = T.apply_transform_gens(self.tfm_gens, depth_image.astype(np.float32))
-            elif "mesh_raw_path" in dataset_dict and not self.REFINED_DEPTH:
-                depth_image = cv2.imread(dataset_dict["mesh_raw_path"], cv2.IMREAD_ANYDEPTH) / self.depth_shift
+            elif "raw_meshD_path" in dataset_dict and not self.REFINED_DEPTH:
+                depth_image = cv2.imread(dataset_dict["raw_meshD_path"], cv2.IMREAD_ANYDEPTH) / self.depth_shift
                 depth_image, _ = T.apply_transform_gens(self.tfm_gens, depth_image.astype(np.float32))
         else:
-            if "hole_refined_path" in dataset_dict and self.REFINED_DEPTH:
-                depth_image = cv2.imread(dataset_dict["hole_refined_path"], cv2.IMREAD_ANYDEPTH) / self.depth_shift
+            if "refined_sensorD_path" in dataset_dict and self.REFINED_DEPTH:
+                depth_image = cv2.imread(dataset_dict["refined_sensorD_path"], cv2.IMREAD_ANYDEPTH) / self.depth_shift
                 depth_image, _ = T.apply_transform_gens(self.tfm_gens, depth_image.astype(np.float32))
-            elif "hole_raw_path" in dataset_dict and not self.REFINED_DEPTH:
-                depth_image = cv2.imread(dataset_dict["hole_raw_path"], cv2.IMREAD_ANYDEPTH) / self.depth_shift 
+            elif "raw_sensorD_path" in dataset_dict and not self.REFINED_DEPTH:
+                depth_image = cv2.imread(dataset_dict["raw_sensorD_path"], cv2.IMREAD_ANYDEPTH) / self.depth_shift 
                 depth_image, _ = T.apply_transform_gens(self.tfm_gens, depth_image.astype(np.float32))
 
         noisy_depth_image = []
-        if "hole_raw_path" in dataset_dict and self.RGBD_INPUT:
-            noisy_depth_image = cv2.imread(dataset_dict["hole_raw_path"], cv2.IMREAD_ANYDEPTH) / self.depth_shift
+        if "raw_sensorD_path" in dataset_dict and self.RGBD_INPUT:
+            noisy_depth_image = cv2.imread(dataset_dict["raw_sensorD_path"], cv2.IMREAD_ANYDEPTH) / self.depth_shift
             noisy_depth_image, _ = T.apply_transform_gens(self.tfm_gens, noisy_depth_image.astype(np.float32))
 
         utils.check_image_size(dataset_dict, image)

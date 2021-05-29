@@ -447,7 +447,7 @@ class Mirror3dCOCOeval(COCOeval):
                                         mirror_GT_anchor = self.anchor_normals[gt_item["anchor_normal_class"]]
                                         mirror_GT_normal_class = gt_item["anchor_normal_class"]
                                         mirror_GT_bboxes = gt_item["bbox"]
-                                        mirror_image_path = gt_item["image_path"]
+                                        mirror_image_path = gt_item["mirror_color_image_path"]
                                         break
 
                                 # get the matched predicted instance 

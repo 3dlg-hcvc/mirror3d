@@ -14,13 +14,14 @@ from utils.algorithm import *
 from utils.general_utlis import *
 from utils.plane_pcd_utils import *
 from annotation.plane_annotation.plane_annotation_tool import Plane_annotation_tool
+from PIL import ImageColor
 
 class Input_Generator(Plane_annotation_tool):
 
-    def __init__(self, mirror_data_main_folder, no_mirror_data_main_folder="", dataset_main_folder="", json_output_folder="", split="test", anchor_normal_path="", contain_no_mirror=False, split_info_folder="", max_num=0):
+    def __init__(self, mask_version, mirror_data_main_folder, no_mirror_data_main_folder="", dataset_main_folder="", json_output_folder="", split="test", anchor_normal_path="", contain_no_mirror=False, split_info_folder="", max_num=0):
         """
         Args:
-            mirror_data_main_folder : folder that contains "raw" , "instance_mask", "refined_depth" ... folders
+            mirror_data_main_folder : folder that contains "mirror_color_images" , "mirror_instance_mask_{}".format(self.mask_version), "refined_depth" ... folders
             no_mirror_data_main_folder : folder of the original datase
                                            e.g. For Matterport3d dataset, no_mirror_data_main_folder should be the folder path 
                                                 that contains "undistorted_color_images", "undistorted_depth_images" folder
@@ -45,13 +46,13 @@ class Input_Generator(Plane_annotation_tool):
         if self.contain_no_mirror:
             assert os.path.exists(self.no_mirror_data_main_folder), "please input a valid none mirror (original data) main folder"
        
-        if "m3d" in self.mirror_data_main_folder:
-            self.dataset_name = "m3d"
+        if "mp3d" in self.mirror_data_main_folder:
+            self.dataset_name = "mp3d"
         elif "nyu" in self.mirror_data_main_folder:
             self.dataset_name = "nyu"
         else:
             self.dataset_name = "scannet"
-
+        self.mask_version = mask_version
     def set_split(self, split):
         """
         Set split (train / test/ val)
@@ -66,34 +67,34 @@ class Input_Generator(Plane_annotation_tool):
         # Get the mirror color image path list
         split_info_path = os.path.join(self.split_info_folder, "{}_mirror".format(self.dataset_name), "{}.txt".format(self.split))
         mirror_split_id_list = read_txt(split_info_path)
-        mirror_color_folder = os.path.join(self.mirror_data_main_folder, "raw")
-        for img_name in os.listdir(mirror_color_folder):
-            if self.dataset_name == "scannet":
-                img_tag = img_name.rsplit("_",1)[0]
+        mirror_color_folder = os.path.join(self.mirror_data_main_folder, "mirror_color_images")
+        color_img_list = [i.strip() for i in os.popen("find -L {} -type f".format(mirror_color_folder)).readlines()]
+        for one_color_img_path in color_img_list:
+            if self.dataset_name != "nyu":
+                train_val_test_tag = one_color_img_path.split("/")[-2]
             else:
-                img_tag = img_name.split(".")[0]
-            if img_tag in mirror_split_id_list:
-                mirror_colorImg_list.append(os.path.join(mirror_color_folder, img_name))
+                train_val_test_tag = one_color_img_path.split("/")[-1].split(".")[0]
+            if train_val_test_tag in mirror_split_id_list:
+                mirror_colorImg_list.append(one_color_img_path)
 
         # Get the none-mirror color image path list
         if self.contain_no_mirror:
-            command = "find {} -type f | grep color".format(self.no_mirror_data_main_folder)
+            command = "find -L {} -type f | grep color".format(self.no_mirror_data_main_folder)
             none_img_file_list = [i.strip() for i in os.popen(command).readlines()]
             split_info_path = os.path.join(self.split_info_folder, "{}_ori".format(self.dataset_name), "{}.txt".format(self.split))
             no_mirror_split_id_list = read_txt(split_info_path)
             for one_img_path in none_img_file_list:
-                img_tag = one_img_path.split("/")[-1].split(".")[0]
+                train_val_test_tag = one_img_path.split("/")[-1].split(".")[0]
                 img_scene = one_img_path.split("/")[-3]
                 if self.dataset_name == "nyu":
                     # NYUv2 data is classified by image_name (with appendix)
-                    if img_tag not in mirror_split_id_list and img_tag in no_mirror_split_id_list:
+                    if train_val_test_tag not in mirror_split_id_list and train_val_test_tag in no_mirror_split_id_list:
                         no_mirror_colorImg_list.append(one_img_path)
                 else:
                     # Matterport3d and ScanNet are classified by sceneID
-                    if img_tag not in mirror_split_id_list and img_scene in no_mirror_split_id_list:
+                    if train_val_test_tag not in mirror_split_id_list and img_scene in no_mirror_split_id_list:
                         no_mirror_colorImg_list.append(one_img_path)
         normal_num = np.load(self.anchor_normal_path).shape[0]
-
         if self.contain_no_mirror:
             cocoFormat_save_path = os.path.join(self.json_output_folder , "{}_{}_normal_all.json".format(self.split, normal_num))
         else:
@@ -101,7 +102,7 @@ class Input_Generator(Plane_annotation_tool):
         self.colorPath_2_json_only_detection(mirror_colorImg_list, no_mirror_colorImg_list, cocoFormat_save_path)
 
 
-    def get_anchor_norma_info(self, mirror_normal):
+    def get_anchor_normal_info(self, mirror_normal):
         """
         Args:
             mirror_normal : 1*3 normal
@@ -131,7 +132,7 @@ class Input_Generator(Plane_annotation_tool):
         Output:
             coco format annotation --> saved to coco_save_path
         """     
-        raw_folder = os.path.join(self.mirror_data_main_folder, "raw")
+        raw_folder = os.path.join(self.mirror_data_main_folder, "mirror_color_images")
 
         categories_info = dict()
         mirror_label = 1
@@ -147,61 +148,62 @@ class Input_Generator(Plane_annotation_tool):
         # Get COCO annoatation for images contain mirror
         for item_index, one_mirror_color_img_path in enumerate(tqdm(mirror_color_img_list)):
             h, w, _ = cv2.imread(one_mirror_color_img_path).shape
-            mask_path = one_mirror_color_img_path.replace("raw", "instance_mask")
-            img_info_path = one_mirror_color_img_path.replace("raw", "img_info").split(".")[0] + ".json"
-            img_info = read_json(img_info_path)
+            mirror_instance_mask_path = one_mirror_color_img_path.replace("mirror_color_images", "mirror_instance_mask_{}".format(self.mask_version)).replace(".jpg", ".png")
+            img_info_path = one_mirror_color_img_path.replace("mirror_color_images", "mirror_plane").split(".")[0] + ".json"
+            img_info = read_plane_json(img_info_path)
             one_mirror_color_img_path_abv = os.path.relpath(one_mirror_color_img_path, self.dataset_main_folder)
-            if not os.path.exists(mask_path) or not os.path.exists(one_mirror_color_img_path):
+            if not os.path.exists(mirror_instance_mask_path) or not os.path.exists(one_mirror_color_img_path):
                 continue
 
             raw_img_path_abv = os.path.relpath(one_mirror_color_img_path, self.dataset_main_folder)
 
-            if self.dataset_name == "m3d":
-                mesh_raw_path_abv = rreplace(raw_img_path_abv.replace("raw", "mesh_raw_depth"),"i","d").replace(".jpg", ".png")
-                mesh_refined_path_abv = rreplace(raw_img_path_abv.replace("raw", "mesh_refined_depth"),"i","d").replace(".jpg", ".png")
-                hole_raw_path_abv = rreplace(raw_img_path_abv.replace("raw", "hole_raw_depth"),"i","d").replace(".jpg", ".png")
-                hole_refined_path_abv = rreplace(raw_img_path_abv.replace("raw", "hole_refined_depth"),"i","d").replace(".jpg", ".png")
+            mirror_instance_mask_path_abv = os.path.relpath(mirror_instance_mask_path, self.dataset_main_folder)
+            if self.dataset_name == "mp3d":
+                raw_meshD_path_abv = rreplace(raw_img_path_abv.replace("mirror_color_images", "raw_meshD"),"i","d").replace(".jpg", ".png")
+                refined_meshD_path_abv = rreplace(raw_img_path_abv.replace("mirror_color_images", "refined_meshD_{}".format(self.mask_version)),"i","d").replace(".jpg", ".png")
+                raw_sensorD_path_abv = rreplace(raw_img_path_abv.replace("mirror_color_images", "raw_sensorD"),"i","d").replace(".jpg", ".png")
+                refined_sensorD_path_abv = rreplace(raw_img_path_abv.replace("mirror_color_images", "refined_sensorD_{}".format(self.mask_version)),"i","d").replace(".jpg", ".png")
             else:
-                hole_raw_path_abv = raw_img_path_abv.replace("raw", "hole_raw_depth").replace(".jpg", ".png")
-                hole_refined_path_abv = raw_img_path_abv.replace("raw", "hole_refined_depth").replace(".jpg", ".png")
-                mesh_raw_path_abv = hole_raw_path_abv
-                mesh_refined_path_abv = hole_refined_path_abv
+                raw_sensorD_path_abv = raw_img_path_abv.replace("mirror_color_images", "raw_sensorD").replace(".jpg", ".png")
+                refined_sensorD_path_abv = raw_img_path_abv.replace("mirror_color_images", "refined_sensorD_{}".format(self.mask_version)).replace(".jpg", ".png")
+                raw_meshD_path_abv = raw_sensorD_path_abv
+                refined_meshD_path_abv = refined_sensorD_path_abv
 
             # COCO image[]
             image = {
                     "id": item_index+1, # same as "image_id"
                     "height": h,
                     "width" : w,
-                    "img_path": raw_img_path_abv,
-                    "mesh_raw_path": mesh_raw_path_abv,
-                    "mesh_refined_path": mesh_refined_path_abv,
-                    "hole_raw_path": hole_raw_path_abv,
-                    "hole_refined_path": hole_refined_path_abv,
+                    "mirror_color_image_path": raw_img_path_abv,
+                    "raw_meshD_path": raw_meshD_path_abv,
+                    "refined_meshD_path": refined_meshD_path_abv,
+                    "raw_sensorD_path": raw_sensorD_path_abv,
+                    "refined_sensorD_path": refined_sensorD_path_abv,
+                    "mirror_instance_mask_path": mirror_instance_mask_path_abv,
                 }
             
             # COCO annotation[]
-            mask_img = cv2.imread(mask_path)
-            mask_path_abv = os.path.relpath(mask_path, self.dataset_main_folder)
+            mask_img = cv2.imread(mirror_instance_mask_path)
             for instance_index in np.unique(np.reshape(mask_img,(-1,3)), axis = 0):
                 if sum(instance_index) == 0: # background
                     continue
-                instance_tag = "{}_{}_{}".format(instance_index[0], instance_index[1], instance_index[2])
+                instance_tag = '%02x%02x%02x' % (instance_index[0],instance_index[1],instance_index[2]) # BGR
                 ground_truth_binary_mask = get_grayscale_instanceMask(mask_img, instance_index)
                 category_info = {'id': mirror_label, 'is_crowd': 0}
                 annotation = create_annotation_info(
                                 annotation_id, annotation_unique_id, category_info, ground_truth_binary_mask,
                                 (w,h), tolerance=2)
-                annotation["mirror_normal_camera"] = unit_vector(img_info[str(instance_tag)]["mirror_normal"]).tolist()
-                anchor_normal_class, anchor_normal_residual = self.get_anchor_norma_info(annotation["mirror_normal_camera"])
+                annotation["mirror_normal_camera"] = unit_vector(img_info[instance_tag]["mirror_normal"]).tolist()
+                anchor_normal_class, anchor_normal_residual = self.get_anchor_normal_info(annotation["mirror_normal_camera"])
                 annotation["anchor_normal_class"] = anchor_normal_class
                 annotation["anchor_normal_residual"] = anchor_normal_residual
-                annotation["mesh_refined_path"] = mesh_refined_path_abv
-                annotation["hole_refined_path"] = hole_refined_path_abv
-                annotation["mesh_raw_path"] = mesh_raw_path_abv
-                annotation["hole_raw_path"] = hole_raw_path_abv
-                annotation["image_path"] = raw_img_path_abv
+                annotation["refined_meshD_path"] = refined_meshD_path_abv
+                annotation["refined_sensorD_path"] = refined_sensorD_path_abv
+                annotation["raw_meshD_path"] = raw_meshD_path_abv
+                annotation["raw_sensorD_path"] = raw_sensorD_path_abv
+                annotation["mirror_color_image_path"] = raw_img_path_abv
                 annotation["instance_tag"] = str(instance_tag)
-                annotation["mask_path"] = mask_path_abv
+                annotation["mirror_instance_mask_path"] = mirror_instance_mask_path_abv
                 annotations.append(annotation)
                 annotation_id += 1
 
@@ -214,27 +216,27 @@ class Input_Generator(Plane_annotation_tool):
         for one_no_mirror_color_img_path in tqdm(no_mirror_color_img_list):
             raw_img_path_abv = os.path.relpath(one_no_mirror_color_img_path, self.dataset_main_folder)
 
-            if self.dataset_name == "m3d":
-                hole_raw_path_abv = rreplace(raw_img_path_abv.replace("color", "depth"),"i","d").replace(".jpg", ".png")
-                hole_refined_path_abv = hole_raw_path_abv
-                mesh_raw_path_abv = ((rreplace(hole_raw_path_abv, "undistorted_depth_images", "mesh_images")).replace("undistorted_depth_images", "matterport_render_depth")).split(".")[0] + "_mesh_depth.png"
-                mesh_refined_path_abv = mesh_raw_path_abv
+            if self.dataset_name == "mp3d":
+                raw_sensorD_path_abv = rreplace(raw_img_path_abv.replace("color", "depth"),"i","d").replace(".jpg", ".png")
+                refined_sensorD_path_abv = raw_sensorD_path_abv
+                raw_meshD_path_abv = ((rreplace(raw_sensorD_path_abv, "undistorted_depth_images", "mesh_images")).replace("undistorted_depth_images", "matterport_render_depth")).split(".")[0] + "_mesh_depth.png"
+                refined_meshD_path_abv = raw_meshD_path_abv
             else:
-                hole_raw_path_abv = raw_img_path_abv.replace("color", "depth").replace(".jpg", ".png")
-                hole_refined_path_abv = hole_raw_path_abv
-                mesh_raw_path_abv = hole_raw_path_abv
-                mesh_refined_path_abv = hole_raw_path_abv
+                raw_sensorD_path_abv = raw_img_path_abv.replace("color", "depth").replace(".jpg", ".png")
+                refined_sensorD_path_abv = raw_sensorD_path_abv
+                raw_meshD_path_abv = raw_sensorD_path_abv
+                refined_meshD_path_abv = raw_sensorD_path_abv
 
             # COCO image[]
             image = {
                     "id": item_index+1, # same as "image_id"
                     "height": h,
                     "width" : w,
-                    "img_path": raw_img_path_abv,
-                    "mesh_raw_path": mesh_raw_path_abv,
-                    "mesh_refined_path": mesh_refined_path_abv,
-                    "hole_raw_path": hole_raw_path_abv,
-                    "hole_refined_path": hole_refined_path_abv,
+                    "mirror_color_image_path": raw_img_path_abv,
+                    "raw_meshD_path": raw_meshD_path_abv,
+                    "refined_meshD_path": refined_meshD_path_abv,
+                    "raw_sensorD_path": raw_sensorD_path_abv,
+                    "refined_sensorD_path": refined_sensorD_path_abv,
                 }
 
             if image not in images:
@@ -351,8 +353,10 @@ if __name__ == "__main__":
         '--coco_json', default="", type=str, help="coco format json file to generate the kmeans normal")
     parser.add_argument(
         '--num_clusters', default=10, type=int, help="number of cluster center")
+    parser.add_argument(
+        '--mask_version', default="precise", help="2 mask version : precise/ coarse")
     args = parser.parse_args()
-    generator = Input_Generator(mirror_data_main_folder = args.mirror_data_main_folder, \
+    generator = Input_Generator(mask_version = args.mask_version, mirror_data_main_folder = args.mirror_data_main_folder, \
                                 no_mirror_data_main_folder = args.no_mirror_data_main_folder, \
                                 dataset_main_folder = args.dataset_main_folder, \
                                 json_output_folder = args.json_output_folder, \
@@ -368,13 +372,13 @@ if __name__ == "__main__":
         assert os.path.exists(args.mirror_data_main_folder), "please input a valid mirror data main folder"
         assert os.path.exists(args.split_info_folder), "please input a split information folder (please remember to down load the split_info.zip from http://aspis.cmpt.sfu.ca/projects/mirrors/data_release/split_info.zip)" 
         if args.split == "all":
+            if args.mirror_data_main_folder.find("nyu") <=0 :
+                generator.set_split("val")
+                generator.generate_coco_main()
             generator.set_split("train")
             generator.generate_coco_main()
             generator.set_split("test")
             generator.generate_coco_main()
-            if args.mirror_data_main_folder.find("nyu") <=0 :
-                generator.set_split("val")
-                generator.generate_coco_main()
         else:
             generator.generate_coco_main()
     elif args.stage == "2":

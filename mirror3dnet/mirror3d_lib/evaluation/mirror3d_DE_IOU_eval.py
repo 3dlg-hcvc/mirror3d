@@ -33,8 +33,8 @@ class Mirror3DNet_Eval:
 
         if self.cfg.TRAIN_COCO_JSON.find("nyu") > 0:
             self.dataset_name = "nyu"
-        elif self.cfg.TRAIN_COCO_JSON.find("m3d") > 0:
-            self.dataset_name = "m3d"
+        elif self.cfg.TRAIN_COCO_JSON.find("mp3d") > 0:
+            self.dataset_name = "mp3d"
         elif self.cfg.TRAIN_COCO_JSON.find("scannet") > 0:
             self.dataset_name = "scannet"
 
@@ -96,7 +96,7 @@ class Mirror3DNet_Eval:
         else:
             train_with_refD = False
 
-        mirror3d_eval = Mirror3d_eval(train_with_refD=train_with_refD, logger=self.logger,Input_tag=Input_tag, method_tag=method_tag,width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
+        mirror3d_eval = Mirror3d_eval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_refD=train_with_refD, logger=self.logger,Input_tag=Input_tag, method_tag=method_tag,width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
 
         input_txt = read_txt(self.cfg.REF_DEPTH_TO_REFINE)
 
@@ -108,7 +108,7 @@ class Mirror3DNet_Eval:
         for i, item in enumerate(output_list):
             one_output, one_input = item
             instances = one_output[0][0]["instances"]
-            color_img_path = one_input[0]["img_path"]
+            color_img_path = one_input[0]["mirror_color_image_path"]
 
             pred_mask = np.zeros(instances.image_size)
             pred_mask = pred_mask.astype(bool)
@@ -135,11 +135,11 @@ class Mirror3DNet_Eval:
                     else:
                         depth_to_ref = refine_depth_fun.refine_depth_by_mirror_area(one_pred_mask.numpy().astype(bool).squeeze(), pred_normal, depth_to_ref)
             depth_to_ref[depth_to_ref<0] = 0
-            mirror3d_eval.compute_and_update_mirror3D_metrics(depth_to_ref/self.cfg.DEPTH_SHIFT,  self.cfg.DEPTH_SHIFT, color_img_path)
+            mirror3d_eval.compute_and_update_mirror3D_metrics(depth_to_ref/self.cfg.DEPTH_SHIFT,  self.cfg.DEPTH_SHIFT, color_img_path,one_input[0]["raw_meshD_path"], one_input[0]["refined_meshD_path"], one_input[0]["mirror_instance_mask_path"])
             if self.cfg.EVAL_SAVE_DEPTH:
                 refined_input_txt_output_folder = os.path.join(self.cfg.OUTPUT_DIR, "refined_input_txt_pred_depth")
                 os.makedirs(refined_input_txt_output_folder, exist_ok=True)
-                mirror3d_eval.save_result(refined_input_txt_output_folder, depth_to_ref/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, color_img_path)
+                mirror3d_eval.save_result(refined_input_txt_output_folder, depth_to_ref/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, color_img_path,one_input[0]["raw_meshD_path"], one_input[0]["refined_meshD_path"], one_input[0]["mirror_instance_mask_path"])
 
         print("############# Result of 'txt {} + Mirror3dNet' #############".format(self.cfg.REF_DEPTH_TO_REFINE))
         if self.cfg.EVAL_SAVE_DEPTH:
@@ -150,26 +150,26 @@ class Mirror3DNet_Eval:
         anchor_normal = np.load(self.cfg.ANCHOR_NORMAL_NYP)
         refine_depth_fun = Refine_depth(self.cfg.FOCAL_LENGTH, self.cfg.REF_BORDER_WIDTH, self.cfg.EVAL_WIDTH, self.cfg.EVAL_HEIGHT)
 
-        mirror3d_eval_sensorD = Mirror3d_eval(train_with_refD=None, logger=self.logger,Input_tag="sensor-D", method_tag="*",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
-        mirror3d_eval_meshD = Mirror3d_eval(train_with_refD=None, logger=self.logger,Input_tag="mesh-D", method_tag="*",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
-        mirror3d_eval_hole = Mirror3d_eval(train_with_refD=None, logger=self.logger,Input_tag="sensor-D", method_tag="\mnet",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
-        mirror3d_eval_mesh = Mirror3d_eval(train_with_refD=None, logger=self.logger,Input_tag="mesh-D", method_tag="\mnet",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
+        mirror3d_eval_sensorD = Mirror3d_eval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_refD=None, logger=self.logger,Input_tag="sensor-D", method_tag="*",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
+        mirror3d_eval_meshD = Mirror3d_eval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_refD=None, logger=self.logger,Input_tag="mesh-D", method_tag="*",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
+        mirror3d_eval_hole = Mirror3d_eval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_refD=None, logger=self.logger,Input_tag="sensor-D", method_tag="\mnet",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
+        mirror3d_eval_mesh = Mirror3d_eval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_refD=None, logger=self.logger,Input_tag="mesh-D", method_tag="\mnet",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
 
         have_mesh_D = False
         imgPath_info = dict()
 
         input_json = read_json(self.cfg.VAL_COCO_JSON)
         for item in input_json["images"]:
-            img_path = os.path.join(self.cfg.VAL_IMG_ROOT, item["img_path"])
+            img_path = os.path.join(self.cfg.VAL_IMG_ROOT, item["mirror_color_image_path"])
             
             imgPath_info[img_path] = item
         
         for i, item in enumerate(output_list):
             one_output, one_input = item
             instances = one_output[0][0]["instances"]
-            color_img_path = one_input[0]["img_path"]
-            hole_raw_depth_path = os.path.join(self.cfg.VAL_IMG_ROOT, imgPath_info[color_img_path]["hole_raw_path"])
-            mesh_raw_depth_path = os.path.join(self.cfg.VAL_IMG_ROOT, imgPath_info[color_img_path]["mesh_raw_path"])
+            color_img_path = one_input[0]["mirror_color_image_path"]
+            hole_raw_depth_path = os.path.join(self.cfg.VAL_IMG_ROOT, imgPath_info[color_img_path]["raw_sensorD_path"])
+            mesh_raw_depth_path = os.path.join(self.cfg.VAL_IMG_ROOT, imgPath_info[color_img_path]["raw_meshD_path"])
 
             pred_mask = np.zeros(instances.image_size)
             pred_mask = pred_mask.astype(bool)
@@ -210,18 +210,18 @@ class Mirror3DNet_Eval:
             
             hole_depth_to_ref[hole_depth_to_ref<0] = 0
             
-            mirror3d_eval_hole.compute_and_update_mirror3D_metrics(hole_depth_to_ref/self.cfg.DEPTH_SHIFT,  self.cfg.DEPTH_SHIFT, color_img_path)
-            mirror3d_eval_sensorD.compute_and_update_mirror3D_metrics(cv2.imread(hole_raw_depth_path, cv2.IMREAD_ANYDEPTH)/self.cfg.DEPTH_SHIFT,  self.cfg.DEPTH_SHIFT, color_img_path)
+            mirror3d_eval_hole.compute_and_update_mirror3D_metrics(hole_depth_to_ref/self.cfg.DEPTH_SHIFT,  self.cfg.DEPTH_SHIFT, color_img_path,one_input[0]["raw_meshD_path"], one_input[0]["refined_meshD_path"], one_input[0]["mirror_instance_mask_path"])
+            mirror3d_eval_sensorD.compute_and_update_mirror3D_metrics(cv2.imread(hole_raw_depth_path, cv2.IMREAD_ANYDEPTH)/self.cfg.DEPTH_SHIFT,  self.cfg.DEPTH_SHIFT, color_img_path,one_input[0]["raw_meshD_path"], one_input[0]["refined_meshD_path"], one_input[0]["mirror_instance_mask_path"])
             if self.cfg.EVAL_SAVE_DEPTH:
-                mirror3d_eval_hole.save_result(hole_depth_to_ref_output_folder, hole_depth_to_ref/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, color_img_path)
+                mirror3d_eval_hole.save_result(hole_depth_to_ref_output_folder, hole_depth_to_ref/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, color_img_path,one_input[0]["raw_meshD_path"], one_input[0]["refined_meshD_path"], one_input[0]["mirror_instance_mask_path"])
 
             if mesh_raw_depth_path != hole_raw_depth_path:
                 have_mesh_D = True
                 mesh_depth_to_ref[mesh_depth_to_ref<0] = 0
-                mirror3d_eval_mesh.compute_and_update_mirror3D_metrics(mesh_depth_to_ref/self.cfg.DEPTH_SHIFT,  self.cfg.DEPTH_SHIFT, color_img_path)
-                mirror3d_eval_meshD.compute_and_update_mirror3D_metrics(cv2.imread(mesh_raw_depth_path, cv2.IMREAD_ANYDEPTH)/self.cfg.DEPTH_SHIFT,  self.cfg.DEPTH_SHIFT, color_img_path)
+                mirror3d_eval_mesh.compute_and_update_mirror3D_metrics(mesh_depth_to_ref/self.cfg.DEPTH_SHIFT,  self.cfg.DEPTH_SHIFT, color_img_path,one_input[0]["raw_meshD_path"], one_input[0]["refined_meshD_path"], one_input[0]["mirror_instance_mask_path"])
+                mirror3d_eval_meshD.compute_and_update_mirror3D_metrics(cv2.imread(mesh_raw_depth_path, cv2.IMREAD_ANYDEPTH)/self.cfg.DEPTH_SHIFT,  self.cfg.DEPTH_SHIFT, color_img_path,one_input[0]["raw_meshD_path"], one_input[0]["refined_meshD_path"], one_input[0]["mirror_instance_mask_path"])
                 if self.cfg.EVAL_SAVE_DEPTH:
-                    mirror3d_eval_mesh.save_result(mesh_depth_to_ref_output_folder, mesh_depth_to_ref/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, color_img_path)
+                    mirror3d_eval_mesh.save_result(mesh_depth_to_ref_output_folder, mesh_depth_to_ref/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, color_img_path,one_input[0]["raw_meshD_path"], one_input[0]["refined_meshD_path"], one_input[0]["mirror_instance_mask_path"])
             else:
                 os.rmdir(mesh_depth_to_ref_output_folder)
         
@@ -251,20 +251,20 @@ class Mirror3DNet_Eval:
         else:
             train_with_refD = False
 
-        mirror3d_eval = Mirror3d_eval(train_with_refD=train_with_refD, logger=self.logger,Input_tag=Input_tag, method_tag=method_tag,width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
+        mirror3d_eval = Mirror3d_eval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_refD=train_with_refD, logger=self.logger,Input_tag=Input_tag, method_tag=method_tag,width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
 
         for one_output, one_input in output_list:
             pred_depth = one_output[1][0].detach().cpu().numpy()
-            gt_depth = cv2.imread(one_input[0]["mesh_refined_path"], cv2.IMREAD_ANYDEPTH)
+            gt_depth = cv2.imread(one_input[0]["refined_meshD_path"], cv2.IMREAD_ANYDEPTH)
 
             np_pred_depth = pred_depth.astype(np.uint16)
 
-            mirror3d_eval.compute_and_update_mirror3D_metrics(np_pred_depth/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, one_input[0]["img_path"])
+            mirror3d_eval.compute_and_update_mirror3D_metrics(np_pred_depth/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, one_input[0]["mirror_color_image_path"],one_input[0]["raw_meshD_path"], one_input[0]["refined_meshD_path"], one_input[0]["mirror_instance_mask_path"])
 
             if self.cfg.EVAL_SAVE_DEPTH:
                 raw_branch_output_folder = os.path.join(self.cfg.OUTPUT_DIR, "DE_branch_pred_depth")
                 os.makedirs(raw_branch_output_folder, exist_ok=True)
-                mirror3d_eval.save_result(raw_branch_output_folder, np_pred_depth/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, one_input[0]["img_path"])
+                mirror3d_eval.save_result(raw_branch_output_folder, np_pred_depth/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, one_input[0]["mirror_color_image_path"],one_input[0]["raw_meshD_path"], one_input[0]["refined_meshD_path"], one_input[0]["mirror_instance_mask_path"])
             
         print("evaluate DE result for {}".format(method_tag))
         self.logger.info("evaluate DE result for {}".format(method_tag))
@@ -285,7 +285,7 @@ class Mirror3DNet_Eval:
             train_with_refD = True
         else:
             train_with_refD = False
-        mirror3d_eval = Mirror3d_eval(train_with_refD=train_with_refD, logger=self.logger,Input_tag=Input_tag, method_tag=method_tag,width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
+        mirror3d_eval = Mirror3d_eval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_refD=train_with_refD, logger=self.logger,Input_tag=Input_tag, method_tag=method_tag,width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
 
         for one_output, one_input in output_list:
             pred_depth = one_output[1][0].detach().cpu().numpy()
@@ -315,12 +315,12 @@ class Mirror3DNet_Eval:
 
             np_pred_depth = np_pred_depth.astype(np.uint16)
             depth_p = depth_p.astype(np.uint16)
-            mirror3d_eval.compute_and_update_mirror3D_metrics(depth_p/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, one_input[0]["img_path"])
+            mirror3d_eval.compute_and_update_mirror3D_metrics(depth_p/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, one_input[0]["mirror_color_image_path"],one_input[0]["raw_meshD_path"], one_input[0]["refined_meshD_path"], one_input[0]["mirror_instance_mask_path"])
 
             if self.cfg.EVAL_SAVE_DEPTH:
                 refined_DE_branch_output_folder = os.path.join(self.cfg.OUTPUT_DIR, "refined_DE_branch_pred_depth")
                 os.makedirs(refined_DE_branch_output_folder, exist_ok=True)
-                mirror3d_eval.save_result(refined_DE_branch_output_folder, depth_p/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, one_input[0]["img_path"])
+                mirror3d_eval.save_result(refined_DE_branch_output_folder, depth_p/self.cfg.DEPTH_SHIFT, self.cfg.DEPTH_SHIFT, one_input[0]["mirror_color_image_path"],one_input[0]["raw_meshD_path"], one_input[0]["refined_meshD_path"], one_input[0]["mirror_instance_mask_path"])
             
         print("eval refined depth from DE branch : {}".format(method_tag))
         mirror3d_eval.print_mirror3D_score()
@@ -331,12 +331,15 @@ class Mirror3DNet_Eval:
         os.makedirs(masked_img_save_folder, exist_ok=True)
 
         for one_output, one_input in output_list:
-            
             instances = one_output[0][0]["instances"]
-            img_path = one_input[0]["img_path"]
-            img_save_path = os.path.join(masked_img_save_folder, img_path.split("/")[-1])
+            img_path = one_input[0]["mirror_color_image_path"]
+          
+            color_img_folder = os.path.join(self.cfg.VAL_IMG_ROOT, color_img_folder.replace(self.dataset_root,"").split("/")[1])
+            masked_img_save_path = img_path.replace(color_img_folder, masked_img_save_folder)
+            masked_img_save_sub_folder = os.path.split(masked_img_save_path)[0]
+            os.makedirs(masked_img_save_sub_folder, exist_ok=True)
             if instances.pred_boxes.tensor.shape[0] <= 0:
-                shutil.copy(img_path, img_save_path)
+                shutil.copy(img_path, masked_img_save_path)
                 print("######## no detection :", img_path)
                 continue
             img = cv2.imread(img_path)
@@ -347,7 +350,7 @@ class Mirror3DNet_Eval:
                 )
             v = v.draw_instance_predictions(instances.to("cpu")) 
             output_img = v.get_image()[:, :, ::-1]
-            cv2.imwrite(img_save_path, output_img)
+            cv2.imwrite(masked_img_save_path, output_img)
         print("masked image saved to : ", masked_img_save_folder)
             
 
@@ -358,8 +361,8 @@ class Mirror3DNet_Eval:
         for i, item in enumerate(output_list):
             one_output, one_input = item
             instances = one_output[0][0]["instances"]
-            mask_path = one_input[0]["img_path"].replace("raw","instance_mask")
-            if not os.path.exists(mask_path) or "no_mirror" in one_input[0]["img_path"]:
+            mask_path = one_input[0]["mirror_instance_mask_path"]
+            if not os.path.exists(mask_path) or "no_mirror" in one_input[0]["mirror_color_image_path"]:
                 continue
             GT_mask = cv2.imread(mask_path, cv2.IMREAD_ANYDEPTH)
             GT_mask = GT_mask > 0

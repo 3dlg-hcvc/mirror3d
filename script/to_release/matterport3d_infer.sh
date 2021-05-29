@@ -334,7 +334,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --batch_size 1 \
 --checkpoint_save_freq 1500 \
 --num_epochs 100 \
---learning_rate 1e-4 \
+--learning_rate 1e-4 \        
 --log_directory /project/3dlg-hcvc/mirrors/www/final_result/m3d_final \
 --anchor_normal_npy /project/3dlg-hcvc/mirrors/www/Mirror3D_final/mirror_normal/m3d/m3d_kmeans_normal_10.npy
 

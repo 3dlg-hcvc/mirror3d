@@ -54,7 +54,7 @@ class Dataset_visulization(Dataset_visulization):
         self.color_img_list = []
         input_images = read_json(test_json)["images"]
         for one_info in input_images: 
-            self.color_img_list.append(os.path.join(dataset_main_folder, one_info["img_path"]))
+            self.color_img_list.append(os.path.join(dataset_main_folder, one_info["mirror_color_image_path"]))
         self.color_img_list.sort()
 
         if multi_processing:
@@ -673,7 +673,7 @@ class Dataset_visulization(Dataset_visulization):
         test_sample_name_list = []
         input_images = read_json(args.test_json)["images"]
         for one_info in input_images: 
-            test_sample_name_list.append(one_info["hole_raw_path"].split("/")[-1])
+            test_sample_name_list.append(one_info["raw_sensorD_path"].split("/")[-1])
 
         for item_index, item in enumerate(self.method_predFolder.items()):
             if args.multi_processing and item_index!=args.process_index:
@@ -2121,7 +2121,7 @@ class Dataset_visulization(Dataset_visulization):
             tag, folder = line.strip().split()
             tag_folder[tag] = folder
             if index == 0:
-                img_list = os.listdir(folder)
+                img_list = get_fileList_uder_folder(folder)
                 sample_num = len(img_list)
 
 
@@ -2136,12 +2136,10 @@ class Dataset_visulization(Dataset_visulization):
             new_table["style"] = "width: 100%%; margin-left: auto; margin-right: auto;"
             soup.body.div.append(new_table)
             for color_img_index, one_color_img_path in enumerate(one_colorSubset):
+                # TODO update color image path
                 sample_name = os.path.split(one_color_img_path)[-1]
                 sample_id = sample_name.split(".")[0]
                 
-                
-                
-                # TODO add heading 
                 if color_img_index == 0:
                     heading = soup.new_tag("tr")
 

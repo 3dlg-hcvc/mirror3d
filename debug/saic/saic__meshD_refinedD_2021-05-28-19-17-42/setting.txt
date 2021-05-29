@@ -1,0 +1,23 @@
+--model_name saic__meshD_refinedD
+--refined_depth True
+--mesh_depth True
+--coco_val waste/mp3d_test.json
+--coco_train waste/mp3d_test.json
+--coco_train_root /project/3dlg-hcvc/mirrors/www/dataset_final_test/mp3d
+--coco_val_root /project/3dlg-hcvc/mirrors/www/dataset_final_test/mp3d
+--coco_focal_len 537
+--depth_shift 4000
+--input_height 512
+--input_width 640
+--train_batch_size 2
+--learning_rate 0.0001
+--weights 
+--snapshot_period 2
+--log_directory debug/saic/saic__meshD_refinedD_2021-05-28-19-17-42
+--epoch 100
+--output_save_folder exp_result
+--debug False
+--postfix 
+--default_cfg LRN
+--config_file init_depth_generator/saic_depth_completion/configs/lrn/LRN_efficientnet-b4_lena.yaml
+--test_batch_size 1

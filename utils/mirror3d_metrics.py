@@ -11,11 +11,12 @@ import time
 
 
 class Mirror3d_eval():
-    def __init__(self, train_with_refD, logger=None, Input_tag="Input_tag", method_tag="method_tag",width=640, height=480, dataset="nyu"):
+    def __init__(self, train_with_refD, logger=None, Input_tag="Input_tag", method_tag="method_tag",width=640, height=480, dataset="nyu", dataset_root=""):
         self.m_nm_all_refD = torch.zeros(27)
         self.m_nm_all_rawD = torch.zeros(27)
         self.raw_cnt = 0
         self.ref_cnt = 0
+        self.dataset_root = dataset_root
         self.train_with_refD = train_with_refD
         self.logger = logger
         self.Input_tag = Input_tag
@@ -24,12 +25,12 @@ class Mirror3d_eval():
         self.height = height
         self.dataset = dataset
         if self.train_with_refD == True: 
-            if self.dataset != "m3d":
+            if self.dataset != "mp3d":
                 self.Train_tag = "ref"
             else:
                 self.Train_tag = "mesh-ref"
         elif self.train_with_refD == False:
-            if self.dataset != "m3d":
+            if self.dataset != "mp3d":
                 self.Train_tag = "raw"
             else:
                 self.Train_tag = "mesh"
@@ -73,12 +74,12 @@ class Mirror3d_eval():
         self.height = height
 
         if self.train_with_refD == True: 
-            if self.dataset != "m3d":
+            if self.dataset != "mp3d":
                 self.Train_tag = "ref"
             else:
                 self.Train_tag = "mesh-ref"
         elif self.train_with_refD == False:
-            if self.dataset != "m3d":
+            if self.dataset != "mp3d":
                 self.Train_tag = "raw"
             else:
                 self.Train_tag = "mesh"
@@ -220,9 +221,8 @@ class Mirror3d_eval():
             eval_measures_std.append(np.std(scores)/np.sqrt(len(scores)))
         self.save_as_table_format(eval_measures_std, compare_with_raw=compare_with_raw, compute_std=True)
 
-
-    def compute_and_update_mirror3D_metrics(self, pred_depth, depth_shift, color_image_path):
-        if color_image_path.find("m3d") > 0 and "mesh" not in self.Train_tag:
+    def compute_and_update_mirror3D_metrics(self, pred_depth, depth_shift, color_image_path, rawD_gt_depth_path, refD_gt_depth_path, mask_path):
+        if color_image_path.find("mp3d") > 0 and "mesh" not in self.Train_tag:
             self.Train_tag = self.Train_tag.replace("ref","mesh-ref")
             self.Train_tag = self.Train_tag.replace("raw","mesh")
 
@@ -281,35 +281,9 @@ class Mirror3d_eval():
 
         def get_refD_scores(pred_depth, depth_shift, color_image_path):
 
-            mask_path = rreplace(color_image_path, "raw","instance_mask")
-            if not os.path.exists(mask_path) and "no_mirror" not in color_image_path:
+            if not os.path.exists(mask_path) and "refined" in refD_gt_depth_path:
                 return 
 
-            if "no_mirror" in color_image_path:
-                self.get_full_set = True
-                if color_image_path.find("m3d") > 0:
-                    refD_gt_depth_path = color_image_path.replace("color", "depth")
-                    refD_gt_depth_path = rreplace(refD_gt_depth_path, "i", "d")
-                    refD_gt_depth_path = refD_gt_depth_path.replace("jpg","png")
-                else:
-                    refD_gt_depth_path = color_image_path.replace("color", "depth")
-                    refD_gt_depth_path = refD_gt_depth_path.replace("jpg","png")
-            else:
-                if color_image_path.find("m3d") > 0:
-                    if os.path.exists(rreplace(color_image_path.replace("raw", "mesh_refined_depth"),"i","d")):
-                        refD_gt_depth_path = rreplace(color_image_path.replace("raw", "mesh_refined_depth"),"i","d")
-                    elif os.path.exists(rreplace(color_image_path.replace("raw", "hole_refined_depth"),"i","d")):
-                        refD_gt_depth_path = rreplace(color_image_path.replace("raw", "hole_refined_depth"),"i","d")
-                    else:
-                        return
-                else:
-                    if os.path.exists(color_image_path.replace("raw", "mesh_refined_depth")):
-                        refD_gt_depth_path = color_image_path.replace("raw", "mesh_refined_depth")
-                    elif os.path.exists(color_image_path.replace("raw", "hole_refined_depth")):
-                        refD_gt_depth_path = color_image_path.replace("raw", "hole_refined_depth")
-                    else:
-                        return
-            
             depth_shift = np.array(depth_shift)
             refD_gt_depth = cv2.resize(cv2.imread(refD_gt_depth_path, cv2.IMREAD_ANYDEPTH), (pred_depth.shape[1], pred_depth.shape[0]), 0, 0, cv2.INTER_NEAREST)
             refD_gt_depth = np.array(refD_gt_depth) / depth_shift
@@ -336,36 +310,10 @@ class Mirror3d_eval():
             return one_m_nm_all
 
         def get_rawD_scores(pred_depth, depth_shift, color_image_path):
-            mask_path = rreplace(color_image_path, "raw","instance_mask")
-            if not os.path.exists(mask_path) and "no_mirror" not in color_image_path:
+            if not os.path.exists(mask_path):
                 return 
-            if "no_mirror" in color_image_path:
-                if color_image_path.find("m3d") > 0:
-                    refD_gt_depth_path = color_image_path.replace("color", "depth")
-                    refD_gt_depth_path = rreplace(refD_gt_depth_path, "i", "d")
-                    refD_gt_depth_path = refD_gt_depth_path.replace("jpg","png")
-                else:
-                    refD_gt_depth_path = color_image_path.replace("color", "depth")
-                    refD_gt_depth_path = refD_gt_depth_path.replace("jpg","png")
-            else:
-                if color_image_path.find("m3d") > 0:
-                    if os.path.exists(rreplace(color_image_path.replace("raw", "mesh_raw_depth"),"i","d")):
-                        refD_gt_depth_path = rreplace(color_image_path.replace("raw", "mesh_raw_depth"),"i","d")
-                    elif os.path.exists(rreplace(color_image_path.replace("raw", "hole_raw_depth"),"i","d")):
-                        refD_gt_depth_path = rreplace(color_image_path.replace("raw", "hole_raw_depth"),"i","d")
-                    else:
-                        return
-                else:
-                    if os.path.exists(color_image_path.replace("raw", "mesh_raw_depth")):
-                        refD_gt_depth_path = color_image_path.replace("raw", "mesh_raw_depth")
-                    elif os.path.exists(color_image_path.replace("raw", "hole_raw_depth")):
-                        refD_gt_depth_path = color_image_path.replace("raw", "hole_raw_depth")
-                    else:
-                        return
-            
-
             depth_shift = np.array(depth_shift)
-            refD_gt_depth = cv2.resize(cv2.imread(refD_gt_depth_path, cv2.IMREAD_ANYDEPTH), (pred_depth.shape[1], pred_depth.shape[0]), 0, 0, cv2.INTER_NEAREST)
+            refD_gt_depth = cv2.resize(cv2.imread(rawD_gt_depth_path, cv2.IMREAD_ANYDEPTH), (pred_depth.shape[1], pred_depth.shape[0]), 0, 0, cv2.INTER_NEAREST)
             refD_gt_depth = np.array(refD_gt_depth) / depth_shift
             pred_depth = np.array(pred_depth)
 
@@ -410,9 +358,10 @@ class Mirror3d_eval():
             self.sample_score[img_name] = {"ref":one_ref_m_nm_all, "raw":one_raw_m_nm_all}
 
         return 
+    
+    
 
-
-    def save_result(self, main_output_folder, pred_depth, depth_shift, color_img_path):
+    def save_result(self, main_output_folder, pred_depth, depth_shift, color_img_path, rawD_gt_depth_path, refD_gt_depth_path, mask_path):
         
         self.main_output_folder = main_output_folder
         if os.path.exists(self.main_output_folder) and self.to_create_folder:
@@ -422,16 +371,6 @@ class Mirror3d_eval():
         elif not os.path.exists(self.main_output_folder):
             self.to_create_folder = False
 
-        if os.path.exists(color_img_path.replace("raw", "mesh_refined_depth")):
-            refD_gt_depth_path = color_img_path.replace("raw", "mesh_refined_depth")
-        elif os.path.exists(color_img_path.replace("raw", "hole_refined_depth")):
-            refD_gt_depth_path = color_img_path.replace("raw", "hole_refined_depth")
-        elif os.path.exists(rreplace(color_img_path.replace("raw", "mesh_refined_depth"),"i","d")):
-            refD_gt_depth_path = rreplace(color_img_path.replace("raw", "mesh_refined_depth"),"i","d")
-        elif os.path.exists(rreplace(color_img_path.replace("raw", "hole_refined_depth"),"i","d")):
-            refD_gt_depth_path = rreplace(color_img_path.replace("raw", "hole_refined_depth"),"i","d")
-        else:
-            return
 
         pred_depth = np.array(pred_depth)
         depth_shift = np.array(depth_shift)
@@ -439,18 +378,10 @@ class Mirror3d_eval():
         info_txt_save_path = os.path.join(main_output_folder, "color_mask_gtD_predD.txt")
         pred_depth_scaled = pred_depth * depth_shift
         pred_depth_scaled = pred_depth_scaled.astype(np.uint16)
-                    
-        predD_save_folder = os.path.join(main_output_folder,"pred_depth")
-        mask_path = color_img_path.replace("raw", "instance_mask")
-
-        if not os.path.exists(mask_path):
-            mask_path = None
+        rawD_folder = os.path.join(self.dataset_root, rawD_gt_depth_path.replace(self.dataset_root,"").split("/")[1])
+        depth_np_save_path = rawD_gt_depth_path.replace(rawD_folder, main_output_folder + "/pred_depth")
+        predD_save_folder = os.path.split(depth_np_save_path)[0]
         os.makedirs(predD_save_folder, exist_ok=True)
-        if "scannet" not in color_img_path:
-            depth_np_save_path = os.path.join(predD_save_folder, refD_gt_depth_path.split("/")[-1])
-        else:
-            depth_np_save_path = os.path.join(predD_save_folder, "{}_{}".format(refD_gt_depth_path.split("/")[-2], refD_gt_depth_path.split("/")[-1]))
-        
         cv2.imwrite(depth_np_save_path, pred_depth_scaled, [cv2.IMWRITE_PNG_COMPRESSION, 0])
 
         with open(info_txt_save_path, "a") as file:
@@ -559,51 +490,3 @@ class Mirror_seg_eval():
 
     def get_results(self):
         return self.IOU_list, self.f_measure_list, self.MAE_list
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Get Setting :D')
-    parser.add_argument( 
-        '--info_list', default="/project/3dlg-hcvc/jiaqit/cvpr/R1_rerun/to_eval.txt", type=str, help="infomation txt contrains color_mask_gtD_predD.txt") 
-    parser.add_argument( 
-        '--line', default=0, type=int, help="line to processs from info_list") 
-    parser.add_argument( 
-        '--depth_shift', default=4000, type=int, help="depth shirt") 
-    args = parser.parse_args()
-
-    
-    info_list_path = read_txt(args.info_list)[args.line]
-    
-    if "refinedD" in info_list_path:
-        train_with_refD = True
-    elif "rawD" in info_list_path:
-        train_with_refD = False
-    else:
-        train_with_refD = None
-    log_file_save_path = info_list_path.replace("color_mask_gtD_predD.txt","eval_output.log")
-    logging.basicConfig(filename=log_file_save_path, filemode="a", format="%(asctime)s %(name)s:%(levelname)s:%(message)s", datefmt="%d-%m-%Y %H:%M:%S", level=logging.INFO)
-
-
-    if info_list_path.find("saic") > 0:
-        Input_tag = "RGBD"
-        method_tag = "saic+M3DNet"
-    elif info_list_path.find("bts") > 0:
-        Input_tag = "RGB"
-        method_tag = "bts+M3DNet"
-    elif info_list_path.find("vnl") > 0:
-        Input_tag = "RGB"
-        method_tag = "vnl+M3DNet"
-    elif info_list_path.find("planercnn"):
-        Input_tag = "RGB"
-        method_tag = "planercnn"
-    else:
-        Input_tag = "RGB"
-        method_tag = "Mirror3DNet"
-
-    eval_fun = Mirror3d_eval(train_with_refD, logger=logging, Input_tag=Input_tag, method_tag=method_tag,width=640, height=480)
-
-    for one_color_mask_gtD_predD in read_txt(info_list_path):
-        color_path, mask_path, gtD_path, predD_path = one_color_mask_gtD_predD.split()
-        predD = cv2.imread(predD_path, cv2.IMREAD_ANYDEPTH) / args.depth_shift
-        eval_fun.compute_and_update_rmse_srmse(predD, args.depth_shift, color_path)
-    print("input info path : {}".format(info_list_path))
-    eval_fun.print_mirror3D_score()

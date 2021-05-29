@@ -58,7 +58,7 @@ class Verification():
             if sample_id in invalid_id_list:
                 if self.is_matterport3d:
                     depth_sample_id = "{}_{}_{}".format(sample_id.split("_")[0], sample_id.split("_")[1].replace("i", "d"), sample_id.split("_")[2])
-                    command = "find {} -type f | grep {}".format(self.data_main_folder, depth_sample_id)
+                    command = "find -L {} -type f | grep {}".format(self.data_main_folder, depth_sample_id)
                     for src_path in os.popen(command).readlines():
                         src_path = src_path.strip()
                         dst_folder = os.path.split(dst_path)[0]
@@ -72,7 +72,7 @@ class Verification():
                             print("copying {} to {}".format(src_path, dst_folder))
                             shutil.copy(src_path, dst_path)
 
-                command = "find {} -type f | grep {}".format(self.data_main_folder, sample_id)
+                command = "find -L {} -type f | grep {}".format(self.data_main_folder, sample_id)
                 for src_path in os.popen(command).readlines():
                     src_path = src_path.strip()
                     dst_path = os.path.join(self.output_folder, src_path.split("/")[-2], src_path.split("/")[-1])
@@ -91,7 +91,7 @@ class Verification():
             elif sample_id in re_anno_id_list:
                 if self.is_matterport3d:
                     depth_sample_id = "{}_{}_{}".format(sample_id.split("_")[0], sample_id.split("_")[1].replace("i", "d"), sample_id.split("_")[2])
-                    command = "find {} -type f | grep {}".format(self.data_main_folder, depth_sample_id)
+                    command = "find -L {} -type f | grep {}".format(self.data_main_folder, depth_sample_id)
                     for src_path in os.popen(command).readlines():
                         src_path = src_path.strip()
                         dst_path = src_path.replace(self.data_main_folder, self.output_folder)
@@ -106,7 +106,7 @@ class Verification():
                             print("copying {} to new_folder {}".format(src_path, dst_folder))
                             shutil.copy(src_path, dst_path)
 
-                command = "find {} -type f | grep {}".format(self.data_main_folder, sample_id)
+                command = "find -L {} -type f | grep {}".format(self.data_main_folder, sample_id)
                 for src_path in os.popen(command).readlines():
                     src_path = src_path.strip()
                     dst_path = src_path.replace(self.data_main_folder, self.output_folder)

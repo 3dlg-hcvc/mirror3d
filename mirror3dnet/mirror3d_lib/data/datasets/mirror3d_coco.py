@@ -122,19 +122,19 @@ def load_mirror3d_coco_json(json_file, image_root, dataset_name=None, extra_anno
         record = {}
         # changed !!!
         if image_root:
-            record["img_path"] = os.path.join(image_root, img_dict["img_path"]) 
+            record["mirror_color_image_path"] = os.path.join(image_root, img_dict["mirror_color_image_path"]) 
         else:
-            record["img_path"] = img_dict["img_path"]
-        if "mask_path" in img_dict:
-            record["mask_path"]= os.path.join(image_root, img_dict["mask_path"])
-        if "hole_raw_path" in img_dict:
-            record["hole_raw_path"]= os.path.join(image_root, img_dict["hole_raw_path"])
-        if "hole_refined_path" in img_dict:
-            record["hole_refined_path"]= os.path.join(image_root, img_dict["hole_refined_path"])
-        if "mesh_raw_path" in img_dict:
-            record["mesh_raw_path"]= os.path.join(image_root, img_dict["mesh_raw_path"])
-        if "mesh_refined_path" in img_dict:
-            record["mesh_refined_path"]= os.path.join(image_root, img_dict["mesh_refined_path"])
+            record["mirror_color_image_path"] = img_dict["mirror_color_image_path"]
+        if "mirror_instance_mask_path" in img_dict:
+            record["mirror_instance_mask_path"]= os.path.join(image_root, img_dict["mirror_instance_mask_path"])
+        if "raw_sensorD_path" in img_dict:
+            record["raw_sensorD_path"]= os.path.join(image_root, img_dict["raw_sensorD_path"])
+        if "refined_sensorD_path" in img_dict:
+            record["refined_sensorD_path"]= os.path.join(image_root, img_dict["refined_sensorD_path"])
+        if "raw_meshD_path" in img_dict:
+            record["raw_meshD_path"]= os.path.join(image_root, img_dict["raw_meshD_path"])
+        if "refined_meshD_path" in img_dict:
+            record["refined_meshD_path"]= os.path.join(image_root, img_dict["refined_meshD_path"])
         record["height"] = img_dict["height"]
         record["width"] = img_dict["width"]
         record["dataset_name"] = dataset_name

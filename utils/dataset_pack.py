@@ -81,27 +81,27 @@ def update_coco_json(ori_json_folder):
         for item in ori_info["annotations"]:
             new_item = item.copy()
             new_item.pop("depth_path")
-            new_item.pop("mesh_refined_path")
-            new_item.pop("hole_refined_path")
-            new_item.pop("mesh_raw_path")
-            new_item.pop("hole_raw_path")
+            new_item.pop("refined_meshD_path")
+            new_item.pop("refined_sensorD_path")
+            new_item.pop("raw_meshD_path")
+            new_item.pop("raw_sensorD_path")
             R, G, B = [int(i) for i in ori_info["instance_tag"].split("_")]
             new_item["mask_id"] = '%02x%02x%02x' % (R, G, B)
-            new_item["refined_sensorD"] = item["hole_refined_path"].replace("with_mirror/precise/raw","mirror_color_image").replace(".png",".jpg")
-            new_item["raw_sensorD"] = item["hole_raw_path"].replace("with_mirror/precise/hole_raw_depth","raw_sensorD_precise")
-            new_item["refined_meshD"] = item["mesh_refined_path"]
-            new_item["raw_meshD"] = item["mesh_raw_path"]
+            new_item["refined_sensorD"] = item["refined_sensorD_path"].replace("with_mirror/precise/raw","mirror_color_image").replace(".png",".jpg")
+            new_item["raw_sensorD"] = item["raw_sensorD_path"].replace("with_mirror/precise/hole_raw_depth","raw_sensorD_precise")
+            new_item["refined_meshD"] = item["refined_meshD_path"]
+            new_item["raw_meshD"] = item["raw_meshD_path"]
             new_info["annotations"].append(new_item)
         for item in ori_info["images"]:
             new_item = item.copy()
-            new_item.pop("mesh_refined_path")
-            new_item.pop("hole_refined_path")
-            new_item.pop("mesh_raw_path")
-            new_item.pop("hole_raw_path")
-            new_item["refined_sensorD"] = item["hole_refined_path"]
-            new_item["raw_sensorD"] = item["hole_raw_path"]
-            new_item["refined_meshD"] = item["mesh_refined_path"]
-            new_item["raw_meshD"] = item["mesh_raw_path"]
+            new_item.pop("refined_meshD_path")
+            new_item.pop("refined_sensorD_path")
+            new_item.pop("raw_meshD_path")
+            new_item.pop("raw_sensorD_path")
+            new_item["refined_sensorD"] = item["refined_sensorD_path"]
+            new_item["raw_sensorD"] = item["raw_sensorD_path"]
+            new_item["refined_meshD"] = item["refined_meshD_path"]
+            new_item["raw_meshD"] = item["raw_meshD_path"]
         # ori_lines = read_txt(json_file_path)
         # ori_string = "mirror_instance_mask_precise"
         # to_replace_string = "mirror_instance_mask_precise/"
@@ -146,7 +146,7 @@ def generate_symlinks_txt_nyu():
 def generate_symlinks_txt_scannet():
     output_lines = []
     all_id = [i.split(".")[0] for i in read_txt("/project/3dlg-hcvc/mirrors/www/dataset_release/temp/scannet_all.txt")]
-    save_path = "/local-scratch/jiaqit/exp/Mirror3D/metadata/scannet_symlink.txt"
+    save_path = "/local-scratch/jiaqit/exp/Mirror3D/dataset/metadata/scannet_symlink.txt"
     all_color_list_25k = read_txt("/project/3dlg-hcvc/mirrors/www/dataset_release/temp/scannet_color_25k.txt")
     all_color_list = read_txt("/project/3dlg-hcvc/mirrors/www/dataset_release/temp/scannet_color.txt")
     for one_id in all_id:
@@ -154,25 +154,15 @@ def generate_symlinks_txt_scannet():
         path_two = "scannet_extracted/raw_image/{}/color/{}.jpg".format(one_id.rsplit("_", 1)[0], str(int(one_id.rsplit("_", 1)[1])))
         if path_two not in all_color_list and path_one not in all_color_list_25k:
             print(one_id)
+        color_to_link = "mirror_color_images/{}/{}.jpg".format(one_id.rsplit("_", 1)[0],int( one_id.rsplit("_", 1)[1]))
+        sensorD_to_link = "raw_sensorD/{}/{}.png".format(one_id.rsplit("_", 1)[0],int( one_id.rsplit("_", 1)[1]))
         if path_two in all_color_list:
-            color_to_link = "mirror_color_images/{}.jpg".format(one_id)
-            sensorD_to_link = "raw_sensorD/{}.png".format(one_id)
             output_lines.append("{} {}".format(path_two, color_to_link))
             output_lines.append("{} {}".format(path_two.replace("color","depth").replace("jpg","png"), sensorD_to_link))
         elif path_one in all_color_list_25k:
-            color_to_link = "mirror_color_images/{}.jpg".format(one_id)
-            sensorD_to_link = "raw_sensorD/{}.png".format(one_id)
             output_lines.append("{} {}".format(path_one, color_to_link))
             output_lines.append("{} {}".format(path_one.replace("color","depth").replace("jpg","png"), sensorD_to_link))
-    # for one_path in all_color_list:
-    #     id = "{}_{}".format(one_path.split("/")[-3], one_path.split("/")[-1].split(".")[0].zfill(6))
-    #     if id in all_id:
-            # color_to_link = "mirror_color_images/{}.jpg".format(id)
-            # sensorD_to_link = "raw_sensorD/{}.png".format(id)
-            # output_lines.append("{} {}".format(one_path, color_to_link))
-            # output_lines.append("{} {}".format(one_path.rep ace("color","depth").replace("jpg","png"), sensorD_to_link))
 
-    # save_txt(save_path, output_lines)
 
     save_txt(save_path, output_lines)
 
