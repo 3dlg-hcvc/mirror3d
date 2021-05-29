@@ -21,16 +21,20 @@ $ git clone https://github.com/3dlg-hcvc/Mirror3D.git
 
 ```
 
+## Dataset
+
+Please refer to [Mirror3D Dataset](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/Mirror3D_dataset.md) for instruction on preparing mirror data.
+
 ## Models
 
-### Mirror3DNet
+### Mirror3DNet PyTorch Implementation
 
-#### Framework
+Mirror3DNet architecture can be used for either an RGB image or an RGBD image input. For an RGB input, we refine the depth of the predicted depth map D<sub>pred</sub> output by a depth estimation module. For RGBD input, we refine a noisy input depth D<sub>noisy</sub>.
 ![network-arch](docs/figure/network-arch-cr-new.png)
 
 Please check [Mirror3DNet](https://github.com/3dlg-hcvc/mirror3d/tree/main/mirror3dnet) for the network implementation. 
 
-### Implemented initial depth generator
+### Initial Depth Generator Implementation
 
 We test three methods on our dataset:
 
