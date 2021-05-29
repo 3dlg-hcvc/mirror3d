@@ -67,7 +67,7 @@ We have updated the dataloader and the main train/test script to support our inp
 | Matterport3D       | RGB       | raw mesh depth     | [VNL](https://github.com/YvanYin/VNL_Monocular_Depth_Prediction)                                        | [vnl_rawD](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/checkpoint/mp3d/vnl_rawD.zip)                 |
 | Matterport3D       | RGB       | refined mesh depth | [VNL](https://github.com/YvanYin/VNL_Monocular_Depth_Prediction)                                        | [vnl_refD](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/checkpoint/mp3d/vnl_refD.zip)                 |
 
-For [BTS](https://github.com/cogaplex-bts/bts) and [VNL](https://github.com/YvanYin/VNL_Monocular_Depth_Prediction), please visit their official website to download the model trained on NYUv2 raw sensor depth.
+For [BTS](https://github.com/cogaplex-bts/bts) and [VNL](https://github.com/YvanYin/VNL_Monocular_Depth_Prediction), please visit their official websites to download the model trained on NYUv2 raw sensor depth.
 
 ## Network input
 
