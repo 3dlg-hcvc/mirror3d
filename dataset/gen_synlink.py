@@ -1,6 +1,6 @@
 import argparse
 import os
-from utils.general_utlis import *
+from utils.general_utils import *
 from tqdm import tqdm
 
 def generate_symlinks(unzipped_folder_path):
