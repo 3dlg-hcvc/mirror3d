@@ -3,24 +3,35 @@
 
 ## STAGE 1: Classification
 
-- **STEP 1*** Train a classifier 
+- **STEP 1** Train a classifier 
 
     ```python
-    python annotation/classifier/classifier_train.py --log_directory [checkpoint and .log file saved directory] --train_pos_list [training positive_sample_path.txt] --train_neg_list [training negative_sample_path.txt] --val_pos_list [validation positive_sample_path.txt] --val_neg_list [validation negative_sample_path.txt]
+    python annotation/classifier/classifier_train.py \
+    --log_directory [checkpoint and .log file saved directory] \
+    --train_pos_list [training positive_sample_path.txt] \
+    --train_neg_list [training negative_sample_path.txt] \
+    --val_pos_list [validation positive_sample_path.txt] \
+    --val_neg_list [validation negative_sample_path.txt]
     ```
 You can find Martterport3d pre-trained checkpoint for the classifier on [checkpoint.pth.tar](http://aspis.cmpt.sfu.ca/projects/mirrors/checkpoint/classifier_checkpoint/checkpoint.pth.tar)
 
-- **STEP 2*** Get sorted img_list with scores (saved in .json file)
+- **STEP 2** Get sorted img_list with scores (saved in .json file)
 
     ```python
-    python annotation/classifier/classifier_train.py --unsort_img_list [img_path_to_be_sorted.txt] --resume_path [classifier_checkpoint_path] --output_save_folder [output_folder_path to save the output .json file]
+    python annotation/classifier/classifier_train.py \
+    --unsort_img_list [img_path_to_be_sorted.txt] \
+    --resume_path [classifier_checkpoint_path] \
+    --output_save_folder [output_folder_path to save the output .json file]
     ```
     
-- **STEP 3*** Pick positive samples based on the .json file output by STEP 2 manually
+- **STEP 3** Pick positive samples based on the .json file output by STEP 2 manually
  
     **Tip**: you can use `Mirror3D/annotation/classifier/classification_tool.py` to manually annotate mirror images
     ```python
-    python annotation/classifier/classification_tool.py --data_root [root path of the dataset] --json_file_path [path of the .json file output by STEP 2] --anno_output_folder [annotation result output folder] 
+    python annotation/classifier/classification_tool.py \
+    --data_root [root path of the dataset] \
+    --json_file_path [path of the .json file output by STEP 2] \
+    --anno_output_folder [annotation result output folder] 
     ```
 
 
@@ -61,7 +72,7 @@ python annotation/plane_annotation/plane_annotation_tool.py --stage [all / 1 ~ 6
 
 ## STAGE 4: Annotation Verification
 
-- **STEP 1*** Generate video for verification 
+- **STEP 1** Generate video for verification 
     ```python
     python visualization/dataset_visualization.py --stage all --data_main_folder [dataset main folder] --process_index [the process index during multi-processing]  --multi_processing --overwrite --f [focal length of the dataset] --output_folder [output point cloud/ mesh plane/ screenshot/ video saved folder] --view_mode [topdown/ front]
     ```
@@ -78,18 +89,26 @@ python annotation/plane_annotation/plane_annotation_tool.py --stage [all / 1 ~ 6
     - `--stage 8`: Generate data distribution figures
     - `--stage all`: run stage 1, 2, 4, 6 together
 
-- **STEP 2*** Launch webpage to view the videos
+- **STEP 2** Launch webpage to view the videos
     
     ```python 
-    python annotation/plane_annotation/verification.py --stage 1 --data_main_folder [folder that contains "video_front, video_topdown .. etc" folders] --output_folder [.html files output folder] --video_num_per_page [int: how many video to display in one .html]
+    python annotation/plane_annotation/verification.py \
+    --stage 1 \
+    --data_main_folder [folder that contains "video_front, video_topdown .. etc" folders] \
+    --output_folder [.html files output folder] \
+    --video_num_per_page [int: how many video to display in one .html]
     ```
 
     Annotators should manually note down the error sample's path to a [error_sample].txt
 
-- **STEP 3*** Copy/ move out the error sample's data to another folder for reannotation
+- **STEP 3** Copy/ move out the error sample's data to another folder for reannotation
 
     ```python 
-    python annotation/plane_annotation/verification.py --stage 2 --data_main_folder [dataset main folder] --output_folder [folder to save the copy of data] --error_list [.txt that contains the error samples' name] --move [bool, if ture it will move out all the error samples' information, if false, it will copy out all the error samples' information]
+    python annotation/plane_annotation/verification.py \
+    --stage 2 \
+    --data_main_folder [dataset main folder] \
+    --output_folder [folder to save the copy of data] \
+    --error_list [.txt that contains the error samples' name] --move [bool, if ture it will move out all the error samples' information, if false, it will copy out all the error samples' information]
     ```
 
 
@@ -98,7 +117,7 @@ python annotation/plane_annotation/plane_annotation_tool.py --stage [all / 1 ~ 6
 
 Here is quick example, we are going to annotate several samples from NYUv2 and get the refined depth map based on the precise mask:
 
-- **STEP 1*** Prepare data structure: after getting the annotated mirror mask, we store the original data in the following format:
+- **STEP 1** Prepare data structure: after getting the annotated mirror mask, we store the original data in the following format:
 
 ```shell
 ├── mirror_color_images
@@ -115,7 +134,7 @@ Here is quick example, we are going to annotate several samples from NYUv2 and g
     └── 686.png
 ```
 
-- **STEP 2*** Set up annotation environment: please run the following command to set up the environment:
+- **STEP 2** Set up annotation environment: please run the following command to set up the environment:
 
 ```python
 python annotation/plane_annotation/plane_annotation_tool.py --stage 1 \
@@ -146,7 +165,7 @@ Then you will get the output pointclouds, RANSAC initialized mirror plane parame
 
 
 
-- **STEP 3*** Manually annotate the mirror plane: please run the following command to use the mirror plane annotation tool:
+- **STEP 3** Manually annotate the mirror plane: please run the following command to use the mirror plane annotation tool:
 
 ```python
 python annotation/plane_annotation/plane_annotation_tool.py --stage 2 \
@@ -206,7 +225,7 @@ After adjustment, you can see the adjusted result. The yellow points are generat
 ![adjust-view](figure/anno-tool-intro/anno-adjust.png)
 
 
-- **STEP 4***  Generate refined depth map: please run the following command to generate a refined depth map from the original depth map
+- **STEP 4**  Generate refined depth map: please run the following command to generate a refined depth map from the original depth map
 
 ```shell
 python annotation/plane_annotation/plane_annotation_tool.py --stage 3 \
@@ -214,7 +233,7 @@ python annotation/plane_annotation/plane_annotation_tool.py --stage 3 \
 --f 519
 ```
 
-- **STEP 5*** Generate video for verification: please run the following command to generate videos for verification. The videos contain the topdown view and front view of the refined pointcloud. The output refined pointcloud is generated based on the refined depth we get in STEP 4 and the source color image.
+- **STEP 5** Generate video for verification: please run the following command to generate videos for verification. The videos contain the topdown view and front view of the refined pointcloud. The output refined pointcloud is generated based on the refined depth we get in STEP 4 and the source color image.
 
 ```shell
 python visualization/dataset_visualization.py --stage all \
@@ -223,7 +242,7 @@ python visualization/dataset_visualization.py --stage all \
 ```
 
 
-- **STEP 6*** Launch webpage to view the videos: please run the following command to launch a website to view the video generated in STEP 5.
+- **STEP 6** Launch webpage to view the videos: please run the following command to launch a website to view the video generated in STEP 5.
 
 ```shell
 python annotation/plane_annotation/verification.py \
@@ -235,7 +254,7 @@ python annotation/plane_annotation/verification.py \
 
 ```
 
-- **STEP 7*** Copy/ move out the error sample's data to another folder for reannotation. 
+- **STEP 7** Copy/ move out the error sample's data to another folder for reannotation. 
 
 
 ```shell
