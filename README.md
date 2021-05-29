@@ -45,14 +45,25 @@ We test three methods on our dataset:
 We have updated the dataloader and the main train/test script to support our input format. 
 
 ## Model Zoo
-
-| Source Dataset | Input | Train | Method                                                                                                  | Model Download |
-|----------------|-------|-------|---------------------------------------------------------------------------------------------------------|----------------|
-| NYUv2          | RGBD  |       | [saic](https://github.com/saic-vul/saic_depth_completion/tree/94bececdf12bb9867ce52c970bb2d11dee948d37) |                |
-| NYUv2          | RGBD  |       |                                                                                                         |                |
-| NYUv2          |       |       |                                                                                                         |                |
-|                |       |       |                                                                                                         |                |
-
+| **Source Dataset** | **Input** | **Train**            | **Method**                                                                                              | **Model Download**                                                                                                      |
+|--------------------|-----------|----------------------|---------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| NYUv2              | RGBD      | raw sensor depth     | [saic](https://github.com/saic-vul/saic_depth_completion/tree/94bececdf12bb9867ce52c970bb2d11dee948d37) | [saic_rawD](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/checkpoint/nyu/saic_rawD.zip)                |
+| NYUv2              | RGBD      | refined sensor depth | [saic](https://github.com/saic-vul/saic_depth_completion/tree/94bececdf12bb9867ce52c970bb2d11dee948d37) | [saic_refD](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/checkpoint/nyu/saic_refD.zip)                |
+| NYUv2              | RGB       | raw sensor depth     | [BTS](https://github.com/cogaplex-bts/bts)                                                              | please check the official website                                                                                       |
+| NYUv2              | RGB       | refined sensor depth | [BTS](https://github.com/cogaplex-bts/bts)                                                              | [bts_refD](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/checkpoint/nyu/bts_refD.zip)                  |
+| NYUv2              | RGB       | raw sensor depth     | [VNL](https://github.com/YvanYin/VNL_Monocular_Depth_Prediction)                                        | please check the official website                                                                                       |
+| NYUv2              | RGB       | refined sensor depth | [VNL](https://github.com/YvanYin/VNL_Monocular_Depth_Prediction)                                        | [vnl_refD](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/checkpoint/nyu/vnl_refD.zip)                  |
+| Matterport3D       | RGBD      | raw sensor depth     | [Mirror3DNet](https://github.com/3dlg-hcvc/mirror3d/tree/main/mirror3dnet)                              | [mirror3dnet_rawD](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/checkpoint/mp3d/mirror3dnet_rawD.zip) |
+| Matterport3D       | RGBD      | refined sensor depth | [Mirror3DNet](https://github.com/3dlg-hcvc/mirror3d/tree/main/mirror3dnet)                              | [mirror3dnet_refD](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/checkpoint/mp3d/mirror3dnet_refD.zip) |
+| Matterport3D       | RGBD      | raw sensor depth     | [PlaneRCNN](https://github.com/NVlabs/planercnn/tree/01e03fe5a97b7afc4c5c4c3090ddc9da41c071bd)          | [planercnn_rawD](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/checkpoint/mp3d/planercnn_rawD.zip)     |
+| Matterport3D       | RGBD      | refined sensor depth | [PlaneRCNN](https://github.com/NVlabs/planercnn/tree/01e03fe5a97b7afc4c5c4c3090ddc9da41c071bd)          | [planercnn_refD](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/checkpoint/mp3d/planercnn_refD.zip)     |
+| Matterport3D       | RGBD      | raw sensor depth     | [saic](https://github.com/saic-vul/saic_depth_completion/tree/94bececdf12bb9867ce52c970bb2d11dee948d37) | [saic_rawD](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/checkpoint/mp3d/saic_rawD.zip)               |
+| Matterport3D       | RGBD      | refined sensor depth | [saic](https://github.com/saic-vul/saic_depth_completion/tree/94bececdf12bb9867ce52c970bb2d11dee948d37) | [saic_refD](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/checkpoint/mp3d/saic_refD.zip)               |
+| Matterport3D       | RGB       | *                    | [Mirror3DNet](https://github.com/3dlg-hcvc/mirror3d/tree/main/mirror3dnet)                              | [mirror3dnet](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/checkpoint/mp3d/mirror3dnet_normal_10.zip) |
+| Matterport3D       | RGB       | raw sensor depth     | [BTS](https://github.com/cogaplex-bts/bts)                                                              | [bts_rawD](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/checkpoint/mp3d/bts_rawD.zip)                 |
+| Matterport3D       | RGB       | refined sensor depth | [BTS](https://github.com/cogaplex-bts/bts)                                                              | [bts_refD](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/checkpoint/mp3d/bts_refD.zip)                 |
+| Matterport3D       | RGB       | raw sensor depth     | [VNL](https://github.com/YvanYin/VNL_Monocular_Depth_Prediction)                                        | [vnl_rawD](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/checkpoint/mp3d/vnl_rawD.zip)                 |
+| Matterport3D       | RGB       | refined sensor depth | [VNL](https://github.com/YvanYin/VNL_Monocular_Depth_Prediction)                                        | [vnl_refD](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/checkpoint/mp3d/vnl_refD.zip)                 |
 
 ## Training
 To train initial depth generator:
