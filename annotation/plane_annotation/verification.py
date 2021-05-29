@@ -1,6 +1,6 @@
 
 import argparse
-from utils.general_utlis import *
+from utils.general_utils import *
 import shutil
 import os
 import bs4

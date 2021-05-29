@@ -7,7 +7,7 @@ from skimage import io
 import sys
 import bs4
 from utils.algorithm import *
-from utils.general_utlis import *
+from utils.general_utils import *
 from utils.plane_pcd_utils import *
 import json
 import shutil

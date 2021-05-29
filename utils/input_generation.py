@@ -11,7 +11,7 @@ from utils.pycococreatortools import create_annotation_info
 from tqdm import tqdm
 import random
 from utils.algorithm import *
-from utils.general_utlis import *
+from utils.general_utils import *
 from utils.plane_pcd_utils import *
 from annotation.plane_annotation.plane_annotation_tool import Plane_annotation_tool
 from PIL import ImageColor

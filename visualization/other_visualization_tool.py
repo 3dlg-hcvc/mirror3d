@@ -1,7 +1,7 @@
 import open3d as o3d
 import os
 import numpy as np
-from utils.general_utlis import *
+from utils.general_utils import *
 from utils.plane_pcd_utils import *
 import cv2
 import argparse

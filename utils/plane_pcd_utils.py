@@ -9,7 +9,7 @@ import cv2
 import pdb
 import math
 from utils.algorithm import *
-from utils.general_utlis import *
+from utils.general_utils import *
 from sympy import *
 from PIL import Image, ImageDraw
 

@@ -9,7 +9,7 @@ import torch.utils.data.distributed
 import torchvision.transforms as transforms
 from mirror3d_resnet import resnet50
 from classifier_Dataset import *
-from utils.general_utlis import *
+from utils.general_utils import *
 from tqdm import tqdm
 import operator
 

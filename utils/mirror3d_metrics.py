@@ -5,7 +5,7 @@ import numpy as np
 import math
 import argparse
 import sys
-from utils.general_utlis import *
+from utils.general_utils import *
 import logging
 import time
 

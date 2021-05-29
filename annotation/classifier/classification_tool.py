@@ -5,7 +5,7 @@ from tkinter import ttk
 import os
 from shutil import copyfile, move
 from PIL import ImageTk, Image
-from utils.general_utlis import *
+from utils.general_utils import *
 from tkinter import messagebox
 import operator
 

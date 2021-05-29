@@ -4,7 +4,7 @@ import os
 import sys
 import torch
 from utils.mirror3d_metrics import *
-from utils.general_utlis import *
+from utils.general_utils import *
 from utils.plane_pcd_utils import *
 
 from detectron2.data import (
