@@ -364,9 +364,9 @@ class Dataset_visulization(Dataset_visulization):
     def gen_latex_table_sep(self, method_predFolder_txt, midrule_index):
         folder_list = [line.strip().split()[-1] for line in read_txt(method_predFolder_txt)]
 
-        main_table_lines = read_txt("./visualization/table_template/main_table_begin.txt")
-        sup_table_part1_lines = read_txt("./visualization/table_template/sup1_table_begin.txt")
-        sup_table_part2_lines = read_txt("./visualization/table_template/sup2_table_begin.txt")
+        main_table_lines = read_txt("./visualization/template/main_table_begin.txt")
+        sup_table_part1_lines = read_txt("./visualization/template/sup1_table_begin.txt")
+        sup_table_part2_lines = read_txt("./visualization/template/sup2_table_begin.txt")
         for exp_index, one_result_folder in enumerate(folder_list):
 
             one_line_latex_source_path = os.path.join(one_result_folder, "latex_result.json")
@@ -495,9 +495,9 @@ class Dataset_visulization(Dataset_visulization):
         std_methodTag_info= read_json(std_json_path) 
         caption = all_info_json.split("/")[-1].replace("_", "\_")
 
-        main_table_lines = read_txt("./visualization/table_template/main_table_begin.txt")
-        sup_table_part1_lines = read_txt("./visualization/table_template/sup1_table_begin.txt")
-        sup_table_part2_lines = read_txt("./visualization/table_template/sup2_table_begin.txt")
+        main_table_lines = read_txt("./visualization/template/main_table_begin.txt")
+        sup_table_part1_lines = read_txt("./visualization/template/sup1_table_begin.txt")
+        sup_table_part2_lines = read_txt("./visualization/template/sup2_table_begin.txt")
 
         main_table_lines_sub = []
         sup_table_part1_lines_sub = []
@@ -605,9 +605,9 @@ class Dataset_visulization(Dataset_visulization):
         methodTag_info = read_json(all_info_json)
         caption = all_info_json.split("/")[-1].replace("_", "\_")
 
-        main_table_lines = read_txt("./visualization/table_template/main_table_begin.txt")
-        sup_table_part1_lines = read_txt("./visualization/table_template/sup1_table_begin.txt")
-        sup_table_part2_lines = read_txt("./visualization/table_template/sup2_table_begin.txt")
+        main_table_lines = read_txt("./visualization/template/main_table_begin.txt")
+        sup_table_part1_lines = read_txt("./visualization/template/sup1_table_begin.txt")
+        sup_table_part2_lines = read_txt("./visualization/template/sup2_table_begin.txt")
 
         main_table_lines_sub = []
         sup_table_part1_lines_sub = []
@@ -1079,9 +1079,9 @@ class Dataset_visulization(Dataset_visulization):
         methodTag_info = read_json(all_info_json)
         caption = all_info_json.split("/")[-1].replace("_", "\_")
 
-        main_table_lines = read_txt("./visualization/table_template/main_table_begin.txt")
-        sup_table_part1_lines = read_txt("./visualization/table_template/sup1_table_begin.txt")
-        sup_table_part2_lines = read_txt("./visualization/table_template/sup2_table_begin.txt")
+        main_table_lines = read_txt("./visualization/template/main_table_begin.txt")
+        sup_table_part1_lines = read_txt("./visualization/template/sup1_table_begin.txt")
+        sup_table_part2_lines = read_txt("./visualization/template/sup2_table_begin.txt")
 
         main_table_lines_sub = []
         sup_table_part1_lines_sub = []
@@ -1268,9 +1268,9 @@ class Dataset_visulization(Dataset_visulization):
         complete_methodTag_info= read_json(complete_json_path) 
         caption = all_info_json.split("/")[-1].replace("_", "\_")
 
-        main_table_lines = read_txt("./visualization/table_template/main_table_begin.txt")
-        sup_table_part1_lines = read_txt("./visualization/table_template/sup1_table_begin.txt")
-        sup_table_part2_lines = read_txt("./visualization/table_template/sup2_table_begin.txt")
+        main_table_lines = read_txt("./visualization/template/main_table_begin.txt")
+        sup_table_part1_lines = read_txt("./visualization/template/sup1_table_begin.txt")
+        sup_table_part2_lines = read_txt("./visualization/template/sup2_table_begin.txt")
 
         main_table_lines_sub = []
         sup_table_part1_lines_sub = []
@@ -1458,9 +1458,9 @@ class Dataset_visulization(Dataset_visulization):
         methodTag_info = read_json(all_info_json)
         caption = all_info_json.split("/")[-1].replace("_", "\_")
 
-        main_table_lines = read_txt("./visualization/table_template/main_table_begin.txt")
-        sup_table_part1_lines = read_txt("./visualization/table_template/sup1_table_begin.txt")
-        sup_table_part2_lines = read_txt("./visualization/table_template/sup2_table_begin.txt")
+        main_table_lines = read_txt("./visualization/template/main_table_begin.txt")
+        sup_table_part1_lines = read_txt("./visualization/template/sup1_table_begin.txt")
+        sup_table_part2_lines = read_txt("./visualization/template/sup2_table_begin.txt")
 
         main_table_lines_sub = []
         sup_table_part1_lines_sub = []
@@ -1702,9 +1702,9 @@ class Dataset_visulization(Dataset_visulization):
                 methodTag_infoFile[methodTag] = [os.path.join(infoFolder,"minFilter_True_full_False_score_per_sample.json")]
         
         tables = dict()
-        main_table_lines = read_txt("./visualization/table_template/main_table_begin.txt")
-        sup_table_part1_lines = read_txt("./visualization/table_template/sup1_table_begin.txt")
-        sup_table_part2_lines = read_txt("./visualization/table_template/sup2_table_begin.txt")
+        main_table_lines = read_txt("./visualization/template/main_table_begin.txt")
+        sup_table_part1_lines = read_txt("./visualization/template/sup1_table_begin.txt")
+        sup_table_part2_lines = read_txt("./visualization/template/sup2_table_begin.txt")
 
         tables["main_without_SE"] = main_table_lines.copy()
         tables["main_with_SE"] = main_table_lines.copy()
@@ -2014,9 +2014,9 @@ class Dataset_visulization(Dataset_visulization):
                 methodTag_infoFile[methodTag] = [os.path.join(infoFolder,"minFilter_True_full_False_score_per_sample.json")]
         
         tables = dict()
-        main_table_lines = read_txt("./visualization/table_template/main_table_begin.txt")
-        sup_table_part1_lines = read_txt("./visualization/table_template/sup1_table_begin.txt")
-        sup_table_part2_lines = read_txt("./visualization/table_template/sup2_table_begin.txt")
+        main_table_lines = read_txt("./visualization/template/main_table_begin.txt")
+        sup_table_part1_lines = read_txt("./visualization/template/sup1_table_begin.txt")
+        sup_table_part2_lines = read_txt("./visualization/template/sup2_table_begin.txt")
 
         tables["main_without_SE"] = main_table_lines.copy()
         tables["main_with_SE"] = main_table_lines.copy()
@@ -2225,7 +2225,7 @@ if __name__ == "__main__":
         '--method_folder_list', nargs='+', default="", type=str)
     parser.add_argument("--midrule_index", nargs="+", type=int, default=[2,5], help="add /midrule in after these liens; index start from 1") 
     parser.add_argument(
-        '--template_path', default="visualization/result_vis_template.html", type=str)
+        '--template_path', default="visualization/template/result_vis_template.html", type=str)
     parser.add_argument(
         '--view_mode', default="topdown", help="object view angle : (1) topdown (2) front")
     parser.add_argument(
@@ -2257,7 +2257,7 @@ if __name__ == "__main__":
         vis_tool.generate_method_pred(args.method_predFolder_txt)
         vis_tool.get_std_score(args)
     elif args.stage == "6":
-        vis_tool.generate_paper_html(vis_saved_main_folder=args.vis_saved_folder, sample_num_per_page=args.sample_num_per_page, template_path="visualization/paper_vis_template.html")
+        vis_tool.generate_paper_html(vis_saved_main_folder=args.vis_saved_folder, sample_num_per_page=args.sample_num_per_page, template_path="visualization/template/paper_vis_template.html")
     elif args.stage == "7":
         vis_tool.gen_latex_table_with_sample_std(args.method_order_txt, args.all_info_json, args.midrule_index)
     elif args.stage == "8":
@@ -2274,7 +2274,7 @@ if __name__ == "__main__":
     elif args.stage == "13":
         vis_tool.get_RMSE_distrubution(args.output_folder, args.all_info_json)
     elif args.stage == "14":
-        vis_tool.vis_masked_image(args.output_folder, args.all_info_json, template_path="visualization/mask_vis_template.html", sample_num_per_page=args.sample_num_per_page)
+        vis_tool.vis_masked_image(args.output_folder, args.all_info_json, template_path="visualization/template/mask_vis_template.html", sample_num_per_page=args.sample_num_per_page)
 
     
     
