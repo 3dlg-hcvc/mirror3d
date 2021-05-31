@@ -444,12 +444,10 @@ def refine_pcd_by_mirror_border(mirror_mask, mirror_border_mask, depth_img_path,
 # ---------------------------------------------------------------------------- #
 #                          get points in masked area from pcd                  #
 # ---------------------------------------------------------------------------- #
-def get_points_in_mask(f, depth_img_path, color_img_path, mirror_mask=None, points_num = None):
+def get_points_in_mask(f, depth_img_path, mirror_mask=None, points_num = None):
 
     import open3d as o3d
     d = cv2.imread(depth_img_path, cv2.IMREAD_ANYDEPTH)
-    color_img = cv2.cvtColor(cv2.imread(color_img_path), cv2.COLOR_BGR2RGB)
-    color_img = color_img/255
 
     h, w = d.shape
     x_cam = []

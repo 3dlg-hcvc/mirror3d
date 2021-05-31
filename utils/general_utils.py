@@ -93,19 +93,22 @@ def save_html(save_path, content):
         outf.write(str(content))
     print("html saved to {}".format(save_path))
 
-def save_plane_parameter_2_json(plane_parameter, one_plane_para_save_path, instance_index):
-    sample_id = '%02x%02x%02x' % (instance_index[0],instance_index[1],instance_index[2]) # BGR
-    if os.path.exists(one_plane_para_save_path):
-        with open(one_plane_para_save_path, 'r') as j:
+def update_plane_parameter_json(plane_parameter, plane_parameter_output_path, instance_index):
+
+    if os.path.exists(plane_parameter_output_path):
+        with open(plane_parameter_output_path, 'r') as j:
             img_info = json.loads(j.read())
     else:
         img_info = []
+
     one_info = dict()
     one_info["plane"] = list(plane_parameter)
     one_info["normal"] = list(unit_vector(list(plane_parameter[:-1])))
-    one_info["mask_id"] = sample_id
+    one_info["mask_id"] = int(instance_index)
     img_info.append(one_info)
-    save_json(one_plane_para_save_path,img_info)
+    save_json(plane_parameter_output_path,img_info)
+
+
 
 def get_all_fileAbsPath_under_folder(folder_path):
     file_path_list = []
@@ -200,4 +203,6 @@ def save_heatmap_no_border(image, save_path=""):
     figure = plt.gcf()
     plt.savefig(save_path, bbox_inches='tight', pad_inches = 0, dpi=100)
     print("image saved to : {}".format(save_path))
+
+
 

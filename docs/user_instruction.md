@@ -138,7 +138,7 @@ Here is quick example, we are going to annotate several samples from NYUv2 and g
 
 ```python
 python annotation/plane_annotation/plane_annotation_tool.py --stage 1 \
---data_main_folder docs/figure/anno-tool-example/nyu \
+--data_main_folder annotation/plane_annotation/example/nyu \
 --f 519
 ```
 
@@ -169,7 +169,7 @@ Then you will get the output pointclouds, RANSAC initialized mirror plane parame
 
 ```python
 python annotation/plane_annotation/plane_annotation_tool.py --stage 2 \
---data_main_folder docs/figure/anno-tool-example/nyu \
+--data_main_folder annotation/plane_annotation/example/nyu \
 --f 519
 ```
 ![pick point pic](figure/anno-tool-intro/anno-init.png)
@@ -229,7 +229,7 @@ After adjustment, you can see the adjusted result. The yellow points are generat
 
 ```shell
 python annotation/plane_annotation/plane_annotation_tool.py --stage 3 \
---data_main_folder docs/figure/anno-tool-example/nyu \
+--data_main_folder annotation/plane_annotation/example/nyu \
 --f 519
 ```
 
@@ -237,7 +237,7 @@ python annotation/plane_annotation/plane_annotation_tool.py --stage 3 \
 
 ```shell
 python visualization/dataset_visualization.py --stage all \
---data_main_folder docs/figure/anno-tool-example/nyu \
+--data_main_folder annotation/plane_annotation/example/nyu \
 --f 519
 ```
 
@@ -247,9 +247,9 @@ python visualization/dataset_visualization.py --stage all \
 ```shell
 python annotation/plane_annotation/verification.py \
 --stage 1 \
---data_main_folder docs/figure/anno-tool-example/nyu \
+--data_main_folder annotation/plane_annotation/example/nyu \
 --video_main_folder [folder that contains "video_front, video_topdown .. etc" folders] \
---output_folder docs/figure/anno-tool-example/nyu/html \
+--output_folder annotation/plane_annotation/example/nyu/html \
 --video_num_per_page 10
 
 ```
@@ -260,8 +260,8 @@ python annotation/plane_annotation/verification.py \
 ```shell
 python annotation/plane_annotation/verification.py \
 --stage 2 \
---data_main_folder docs/figure/anno-tool-example/nyu \
---output_folder docs/figure/anno-tool-example/nyu_reannoatate \
+--data_main_folder annotation/plane_annotation/example/nyu \
+--output_folder annotation/plane_annotation/example/nyu_reannoatate \
 --error_list [.txt that contains the error samples' name (without file name extension); error sample is the sample with the wrong annotation] \
 --waste_list [.txt that contains the waste samples' name (without file name extension); the waste sample is the sample to waste] \
 --move [bool, if true it will move out all the error samples' information, if false, it will copy out all the error samples' information]

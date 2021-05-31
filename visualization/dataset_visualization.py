@@ -159,7 +159,7 @@ class Dataset_visulization(Plane_annotation_tool):
                 pcd = get_pcd_from_rgbd_depthPath(self.f, depth_img_path, color_img_path, mirror_mask=binary_instance_mask)
 
                 # Get mirror plane for the instance
-                mirror_points = get_points_in_mask(self.f, depth_img_path, color_img_path, mirror_mask=binary_instance_mask)
+                mirror_points = get_points_in_mask(self.f, depth_img_path, mirror_mask=binary_instance_mask)
                 mirror_pcd = o3d.geometry.PointCloud()
                 mirror_pcd.points = o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0))
                 mirror_bbox = o3d.geometry.OrientedBoundingBox.create_from_points(o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0)))

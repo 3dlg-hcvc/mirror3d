@@ -46,7 +46,7 @@ def check_one_sample(color_img_path, depth_img_path, img_info_path, instance_id,
     plane_parameter = img_info[instance_id]["plane_parameter"]
     mask_path = color_img_path.replace("raw", "instance_mask")
     instance_mask = get_grayscale_instanceMask(cv2.imread(mask_path),[ int(i) for i in instance_id.split("_")])
-    mirror_points = get_points_in_mask(f, depth_img_path=depth_img_path, color_img_path=color_img_path, mirror_mask=instance_mask)
+    mirror_points = get_points_in_mask(f, depth_img_path=depth_img_path, mirror_mask=instance_mask)
     mirror_pcd = o3d.geometry.PointCloud()
     mirror_pcd.points = o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0))
     mirror_bbox = o3d.geometry.OrientedBoundingBox.create_from_points(o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0))) 
