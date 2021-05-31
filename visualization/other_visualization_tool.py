@@ -9,9 +9,9 @@ import argparse
 # ---------------------------------------------------------------------------- #
 #                function to iteratively visualize a point cloud               #
 # ---------------------------------------------------------------------------- #
-def visualize_single_image():
+def visualize_pcd():
     while 1:
-        input_path = input("cloud point path : ")
+        input_path = input("(q : Quit) cloud point path: ")
         if input_path == "q" :
             exit(1)
         pcd = o3d.io.read_point_cloud(input_path)
@@ -40,24 +40,11 @@ def vislize_pcd_from_rgbd(depth_img_path, color_img_path, f, save_folder=""):
         o3d.visualization.draw_geometries([pcd])
 
 
-def check_one_sample(color_img_path, depth_img_path, img_info_path, instance_id, f):
-    pcd = get_pcd_from_rgbd_depthPath(f, depth_img_path, color_img_path)
-    img_info = read_json(img_info_path)
-    plane_parameter = img_info[instance_id]["plane_parameter"]
-    mask_path = color_img_path.replace("raw", "instance_mask")
-    instance_mask = get_grayscale_instanceMask(cv2.imread(mask_path),[ int(i) for i in instance_id.split("_")])
-    mirror_points = get_points_in_mask(f, depth_img_path=depth_img_path, mirror_mask=instance_mask)
-    mirror_pcd = o3d.geometry.PointCloud()
-    mirror_pcd.points = o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0))
-    mirror_bbox = o3d.geometry.OrientedBoundingBox.create_from_points(o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0))) 
-    mirror_plane = get_mirror_init_plane_from_mirrorbbox(plane_parameter, mirror_bbox)
-    o3d.visualization.draw_geometries([pcd, mirror_plane])
-
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
-        '--stage', default="3")
+        '--stage', default="1")
     parser.add_argument(
         '--depth_img_path', default="")
     parser.add_argument(
@@ -72,9 +59,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.stage == "1":
-        visualize_single_image()
+        visualize_pcd()
     elif args.stage == "2":
         vislize_pcd_from_rgbd(args.depth_img_path, args.color_img_path, args.f, "")
-    elif args.stage == "3":
-        check_one_sample(args.color_img_path, args.depth_img_path, args.img_info_path, args.instance_index, args.f)
 

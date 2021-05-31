@@ -113,28 +113,12 @@ python annotation/plane_annotation/plane_annotation_tool.py --stage [all / 1 ~ 6
 
 
 
-## Getting Started
+## Getting Started 
 
 Here is quick example, we are going to annotate several samples from NYUv2 and get the refined depth map based on the precise mask:
 
-- **STEP 1** Prepare data structure: after getting the annotated mirror mask, we store the original data in the following format:
 
-```shell
-├── mirror_color_images
-│   ├── 221.jpg
-│   ├── 45.jpg
-│   └── 686.jpg
-├── mirror_instance_mask_precise
-│   ├── 221.png
-│   ├── 45.png
-│   └── 686.png
-└── raw_sensorD
-    ├── 221.png
-    ├── 45.png
-    └── 686.png
-```
-
-- **STEP 2** Set up annotation environment: please run the following command to set up the environment:
+- **STEP 1** Set up annotation environment: please run the following command to set up the environment:
 
 ```python
 python annotation/plane_annotation/plane_annotation_tool.py --stage 1 \
@@ -165,7 +149,7 @@ Then you will get the output pointclouds, RANSAC initialized mirror plane parame
 
 
 
-- **STEP 3** Manually annotate the mirror plane: please run the following command to use the mirror plane annotation tool:
+- **STEP 2** Manually annotate the mirror plane: please run the following command to use the mirror plane annotation tool:
 
 ```python
 python annotation/plane_annotation/plane_annotation_tool.py --stage 2 \

@@ -5,163 +5,134 @@ import os
 import matplotlib.pyplot as plt
 from skimage import io
 import sys
-from utils.algorithm import *
 from utils.general_utils import *
+from utils.algorithm import *
 from utils.plane_pcd_utils import *
 import json
 import shutil
 import time
 from PIL import ImageColor
+import bs4
 
 
-class Plane_annotation_tool():
-    """
-    The Plane_annotation_tool class currently does the following:
-    1. anno_env_setup          
-    2. anno_plane_update_imgInfo                       
-    3. anno_update_depth_from_imgInfo          
-    """
-    def __init__(self, data_main_folder=None, process_index=0, multi_processing=False, border_width=50, f=519, anno_output_folder=None, mask_version="precise"):
-        """
-        Initilizationse
+class Plane_annotation_tool_new():
 
-        Args:
-            data_main_folder : Folder raw, raw_sensorD/ raw_meshD, instance_mask saved folder.
-            anno_output_folder(optional) : Inital pcd, img_info, border_vis saved forder (default : data_main_folder).
-            process_index : The process index of multi_processing.
-            multi_processing : Use multi_processing or not (bool).
-            border_width : Half of mirror 2D border width (half of cv2.dilate kernel size; 
-                           default kernel anchor is at the center); default : 50 --> actualy border width = 25.
-            f : Camera focal length of current input data.
-        """
-
-        self.data_main_folder = data_main_folder
-        assert os.path.exists(data_main_folder), "please input a valid folder path"
+    def __init__(self, process_index=0, multi_processing=False, overwrite=True):
         self.process_index = process_index
         self.multi_processing = multi_processing
-        self.error_info_path = os.path.join(data_main_folder, "error_img_list.txt")
-        self.mask_version = mask_version
-        if "mp3d" not in data_main_folder:
-            self.is_matterport3d = False
-        else:
-            self.is_matterport3d = True
+        self.overwrite = overwrite
 
-        self.color_img_list = [i.strip() for i in os.popen("find -L {} -type f".format(os.path.join(data_main_folder, "mirror_color_images"))).readlines()]
-        
-        self.color_img_list.sort()
-        if multi_processing:
-            self.color_img_list = self.color_img_list[process_index:process_index+1]
-        # Because we use "cv2.getStructuringElement(cv2.MORPH_ELLIPSE ***" and the anchor of the element is at the center, so actual width is half of self.border_width
-        self.border_width = border_width * 2 
-        self.f = f
-        
-        if anno_output_folder == None or not os.path.exists(anno_output_folder):
-            self.anno_output_folder = data_main_folder
-            print("########## NOTE output saved to {}, this may overwrite your current information ############".format(self.anno_output_folder))
-        else:
-            self.anno_output_folder = anno_output_folder
-    
-    def set_color_list(self, color_img_list_path):
-        self.color_img_list =list( set(read_txt(color_img_list_path)))
-        self.color_img_list.sort()
+    def get_list_to_process(self, full_list):
+        full_list.sort()
         if self.multi_processing:
-            self.color_img_list = self.color_img_list[self.process_index:self.process_index+1]
+            return full_list[self.process_index:self.process_index+1]
+        else:
+            return full_list
 
     def set_show_plane(self, show_plane):
         """
-        For step 2: show the mesh plane during annotation or not
+        For plane annotation: show the mesh plane during annotation or not
         Suggest to show the mesh plane if computer allows
         """
         self.show_plane = show_plane
-    
 
-    def set_overwrite(self, overwrite):
-        """
-        For STEP 1 overwrite current environment setup or not
-        """
-        self.overwrite = overwrite
+    def gen_colormask_from_intmask(self, intmask_colormask_txt):
+        random.seed(5)
+        rand = lambda: random.randint(100, 255)
+        BGR_color_list = []
+        for i in range(100):
+            BGR_color_list.append([rand(), rand(), rand()])
+        process_list =  self.get_list_to_process(read_txt(intmask_colormask_txt))
+        for item in process_list:
+            if len(item.strip().split()) == 2:
+                intmask_path, colormask_output_path = item.strip().split()
+                os.makedirs(os.path.split(colormask_output_path)[0], exist_ok=True)
+                int_mask = cv2.imread(intmask_path, cv2.IMREAD_ANYDEPTH)
+                height, width = int_mask.shape
+                color_mask = np.zeros((height, width, 3))
+                for id in np.unique(int_mask):
+                    if id == 0:
+                        continue # background
+                    color_mask[np.where(int_mask==id)] = BGR_color_list[id-1] # instance id in int_mask start from 1
+                cv2.imwrite(colormask_output_path, color_mask)
+                print("RGB instance mask saved to :", colormask_output_path)
 
-    def save_error_raw_name(self, sample_raw_name):
-        """
-        Save error path
-         
-        Args : 
-            sample_raw_name : color image name
-        """
+    def gen_intmask_colormask(self, coco_json, filename_intmask_colormask_txt, coco_filename_tag="file_name"):
+        from pycocotools.coco import COCO
+        random.seed(5)
+        rand = lambda: random.randint(100, 255)
+        BGR_color_list = []
+        for i in range(100):
+            BGR_color_list.append([rand(), rand(), rand()])
+        # Get filename intmask_output_path, colormask_output_path dict()
+        filename_intmask_colormask_list = read_txt(filename_intmask_colormask_txt)
+        color_outputpaths = dict()
+        for item in filename_intmask_colormask_list:
+            if len(item.strip().split()) == 3:
+                colorname , intmask_output_path, colormask_output_path = item.strip().split()
+                color_outputpaths[colorname] = [intmask_output_path, colormask_output_path]
 
-        error_img_list = []
-        if os.path.exists(self.error_info_path):
-            error_img_list = read_txt(self.error_info_path)
-        if sample_raw_name not in error_img_list:
-            with open(self.error_info_path, "a") as file:
-                    file.write(sample_raw_name)
-                    file.write("\n")
-    
-    def check_file(self):
-        """Check whether files under self.data_main_folder are valid"""
+        to_gen_list = [i[coco_filename_tag] for i in read_json(coco_json)["images"]]
+        to_gen_list = self.get_list_to_process(to_gen_list)
 
-        data_correct = True
-        raw_foler = os.path.join(self.data_main_folder, "mirror_color_images")
+        coco=COCO(coco_json)
+        for index in range(len(coco.imgs)):
+            img_id = index + 1 # coco image id start from 1
+            annIds = coco.getAnnIds(imgIds=img_id)
+            anns = coco.loadAnns(annIds)
+            img_info = coco.loadImgs(img_id)[0]
+            intmask_output_path, colormask_output_path = color_outputpaths[img_info[coco_filename_tag]]
+            os.makedirs(os.path.split(intmask_output_path)[0], exist_ok=True)
+            os.makedirs(os.path.split(colormask_output_path)[0], exist_ok=True)
+            int_mask = np.zeros((img_info['height'],img_info['width']))
+            color_mask = np.zeros((img_info['height'],img_info['width'], 3))
+            for i, ann in enumerate(anns):
+                int_mask = coco.annToMask(ann)
+                int_mask += (int_mask * (i+1)) # instance id in int_mask start from 1
+                color_mask[np.where(int_mask!=0)] = BGR_color_list[i]
+            cv2.imwrite(intmask_output_path, int_mask.astype(np.uint16))
+            cv2.imwrite(colormask_output_path, color_mask)
 
-        if self.is_matterport3d:
-            depth_folder = os.path.join(self.data_main_folder, "raw_meshD")
-        else:
-            depth_folder = os.path.join(self.data_main_folder, "raw_sensorD")
+    def update_planeinfo_from_depth(self, mask_depth_jsonpath_txt):
+        process_list =  self.get_list_to_process(read_txt(mask_depth_jsonpath_txt))
+        for item in process_list:
+            if len(item.strip().split()) == 4:
+                mask_path, depth_path, json_save_path, f = item.strip().split()
+                f = self.get_and_check_focal_length(f, item)
+                mask = cv2.imread(mask_path, cv2.IMREAD_ANYDEPTH)
+                img_info = []
+                for instance_index in np.unique(mask):
+                    if instance_index == 0:
+                        continue
+                    binary_instance_mask = (mask == instance_index).astype(np.uint8)
+                    mirror_points = (get_points_in_mask(f, depth_path, mirror_mask=binary_instance_mask))
+                    plane_parameter = get_mirror_parameter_from_xyzs_by_ransac(mirror_points)
+                    one_info = dict()
+                    one_info["plane"] = list(plane_parameter)
+                    one_info["normal"] = list(unit_vector(list(plane_parameter[:-1])))
+                    one_info["mask_id"] = int(instance_index)
+                    img_info.append(one_info)
+                save_json(json_save_path,img_info)
 
-        mask_folder = os.path.join(self.data_main_folder, "mirror_instance_mask_{}".format(self.mask_version))
-        img_info_folder = os.path.join(self.data_main_folder, "mirror_plane")
-
-        for file_name in os.listdir(raw_foler):
-
-            raw_file_path = os.path.join(raw_foler, file_name)
-            depth_file_path = os.path.join(depth_folder, file_name).replace("jpg","png")
-            
-            if self.is_matterport3d:
-                depth_file_path = rreplace(depth_file_path, "i", "d").replace("jpg","png")
-            mask_file_path =  os.path.join(mask_folder, file_name).replace("jpg","png")
-            if os.path.exists(mask_file_path) and os.path.exists(raw_file_path) and os.path.exists(depth_file_path):
-                continue
-            else:
-                data_correct = False
-                self.save_error_raw_name(file_name)
-                print(" path not exists : {} {} mask {} {}raw {} depth {} {}".format( file_name, os.path.exists(mask_file_path),mask_file_path , os.path.exists(raw_file_path),raw_file_path , os.path.exists(depth_file_path), depth_file_path, os.path.exists(img_info_file_path)))
-        
-        assert data_correct, "sth wrong with data, please check data first"
-
-        print("dataset checking finished ~ ")
-    
-
-
-    def anno_env_setup(self):
+    def anno_env_setup(self, input_txt, border_width=25):
         """
         Generate pcd for annotation and initlize plane parameter using ransac
         
         Output:
-            pcd : .ply file (per instance).
-            img_info : .json file (per image); save mirror instances' parameter. 
-            border_vis : .png file (per instance).
+            pointclouds : .ply file (per instance).
+            mirror plane information : .json file (per image); save mirror instances' parameter. 
+            color image with a mirror border mask : .png file (per instance).
         """
-        import open3d as o3d
-
-        def gen_pcd(color_img_path, depth_img_path, mask_img_path):
-            #  Get pcd and masked RGB image for each instance
-            pcd_save_folder = os.path.split(color_img_path.replace(self.data_main_folder, self.anno_output_folder).replace("mirror_color_images", "anno_pcd"))[0]
-            os.makedirs(pcd_save_folder, exist_ok=True)
-            mirror_border_vis_save_folder = pcd_save_folder.replace("anno_pcd", "border_vis")
-            os.makedirs(mirror_border_vis_save_folder, exist_ok=True)
-            plane_parameter_save_folder = pcd_save_folder.replace("anno_pcd", "mirror_plane")
-            os.makedirs(plane_parameter_save_folder, exist_ok=True)
-            mask = cv2.imread(mask_img_path)
-            import pdb;pdb.set_trace()
-            for instance_index in np.unique(np.reshape(mask,(-1,3)), axis = 0):
-                if sum(instance_index) == 0: # background
+        def gen_pcd(color_img_path, depth_img_path, mask_img_path, pcd_output_folder, plane_parameter_output_path, mirror_border_vis_output_folder, f):
+            os.makedirs(mirror_border_vis_output_folder, exist_ok=True)
+            os.makedirs(pcd_output_folder, exist_ok=True)
+            os.makedirs(os.path.split(plane_parameter_output_path)[0], exist_ok=True)
+            int_mask = cv2.imread(mask_img_path, cv2.IMREAD_ANYDEPTH)
+            for instance_index in np.unique(int_mask):
+                if instance_index == 0: # background
                     continue
-                instance_tag = "_idx_"
-                instance_tag += '%02x%02x%02x' % (instance_index[0],instance_index[1],instance_index[2]) # BGR
-                smaple_name = os.path.split(color_img_path)[-1].split(".")[0]
-                instance_tag = smaple_name + instance_tag
-                pcd_save_path = os.path.join(pcd_save_folder,  "{}.ply".format(instance_tag))
-
+                file_save_name = os.path.split(color_img_path)[-1].split(".")[0] + "_idx_" + str(instance_index)
+                pcd_save_path = os.path.join(pcd_output_folder,  "{}.ply".format(file_save_name))
                 if os.path.isfile(pcd_save_path) and not self.overwrite:
                     print(pcd_save_path , "exist! continue")
                     continue
@@ -171,97 +142,138 @@ class Plane_annotation_tool():
                     else:
                         print("generating pcd {}".format(pcd_save_path))
 
-                binary_instance_mask = get_grayscale_instanceMask(mask, instance_index)
-                mirror_border_mask = cv2.dilate(binary_instance_mask, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (self.border_width,self.border_width))) - binary_instance_mask
+                binary_instance_mask = (int_mask == instance_index).astype(np.uint8)
+                mirror_border_mask = cv2.dilate(binary_instance_mask, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (border_width,border_width))) - binary_instance_mask
 
                 #  Save image with masked mirror boreder 
                 border_mask_vis_image = visulize_mask_one_image(color_img_path, mirror_border_mask)
-                border_mask_vis_save_path = os.path.join(mirror_border_vis_save_folder, "{}.jpg".format(instance_tag)) 
-                plt.imsave(border_mask_vis_save_path, border_mask_vis_image)
-                print("border_mask_vis_save_path : ", os.path.abspath(border_mask_vis_save_path))
+                border_mask_vis_output_path = os.path.join(mirror_border_vis_output_folder, "{}.jpg".format(file_save_name)) 
+                plt.imsave(border_mask_vis_output_path, border_mask_vis_image)
+                print("border_mask_vis_output_path : ", os.path.abspath(border_mask_vis_output_path))
 
                 #  Get pcd with refined mirror depth by ransac 
-                pcd, plane_parameter = refine_pcd_by_mirror_border(binary_instance_mask, mirror_border_mask, depth_img_path, color_img_path, self.f)
-                one_plane_para_save_path = os.path.join(plane_parameter_save_folder, "{}.json".format(smaple_name))
-                save_plane_parameter_2_json(plane_parameter, one_plane_para_save_path, instance_index)
-                print("plane_parameter saved to :", os.path.abspath(one_plane_para_save_path))
+                pcd, plane_parameter = refine_pcd_by_mirror_border(binary_instance_mask, mirror_border_mask, depth_img_path, color_img_path, f)
+                update_plane_parameter_json(plane_parameter, plane_parameter_output_path, instance_index)
+                print("plane_parameter saved to :", os.path.abspath(plane_parameter_output_path))
 
                 o3d.io.write_point_cloud(pcd_save_path, pcd)
                 print("point cloud saved  to :", os.path.abspath(pcd_save_path))
 
-        for color_img_path in self.color_img_list:
-            # Get paths
-            mask_img_path = color_img_path.replace("mirror_color_images","mirror_instance_mask_{}".format(self.mask_version)).replace("jpg","png")
-            if self.is_matterport3d:
-                depth_img_path = rreplace(color_img_path.replace("mirror_color_images","raw_meshD"), "i", "d").replace("jpg","png")
-            else:
-                depth_img_path = color_img_path.replace("mirror_color_images","raw_sensorD").replace("jpg","png")
-            gen_pcd(color_img_path, depth_img_path, mask_img_path)
+        import open3d as o3d
+        process_list =  self.get_list_to_process(read_txt(input_txt))
+        for item in process_list:
+            if len(item.strip().split()) == 7:
+                color_img_path, depth_img_path, mask_img_path, pcd_output_folder, plane_parameter_output_path, mirror_border_vis_output_folder, f = item.strip().split()
+                f = self.get_and_check_focal_length(f, item)
+                
+                if not os.path.exists(color_img_path) or not os.path.exists(depth_img_path) or not os.path.exists(mask_img_path):
+                    print("invalid line : ", item)
+                    print("input txt format: [input color image path] [input depth image path] [input integer mask path] [pointcloud output folder(pointcloud's name will be color image name + instance id)] [plane parameter JSON output path] [folder to save color image with mirror border mask] [focal length of this sample]")
+                
+                gen_pcd(color_img_path, depth_img_path, mask_img_path, pcd_output_folder, plane_parameter_output_path, mirror_border_vis_output_folder, f)
 
-    def anno_plane_update_imgInfo(self):
+    def save_progress(self, anotation_progress_save_folder):
+        """Save annotation progress"""
+        error_txt_path = os.path.join(anotation_progress_save_folder, "error_pcd_list.txt")
+        correct_txt_path = os.path.join(anotation_progress_save_folder, "correct_pcd_list.txt")
+        save_txt(error_txt_path, set([item  for item in self.error_pcd_list]))
+        save_txt(correct_txt_path, set([item  for item in self.correct_pcd_list]))
+
+    def get_progress(self, input_txt, anotation_progress_save_folder):
+        """Get annotation progress"""
+        self.anno_info_list = []
+        self.to_anno_sample_index = 0
+        start_index = 0
+        process_list = read_txt(input_txt)
+        for item in process_list:
+            if len(item.strip().split()) == 7:
+                color_img_path, depth_img_path, mask_path,pcd_path, plane_parameter_output_path, mirror_border_vis_path, f = item.strip().split()
+                if not os.path.exists(pcd_path) or not os.path.exists(mirror_border_vis_path)  or not os.path.exists(color_img_path) or not os.path.exists(depth_img_path) or not os.path.exists(mask_path):
+                    print("invalid line : ", item)
+                    exit()
+                else:
+                    self.anno_info_list.append([color_img_path, depth_img_path, mask_path,pcd_path, plane_parameter_output_path, mirror_border_vis_path, int(f)])
+
+        self.anno_info_list.sort()
+        error_txt = os.path.join(anotation_progress_save_folder, "error_pcd_list.txt")
+        correct_txt = os.path.join(anotation_progress_save_folder, "correct_pcd_list.txt")
+
+        # get error list
+        if os.path.exists(error_txt):
+            self.error_pcd_list = read_txt(error_txt)
+        else:
+            self.error_pcd_list = []
+        
+        # get correct list
+        if os.path.exists(correct_txt):
+            self.correct_pcd_list = read_txt(correct_txt)
+        else:
+            self.correct_pcd_list = []
+        
+        # get error list (regardless of instance id)
+        self.error_sample = []
+        for item in self.error_pcd_list:
+            self.error_sample.append(item.split("_idx_")[0])
+
+        # get annotation start position
+        for index, info in enumerate(self.anno_info_list):
+            one_path = info[3] # get pcd path
+            if one_path not in self.correct_pcd_list and one_path not in self.error_pcd_list:
+                self.to_anno_sample_index = index
+                return
+        self.to_anno_sample_index = len(self.anno_info_list)
+        return
+
+
+    def anno_plane_update_imgInfo(self, anotation_progress_save_folder, input_txt):
         """
-        Check whether mirror plane is correct (verification & adjustment)
+        Plane annotation 
 
         Requirement : open3d 0.10.0 +
         """
         import open3d as o3d
         import warnings
-        self.check_file()
         warnings.filterwarnings("ignore")
-        anotation_progress_save_folder = os.path.join(self.anno_output_folder, "anno_progress")
         os.makedirs(anotation_progress_save_folder, exist_ok=True)
-        self.get_progress() # self.sample_index start from 0
-        annotation_start_index = self.sample_index
-        manual_adjust_num = 0
-        annotation_start_time = time.time()
+
+        self.get_progress(input_txt, anotation_progress_save_folder) 
+        annotation_start_index = self.to_anno_sample_index # self.to_anno_sample_index start from 0
+        manual_adjust_num = 0 # count statistic
+        annotation_start_time = time.time() # note dwon the annotation time 
         while 1:
-            if self.sample_index == len(self.pcd_path_list):
+            if self.to_anno_sample_index == len(self.anno_info_list):
                 print("annotation finished ! XD")
                 exit(1)
-            current_pcd_path = self.pcd_path_list[self.sample_index]
-            currect_pcd_id = current_pcd_path.split("/")[-1].split("_idx_")[0]
+            color_img_path, depth_img_path, mask_path, current_pcd_path, plane_parameter_output_path, mirror_border_vis_path, f = self.anno_info_list[self.to_anno_sample_index]
+            currect_pcd_id = current_pcd_path.split("_idx_")[0]
+            mirror_plane = []
 
             # If one instance in the sample is negative; then this sample is invalid
-            if currect_pcd_id in self.error_id: 
-                self.error_list.append(current_pcd_path)
-                self.save_progress()
-                self.get_progress()
-                print("[AUTO] sample index {} path {} is invalid".format(self.sample_index, current_pcd_path))
+            if currect_pcd_id in self.error_sample: 
+                self.error_pcd_list.append(current_pcd_path)
+                self.save_progress(anotation_progress_save_folder)
+                self.get_progress(input_txt, anotation_progress_save_folder) 
+                print("[AUTO] sample index {} path {} is invalid".format(self.to_anno_sample_index, current_pcd_path))
                 continue
-
-            mirror_border_vis_save_folder = os.path.join(self.anno_output_folder, "border_vis")
-            masked_image_path = os.path.join(mirror_border_vis_save_folder, "{}.jpg".format(current_pcd_path.split("/")[-1].split(".")[0]))
+            
+            # print the current annotation tag for the sample
             current_sample_status = "N/A"
-            if current_pcd_path in self.correct_list:
+            if current_pcd_path in self.correct_pcd_list:
                 current_sample_status = "correct"
-            elif current_pcd_path in self.error_list:
+            elif current_pcd_path in self.error_pcd_list:
                 current_sample_status = "error"
             print("###################### sample status {} ######################".format(current_sample_status))
 
-            
-
+            # get the pcd for annotation
             pcd = o3d.io.read_point_cloud(current_pcd_path)
-            pcd_name = current_pcd_path.split("/")[-1].split(".")[0]
-            img_name = pcd_name.split("_idx_")[0]
-            instance_id = pcd_name.split("_idx_")[1]
-            instance_id = ImageColor.getcolor("#{}".format(instance_id), "RGB")
-            instance_id = [instance_id[2], instance_id[1], instance_id[0]]# BGR
-            if self.is_matterport3d:
-                depth_img_path = os.path.join(self.data_main_folder, "raw_meshD","{}.png".format(rreplace(img_name, "i", "d")))
-            else:
-                depth_img_path = os.path.join(self.data_main_folder, "raw_sensorD","{}.png".format(img_name))
-            color_img_path = os.path.join(self.data_main_folder, "mirror_color_images","{}.jpg".format(img_name))
-            mask_path = os.path.join(self.data_main_folder, "mirror_instance_mask_{}".format(self.mask_version),"{}.png".format(img_name))
-            plane_parameter = read_plane_json(os.path.join(self.anno_output_folder, "mirror_plane","{}.json".format(img_name)))[pcd_name.split("_idx_")[1]]["plane_parameter"]
+            instance_id = int(current_pcd_path.split("_idx_")[-1].split(".")[0])
+            plane_parameter = read_plane_json(plane_parameter_output_path)[instance_id]["plane_parameter"]
+            print("sample index {} mirror to annotate {}".format(self.to_anno_sample_index, mirror_border_vis_path))
 
-            if os.path.exists(masked_image_path):
-                print("sample index {} mirror to annotate {}".format(self.sample_index, masked_image_path))
-            else:
-                print("sample index {} mirror to annotate {}".format(self.sample_index, color_img_path))
-
+            # show the point cloud and mesh plane (optional) in the user interface
             if self.show_plane:
                 try:
-                    instance_mask = get_grayscale_instanceMask(cv2.imread(mask_path),instance_id)
+                    instance_mask = (cv2.imread(mask_path, cv2.IMREAD_ANYDEPTH) == instance_id).astype(np.uint8)
                     mirror_points = get_points_in_mask(f=self.f, depth_img_path=depth_img_path, color_img_path=color_img_path, mirror_mask=instance_mask)
                     mirror_pcd = o3d.geometry.PointCloud()
                     mirror_pcd.points = o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0))
@@ -276,6 +288,7 @@ class Plane_annotation_tool():
                     o3d.visualization.draw_geometries([pcd])
             else:
                 o3d.visualization.draw_geometries([pcd])
+            
 
             option_list = Tool_Option()
             option_list.add_option("t", "TRUE : initial plane parameter is correct")
@@ -286,61 +299,54 @@ class Plane_annotation_tool():
             option_list.add_option("a", "ADJUST: adjust one sample repeatedly")
             option_list.add_option("exit", "EXIT : save and exit")
             option_list.print_option()
-
             input_option = input()
-
-            mirror_plane = []
 
             if not option_list.is_input_key_valid(input_option):
                 print("invalid input, please input again :D")
                 continue
             
             if input_option == "t":
-                if current_pcd_path in self.error_list:
-                    self.error_list.remove(current_pcd_path)
-                self.correct_list.append(current_pcd_path)
-                self.save_progress()
-                self.get_progress()
+                if current_pcd_path in self.error_pcd_list:
+                    self.error_pcd_list.remove(current_pcd_path)
+                self.correct_pcd_list.append(current_pcd_path)
+                self.save_progress(anotation_progress_save_folder)
+                self.get_progress(input_txt, anotation_progress_save_folder) 
+
             elif input_option == "w":
-                if current_pcd_path in self.correct_list:
-                    self.correct_list.remove(current_pcd_path)
-                self.error_list.append(current_pcd_path)
-                self.save_progress()
-                self.get_progress()
+                if current_pcd_path in self.correct_pcd_list:
+                    self.correct_pcd_list.remove(current_pcd_path)
+                self.error_pcd_list.append(current_pcd_path)
+                self.save_progress(anotation_progress_save_folder)
+                self.get_progress(input_txt, anotation_progress_save_folder) 
             elif input_option == "n":
                 if current_sample_status == "N/A":
                     print("please annotate current sample :-)")
                     continue
-                self.sample_index += 1
+                self.to_anno_sample_index += 1
             elif input_option == "exit":
-                self.save_progress()
-                self.get_progress()
-                print("current progress {} / {}".format(self.sample_index, len(self.pcd_path_list)))
-                try:
-                    refer_speed = (time.time()-annotation_start_time)/ (self.sample_index - annotation_start_index)
-                    left_h = ((len(self.pcd_path_list) - self.sample_index) * refer_speed) / 3600
-                    manul_percentage = (manual_adjust_num /  (self.sample_index - annotation_start_index)) * 100
-                    print("Reference annotation speed {:.2f} s/sample; Estimate remaining time {:.1f} h; manual adjust {:.2f}%".format(refer_speed, left_h, manul_percentage))
-                except:
-                    pass
+                self.save_progress(anotation_progress_save_folder)
+                self.get_progress(input_txt, anotation_progress_save_folder) 
+                print("current progress {} / {}".format(self.to_anno_sample_index, len(self.anno_info_list)))
+                refer_speed = (time.time()-annotation_start_time)/ (self.to_anno_sample_index - annotation_start_index)
+                left_h = ((len(self.anno_info_list) - self.to_anno_sample_index) * refer_speed) / 3600
+                manul_percentage = (manual_adjust_num /  (self.to_anno_sample_index - annotation_start_index)) * 100
+                print("Reference annotation speed {:.2f} s/sample; Estimate remaining time {:.1f} h; manual adjust {:.2f}%".format(refer_speed, left_h, manul_percentage))
                 exit(1)
             elif "back" in input_option:
                 n = int(input_option.split()[1]) - 1
-                if self.sample_index - n < 0:
-                    print("at most return {} times".format(self.sample_index+1))
+                if self.to_anno_sample_index - n < 0:
+                    print("at most return {} times".format(self.to_anno_sample_index+1))
                     continue
-                self.sample_index -= n
+                self.to_anno_sample_index -= n
             elif "goto" in input_option:
                 n = int(input_option.split()[1]) - 1
-                if  n > len(self.pcd_path_list)-1:
-                    print("you can go to 0 ~ {}".format(len(self.pcd_path_list)-1))
+                if  n > len(self.anno_info_list)-1:
+                    print("you can go to 0 ~ {}".format(len(self.anno_info_list)-1))
                     continue
-                self.sample_index = n
-            
+                self.to_anno_sample_index = n
             elif input_option == "a":
-                instance_mask = get_grayscale_instanceMask(cv2.imread(mask_path),instance_id)
-                import pdb;pdb.set_trace()
-                mirror_pcd = get_mirrorPoint_based_on_plane_parameter(f=self.f, plane_parameter=plane_parameter, mirror_mask=instance_mask, color_img_path=color_img_path, color=[1,1,0])
+                instance_mask = (cv2.imread(mask_path, cv2.IMREAD_ANYDEPTH) == instance_id).astype(np.uint8)
+                mirror_pcd = get_mirrorPoint_based_on_plane_parameter(f, plane_parameter=plane_parameter, mirror_mask=instance_mask, color_img_path=color_img_path, color=[1,1,0])
                 init_step_size = ((np.max(np.array(pcd.points)[:,0])) - (np.min(np.array(pcd.points)[:,0])))/300
                 while 1:
                     min_adjust_option_list = Tool_Option()
@@ -355,17 +361,16 @@ class Plane_annotation_tool():
                         continue
                     
                     if min_input_option == "f":
-                        one_plane_para_save_path = os.path.join(os.path.join(self.anno_output_folder, "mirror_plane"), "{}.json".format(img_name))
-                        save_plane_parameter_2_json(plane_parameter, one_plane_para_save_path, instance_id)
+                        update_plane_parameter_json(plane_parameter, plane_parameter_output_path, instance_id)
                         manual_adjust_num += 1
-                        self.correct_list.append(current_pcd_path)
-                        self.save_progress()
-                        self.get_progress()
+                        self.correct_pcd_list.append(current_pcd_path)
+                        self.save_progress(anotation_progress_save_folder)
+                        self.get_progress(input_txt, anotation_progress_save_folder) 
                         break
                     elif min_input_option == "i":
                         [p1, p2, p3] = get_picked_points(pcd)
                         plane_parameter = get_parameter_from_plane_adjustment(pcd, get_mirror_init_plane_from_3points(p1, p2, p3), init_step_size)
-                        mirror_pcd = get_mirrorPoint_based_on_plane_parameter(f=self.f, plane_parameter=plane_parameter, mirror_mask=instance_mask, color_img_path=color_img_path, color=[1,1,0])
+                        mirror_pcd = get_mirrorPoint_based_on_plane_parameter(f, plane_parameter=plane_parameter, mirror_mask=instance_mask, color_img_path=color_img_path, color=[1,1,0])
                         o3d.visualization.draw_geometries([pcd, mirror_pcd])
 
                     elif min_input_option == "a":
@@ -375,350 +380,48 @@ class Plane_annotation_tool():
                         if mirror_plane == []:
                             mirror_plane = get_mirror_init_plane_from_3points(p1, p2, p3)
                         plane_parameter = get_parameter_from_plane_adjustment(pcd, mirror_plane, init_step_size)
-                        mirror_pcd = get_mirrorPoint_based_on_plane_parameter(f=self.f, plane_parameter=plane_parameter, mirror_mask=instance_mask, color_img_path=color_img_path, color=[1,1,0])
+                        mirror_pcd = get_mirrorPoint_based_on_plane_parameter(f, plane_parameter=plane_parameter, mirror_mask=instance_mask, color_img_path=color_img_path, color=[1,1,0])
                         o3d.visualization.draw_geometries([pcd, mirror_pcd])
 
+    def get_and_check_focal_length(self, f, line):
+        try:
+            f = int(f)
+            return f
+        except:
+            print("{} invalid focal length format".format(f))
+            print("please check line: ", line)
+            exit()
 
-    def anno_move_only_mask(self):
-        """
-        Move invalid sample to "only_mask" folder
-        """
-        raw_image_save_folder = os.path.join(self.data_main_folder, "mirror_color_images")
-        error_id_path = os.path.join(self.anno_output_folder, "anno_progress", "error_id.txt")
-        if os.path.exists(error_id_path):
-            self.error_id = read_txt(error_id_path)
-        else:
-            self.error_id = []
-        for color_img_path in self.color_img_list:
-            smaple_name = os.path.split(color_img_path)[1].split(".")[0] 
-
-            valid_instance = False
-
-            # If this is an invalid sample; only save the RGB image and instance_mask
-            if smaple_name in self.error_id:
-                command = "find -L {} -type f | grep {}".format(self.data_main_folder, smaple_name)
-                for src_path in os.popen(command).readlines():
-                    src_path = src_path.strip()
-                    dst_path = src_path.replace("with_mirror", "only_mask")
-                    dst_folder = os.path.split(dst_path)[0]
-                    os.makedirs(dst_folder, exist_ok=True)
-                    print("moving {} to only_mask {}".format(src_path, dst_folder))
-                    if os.path.exists(dst_path):
-                        os.remove(dst_path)
-                    shutil.move(src_path, dst_folder)
-                
-                if self.is_matterport3d:
-                    smaple_name = rreplace(smaple_name,"i","d")
-                    command = "find -L {} -type f | grep {}".format(self.data_main_folder, smaple_name)
-                    for src_path in os.popen(command).readlines():
-                        src_path = src_path.strip()
-                        dst_path = src_path.replace("with_mirror", "only_mask")
-                        dst_folder = os.path.split(dst_path)[0]
-                        os.makedirs(dst_folder, exist_ok=True)
-                        print("moving {} to only_mask {}".format(src_path, dst_folder))
-                        if os.path.exists(dst_path):
-                            os.remove(dst_path)
-                        shutil.move(src_path, dst_folder)
-
-
-
-
-
-
-    def anno_update_depth_from_imgInfo(self):
+    def anno_update_depth_from_imgInfo(self, input_txt):
         """
         After plane annotation, update "raw_sensorD/raw_meshD" to "refined_sensorD/refined_meshD"
 
         Output:
             Refined depth saved to refined_sensorD or refined_meshD (Matterport3d only).
         """
-        img_info_save_folder = os.path.join(self.anno_output_folder, "mirror_plane")
-        error_id_path = os.path.join(self.anno_output_folder, "anno_progress", "error_id.txt")
-        if os.path.exists(error_id_path):
-            self.error_id = read_txt(error_id_path)
-        else:
-            self.error_id = []
-        for color_img_path in self.color_img_list:
-            smaple_name = os.path.split(color_img_path)[1].split(".")[0] 
-            mask_img_path = os.path.join(self.data_main_folder, "mirror_instance_mask_{}".format(self.mask_version),"{}.png".format(smaple_name))
-            mask = cv2.imread(mask_img_path)
-
-            one_info_file_path = os.path.join(img_info_save_folder, "{}.json".format(smaple_name))
-            info = read_json(one_info_file_path)
+        process_list =  self.get_list_to_process(read_txt(input_txt))
+        for item in process_list:
+            if len(item.strip().split()) != 5: 
+                continue
+            rawD_path, mask_img_path, plane_parameter_json_path, refD_output_path, f = item.strip().split()
+            if not os.path.exists(rawD_path) or not os.path.exists(mask_img_path) or not os.path.exists(plane_parameter_json_path):
+                print("invalid line : ", item)
+                print("input txt format: [path to depth map to refine (rawD)] [input integer mask path] [plane parameter JSON output path] [path to save the refined depth map (refD)] [focal length of this sample]")
+                continue
+            f = self.get_and_check_focal_length(f, item)
+            
+            os.makedirs(os.path.split(refD_output_path)[0], exist_ok=True)
+            mask = cv2.imread(mask_img_path, cv2.IMREAD_ANYDEPTH)
+            info = read_json(plane_parameter_json_path)
             valid_instance = False
             for one_info in info:
                 instance_index = one_info["mask_id"]
-                instance_index = ImageColor.getcolor("#{}".format(instance_index), "RGB")
-                binary_instance_mask = get_grayscale_instanceMask(mask, instance_index)
+                binary_instance_mask = (mask == instance_index).astype(np.uint8)
                 plane_parameter = one_info["plane"]
+                cv2.imwrite(refD_output_path, refine_depth_with_plane_parameter_mask(plane_parameter, binary_instance_mask, cv2.imread(rawD_path,cv2.IMREAD_ANYDEPTH),f))
+                print("update depth {}".format(refD_output_path))
 
-                # Refine mesh raw depth (only Matterport3d have mesh raw depth)
-                if self.is_matterport3d:
-                    depth_file_name = "{}.png".format(rreplace(smaple_name,"i","d"))
-                    raw_sensorD_path = os.path.join(self.data_main_folder, "raw_sensorD",depth_file_name)
-                    refined_sensorD_path = os.path.join(self.data_main_folder, "refined_sensorD_{}".format(self.mask_version),depth_file_name)
-                    raw_meshD_path = os.path.join(self.data_main_folder, "raw_meshD",depth_file_name)
-                    refined_meshD_path = os.path.join(self.data_main_folder, "refined_meshD_{}".format(self.mask_version),depth_file_name)
-                    os.makedirs(os.path.split(refined_meshD_path)[0], exist_ok=True)
-                    # If there's refined depth; refine the refiend depth 
-                    if os.path.exists(refined_meshD_path):
-                        raw_meshD_path = refined_meshD_path
-                    cv2.imwrite(refined_meshD_path, refine_depth_with_plane_parameter_mask(plane_parameter, binary_instance_mask, cv2.imread(raw_meshD_path,cv2.IMREAD_ANYDEPTH),self.f))
-                    if os.path.exists(refined_meshD_path) and not self.overwrite:
-                        continue
-                    print("update depth {}".format(refined_meshD_path))
-                else:
-                    depth_file_name = "{}.png".format(smaple_name)
-                # Refine hole raw depth
-                raw_sensorD_path = os.path.join(self.data_main_folder, "raw_sensorD",depth_file_name)
-                refined_sensorD_path = os.path.join(self.data_main_folder, "refined_sensorD_{}".format(self.mask_version),depth_file_name)
-                os.makedirs(os.path.split(refined_sensorD_path)[0], exist_ok=True)
-                # If there's refined depth; refine the refiend depth
-                if os.path.exists(refined_sensorD_path):
-                    raw_sensorD_path = refined_sensorD_path
-                if os.path.exists(refined_sensorD_path) and not self.overwrite:
-                    continue
-                cv2.imwrite(refined_sensorD_path, refine_depth_with_plane_parameter_mask(plane_parameter, binary_instance_mask, cv2.imread(raw_sensorD_path,cv2.IMREAD_ANYDEPTH),self.f))
-                print("update depth {}".format(refined_sensorD_path))
-
-    def save_progress(self):
-        """Save annotation progress"""
-        anotation_progress_save_folder = os.path.join(self.anno_output_folder, "anno_progress")
-        error_txt_path = os.path.join(anotation_progress_save_folder, "error_list.txt")
-        error_id_path = os.path.join(anotation_progress_save_folder, "error_id.txt")
-        correct_txt_path = os.path.join(anotation_progress_save_folder, "correct_list.txt")
-        save_txt(error_id_path, set(self.error_id))
-        save_txt(error_txt_path, set([item  for item in self.error_list]))
-        save_txt(correct_txt_path, set([item  for item in self.correct_list]))
-
-    def get_progress(self):
-        """Get annotation progress"""
-        self.sample_index = 0
-        start_index = 0
-        self.pcd_path_list = []
-        pcd_save_folder = os.path.join(self.anno_output_folder, "anno_pcd")
-        for pcd_name in os.listdir(pcd_save_folder):
-            self.pcd_path_list.append(os.path.join(pcd_save_folder, pcd_name))
-        self.pcd_path_list.sort()
-        anotation_progress_save_folder = os.path.join(self.anno_output_folder, "anno_progress")
-
-        error_txt = os.path.join(anotation_progress_save_folder, "error_list.txt")
-        correct_txt = os.path.join(anotation_progress_save_folder, "correct_list.txt")
-
-        if os.path.exists(error_txt):
-            self.error_list = [os.path.join(self.data_main_folder, item)  for item in read_txt(error_txt)]
-        else:
-            self.error_list = []
-        
-        self.error_id = []
-        for item in self.error_list:
-            self.error_id.append(item.split("/")[-1].split("_idx_")[0])
-        if os.path.exists(correct_txt):
-            self.correct_list = [ item  for item in read_txt(correct_txt) ]
-        else:
-            self.correct_list = []
-
-        for index, one_path in enumerate(self.pcd_path_list):
-            if one_path not in self.correct_list and one_path not in self.error_list:
-                self.sample_index = index
-                return
-        self.sample_index = len(self.pcd_path_list)
-        return
-
-
-
-    def adjust_one_sample_plane(self, instance_index=None, img_name=None):
-        """
-        Repeatedly adjust one sample's plane parameter
-
-        Args:
-            instance_index : "[B]_[G]_[R]",e.g. (128, 0, 0) --> "128_0_0"
-            img_name : color image sample name, e.g. 128
-        """
-        if len(img_name) == 0 or len(instance_index) == 0:
-            print("invalid input instance_index {} img_name {}".format(instance_index, img_name))
-            exit()
-
-        import open3d as o3d
-        if self.is_matterport3d:
-            raw_sensorD_path = os.path.join(self.data_main_folder, "raw_sensorD","{}.png".format(rreplace(img_name, "i", "d")))
-            raw_meshD_path = os.path.join(self.data_main_folder, "raw_meshD","{}.png".format(rreplace(img_name, "i", "d")))
-            refined_meshD_path = os.path.join(self.anno_output_folder, "refined_meshD_{}".format(self.mask_version),"{}.png".format(rreplace(img_name, "i", "d")))
-            refined_sensorD_path = os.path.join(self.anno_output_folder, "refined_sensorD_{}".format(self.mask_version),"{}.png".format(rreplace(img_name, "i", "d")))
-        else:
-            raw_sensorD_path = os.path.join(self.data_main_folder, "raw_sensorD","{}.png".format(img_name))
-            refined_sensorD_path = os.path.join(self.anno_output_folder, "refined_sensorD_{}".format(self.mask_version),"{}.png".format(img_name))
-
-        color_img_path = os.path.join(self.data_main_folder, "mirror_color_images","{}.jpg".format(img_name))
-        mask_path = os.path.join(self.data_main_folder, "mirror_instance_mask_{}".format(self.mask_version),"{}.png".format(img_name))
-        instance_id = [int(i) for i in instance_index.split("_")]
-        instance_mask = get_grayscale_instanceMask(cv2.imread(mask_path),instance_id)
-
-        pcd_save_folder = os.path.join(self.anno_output_folder, "anno_pcd")
-        instance_tag = img_name + "_idx_" + instance_index
-        pcd_path = os.path.join(pcd_save_folder, "{}.ply".format(instance_tag))
-
-        
-        one_plane_para_save_path = os.path.join(os.path.join(self.anno_output_folder, "mirror_plane"), "{}.json".format(img_name))
-        if os.path.exists(one_plane_para_save_path):
-            plane_parameter = read_json(one_plane_para_save_path)[instance_index]["plane"]
-
-        pcd = o3d.io.read_point_cloud(pcd_path)
-        mirror_pcd = get_mirrorPoint_based_on_plane_parameter(f=self.f, plane_parameter=plane_parameter, mirror_mask=instance_mask, color_img_path=color_img_path, color=[0,0,1])
-        o3d.visualization.draw_geometries([pcd, mirror_pcd])
-        init_step_size = ((np.max(np.array(pcd.points)[:,0])) - (np.min(np.array(pcd.points)[:,0])))/300
-
-        while 1:
-
-            option_list = Tool_Option()
-            option_list.add_option("f", "FINISH : update refined_sensorD/ refined_meshD/ img_info and EXIT")
-            option_list.add_option("a", "ADJUST : need to adjust the plane parameter")
-            option_list.add_option("i", "INIT : pick 3 points to initialize the plane (press shift + left click to select a point; press shirt + right click to unselect; for more detail please refer to Open3d instruction)")
-            option_list.print_option()
-            input_option = input()
-
-            print("relevant color image path : {}".format(color_img_path))
-
-            if input_option not in ["f", "i", "a"]:
-                print("invalid input, please input again :D")
-                continue
-            
-            if input_option == "f":
-                save_plane_parameter_2_json(plane_parameter, one_plane_para_save_path, instance_id)
-                cv2.imwrite(refined_sensorD_path, refine_depth_with_plane_parameter_mask(plane_parameter, instance_mask, cv2.imread(raw_sensorD_path, cv2.IMREAD_ANYDEPTH),self.f))
-                if self.is_matterport3d:
-                    cv2.imwrite(refined_meshD_path, refine_depth_with_plane_parameter_mask(plane_parameter, instance_mask, cv2.imread(raw_meshD_path, cv2.IMREAD_ANYDEPTH),self.f))
-                print("annotation of {} finished !".format(img_name))
-                exit()
-            elif input_option == "i":
-                [p1, p2, p3] = get_picked_points(pcd)
-                plane_parameter = get_parameter_from_plane_adjustment(pcd, get_mirror_init_plane_from_3points(p1, p2, p3), init_step_size)
-                mirror_pcd = get_mirrorPoint_based_on_plane_parameter(f=self.f, plane_parameter=plane_parameter, mirror_mask=instance_mask, color_img_path=color_img_path, color=[0,0,1])
-                o3d.visualization.draw_geometries([pcd, mirror_pcd])
-
-            elif input_option == "a":
-                p1 = np.mean(np.array(mirror_pcd.points), axis=0)
-                p2 = np.array(mirror_pcd.points)[0]
-                p3 = np.array(mirror_pcd.points)[-1]
-                plane_parameter = get_parameter_from_plane_adjustment(pcd, get_mirror_init_plane_from_3points(p1, p2, p3), init_step_size)
-                mirror_pcd = get_mirrorPoint_based_on_plane_parameter(f=self.f, plane_parameter=plane_parameter, mirror_mask=instance_mask, color_img_path=color_img_path, color=[0,0,1])
-                o3d.visualization.draw_geometries([pcd, mirror_pcd])
-
-
-
-    def manual_clamp_one_sample(self, instance_index=None, img_name=None):
-        """
-        Repeatedly adjust one sample's plane parameter
-
-        Args:
-            instance_index : "[R]_[G]_[B]",e.g. (128, 0, 0) --> "128_0_0"
-            img_name : color image sample name, e.g. 128
-        """
-        if len(instance_index) == 0 or len(instance_index) == 0:
-            print("invalid input instance_index {} img_name {}".format(instance_index, img_name))
-            exit()
-        clamp_dis = 100
-
-        import open3d as o3d
-        if self.is_matterport3d:
-            raw_sensorD_path = os.path.join(self.data_main_folder, "raw_sensorD","{}.png".format(rreplace(img_name, "i", "d")))
-            refined_sensorD_path = os.path.join(self.anno_output_folder, "refined_sensorD_{}".format(self.mask_version),"{}.png".format(rreplace(img_name, "i", "d")))
-        else:
-            raw_sensorD_path = os.path.join(self.data_main_folder, "raw_sensorD","{}.png".format(img_name))
-            refined_sensorD_path = os.path.join(self.anno_output_folder, "refined_sensorD_{}".format(self.mask_version),"{}.png".format(img_name))
-
-        color_img_path = os.path.join(self.data_main_folder, "mirror_color_images","{}.jpg".format(img_name))
-        mask_path = os.path.join(self.data_main_folder, "mirror_instance_mask_{}".format(self.mask_version),"{}.png".format(img_name))
-        instance_id = [int(i) for i in instance_index.split("_")]
-        instance_mask = get_grayscale_instanceMask(cv2.imread(mask_path),instance_id)
-
-        pcd_save_folder = os.path.join(self.anno_output_folder, "anno_pcd")
-        instance_tag = img_name + "_idx_" + instance_index
-        pcd_path = os.path.join(pcd_save_folder, "{}.ply".format(instance_tag))
-
-        
-        one_plane_para_save_path = os.path.join(os.path.join(self.anno_output_folder, "mirror_plane"), "{}.json".format(img_name))
-        if os.path.exists(one_plane_para_save_path):
-            plane_parameter = read_json(one_plane_para_save_path)[instance_index]["plane"]
-
-        refined_depth_to_clamp = cv2.imread(refined_sensorD_path, cv2.IMREAD_ANYDEPTH)
-        h, w = refined_depth_to_clamp.shape
-
-        while 1:
-
-            pcd = get_pcd_from_rgb_depthMap(self.f, refined_depth_to_clamp, color_img_path)
-            o3d.visualization.draw_geometries([pcd])
-
-            option_list = Tool_Option()
-            option_list.add_option("f", "FINISH : update refined_sensorD/ refined_meshD/ img_info and EXIT")
-            option_list.add_option("r", "REPAIR : pick points and refine the specific area")
-            option_list.add_option("d", "DISTANCE : the clamping distance_threshold; distance over distance_threshold will be clamped")
-            option_list.add_option("exit", "EXIT : exit without saving the result")
-            option_list.print_option()
-            input_option = input()
-
-            print("relevant color image path : {}".format(color_img_path))
-
-            if input_option not in ["f", "r", "exit", "d"]:
-                print("invalid input, please input again :D")
-                continue
-
-            if input_option == "d":
-                clamp_dis = int(input("please input new clamping distace (default : 100)"))
-            elif input_option == "f":
-                cv2.imwrite(refined_sensorD_path, refined_depth_to_clamp)
-                print("annotation of {} finished !".format(refined_sensorD_path))
-                exit()
-            elif input_option == "r":
-                three_points = get_picked_points(pcd)
-                three_points_2D = get_2D_coor_from_3D(three_points, self.f, w, h)
-                clamp_mask = get_triange_mask(three_points_2D, w, h) 
-                refined_depth_to_clamp = clamp_pcd_by_mask(depth_to_refine=refined_depth_to_clamp, f=self.f, clamp_mask=clamp_mask,plane_parameter=plane_parameter, clamp_dis=clamp_dis)
-                
-            elif input_option == "exit":
-                exit()
-
-
-class Data_post_processing(Plane_annotation_tool):
-
-
-    def __init__(self, data_main_folder=None, process_index=0, multi_processing=False, border_width=50, f=519, anno_output_folder=None, expand_range=100, clamp_dis = 100):
-        """
-        Initilization
-
-        Args:
-            data_main_folder : Folder raw, raw_sensorD/ raw_meshD, instance_mask saved folder.
-            anno_output_folder(optional) : Inital pcd, img_info, border_vis saved forder (default : data_main_folder).
-            process_index : The process index of multi_processing.
-            multi_processing : Use multi_processing or not (bool).
-            border_width : Half of mirror 2D border width (half of cv2.dilate kernel size; 
-                           default kernel anchor is at the center); default : 50 --> actualy border width = 25.
-            f : Camera focal length of current input data.
-            expand_range : Data clamping 3D bbox expanded step size.
-        """
-        self.data_main_folder = data_main_folder
-        assert os.path.exists(data_main_folder), "please input a valid folder path"
-        self.process_index = process_index
-        self.multi_processing = multi_processing
-        self.error_info_path = os.path.join(data_main_folder, "error_img_list.txt")
-        if "mp3d" not in data_main_folder:
-            self.is_matterport3d = False
-        else:
-            self.is_matterport3d = True
-        self.color_img_list = [os.path.join(data_main_folder, "mirror_color_images", i) for i in os.listdir(os.path.join(data_main_folder, "mirror_color_images"))]
-        self.color_img_list.sort()
-        if multi_processing:
-            self.color_img_list = self.color_img_list[process_index:process_index+1]
-        self.border_width = border_width
-        self.f = f
-        if anno_output_folder == None or not os.path.exists(anno_output_folder):
-            self.anno_output_folder = data_main_folder
-            print("########## NOTE output saved to {}, this may overwrite your current information ############".format(self.anno_output_folder))
-        self.expand_range = expand_range
-        self.clamp_dis = clamp_dis
-
-
-    def data_clamping(self):
+    def data_clamping(self, input_txt, expand_range=100, clamp_dis=100, border_width=25):
         """
         Clamp data based on 3D bbox
 
@@ -726,199 +429,459 @@ class Data_post_processing(Plane_annotation_tool):
             Clamped depth : saved to refined_sensorD or mesh_refined depth under self.data_main_folder
         """
         import open3d as o3d
-        raw_image_save_folder = os.path.join(self.data_main_folder, "mirror_color_images")
-        img_info_save_folder = os.path.join(self.data_main_folder, "mirror_plane")
-        for color_img_path in self.color_img_list:
-            img_name = os.path.split(color_img_path)[1].split(".")[0] 
-            one_info_file_path = os.path.join(img_info_save_folder, "{}.json".format(img_name))
-            info = read_json(one_info_file_path)
-            for one_info in info.items():
-                instance_index_str = one_info[0].split("_")
-                instance_index_tuple = [int(i) for i in instance_index_str]
+        process_list =  self.get_list_to_process(read_txt(input_txt))
+        for item in process_list:
+            if len(item.strip().split()) != 5: 
+                continue
+            refD_path, mask_img_path, plane_parameter_json_path, clamped_refD_path, f = item.strip().split()
+            if not os.path.exists(refD_path) or not os.path.exists(mask_img_path) or not os.path.exists(plane_parameter_json_path):
+                print("invalid line : ", item)
+                print("input txt format: [path to depth map to the unclamped refine (rawD)] [input integer mask path] [plane parameter JSON output path] [path to save the clamped refined depth map (refD)] [focal length of this sample]")
+                continue
+            f = self.get_and_check_focal_length(f, item)
+            mask = cv2.imread(mask_img_path, cv2.IMREAD_ANYDEPTH)
+            for instance_index in np.unique(mask):
+                if instance_index == 0:
+                    continue # background
 
-                # Get mask_img_path, depth_img_path, color_img_path
-                mask_img_path = os.path.join(self.data_main_folder, "mirror_instance_mask_{}".format(self.mask_version),"{}.png".format(img_name))
-                if self.is_matterport3d: 
-                    # matterport3d mesh depth don't need to be clamped 
-                    depth_img_path = os.path.join(self.data_main_folder, "raw_sensorD","{}.png".format(rreplace(img_name, "i", "d")))
-                else:
-                    depth_img_path = os.path.join(self.data_main_folder, "raw_sensorD","{}.png".format(img_name))
-                depth_file_name = depth_img_path.split("/")[-1]
-                color_img_path = os.path.join(self.data_main_folder, "mirror_color_images","{}.jpg".format(img_name))
-                
                 # Get mirror_border_mask
-                instance_mask = get_grayscale_instanceMask(cv2.imread(mask_img_path), instance_index_tuple)
-                mirror_border_mask = cv2.dilate(instance_mask, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (self.border_width,self.border_width))) - cv2.erode(instance_mask,cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (10,10)))
+                instance_mask = (mask == instance_index).astype(np.uint8)
+                mirror_border_mask = cv2.dilate(instance_mask, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (border_width,border_width))) - cv2.erode(instance_mask,cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (10,10)))
                 
                 # Get mirror_bbox
-                mirror_points = get_points_in_mask(f=self.f, depth_img_path=depth_img_path, color_img_path=color_img_path, mirror_mask=instance_mask)
+                mirror_points = get_points_in_mask(f=f, depth_img_path=refD_path, mirror_mask=instance_mask)
                 mirror_pcd = o3d.geometry.PointCloud()
                 mirror_pcd.points = o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0))
                 mirror_bbox = o3d.geometry.OrientedBoundingBox.create_from_points(o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0)))
                  
-                if self.is_matterport3d:
-                    # Refine mesh raw depth (only Matterport3d have mesh raw depth)
-                    refined_meshD_path = os.path.join(self.data_main_folder, "refined_meshD_{}".format(self.mask_version), depth_file_name)
-                    cv2.imwrite(refined_meshD_path, clamp_pcd_by_bbox(mirror_bbox=mirror_bbox, depth_img_path=refined_meshD_path, f=self.f, mirror_border_mask=mirror_border_mask , plane_parameter=one_info[1]["plane"], expand_range = self.expand_range, clamp_dis = self.clamp_dis))
-                    print("update depth {}".format(refined_meshD_path))
+                # Get plane parameter
+                plane_parameter = read_plane_json(plane_parameter_json_path)[instance_index]["plane_parameter"]
 
                 # Refine hole raw depth
-                refined_sensorD_path = os.path.join(self.data_main_folder, "refined_sensorD_{}".format(self.mask_version), depth_file_name)
-                cv2.imwrite(refined_sensorD_path, clamp_pcd_by_bbox(mirror_bbox=mirror_bbox, depth_img_path=refined_sensorD_path, f=self.f, mirror_border_mask=mirror_border_mask ,plane_parameter=one_info[1]["plane"], expand_range = self.expand_range, clamp_dis = self.clamp_dis))
-                print("update depth {}".format(refined_sensorD_path))
+                os.makedirs(os.path.split(clamped_refD_path)[0], exist_ok=True)
+                cv2.imwrite(clamped_refD_path, clamp_pcd_by_bbox(mirror_bbox=mirror_bbox, depth_img_path=refD_path, f=f, mirror_border_mask=mirror_border_mask ,plane_parameter=plane_parameter, expand_range = expand_range, clamp_dis = clamp_dis))
+                print("update depth {}".format(clamped_refD_path))
 
-    def update_imgInfo_based_on_depth(self):
+
+    def generate_pcdMesh_for_vis(self, input_txt, above_height=3000):
         """
-        Updata img_info based on refined depth
+        Generate "point cloud" + "mesh plane" for specific sample
 
+        Args:
+            color_img_path : The color image absolute path for the specific sample.
+        
         Output:
-            updated img_info : (1) Matterport3d's img_info are updated based on refined_meshD
-                               (2) Other datasets img_info are updated based on refined_sensorD
+            "point cloud" + "mesh plane" : Saved under self.output_folder.
         """
-        for color_img_path in self.color_img_list:
-            img_name = os.path.split(color_img_path)[1].split(".")[0]
-            if self.is_matterport3d:
-                depth_img_path = os.path.join(self.data_main_folder, "refined_meshD_{}".format(self.mask_version),"{}.png".format(rreplace(img_name, "i", "d")))
-            else:
-                depth_img_path = os.path.join(self.data_main_folder, "refined_sensorD_{}".format(self.mask_version),"{}.png".format(img_name))
-            mask_img_path = color_img_path.replace("mirror_color_images", "mirror_instance_mask_{}".format(self.mask_version)).replace("jpg","png")
-            img_info_path = color_img_path.replace("mirror_color_images", "mirror_plane").replace(".png",".json")
-            smaple_name = os.path.split(color_img_path)[1].split(".")[0] 
 
-            mask = cv2.imread(mask_img_path)
-            #  Get plane parameter for each instance (based on refined depth) 
-            for instance_index in np.unique(np.reshape(mask,(-1,3)), axis = 0):
-                if sum(instance_index) == 0: # background
+        import open3d as o3d
+        # Pack as a function to better support Matterport3d ply generation
+        def generate_and_save_ply(color_img_path, depth_img_path, mask_img_path, plane_parameter_json_path, pcd_save_folder, mesh_save_folder, f):
+            os.makedirs(pcd_save_folder, exist_ok=True)
+            os.makedirs(mesh_save_folder, exist_ok=True)
+
+            mask = cv2.imread(mask_img_path, cv2.IMREAD_ANYDEPTH)
+            #  Get pcd and masked RGB image for each instance
+            for instance_index in np.unique(mask):
+                if instance_index == 0: # background
                     continue
-                
-                instance_tag = "_idx"
-                for i in instance_index:
-                    instance_tag += "_{}".format(i)
-                instance_tag = smaple_name + instance_tag
+                save_name = color_img_path.split("/")[-1].split(".")[0] + "_idx_" + str(instance_index)
+                mesh_save_path = os.path.join(mesh_save_folder,  "{}.ply".format(save_name))
+                pcd_save_path = os.path.join(pcd_save_folder,  "{}.ply".format(save_name))
+                binary_instance_mask = (mask == instance_index).astype(np.uint8)
+                plane_parameter = read_plane_json(plane_parameter_json_path)[instance_index]["plane_parameter"]
 
-                binary_instance_mask = get_grayscale_instanceMask(mask, instance_index)
-                
-                plane_parameter = get_mirror_parameter_from_xyzs_by_ransac(get_points_in_mask(self.f, depth_img_path, color_img_path, mirror_mask=binary_instance_mask))
-                save_plane_parameter_2_json(plane_parameter, img_info_path, instance_index)
-                print("updated plane_parameter in {}".format(img_info_path))
-
-    def set_specific_clamp_parameter(self, specific_clamp_parameter_json):
-        para = read_json(specific_clamp_parameter_json)
-        for one_color_path in self.color_img_list:
-            for item in para.items():
-                if one_color_path.find(item[0]) > 0:
-                    self.expand_range = int(item[1])
-                    print("expand range set to {}".format(self.expand_range))
+                if os.path.exists(pcd_save_path) and os.path.exists(mesh_save_path) and not self.overwrite:
+                    print(pcd_save_path , mesh_save_path, "exist! continue")
                     return
 
+                # Get pcd for the instance
+                pcd = get_pcd_from_rgbd_depthPath(f, depth_img_path, color_img_path, mirror_mask=binary_instance_mask)
+
+                # Get mirror plane for the instance
+                mirror_points = get_points_in_mask(f, depth_img_path, mirror_mask=binary_instance_mask)
+                mirror_pcd = o3d.geometry.PointCloud()
+                mirror_pcd.points = o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0))
+                mirror_bbox = o3d.geometry.OrientedBoundingBox.create_from_points(o3d.utility.Vector3dVector(np.stack(mirror_points,axis=0)))
+                mirror_plane = get_mirror_init_plane_from_mirrorbbox(plane_parameter, mirror_bbox)
+                
+                o3d.io.write_point_cloud(pcd_save_path, pcd)
+                print("point cloud saved  to :", os.path.abspath(pcd_save_path))
+
+                o3d.io.write_triangle_mesh(mesh_save_path, mirror_plane)
+                print("mirror plane (mesh) saved  to :", os.path.abspath(mesh_save_path))
 
 
-    def clean_up_repo(self):
+        process_list =  self.get_list_to_process(read_txt(input_txt))
+        for item in process_list:
+            if len(item.strip().split()) != 7: 
+                    continue
+            color_img_path, depth_img_path, mask_img_path, plane_parameter_json_path, pcd_save_folder, mesh_save_folder, f = item.strip().split()
+            if not os.path.exists(color_img_path) or not os.path.exists(depth_img_path) or not os.path.exists(plane_parameter_json_path):
+                print("invalid line : ", item)
+                print("input txt format: [input color image path] [input depth image path] [input integer mask path] [plane parameter JSON path] [folder to save the output pointcloud] [folder to save the output mesh plane] [focal length of this sample]")
+                continue
+            f = self.get_and_check_focal_length(f, item)
+            generate_and_save_ply(color_img_path, depth_img_path, mask_img_path, plane_parameter_json_path, pcd_save_folder, mesh_save_folder, f)
+
+    def set_view_mode(self, view_mode):
+        """Function to save the view mode"""
+        self.view_mode = view_mode
+
+    def rotate_pcdMesh_topdown(self, screenshot_output_folder, pcd, plane, above_height=3000):
         """
-        clean_up current folder based on raw image
+        Rotate the "pcd + mesh" by topdown view
+
+        Output:
+            Screenshots png
         """
-        raw_folder = os.path.join(self.data_main_folder, "mirror_color_images")
-        raw_id_list = [i.split(".")[0] for i in os.listdir(raw_folder)]
-        command = "find -L {} -type f ".format(self.data_main_folder)
-        for src_path in os.popen(command).readlines():
-            is_related_to_color = False
-            for one_raw_id in raw_id_list:
-                if src_path.find(one_raw_id) > 0:
-                    is_related_to_color = True
-                    break
-                if self.is_matterport3d:
-                    one_depth_id = rreplace(one_raw_id)
-                    if src_path.find(one_depth_id) > 0:
-                        is_related_to_color = True
-                        break
-            if not is_related_to_color:
-                src_path = src_path.strip()
-                dst_path = src_path.replace("with_mirror", "clean_up")
-                dst_folder = os.path.split(dst_path)[0]
-                os.makedirs(dst_folder, exist_ok=True)
-                print("moving {} to clean_up {}".format(src_path, dst_folder))
-                if os.path.exists(dst_path):
-                    os.remove(dst_path)
-                shutil.move(src_path, dst_folder)
+        import open3d as o3d
+        
+        screenshot_id = 0
+        mesh_center = np.mean(np.array(plane.vertices), axis=0)
+        rotation_step_degree = 10
+        start_rotation = get_extrinsic(90,0,0,[0,0,0])
+        stage_tranlation = get_extrinsic(0,0,0,[-mesh_center[0],-mesh_center[1] + above_height,-mesh_center[2]])
+        start_position = np.dot(start_rotation, stage_tranlation)
+        def rotate_view(vis):
+            
+            nonlocal screenshot_id
+            T_rotate = get_extrinsic(0,rotation_step_degree*(screenshot_id+1),0,[0,0,0])
+            cam = vis.get_view_control().convert_to_pinhole_camera_parameters()
+            cam.extrinsic = np.dot(np.dot(start_rotation, T_rotate), stage_tranlation)
+            vis.get_view_control().convert_from_pinhole_camera_parameters(cam)
+            
+            screenshot_id += 1
+            screenshot_save_path = os.path.join(screenshot_output_folder, "{0:05d}.png".format(screenshot_id))
+            vis.capture_screen_image(filename=screenshot_save_path, do_render=True)
+            print("image saved to {}".format(screenshot_save_path))
+            if screenshot_id > (360/rotation_step_degree):
+                vis.destroy_window()
+            return False
+
+        vis = o3d.visualization.VisualizerWithKeyCallback()
+        vis.register_animation_callback(rotate_view)
+        vis.create_window(width=800,height=800)
+        vis.get_render_option().point_size = 1.0
+        vis.add_geometry(pcd)
+        vis.add_geometry(plane)
+        cam = vis.get_view_control().convert_to_pinhole_camera_parameters()
+        cam.extrinsic = start_position
+        vis.get_view_control().convert_from_pinhole_camera_parameters(cam)
+        vis.run()
+
+    def rotate_pcdMesh_front(self, screenshot_output_folder, pcd, plane):
+        """
+        Rotate the "pcd + mesh" by front view
+
+        Output:
+            Screenshots png
+        """
+        import open3d as o3d
+        
+        screenshot_id = 0
+        mesh_center = np.mean(np.array(plane.vertices), axis=0)
+        rotation_step_degree = 10
+        start_position = get_extrinsic(0,0,0,[0,0,3000])
+
+        def rotate_view(vis):
+            
+            nonlocal screenshot_id
+            T_to_center = get_extrinsic(0,0,0,mesh_center)
+            T_rotate = get_extrinsic(0,rotation_step_degree*(screenshot_id+1),0,[0,0,0])
+            T_to_mesh = get_extrinsic(0,0,0,-mesh_center)
+            cam = vis.get_view_control().convert_to_pinhole_camera_parameters()
+            cam.extrinsic = np.dot(start_position, np.dot(np.dot(T_to_center, T_rotate),T_to_mesh))
+            vis.get_view_control().convert_from_pinhole_camera_parameters(cam)
+            
+            screenshot_id += 1
+            screenshot_save_path = os.path.join(screenshot_output_folder, "{0:05d}.png".format(screenshot_id))
+            vis.capture_screen_image(filename=screenshot_save_path, do_render=True)
+            print("image saved to {}".format(screenshot_save_path))
+            if screenshot_id > (360/rotation_step_degree):
+                vis.destroy_window()
+            return False
+
+        vis = o3d.visualization.VisualizerWithKeyCallback()
+        vis.register_animation_callback(rotate_view)
+        vis.create_window(width=800,height=800)
+        vis.get_render_option().point_size = 1.0
+        vis.add_geometry(pcd)
+        vis.add_geometry(plane)
+        cam = vis.get_view_control().convert_to_pinhole_camera_parameters()
+        cam.extrinsic = start_position
+        vis.get_view_control().convert_from_pinhole_camera_parameters(cam)
+        vis.run()
+
+    def generate_video_screenshot_from_pcdMesh(self, input_txt, above_height=3000):
+        """
+        Generate "pcd + mesh"'s screenshots
+
+        Args:
+            self.view_mode : str; "topdow" / "front".
+
+        Output:
+            screenshots png
+        """
+        import open3d as o3d
+
+        def generate_video_ffmpeg(one_video_save_path, one_screenshot_output_folder):
+            os.makedirs(os.path.split(one_video_save_path)[0], exist_ok=True)
+            try:
+                start_time = time.time()
+                if os.path.exists(one_video_save_path):
+                    if not self.overwrite:
+                        print("{} video exists!".format(one_video_save_path))
+                        return
+                    else:
+                        os.remove(one_video_save_path)
+                command = "ffmpeg -f image2 -i " + one_screenshot_output_folder + "/%05d.png " + one_video_save_path
+                os.system(command)
+                print("video saved to {}, used time :{}".format(one_video_save_path, time.time() - start_time))
+                start_time = time.time()
+            except:
+                print("error saving video for :", one_screenshot_output_folder)
+
+        def generate_screenshot(pcd_path, mesh_path, screenshot_output_folder):
+
+            pcd = o3d.io.read_point_cloud(pcd_path)
+            mirror_plane = o3d.io.read_triangle_mesh(mesh_path)
+            os.makedirs(screenshot_output_folder, exist_ok=True)
+
+            if len(os.listdir(screenshot_output_folder)) == 37 and not self.overwrite:
+                print("screenshots for {} exist ! continue".format(pcd_path))
+                return
+
+            if self.view_mode == "topdown":
+                topdown_folder = os.path.join(screenshot_output_folder, "topdown")
+                os.makedirs(topdown_folder, exist_ok=True)
+                self.rotate_pcdMesh_topdown(topdown_folder, pcd, mirror_plane, above_height)
+            else:
+                front_folder = os.path.join(screenshot_output_folder, "front")
+                os.makedirs(front_folder, exist_ok=True)
+                self.rotate_pcdMesh_front(front_folder, pcd, mirror_plane)
+
+        process_list =  self.get_list_to_process(read_txt(input_txt))
+        for item in process_list:
+            if len(item.strip().split()) != 3: 
+                    continue
+            pcd_path, mesh_path, screenshot_output_folder = item.strip().split()
+            if not os.path.exists(pcd_path) or not os.path.exists(mesh_path):
+                print("invalid line : ", item)
+                print("input txt format: [input color image path] [input depth image path] [input integer mask path] [plane parameter JSON path] [folder to save the output pointcloud] [folder to save the output mesh plane] [focal length of this sample]")
+                continue
+            generate_screenshot(pcd_path, mesh_path, screenshot_output_folder)
+            if self.view_mode == "topdown":
+                topdown_folder = os.path.join(screenshot_output_folder, "topdown")
+                video_save_path = os.path.join(screenshot_output_folder, "topdown_{}_.mp4".format(os.path.split(mesh_path)[-1].split(".")[0]))
+                generate_video_ffmpeg(video_save_path, topdown_folder)
+            else:
+                front_folder = os.path.join(screenshot_output_folder, "front")
+                video_save_path = os.path.join(screenshot_output_folder, "front_{}_.mp4".format(os.path.split(mesh_path)[-1].split(".")[0]))
+                generate_video_ffmpeg(video_save_path, front_folder)
+            
+
+    def gen_verification_html(self, input_txt, video_num_per_page, html_output_folder):
+
+        template_path = "visualization/template/veri_template.html"
+        os.makedirs(html_output_folder, exist_ok=True)
+        process_list_temp =  self.get_list_to_process(read_txt(input_txt))
+        process_list = []
+        for item in process_list_temp:
+            if len(item.strip().split()) != 5: 
+                    continue
+            sample_id, color_img_path, colored_depth_path, front_video_path, topdown_video_path = item.strip().split()
+            if not os.path.exists(color_img_path) or not os.path.exists(colored_depth_path) or not os.path.exists(front_video_path) or not os.path.exists(topdown_video_path):
+                print("invalid line : ", item)
+                print("input txt format: [sample id] [input color image path] [colored depth map saved path] [front view video path] [topdown view video path]")
+                continue
+
+            process_list.append(item.strip().split())
+        process_sub_list = [process_list[x:x+video_num_per_page] for x in range(0, len(process_list), video_num_per_page)]
+        for html_index, process_sub in enumerate(process_sub_list):
+            
+            with open(template_path) as inf:
+                txt = inf.read()
+                soup = bs4.BeautifulSoup(txt, features="html.parser")
+
+            new_table = soup.new_tag("table")
+            new_table["style"] = "width: 100%%; margin-left: auto; margin-right: auto;"
+            soup.body.div.append(new_table)
+
+            # add heading 
+            heading_tag = ["ID", "Color Image", "Depth Image", "Topdown View Pointcloud", "Front View Pointcloud"]
+            heading = soup.new_tag("tr")
+
+            for item_index, tag in enumerate(heading_tag):
+                heading["class"] = "one-item"
+                one_hreading = soup.new_tag("td")
+                text = soup.new_tag("p")
+                text.string = tag
+                text["style"] = "text-align: center;"
+                one_hreading.append(text)                       
+                heading.append(one_hreading)
+            new_table.append(heading)
+            for one_sub_info in process_sub:
+                sample_id, color_img_path, colored_depth_path, front_video_path, topdown_video_path = one_sub_info
+                
+                # Append sample_id 
+                new_tr = soup.new_tag("tr")
+                sample_id_box = soup.new_tag("td")
+                text = soup.new_tag("p")
+                text.string = sample_id
+                text["style"] = "text-align: center; font-size: 50px;"
+                sample_id_box.append(text)                       
+                new_tr.append(sample_id_box)
+
+                # Append color image to one line in HTML
+                one_color_img = soup.new_tag("td")
+                one_color_img["class"] = "one-item"
+                img = soup.new_tag('img',  src=os.path.relpath(color_img_path, html_output_folder))
+                img["style"] = "max-height: 220px; width:100%;" 
+                one_color_img.append(img)
+                new_tr.append(one_color_img)
+
+                # Append colored dpeth image to one line in HTML
+                one_color_img = soup.new_tag("td")
+                one_color_img["class"] = "one-item"
+                img = soup.new_tag('img',  src=os.path.relpath(colored_depth_path, html_output_folder))
+                img["style"] = "max-height: 220px; width:100%;" 
+                one_color_img.append(img)
+                new_tr.append(one_color_img)
+
+                # add topdown video
+                video_td = soup.new_tag("td")
+                video_td["class"] = "one-item"
+                one_video = soup.new_tag("video")
+                one_video["class"] = "lazy-video"
+                one_video["controls"] = "True"
+                one_video["autoplay"] = "True"
+                one_video["muted"] = "True"
+                one_video["loop"] = "True"
+                new_link = soup.new_tag("source")
+                new_link["data-src"] = os.path.relpath(topdown_video_path, html_output_folder)
+                new_link["type"] = "video/mp4"
+                one_video.append(new_link)
+                video_td.append(one_video)
+                new_tr.append(video_td)
+
+                # add front video
+                video_td = soup.new_tag("td")
+                video_td["class"] = "one-item"
+                one_video = soup.new_tag("video")
+                one_video["class"] = "lazy-video"
+                one_video["controls"] = "True"
+                one_video["autoplay"] = "True"
+                one_video["muted"] = "True"
+                one_video["loop"] = "True"
+                new_link = soup.new_tag("source")
+                new_link["data-src"] = os.path.relpath(front_video_path, html_output_folder)
+                new_link["type"] = "video/mp4"
+                one_video.append(new_link)
+                video_td.append(one_video)
+                new_tr.append(video_td)
+
+                new_table.append(new_tr)
+
+            html_path = os.path.join(html_output_folder, "{}.html".format(html_index))
+            save_html(html_path, soup)
+            print("html saved to :", os.path.abspath(html_path))
+            print("debug : ", html_path.replace("/project/3dlg-hcvc/mirrors/www","http://aspis.cmpt.sfu.ca/projects/mirrors")) # TODO delete later
+
+
+    def gen_colored_grayscale_for_depth(self, input_txt):
+        """
+        Generate colored depth for one sample
+        Output:
+            colored depth image (using plt "magma" colormap)
+        """
+
+        process_list =  self.get_list_to_process(read_txt(input_txt))
+        for item in process_list:
+            if len(item.strip().split()) != 2: 
+                    continue
+            depth_path, colored_depth_output_path = item.strip().split()
+            if not os.path.exists(depth_path) :
+                print("invalid line : ", item)
+                print("input txt format: [input depth image path] [colored depth map saved path]")
+                continue
+            os.makedirs(os.path.split(colored_depth_output_path)[0], exist_ok=True)
+            save_heatmap_no_border(cv2.imread(depth_path, cv2.IMREAD_ANYDEPTH), colored_depth_output_path)
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
-        '--stage', default="4")
+        '--stage', default="3")
     parser.add_argument(
-        '--data_main_folder', default="")
+        '--coco_json', default="")
     parser.add_argument(
-        '--dataset', default="mp3d", help="scannet / nyu/ mp3d")
+        '--anotation_progress_save_folder', default="", \
+        help="folder to save the plane annotation progress")
     parser.add_argument(
-        '--process_index', default=0, type=int, help="process index")
+        '--input_txt', default="")
     parser.add_argument('--multi_processing', help='do multi-process or not',action='store_true')
-    parser.add_argument('--overwrite', help='STEP 1 overwrite current environment setup or not',action='store_true')
+    parser.add_argument('--overwrite', help='overwrite current result or not',action='store_true')
     parser.add_argument('--anno_show_plane', help='do multi-process or not',action='store_true')
     parser.add_argument(
-        '--border_width', default=50, type=int, help="border_width")
+        '--process_index', default=0, type=int, help="if do --multi_processing please input the process index")
     parser.add_argument(
-        '--f', default=519, type=int, help="camera focal length")
+        '--border_width', default=25, type=int, help="border width of mirror; when setup annotation environment, specify a border with to run RANSAC on mirror border")
     parser.add_argument(
         '--expand_range', default=200, type=int, help="expand the mirror instance bbox by expand_range; unit : mm")
     parser.add_argument(
         '--clamp_dis', default=100, type=int, help="outliers threshold")
     parser.add_argument(
-        '--anno_output_folder', default="")
+        '--above_height', default=3000, type=int, help="camera height to the mirror plane ceneter in the topdown view")
     parser.add_argument(
-        '--img_name', default="")
+        '--video_num_per_page', default=100, type=int)
     parser.add_argument(
-        '--color_img_list', default="", help="If you want to run anno_move_only_mask() please input a color_img_list")
+        '--html_output_folder', default="")
     parser.add_argument(
-        '--specific_clamp_parameter_json', default="", help="json file that contain the sample id and relevant expand_range; only useful for multi-processing")
-    parser.add_argument(
-        '--instance_index', default="")
-    parser.add_argument(
-        '--mask_version', default="precise", help="2 mask version : precise/ coarse")
+        '--view_mode', default="front", help="object view angle : (1) topdown (2) front")
     args = parser.parse_args()
 
+    # TODO change the class name
+    plane_anno_tool = Plane_annotation_tool_new(process_index=args.process_index, multi_processing=args.multi_processing, overwrite=args.overwrite)
+
     if args.stage == "1":
-        plane_anno_tool = Plane_annotation_tool(mask_version=args.mask_version, data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
-        plane_anno_tool.set_overwrite(args.overwrite)
-        plane_anno_tool.anno_env_setup()
+        print("input txt format: [color image filename in coco json] [integer mask output path] [RGB mask output path]")
+        plane_anno_tool.gen_intmask_colormask(args.coco_json, args.input_txt) 
     elif args.stage == "2":
-        plane_anno_tool = Plane_annotation_tool(mask_version=args.mask_version, data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
-        plane_anno_tool.set_show_plane(args.anno_show_plane)
-        plane_anno_tool.set_overwrite(args.overwrite)
-        plane_anno_tool.anno_plane_update_imgInfo()
+        print("input txt format: [input integer mask path] [RGB mask output path]")
+        plane_anno_tool.gen_colormask_from_intmask(args.input_txt) 
     elif args.stage == "3":
-        plane_anno_tool = Plane_annotation_tool(mask_version=args.mask_version, data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
-        plane_anno_tool.set_overwrite(args.overwrite)
-        plane_anno_tool.anno_update_depth_from_imgInfo()
-    elif args.stage == "4": 
-        plane_anno_tool = Data_post_processing(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder, expand_range=args.expand_range, clamp_dis=args.clamp_dis)
-        if os.path.exists(args.specific_clamp_parameter_json):
-            plane_anno_tool.set_specific_clamp_parameter(args.specific_clamp_parameter_json)
-        plane_anno_tool.data_clamping()
-    elif args.stage == "all":
-        plane_anno_tool = Plane_annotation_tool(mask_version=args.mask_version, data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
-        plane_anno_tool.anno_env_setup()
-        plane_anno_tool.anno_plane_update_imgInfo()
-        assert os.path.exists(args.color_img_list), "please input a valid --color_img_list before moving data based on annotation result"
-        plane_anno_tool.set_color_list(args.color_img_list)
-        plane_anno_tool.anno_move_only_mask()
-        plane_anno_tool.anno_update_depth_from_imgInfo()
-        plane_anno_tool = Data_post_processing(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder, expand_range=args.expand_range, clamp_dis=args.clamp_dis)
-        if os.path.exists(args.specific_clamp_parameter):
-            plane_anno_tool.set_specific_clamp_parameter(args.specific_clamp_parameter)
-        plane_anno_tool.data_clamping()
+        print("input txt format: [input integer mask path] [input refined depth path] [plane JSON file output path] [focal length of this sample]")
+        plane_anno_tool.update_planeinfo_from_depth(args.input_txt) 
+    elif args.stage == "4":
+        print("input txt format: [input color image path] [input depth image path] [input integer mask path] [pointcloud output folder(pointcloud's name will be color image name + instance id)] [plane parameter JSON output path] [folder to save color image with mirror border mask] [focal length of this sample]")
+        plane_anno_tool.anno_env_setup(args.input_txt, args.border_width) 
     elif args.stage == "5":
-        plane_anno_tool = Data_post_processing(data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
-        plane_anno_tool.update_imgInfo_based_on_depth()
+        print("input txt format: [input color image path] [input depth image path] [input integer mask path] [instance pointcloud path] [plane parameter JSON output path] [path to the color image with mirror border mask] [focal length of this sample]")
+        plane_anno_tool.set_show_plane(args.anno_show_plane)
+        plane_anno_tool.anno_plane_update_imgInfo(args.anotation_progress_save_folder, args.input_txt) 
     elif args.stage == "6":
-        plane_anno_tool = Plane_annotation_tool(mask_version=args.mask_version, data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
-        plane_anno_tool.adjust_one_sample_plane(args.instance_index, args.img_name)
+        print("input txt format: [path to depth map to refine (rawD)] [input integer mask path] [plane parameter JSON output path] [path to save the refined depth map (refD)] [focal length of this sample]")
+        plane_anno_tool.anno_update_depth_from_imgInfo(args.input_txt)
     elif args.stage == "7":
-        plane_anno_tool = Plane_annotation_tool(mask_version=args.mask_version, data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
-        plane_anno_tool.manual_clamp_one_sample(args.instance_index, args.img_name)
+        print("input txt format: [path to depth map to the unclamped refine (rawD)] [input integer mask path] [plane parameter JSON output path] [path to save the clamped refined depth map (refD)] [focal length of this sample]")
+        plane_anno_tool.data_clamping(args.input_txt, args.expand_range, args.clamp_dis, args.border_width)
     elif args.stage == "8":
-        plane_anno_tool = Plane_annotation_tool(mask_version=args.mask_version, data_main_folder=args.data_main_folder, process_index=args.process_index, multi_processing=args.multi_processing, border_width=args.border_width, f=args.f, anno_output_folder=args.anno_output_folder)
-        assert os.path.exists(args.color_img_list), "please input a valid --color_img_list before moving data based on annotation result"
-        plane_anno_tool.set_color_list(args.color_img_list)
-        plane_anno_tool.anno_move_only_mask()
+        print("input txt format: [input color image path] [input depth image path] [input integer mask path] [plane parameter JSON path] [folder to save the output pointcloud] [folder to save the output mesh plane] [focal length of this sample]")
+        plane_anno_tool.generate_pcdMesh_for_vis(args.input_txt)
+    elif args.stage == "9":
+        print("input txt format: [path to pointcloud] [path to mesh plane] [screenshot output main folder]")
+        plane_anno_tool.set_view_mode("topdown")
+        plane_anno_tool.generate_video_screenshot_from_pcdMesh(args.input_txt, args.above_height)
+        plane_anno_tool.set_view_mode("front")
+        plane_anno_tool.generate_video_screenshot_from_pcdMesh(args.input_txt, args.above_height)
+    elif args.stage == "10":
+        print("input txt format: [path to pointcloud] [path to mesh plane] [screenshot output main folder]")
+        plane_anno_tool.set_view_mode(args.view_mode)
+        plane_anno_tool.generate_video_screenshot_from_pcdMesh(args.input_txt, args.above_height)
+    elif args.stage == "11":
+        print("input txt format: [input depth image path] [colored depth map saved path]")
+        plane_anno_tool.gen_colored_grayscale_for_depth(args.input_txt)
+    elif args.stage == "12":
+        print("input txt format: [sample id] [input color image path] [colored depth map saved path] [front view video path] [topdown view video path]")
+        plane_anno_tool.gen_verification_html(args.input_txt, args.video_num_per_page, args.html_output_folder)
