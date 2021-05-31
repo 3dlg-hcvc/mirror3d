@@ -96,9 +96,9 @@ class Input_Generator(Plane_annotation_tool):
                         no_mirror_colorImg_list.append(one_img_path)
         normal_num = np.load(self.anchor_normal_path).shape[0]
         if self.contain_no_mirror:
-            cocoFormat_save_path = os.path.join(self.json_output_folder , "{}_{}_normal_all.json".format(self.split, normal_num))
+            cocoFormat_save_path = os.path.join(self.json_output_folder , "{}_{}_{}_normal_all.json".format(self.split, normal_num, self.mask_version))
         else:
-            cocoFormat_save_path = os.path.join(self.json_output_folder , "{}_{}_normal_mirror.json".format(self.split, normal_num))
+            cocoFormat_save_path = os.path.join(self.json_output_folder , "{}_{}_{}_normal_mirror.json".format(self.split, normal_num, self.mask_version))
         self.colorPath_2_json_only_detection(mirror_colorImg_list, no_mirror_colorImg_list, cocoFormat_save_path)
 
 
@@ -326,7 +326,6 @@ def get_kmeans_normal(train_coco_json="", num_clusters=10, output_save_folder=""
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Get Setting :D')
-    # Args for --stage 1
     parser.add_argument(
         '--mirror_data_main_folder', default="", type=str, help="folder contain raw, instance_mask... folders") 
     parser.add_argument(
