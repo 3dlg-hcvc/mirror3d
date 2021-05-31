@@ -1,0 +1,3 @@
+annotation/plane_annotation/example/nyu/anno_pcd/686_idx_1.ply
+annotation/plane_annotation/example/nyu/anno_pcd/45_idx_1.ply
+annotation/plane_annotation/example/nyu/anno_pcd/686_idx_2.ply

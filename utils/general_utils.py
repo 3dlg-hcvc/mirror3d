@@ -100,12 +100,18 @@ def update_plane_parameter_json(plane_parameter, plane_parameter_output_path, in
             img_info = json.loads(j.read())
     else:
         img_info = []
-
-    one_info = dict()
-    one_info["plane"] = list(plane_parameter)
-    one_info["normal"] = list(unit_vector(list(plane_parameter[:-1])))
-    one_info["mask_id"] = int(instance_index)
-    img_info.append(one_info)
+    found = 0
+    for item in img_info:
+        if item["mask_id"] == instance_index:
+            item["plane"] = list(plane_parameter)
+            item["normal"] = list(unit_vector(list(plane_parameter[:-1])))
+            found = 1
+    if found == 0:
+        one_info = dict()
+        one_info["plane"] = list(plane_parameter)
+        one_info["normal"] = list(unit_vector(list(plane_parameter[:-1])))
+        one_info["mask_id"] = int(instance_index)
+        img_info.append(one_info)
     save_json(plane_parameter_output_path,img_info)
 
 

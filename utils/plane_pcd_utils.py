@@ -6,7 +6,6 @@ import random
 import time
 import numpy as np
 import cv2
-import pdb
 import math
 from utils.algorithm import *
 from utils.general_utils import *
@@ -519,9 +518,6 @@ def get_pcd_from_rgbd_depthPath(f, depth_img_path, color_img_path, mirror_mask=N
     else:
         h, w = d.shape
     
-
-    
-
     x_cam = []
     y_cam = []
     z_cam = []

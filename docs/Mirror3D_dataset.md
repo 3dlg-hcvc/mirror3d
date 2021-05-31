@@ -159,8 +159,17 @@ scannet
 └── mirror_color_images # mirror samples' color image symlinks --- link to data under ./scannet_extracted
 ```
 
+<!-- ## Generate RGB instance mask
+
+The mirrorinstances masks we provide in the zip files are 8-bit integer instance mask. To generate RGB instance mask for visualization, you can run:
+
+```python
+python
+
+``` -->
+
 ## Data visualization
-To validate the correctness of the generated depth map, you can run:
+To check and visualize one sample's data, you can run:
 
 ```python
 python visualization/check_sample_info.py \

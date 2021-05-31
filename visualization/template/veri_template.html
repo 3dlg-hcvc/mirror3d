@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+    td {
+        zoom: 1;
+        width: 100px;
+        height: 100px;
+        }
+    img {
+        display: block;
+        max-width: 300px;
+        max-height: 300px;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+    }
+    .begin-text {
+    width: 150px;
+    height: 300px;
+    font-size: 50px;
+    }
+    .one-item{
+        width : 300px;
+        font-size: 50px;
+        padding-bottom: 0px;
+    }
+    .begin-method{
+        width: 150px;
+        height: 300px;
+        font-size: 50px;
+        text-align: right;
+        padding-right: 20px;
+    }
+    .begin-top{
+        width: 150px;
+        height: 300px;
+        font-size: 50px;
+        text-align: right;
+        padding-top: 0px;
+        margin-top: 0px;
+        vertical-align: top;
+    }
+    .begin-bottom{
+        width: 150px;
+        height: 300px;
+        font-size: 50px;
+        text-align: right;
+        padding-bottom: 0px;
+        margin-bottom: 0px;
+        vertical-align: bottom;
+    }
+    </style>
+</head>
+
+<body>
+    <div></div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript">
+    // Lazy load video
+    const lazyvideo = document.querySelectorAll('.lazy-video');
+    observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.intersectionRatio > 0) {
+                console.log('video in the view');
+                if (entry.target.querySelector('source').getAttribute('data-src') !== null) {
+                    const source = entry.target.querySelector('source').getAttribute('data-src')
+                    entry.target.setAttribute('src', source);
+                }
+                observer.unobserve(entry.target);
+            } else {
+                console.log('video out of view');
+            }
+        });
+    });
+    lazyvideo.forEach(video => {
+        observer.observe(video);
+    });
+
+    // Save scroll position 
+    $(document).ready(function () {
+        if (localStorage.getItem("my_app_name_here-quote-scroll") != null) {
+            $(window).scrollTop(localStorage.getItem("my_app_name_here-quote-scroll"));
+        }
+        $(window).on("scroll", function () {
+            localStorage.setItem("my_app_name_here-quote-scroll", $(window).scrollTop());
+        });
+
+    });
+</script>
