@@ -146,7 +146,7 @@ class PlaneAnnotationTool:
                     border_width, border_width))) - binary_instance_mask
 
                 #  Save image with masked mirror border
-                border_mask_vis_image = visulize_mask_one_image(color_img_path, mirror_border_mask)
+                border_mask_vis_image = visualize_mask_one_image(color_img_path, mirror_border_mask)
                 border_mask_vis_output_path = os.path.join(mirror_border_vis_output_folder,
                                                            "{}.jpg".format(file_save_name))
                 plt.imsave(border_mask_vis_output_path, border_mask_vis_image)
@@ -302,7 +302,7 @@ class PlaneAnnotationTool:
             else:
                 o3d.visualization.draw_geometries([pcd])
 
-            option_list = Tool_Option()
+            option_list = ToolOption()
             option_list.add_option("t", "TRUE : initial plane parameter is correct")
             option_list.add_option("w", "WASTE : sample have error, can not be used (e.g. point cloud too noisy)")
             option_list.add_option("back n", "BACK : return n times (e.g. back 3 : give up the recent 3 annotated "
@@ -367,7 +367,7 @@ class PlaneAnnotationTool:
                                                                       color_img_path=color_img_path, color=[1, 1, 0])
                 init_step_size = ((np.max(np.array(pcd.points)[:, 0])) - (np.min(np.array(pcd.points)[:, 0]))) / 300
                 while 1:
-                    min_adjust_option_list = Tool_Option()
+                    min_adjust_option_list = ToolOption()
                     min_adjust_option_list.add_option("f", "FINISH : update refined_sensorD/ refined_meshD/ img_info "
                                                            "and EXIT")
                     min_adjust_option_list.add_option("a", "ADJUST : adjust the plane parameter based on current "
