@@ -69,9 +69,7 @@ Here is a quick example, we are going to annotate several samples from NYUv2 and
 
 - **STEP 1:**  Get integer masks from CVAT coco format output:
 
-Here you should generate a txt file. Each line of the text file should have three components:
 
-`[color image filename in coco json] [integer mask output path] [RGB mask output path]`
 
 ```python
 python annotation/plane_annotation/plane_annotation_tool.py \
@@ -79,6 +77,8 @@ python annotation/plane_annotation/plane_annotation_tool.py \
 --coco_json [the coco format JSON dumped by CVAT] \
 --input_txt [path to the txt file] 
 ```
+
+Here, you should generate a txt file. Each line of the text file should have three components `[color image filename in coco json] [integer mask output path] [RGB mask output path]`
 
 - **STEP 2:**  Set up annotation environment: please run the following command to set up the environment:
 
