@@ -25,7 +25,7 @@ class ClassificationGUI:
         :param whole_path_list: A list of file whole_path_list to images
         :return:
         """
-        
+
         self.dataset = dataset  # m3d; scannet; nyu
         self.whole_path_list = whole_path_list
         self.anno_output_folder = anno_output_folder
