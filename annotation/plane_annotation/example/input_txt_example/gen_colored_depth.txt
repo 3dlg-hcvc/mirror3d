@@ -1,2 +1,0 @@
-annotation/plane_annotation/example/nyu/anno_result_clamped/686.png annotation/plane_annotation/example/nyu/colored_refD/686.png
-annotation/plane_annotation/example/nyu/anno_result_clamped/45.png annotation/plane_annotation/example/nyu/colored_refD/45.png  

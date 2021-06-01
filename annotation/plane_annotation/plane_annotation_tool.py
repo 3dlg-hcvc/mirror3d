@@ -15,7 +15,7 @@ from PIL import ImageColor
 import bs4
 
 
-class Plane_annotation_tool_new():
+class Plane_annotation_tool():
 
     def __init__(self, process_index=0, multi_processing=False, overwrite=True):
         self.process_index = process_index
@@ -141,7 +141,6 @@ class Plane_annotation_tool_new():
                         print("begin to overwrite {}".format(pcd_save_path))
                     else:
                         print("generating pcd {}".format(pcd_save_path))
-
                 binary_instance_mask = (int_mask == instance_index).astype(np.uint8)
                 mirror_border_mask = cv2.dilate(binary_instance_mask, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (border_width,border_width))) - binary_instance_mask
 
@@ -541,14 +540,14 @@ class Plane_annotation_tool_new():
         mesh_center = np.mean(np.array(plane.vertices), axis=0)
         rotation_step_degree = 10
         start_rotation = get_extrinsic(90,0,0,[0,0,0])
-        stage_tranlation = get_extrinsic(0,0,0,[-mesh_center[0],-mesh_center[1] + above_height,-mesh_center[2]])
-        start_position = np.dot(start_rotation, stage_tranlation)
+        step_tranlation = get_extrinsic(0,0,0,[-mesh_center[0],-mesh_center[1] + above_height,-mesh_center[2]])
+        start_position = np.dot(start_rotation, step_tranlation)
         def rotate_view(vis):
             
             nonlocal screenshot_id
             T_rotate = get_extrinsic(0,rotation_step_degree*(screenshot_id+1),0,[0,0,0])
             cam = vis.get_view_control().convert_to_pinhole_camera_parameters()
-            cam.extrinsic = np.dot(np.dot(start_rotation, T_rotate), stage_tranlation)
+            cam.extrinsic = np.dot(np.dot(start_rotation, T_rotate), step_tranlation)
             vis.get_view_control().convert_from_pinhole_camera_parameters(cam)
             
             screenshot_id += 1
@@ -812,7 +811,7 @@ class Plane_annotation_tool_new():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
-        '--stage', default="3")
+        '--function', default="3")
     parser.add_argument(
         '--coco_json', default="")
     parser.add_argument(
@@ -841,47 +840,46 @@ if __name__ == "__main__":
         '--view_mode', default="front", help="object view angle : (1) topdown (2) front")
     args = parser.parse_args()
 
-    # TODO change the class name
-    plane_anno_tool = Plane_annotation_tool_new(process_index=args.process_index, multi_processing=args.multi_processing, overwrite=args.overwrite)
+    plane_anno_tool = Plane_annotation_tool(process_index=args.process_index, multi_processing=args.multi_processing, overwrite=args.overwrite)
 
-    if args.stage == "1":
+    if args.function == "1":
         print("input txt format: [color image filename in coco json] [integer mask output path] [RGB mask output path]")
         plane_anno_tool.gen_intmask_colormask(args.coco_json, args.input_txt) 
-    elif args.stage == "2":
+    elif args.function == "2":
         print("input txt format: [input integer mask path] [RGB mask output path]")
         plane_anno_tool.gen_colormask_from_intmask(args.input_txt) 
-    elif args.stage == "3":
+    elif args.function == "3":
         print("input txt format: [input integer mask path] [input refined depth path] [plane JSON file output path] [focal length of this sample]")
         plane_anno_tool.update_planeinfo_from_depth(args.input_txt) 
-    elif args.stage == "4":
+    elif args.function == "4":
         print("input txt format: [input color image path] [input depth image path] [input integer mask path] [pointcloud output folder(pointcloud's name will be color image name + instance id)] [plane parameter JSON output path] [folder to save color image with mirror border mask] [focal length of this sample]")
         plane_anno_tool.anno_env_setup(args.input_txt, args.border_width) 
-    elif args.stage == "5":
+    elif args.function == "5":
         print("input txt format: [input color image path] [input depth image path] [input integer mask path] [instance pointcloud path] [plane parameter JSON output path] [path to the color image with mirror border mask] [focal length of this sample]")
         plane_anno_tool.set_show_plane(args.anno_show_plane)
         plane_anno_tool.anno_plane_update_imgInfo(args.anotation_progress_save_folder, args.input_txt) 
-    elif args.stage == "6":
+    elif args.function == "6":
         print("input txt format: [path to depth map to refine (rawD)] [input integer mask path] [plane parameter JSON output path] [path to save the refined depth map (refD)] [focal length of this sample]")
         plane_anno_tool.anno_update_depth_from_imgInfo(args.input_txt)
-    elif args.stage == "7":
+    elif args.function == "7":
         print("input txt format: [path to depth map to the unclamped refine (rawD)] [input integer mask path] [plane parameter JSON output path] [path to save the clamped refined depth map (refD)] [focal length of this sample]")
         plane_anno_tool.data_clamping(args.input_txt, args.expand_range, args.clamp_dis, args.border_width)
-    elif args.stage == "8":
+    elif args.function == "8":
         print("input txt format: [input color image path] [input depth image path] [input integer mask path] [plane parameter JSON path] [folder to save the output pointcloud] [folder to save the output mesh plane] [focal length of this sample]")
         plane_anno_tool.generate_pcdMesh_for_vis(args.input_txt)
-    elif args.stage == "9":
+    elif args.function == "9":
         print("input txt format: [path to pointcloud] [path to mesh plane] [screenshot output main folder]")
         plane_anno_tool.set_view_mode("topdown")
         plane_anno_tool.generate_video_screenshot_from_pcdMesh(args.input_txt, args.above_height)
         plane_anno_tool.set_view_mode("front")
         plane_anno_tool.generate_video_screenshot_from_pcdMesh(args.input_txt, args.above_height)
-    elif args.stage == "10":
+    elif args.function == "10":
         print("input txt format: [path to pointcloud] [path to mesh plane] [screenshot output main folder]")
         plane_anno_tool.set_view_mode(args.view_mode)
         plane_anno_tool.generate_video_screenshot_from_pcdMesh(args.input_txt, args.above_height)
-    elif args.stage == "11":
+    elif args.function == "11":
         print("input txt format: [input depth image path] [colored depth map saved path]")
         plane_anno_tool.gen_colored_grayscale_for_depth(args.input_txt)
-    elif args.stage == "12":
+    elif args.function == "12":
         print("input txt format: [sample id] [input color image path] [colored depth map saved path] [front view video path] [topdown view video path]")
         plane_anno_tool.gen_verification_html(args.input_txt, args.video_num_per_page, args.html_output_folder)

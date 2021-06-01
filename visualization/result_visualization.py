@@ -287,7 +287,7 @@ class Dataset_visulization(Dataset_visulization):
                     one_predD_map = os.path.join(one_method_folder_path, "colored_pred_depth", one_depth_sample_name)
                     one_front_view_img = os.path.join(one_method_folder_path, "pred_depth_ply", "front_{}".format(sample_name))
                     one_topdown_view_img = os.path.join(one_method_folder_path, "pred_depth_ply", "topdown_{}".format(sample_name))
-
+                    
                     new_div = soup.new_tag("div")
                     new_div['class'] = "one-sample"
                     
