@@ -45,7 +45,7 @@ We provide a simple plane annotation tool `annotation/plane_annotation/plane_ann
 Overall, we provide 12 functions in the annotation tool:
 
 - `--function 1`: generate integer mask and colorful masks from the coco format JSON file output by CVAT
-- `--function 2 `: (optional) generate colorful mask from integer mask
+- `--function 2`: (optional) generate colorful mask from integer mask
 - `--function 3`: update mirror plane information based on the refined depth map
 - `--function 4`: set up the environment for annotation
 - `--function 5`: use the annotation tool to annotate the mirror plane
