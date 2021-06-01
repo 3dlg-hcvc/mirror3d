@@ -53,24 +53,23 @@ def generate_overlay_masks_and_check(args_obj, raw_filenames):
                 final = raw.copy()
                 final.paste(tmp_img, (0, 0), mask=tmp_img)
                 mask_id = str(key[2]) + "_" + str(key[1]) + "_" + str(key[0]) + FINAL_MASK_FILENAME_SUFFIXES[i]
-                final.save(os.path.join(path,  mask_id))
+                final.save(os.path.join(path, mask_id))
                 labels[mask_id[:-4]] = LABEL_MAP[semantic_mask.getpixel(item[len(item) // 2])]
 
-        with open(os.path.join(path, "labels.txt"), "w") as f:
-            f.write(str(labels))
+        with open(os.path.join(path, "labels.txt"), "w") as label_file:
+            label_file.write(str(labels))
 
         for key, value in labels.items():
             if key[-15:] == "coarse_instance":
                 if labels[key.replace("coarse", "detailed")] != value:
                     label_error_list.append(file[:-4] + "_".join(key.split("_")[0:2]))
-
     return label_error_list
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--raw_folder', help='The Raw folder')
-    parser.add_argument('--masks_folder',  help='The Mask folder that consists of coarse and detailed masks')
+    parser.add_argument('--masks_folder', help='The Mask folder that consists of coarse and detailed masks')
     parser.add_argument('--output', help='The output folder', default="output")
     parser.add_argument('--alpha', help='The alpha value of overlays (0-255)', default=165, type=int)
     args = parser.parse_args()
@@ -78,6 +77,7 @@ if __name__ == '__main__':
     total_raw_filenames = os.listdir(args.raw_folder)
     coarse_mask_path = os.path.join(args.masks_folder, COARSE_MASK_PATH)
     detailed_mask_path = os.path.join(args.masks_folder, DETAILED_MASK_PATH)
+
     # Check consistency
     len_raw = len(total_raw_filenames)
     len_coarse_instance = len(os.listdir(os.path.join(coarse_mask_path, INSTANCE_MASK_PATH)))
@@ -102,7 +102,6 @@ if __name__ == '__main__':
     for result in results:
         label_error_list += result.get()
     print("\nDone.")
-
     if len(label_error_list) != 0:
         log_path = os.path.abspath(os.path.join(args.output, "label_error_ids.txt"))
         print("\nWarning: " + str(

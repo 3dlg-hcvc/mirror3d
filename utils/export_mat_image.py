@@ -2,7 +2,6 @@
 
 import argparse
 import os
-
 import h5py
 import numpy as np
 from PIL import Image
@@ -19,19 +18,17 @@ def export_img_from_mat(mat_path, output_dir, img_type="depths"):
     """
     h5_file = h5py.File(mat_path)
     img_data = h5_file[img_type]
-
     img_np = np.array(img_data)
     if img_type == "images":
         img_np = np.uint8(img_np).transpose((0, 3, 2, 1))
     elif img_type == "depths":
         img_np = img_np * 1000
         img_np = np.uint16(img_np).transpose((0, 2, 1))
-
     if not os.path.isdir(output_dir):
         os.makedirs(output_dir)
     for i, single_img_np in enumerate(img_np):
         img_pil = Image.fromarray(single_img_np)
-        save_path = os.path.join(output_dir, str(i)+'.png')
+        save_path = os.path.join(output_dir, str(i) + '.png')
         img_pil.save(save_path, 'PNG')
 
 
