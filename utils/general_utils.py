@@ -1,9 +1,5 @@
-import sys
 import os
-import time
 import json
-import random
-import time
 import numpy as np
 import cv2
 import math
@@ -18,6 +14,7 @@ def get_fileList_uder_folder(folder_path):
     file_path_list = [i.strip() for i in os.popen(command).readlines()]
     return file_path_list
 
+
 def read_plane_json(json_path):
     with open(json_path, 'r') as j:
         info = json.loads(j.read())
@@ -28,20 +25,21 @@ def read_plane_json(json_path):
         plane_info[item["mask_id"]]["mirror_normal"] = item["normal"]
     return plane_info
 
+
 def check_converge(score_list=[], check_freq=2, change_ratio_threshold=0.03, logger=None):
     if logger:
         logger.info("######################### check_converge {} #########################".format(len(score_list)))
     print("######################### check_converge {} #########################".format(len(score_list)))
-    if len(score_list) < check_freq*2:
+    if len(score_list) < check_freq * 2:
         return False
 
-    check_back_loss = score_list[-check_freq*2:-check_freq]
+    check_back_loss = score_list[-check_freq * 2:-check_freq]
     check_forward_loss = score_list[-check_freq:]
-    change_ratio =(np.abs(np.average(check_forward_loss) - np.average(check_back_loss)))/np.average(check_back_loss) 
+    change_ratio = (np.abs(np.average(check_forward_loss) - np.average(check_back_loss))) / np.average(check_back_loss)
     print("######################### change_ratio {} #########################".format(change_ratio))
     if logger:
         logger.info("######################### change_ratio {} #########################".format(change_ratio))
-    if change_ratio <= change_ratio_threshold: 
+    if change_ratio <= change_ratio_threshold:
         return True
     else:
         return False
@@ -49,15 +47,16 @@ def check_converge(score_list=[], check_freq=2, change_ratio_threshold=0.03, log
 
 def list_diff(list1, list2):
     """
-    Get a list exist in list1 but don't exisit in list2
+    Get a list existing in list1 but not in list2
     """
     out = []
     for ele in list1:
-        if not ele in list2:
+        if ele not in list2:
             out.append(ele)
     return out
 
-def center_crop_image(input_folder="", output_folder = "", new_w=608, new_h=456, ori_w=640, ori_h=480):
+
+def center_crop_image(input_folder="", output_folder="", new_w=608, new_h=456, ori_w=640, ori_h=480):
     """
     Center crop the image
     Args:
@@ -65,8 +64,8 @@ def center_crop_image(input_folder="", output_folder = "", new_w=608, new_h=456,
         output_folder : folder path to saved the cropped result
     """
     os.makedirs(output_folder, exist_ok=True)
-    w_border = int((ori_w - new_w)/2)
-    h_border = int((ori_h - new_h)/2)
+    w_border = int((ori_w - new_w) / 2)
+    h_border = int((ori_h - new_h) / 2)
     for one_img in os.listdir(input_folder):
         one_img_path = os.path.join(input_folder, one_img)
         one_img_save_path = os.path.join(output_folder, one_img)
@@ -76,25 +75,25 @@ def center_crop_image(input_folder="", output_folder = "", new_w=608, new_h=456,
             continue
         try:
             if one_img_path.find("depth") > 0:
-                ori_img = cv2.imread(one_img_path, cv2.IMREAD_ANYDEPTH) 
-                ori_img = ori_img[h_border:h_border+new_h, w_border:w_border+new_w]
+                ori_img = cv2.imread(one_img_path, cv2.IMREAD_ANYDEPTH)
+                ori_img = ori_img[h_border:h_border + new_h, w_border:w_border + new_w]
             else:
                 ori_img = cv2.imread(one_img_path)
-                ori_img = ori_img[h_border:h_border+new_h, w_border:w_border+new_w]
+                ori_img = ori_img[h_border:h_border + new_h, w_border:w_border + new_w]
         except:
             print(print("error: ", one_img_path))
             continue
         cv2.imwrite(one_img_save_path, ori_img)
-    print("corpped image saved to {}".format(output_folder))
+    print("cropped image saved to {}".format(output_folder))
 
 
 def save_html(save_path, content):
-    with open(save_path, "w") as outf:
-        outf.write(str(content))
+    with open(save_path, "w") as out_file:
+        out_file.write(str(content))
     print("html saved to {}".format(save_path))
 
-def update_plane_parameter_json(plane_parameter, plane_parameter_output_path, instance_index):
 
+def update_plane_parameter_json(plane_parameter, plane_parameter_output_path, instance_index):
     if os.path.exists(plane_parameter_output_path):
         with open(plane_parameter_output_path, 'r') as j:
             img_info = json.loads(j.read())
@@ -112,8 +111,7 @@ def update_plane_parameter_json(plane_parameter, plane_parameter_output_path, in
         one_info["normal"] = list(unit_vector(list(plane_parameter[:-1])))
         one_info["mask_id"] = int(instance_index)
         img_info.append(one_info)
-    save_json(plane_parameter_output_path,img_info)
-
+    save_json(plane_parameter_output_path, img_info)
 
 
 def get_all_fileAbsPath_under_folder(folder_path):
@@ -123,15 +121,18 @@ def get_all_fileAbsPath_under_folder(folder_path):
             file_path_list.append(os.path.join(root, file))
     return file_path_list
 
+
 def read_json(json_path):
     with open(json_path, 'r') as j:
         info = json.loads(j.read())
     return info
 
+
 def read_txt(txt_path):
     with open(txt_path, "r") as file:
         lines = file.readlines()
     return [line.strip() for line in lines]
+
 
 def save_txt(save_path, data):
     with open(save_path, "w") as file:
@@ -140,13 +141,15 @@ def save_txt(save_path, data):
             file.write("\n")
     print("txt saved to : ", save_path, len(data))
 
-def save_json(save_path,data):
+
+def save_json(save_path, data):
     out_json = json.dumps(data, sort_keys=False, indent=4, separators=(',', ':'),
                           ensure_ascii=False)
     with open(save_path, "w") as fo:
         fo.write(out_json)
         fo.close()
-        print("json file saved to : ",save_path )
+        print("json file saved to : ", save_path)
+
 
 def rreplace(s, old, new):
     li = s.rsplit(old, 1)
@@ -168,16 +171,16 @@ def get_compose_image(output_save_path, img_list, mini_img_w=320, mini_img_h=240
         result.paste(pil_img, (left, top))
         return result
 
-    image_col = math.ceil(len(img_list)/mini_image_per_row) 
-    to_image = Image.new('RGB', (mini_image_per_row * mini_img_w, image_col * mini_img_h)) 
+    image_col = math.ceil(len(img_list) / mini_image_per_row)
+    to_image = Image.new('RGB', (mini_image_per_row * mini_img_w, image_col * mini_img_h))
 
     for y in range(1, image_col + 1):
         for x in range(1, mini_image_per_row + 1):
             img_index = mini_image_per_row * (y - 1) + x - 1
-            from_image = img_list[img_index].resize((mini_img_w, mini_img_h),Image.ANTIALIAS)
-            from_image = add_margin(from_image, 20,20,20,20,(255,255,255))
+            from_image = img_list[img_index].resize((mini_img_w, mini_img_h), Image.ANTIALIAS)
+            from_image = add_margin(from_image, 20, 20, 20, 20, (255, 255, 255))
             to_image.paste(from_image, ((x - 1) * mini_img_w, (y - 1) * mini_img_h))
-    to_image.save(output_save_path) 
+    to_image.save(output_save_path)
     print("image saved to :", output_save_path)
 
 
@@ -192,8 +195,9 @@ def nth_replace(s, sub, repl, n):
         i += 1
     # If i is equal to n we found nth match so replace
     if i == n:
-        return s[:find] + repl + s[find+len(sub):]
+        return s[:find] + repl + s[find + len(sub):]
     return s
+
 
 def save_heatmap_no_border(image, save_path=""):
     """ 
@@ -207,8 +211,5 @@ def save_heatmap_no_border(image, save_path=""):
     fig.axes.get_xaxis().set_visible(False)
     fig.axes.get_yaxis().set_visible(False)
     figure = plt.gcf()
-    plt.savefig(save_path, bbox_inches='tight', pad_inches = 0, dpi=100)
+    plt.savefig(save_path, bbox_inches='tight', pad_inches=0, dpi=100)
     print("image saved to : {}".format(save_path))
-
-
-
