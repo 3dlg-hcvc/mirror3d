@@ -1,2 +1,0 @@
-annotation/plane_annotation/example/nyu/anno_result/686.png annotation/plane_annotation/example/nyu/mirror_instance_mask_precise/686.png annotation/plane_annotation/example/nyu/mirror_plane/686.json annotation/plane_annotation/example/nyu/anno_result_clamped/686.png 519
-annotation/plane_annotation/example/nyu/anno_result/45.png annotation/plane_annotation/example/nyu/mirror_instance_mask_precise/45.png  annotation/plane_annotation/example/nyu/mirror_plane/45.json annotation/plane_annotation/example/nyu/anno_result_clamped/45.png 519

@@ -1,0 +1,3 @@
+/local-scratch/jiaqit/exp/Mirror3D/ output/pcd_vis/686_idx_1.ply /local-scratch/jiaqit/exp/Mirror3D/ output/mesh_vis/686_idx_1.ply /local-scratch/jiaqit/exp/Mirror3D/ output/screenshot/686_idx_1 
+/local-scratch/jiaqit/exp/Mirror3D/ output/pcd_vis/686_idx_2.ply /local-scratch/jiaqit/exp/Mirror3D/ output/mesh_vis/686_idx_2.ply /local-scratch/jiaqit/exp/Mirror3D/ output/screenshot/686_idx_2 
+/local-scratch/jiaqit/exp/Mirror3D/ output/pcd_vis/45_idx_1.ply /local-scratch/jiaqit/exp/Mirror3D/ output/mesh_vis/45_idx_1.ply /local-scratch/jiaqit/exp/Mirror3D/ output/screenshot/45_idx_1
