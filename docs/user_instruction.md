@@ -3,7 +3,7 @@
 
 ## STAGE 1: Classification
 
-- **STEP 1** Train a classifier 
+- **STEP 1: ** Train a classifier 
 
     ```python
     python annotation/classifier/classifier_train.py \
@@ -15,7 +15,7 @@
     ```
 You can find Martterport3d pre-trained checkpoint for the classifier on [checkpoint.pth.tar](http://aspis.cmpt.sfu.ca/projects/mirrors/checkpoint/classifier_checkpoint/checkpoint.pth.tar)
 
-- **STEP 2** Get sorted img_list with scores (saved in .json file)
+- **STEP 2: ** Get sorted img_list with scores (saved in .json file)
 
     ```python
     python annotation/classifier/classifier_train.py \
@@ -24,7 +24,7 @@ You can find Martterport3d pre-trained checkpoint for the classifier on [checkpo
     --output_save_folder [output_folder_path to save the output .json file]
     ```
     
-- **STEP 3** Pick positive samples based on the .json file output by STEP 2 manually
+- **STEP 3: ** Pick positive samples based on the .json file output by STEP 2 manually
  
     **Tip**: you can use `Mirror3D/annotation/classifier/classification_tool.py` to manually annotate mirror images
     ```python
@@ -67,7 +67,7 @@ Please try out the [example](#jump) below to get familiar with our annotation to
 
 Here is a quick example, we are going to annotate several samples from NYUv2 and get the refined depth map based on the precise mask:
 
-- **STEP 1** Get integer masks from CVAT coco format output:
+- **STEP 1: ** Get integer masks from CVAT coco format output:
 
 Here you should generate a txt file. Each line of the text file should have three components:
 
@@ -80,7 +80,7 @@ python annotation/plane_annotation/plane_annotation_tool.py \
 --input_txt [path to the txt file] 
 ```
 
-- **STEP 2** Set up annotation environment: please run the following command to set up the environment:
+- **STEP 2: ** Set up annotation environment: please run the following command to set up the environment:
 
 ```python
 python annotation/plane_annotation/plane_annotation_tool.py \
@@ -93,7 +93,7 @@ python annotation/plane_annotation/plane_annotation_tool.py \
 Each line of the input txt file should include the information: `[input color image path] [input depth image path] [input integer mask path] [pointcloud output folder(point cloud's name will be color image name + instance id)] [plane parameter JSON output path] [folder to save the color image with mirror border mask] [focal length of this sample]` please refer to the example txt  `docs/example/input_txt_example/anno_env_setup.txt` for more detail. 
 
 
-- **STEP 3**: Manually annotate the mirror plane: please run the following command to try out the mirror plane annotation tool:
+- **STEP 3: **: Manually annotate the mirror plane: please run the following command to try out the mirror plane annotation tool:
 
 ```python
 python annotation/plane_annotation/plane_annotation_tool.py \
@@ -158,7 +158,7 @@ After adjustment, you can see the adjusted result. The yellow points are generat
 ![adjust-view](figure/anno-tool-intro/anno-adjust.png)
 
 
-- **STEP 4**  Generate refined depth map: please run the following command to generate a refined depth map from the original depth map
+- **STEP 4: **  Generate refined depth map: please run the following command to generate a refined depth map from the original depth map
 
 ```shell
 python annotation/plane_annotation/plane_annotation_tool.py \
@@ -168,7 +168,7 @@ python annotation/plane_annotation/plane_annotation_tool.py \
 
 Each line of the input txt file should include the information: `[path to depth map to refine (rawD)] [input integer mask path] [plane parameter JSON output path] [path to save the refined depth map (refD)] [focal length of this sample]`, please refer to the example txt `docs/example/input_txt_example/anno_get_refD.txt` for more detail. 
 
-- **STEP 5** (Optional) Clamp the refined depth map gained from STEP 4:
+- **STEP 5: ** (Optional) Clamp the refined depth map gained from STEP 4:
 
 ```shell
 python annotation/plane_annotation/plane_annotation_tool.py \
@@ -179,7 +179,7 @@ python annotation/plane_annotation/plane_annotation_tool.py \
 
 Each line of the input txt file should include the information: `[path to depth map to the unclamped refine (rawD)] [input integer mask path] [plane parameter JSON output path] [path to save the clamped refined depth map (refD)] [focal length of this sample]`, please refer to the example txt `docs/example/input_txt_example/anno_clamp_refD.txt` for more detail. 
 
-- **STEP 6** Generate a video and colored depth map for verification: please run the following command to generate videos for verification. The videos contain the topdown view and front view of the refined point cloud. The output refined point cloud is generated based on the refined depth we get in STEP 4 and the source color image.
+- **STEP 6: ** Generate a video and colored depth map for verification: please run the following command to generate videos for verification. The videos contain the topdown view and front view of the refined point cloud. The output refined point cloud is generated based on the refined depth we get in STEP 4 and the source color image.
 
 To generate video, firstly, we need to generate the point cloud and 3D mesh plane:
 
@@ -213,7 +213,7 @@ python annotation/plane_annotation/plane_annotation_tool.py \
 
 Each line of the input txt file should include the information: `[input depth image path] [colored depth map saved path]`, please refer to the example txt `docs/example/input_txt_example/gen_colored_depth.txt` for more detail. 
 
-- **STEP 7** Launch webpage to view the videos: please run the following command to launch a website to view the video and colored depth map generated in STEP 6.
+- **STEP 7: ** Launch webpage to view the videos: please run the following command to launch a website to view the video and colored depth map generated in STEP 6.
 
 
 
@@ -235,7 +235,7 @@ Each line of the input txt file should include the information: `[sample id] [in
 You can see the color image, colored refined depth image, and point cloud videos on the verification web page. Please note down the sample id manually for reannotate.  
 
 
-<!-- - **STEP 7** Copy or move out the error sample's data to another folder for reannotation. 
+<!-- - **STEP 7: ** Copy or move out the error sample's data to another folder for reannotation. 
 
 
 ```shell
@@ -283,7 +283,7 @@ python annotation/plane_annotation/plane_annotation_tool.py --stage [all / 1 ~ 6
 
 ## STAGE 4: Annotation Verification
 
-- **STEP 1** Generate video for verification 
+- **STEP 1: ** Generate video for verification 
     ```python
     python visualization/dataset_visualization.py --stage all --data_main_folder [dataset main folder] --process_index [the process index during multi-processing]  --multi_processing --overwrite --f [focal length of the dataset] --output_folder [output point cloud/ mesh plane/ screenshot/ video saved folder] --view_mode [topdown/ front]
     ```
@@ -300,7 +300,7 @@ python annotation/plane_annotation/plane_annotation_tool.py --stage [all / 1 ~ 6
     - `--stage 8`: Generate data distribution figures
     - `--stage all`: run stage 1, 2, 4, 6 together
 
-- **STEP 2** Launch webpage to view the videos
+- **STEP 2: ** Launch webpage to view the videos
     
     ```python 
     python annotation/plane_annotation/verification.py \
@@ -312,7 +312,7 @@ python annotation/plane_annotation/plane_annotation_tool.py --stage [all / 1 ~ 6
 
     Annotators should manually note down the error sample's path to a [error_sample].txt
 
-- **STEP 3** Copy/ move out the error sample's data to another folder for reannotation
+- **STEP 3: ** Copy/ move out the error sample's data to another folder for reannotation
 
     ```python 
     python annotation/plane_annotation/verification.py \
@@ -329,7 +329,7 @@ python annotation/plane_annotation/plane_annotation_tool.py --stage [all / 1 ~ 6
 Here is quick example, we are going to annotate several samples from NYUv2 and get the refined depth map based on the precise mask:
 
 
-- **STEP 1** Set up annotation environment: please run the following command to set up the environment:
+- **STEP 1: ** Set up annotation environment: please run the following command to set up the environment:
 
 ```python
 python annotation/plane_annotation/plane_annotation_tool.py --stage 1 \
@@ -360,7 +360,7 @@ Then you will get the output pointclouds, RANSAC initialized mirror plane parame
 
 
 
-- **STEP 2** Manually annotate the mirror plane: please run the following command to use the mirror plane annotation tool:
+- **STEP 2: ** Manually annotate the mirror plane: please run the following command to use the mirror plane annotation tool:
 
 ```python
 python annotation/plane_annotation/plane_annotation_tool.py --stage 2 \
@@ -420,7 +420,7 @@ After adjustment, you can see the adjusted result. The yellow points are generat
 ![adjust-view](figure/anno-tool-intro/anno-adjust.png)
 
 
-- **STEP 4**  Generate refined depth map: please run the following command to generate a refined depth map from the original depth map
+- **STEP 4: **  Generate refined depth map: please run the following command to generate a refined depth map from the original depth map
 
 ```shell
 python annotation/plane_annotation/plane_annotation_tool.py --stage 3 \
@@ -428,7 +428,7 @@ python annotation/plane_annotation/plane_annotation_tool.py --stage 3 \
 --f 519
 ```
 
-- **STEP 5** Generate video for verification: please run the following command to generate videos for verification. The videos contain the topdown view and front view of the refined pointcloud. The output refined pointcloud is generated based on the refined depth we get in STEP 4 and the source color image.
+- **STEP 5: ** Generate video for verification: please run the following command to generate videos for verification. The videos contain the topdown view and front view of the refined pointcloud. The output refined pointcloud is generated based on the refined depth we get in STEP 4 and the source color image.
 
 ```shell
 python visualization/dataset_visualization.py --stage all \
@@ -437,7 +437,7 @@ python visualization/dataset_visualization.py --stage all \
 ```
 
 
-- **STEP 6** Launch webpage to view the videos: please run the following command to launch a website to view the video generated in STEP 5.
+- **STEP 6: ** Launch webpage to view the videos: please run the following command to launch a website to view the video generated in STEP 5.
 
 ```shell
 python annotation/plane_annotation/verification.py \
@@ -449,7 +449,7 @@ python annotation/plane_annotation/verification.py \
 
 ```
 
- - **STEP 7** Copy or move out the error sample's data to another folder for reannotation. 
+ - **STEP 7: ** Copy or move out the error sample's data to another folder for reannotation. 
 
 
 ```shell
