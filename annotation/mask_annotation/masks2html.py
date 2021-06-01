@@ -1,5 +1,4 @@
 import argparse
-from tqdm import trange
 import os
 import bs4
 
@@ -44,7 +43,6 @@ def generate_html(args_obj):
     """
     Generate html to show masks; all views for one sample is shown in one line;
     """
-
     os.makedirs(args_obj.output, exist_ok=True)
     img_ids = os.listdir(args_obj.data)
     count = 0
@@ -63,12 +61,13 @@ def generate_html(args_obj):
                 coarse_instance_id = coarse_instance_mask[:-20]
                 one_line_mask_info.append(
                     (img_id, coarse_instance_id, detailed_instance_mask[:-22],
-                     os.path.join(img_folder_path, coarse_instance_mask).replace("/project/3dlg-hcvc/mirrors/www", "/projects/mirrors"),
-                     os.path.join(img_folder_path, detailed_instance_mask).replace("/project/3dlg-hcvc/mirrors/www", "/projects/mirrors"),
+                     os.path.join(img_folder_path, coarse_instance_mask).replace("/project/3dlg-hcvc/mirrors/www",
+                                                                                 "/projects/mirrors"),
+                     os.path.join(img_folder_path, detailed_instance_mask).replace("/project/3dlg-hcvc/mirrors/www",
+                                                                                   "/projects/mirrors"),
                      labels[coarse_instance_id + "_coarse_instance"]
                      )
                 )
-
     page_num = count // args_obj.instance_num_per_page + 1
 
     for page in range(page_num):
@@ -101,7 +100,8 @@ def generate_html(args_obj):
             coarse_mask_box = soup.new_tag("td")
             coarse_mask_box["style"] = "width: 40%; padding: 30px 0"
             coarse_mask_img = soup.new_tag('img', src=one_line[3])
-            coarse_mask_img["style"] = "max-width: 600px; max-height: 600px; width: 100%; height: auto; object-fit: contain;"
+            coarse_mask_img["style"] = \
+                "max-width: 600px; max-height: 600px; width: 100%; height: auto; object-fit: contain;"
             coarse_mask_box.append(coarse_mask_img)
             instance_id = soup.new_tag("p")
             instance_id["style"] = "font-size: 15px;"
@@ -113,7 +113,8 @@ def generate_html(args_obj):
             detailed_mask_box = soup.new_tag("td")
             detailed_mask_box["style"] = "width: 40%; padding: 30px 0"
             detailed_mask_img = soup.new_tag('img', src=one_line[4])
-            detailed_mask_img["style"] = "max-width: 600px; max-height: 600px; width: 100%; height: auto; object-fit: contain;"
+            detailed_mask_img["style"] = \
+                "max-width: 600px; max-height: 600px; width: 100%; height: auto; object-fit: contain;"
             detailed_mask_box.append(detailed_mask_img)
             instance_id = soup.new_tag("p")
             instance_id["style"] = "margin-top: 5px; font-size: 16px;"

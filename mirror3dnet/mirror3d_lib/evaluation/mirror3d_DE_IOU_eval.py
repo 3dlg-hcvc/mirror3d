@@ -73,7 +73,7 @@ class Mirror3DNet_Eval:
 
     def refine_input_txtD_and_eval(self, output_list):
         anchor_normal = np.load(self.cfg.ANCHOR_NORMAL_NYP)
-        refine_depth_fun = Refine_depth(self.cfg.FOCAL_LENGTH, self.cfg.REF_BORDER_WIDTH, self.cfg.EVAL_WIDTH, self.cfg.EVAL_HEIGHT)
+        refine_depth_fun = RefineDepth(self.cfg.FOCAL_LENGTH, self.cfg.REF_BORDER_WIDTH, self.cfg.EVAL_WIDTH, self.cfg.EVAL_HEIGHT)
         if self.cfg.REF_DEPTH_TO_REFINE.find("SAIC") > 0:
             Input_tag = "RGBD"
             method_tag = "saic + \mnet"
@@ -96,7 +96,7 @@ class Mirror3DNet_Eval:
         else:
             train_with_refD = False
 
-        mirror3d_eval = Mirror3d_eval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_refD=train_with_refD, logger=self.logger,Input_tag=Input_tag, method_tag=method_tag,width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
+        mirror3d_eval = Mirror3dEval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_ref_d=train_with_refD, logger=self.logger,input_tag=Input_tag, method_tag=method_tag,width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
 
         input_txt = read_txt(self.cfg.REF_DEPTH_TO_REFINE)
 
@@ -148,12 +148,12 @@ class Mirror3DNet_Eval:
 
     def refine_raw_inputD_and_eval(self, output_list):
         anchor_normal = np.load(self.cfg.ANCHOR_NORMAL_NYP)
-        refine_depth_fun = Refine_depth(self.cfg.FOCAL_LENGTH, self.cfg.REF_BORDER_WIDTH, self.cfg.EVAL_WIDTH, self.cfg.EVAL_HEIGHT)
+        refine_depth_fun = RefineDepth(self.cfg.FOCAL_LENGTH, self.cfg.REF_BORDER_WIDTH, self.cfg.EVAL_WIDTH, self.cfg.EVAL_HEIGHT)
 
-        mirror3d_eval_sensorD = Mirror3d_eval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_refD=None, logger=self.logger,Input_tag="sensor-D", method_tag="*",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
-        mirror3d_eval_meshD = Mirror3d_eval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_refD=None, logger=self.logger,Input_tag="mesh-D", method_tag="*",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
-        mirror3d_eval_hole = Mirror3d_eval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_refD=None, logger=self.logger,Input_tag="sensor-D", method_tag="\mnet",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
-        mirror3d_eval_mesh = Mirror3d_eval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_refD=None, logger=self.logger,Input_tag="mesh-D", method_tag="\mnet",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
+        mirror3d_eval_sensorD = Mirror3dEval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_ref_d=None, logger=self.logger,input_tag="sensor-D", method_tag="*",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
+        mirror3d_eval_meshD = Mirror3dEval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_ref_d=None, logger=self.logger,input_tag="mesh-D", method_tag="*",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
+        mirror3d_eval_hole = Mirror3dEval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_ref_d=None, logger=self.logger,input_tag="sensor-D", method_tag="\mnet",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
+        mirror3d_eval_mesh = Mirror3dEval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_ref_d=None, logger=self.logger,input_tag="mesh-D", method_tag="\mnet",width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
 
         have_mesh_D = False
         imgPath_info = dict()
@@ -237,7 +237,7 @@ class Mirror3DNet_Eval:
 
     def eval_raw_DEbranch_predD(self, output_list):
 
-        refine_depth_fun = Refine_depth(self.cfg.FOCAL_LENGTH, self.cfg.REF_BORDER_WIDTH, self.cfg.EVAL_WIDTH, self.cfg.EVAL_HEIGHT)
+        refine_depth_fun = RefineDepth(self.cfg.FOCAL_LENGTH, self.cfg.REF_BORDER_WIDTH, self.cfg.EVAL_WIDTH, self.cfg.EVAL_HEIGHT)
 
         if not self.cfg.OBJECT_CLS:
             Input_tag = "RGB"
@@ -251,7 +251,7 @@ class Mirror3DNet_Eval:
         else:
             train_with_refD = False
 
-        mirror3d_eval = Mirror3d_eval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_refD=train_with_refD, logger=self.logger,Input_tag=Input_tag, method_tag=method_tag,width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
+        mirror3d_eval = Mirror3dEval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_ref_d=train_with_refD, logger=self.logger,input_tag=Input_tag, method_tag=method_tag,width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
 
         for one_output, one_input in output_list:
             pred_depth = one_output[1][0].detach().cpu().numpy()
@@ -272,7 +272,7 @@ class Mirror3DNet_Eval:
 
     def refine_DEbranch_predD_and_eval(self, output_list):
 
-        refine_depth_fun = Refine_depth(self.cfg.FOCAL_LENGTH, self.cfg.REF_BORDER_WIDTH, self.cfg.EVAL_WIDTH, self.cfg.EVAL_HEIGHT)
+        refine_depth_fun = RefineDepth(self.cfg.FOCAL_LENGTH, self.cfg.REF_BORDER_WIDTH, self.cfg.EVAL_WIDTH, self.cfg.EVAL_HEIGHT)
         if not self.cfg.OBJECT_CLS:
             Input_tag = "RGB"
             method_tag = "PlaneRCNN"
@@ -285,7 +285,7 @@ class Mirror3DNet_Eval:
             train_with_refD = True
         else:
             train_with_refD = False
-        mirror3d_eval = Mirror3d_eval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_refD=train_with_refD, logger=self.logger,Input_tag=Input_tag, method_tag=method_tag,width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
+        mirror3d_eval = Mirror3dEval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_ref_d=train_with_refD, logger=self.logger,input_tag=Input_tag, method_tag=method_tag,width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
 
         for one_output, one_input in output_list:
             pred_depth = one_output[1][0].detach().cpu().numpy()
@@ -356,7 +356,7 @@ class Mirror3DNet_Eval:
 
     def eval_seg(self, output_list):
 
-        eval_seg_fun = Mirror_seg_eval(self.cfg.EVAL_WIDTH, self.cfg.EVAL_HEIGHT)
+        eval_seg_fun = MirrorSegEval(self.cfg.EVAL_WIDTH, self.cfg.EVAL_HEIGHT)
 
         for i, item in enumerate(output_list):
             one_output, one_input = item
