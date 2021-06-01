@@ -44,18 +44,18 @@ We provide a simple plane annotation tool `annotation/plane_annotation/plane_ann
 
 Overall, we provide 12 functions in the annotation tool:
 
-- `--function 1: generate integer mask and colorful masks from the coco format JSON file output by CVAT
-- `--function 2 : (optional) generate colorful mask from integer mask
-- `--function 3: update mirror plane information based on the refined depth map
-- `--function 4: set up the environment for annotation
-- `--function 5: use the annotation tool to annotate the mirror plane
-- `--function 6: update the depth at mirror region for uncorrected depth map
-- `--function 7: clamp the depth at mirror border
-- `--function 8: generate point cloud and 3D mesh plane from RGBD input and saved plane parameter
-- `--function 9: generate screenshots and videos under topdown view and front view for the point cloud and 3D mesh plane generated in function 8 
-- `--function 10: generate screenshots and videos under topdown view or front view for the point cloud and 3D mesh plane generated in function 8 
-- `--function 11: generate the colored depth map
-- `--function 12: generate HTML to show mirror color images, mirror colored depth images, and videos generated in function 8
+- `--function 1`: generate integer mask and colorful masks from the coco format JSON file output by CVAT
+- `--function 2 `: (optional) generate colorful mask from integer mask
+- `--function 3`: update mirror plane information based on the refined depth map
+- `--function 4`: set up the environment for annotation
+- `--function 5`: use the annotation tool to annotate the mirror plane
+- `--function 6`: update the depth at mirror region for uncorrected depth map
+- `--function 7`: clamp the depth at mirror border
+- `--function 8`: generate point cloud and 3D mesh plane from RGBD input and saved plane parameter
+- `--function 9`: generate screenshots and videos under topdown view and front view for the point cloud and 3D mesh plane generated in function 8 
+- `--function 10`: generate screenshots and videos under topdown view or front view for the point cloud and 3D mesh plane generated in function 8 
+- `--function 11`: generate the colored depth map
+- `--function 12`: generate HTML to show mirror color images, mirror colored depth images, and videos generated in function 8
 
 
 Please try out the [example](#jump) below to get familiar with our annotation tool.
