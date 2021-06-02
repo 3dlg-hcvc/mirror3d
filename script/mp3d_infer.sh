@@ -8,7 +8,7 @@ python init_depth_generator/bts/pytorch/init_depth_gen_infer.py \
 --depth_shift 4000 \
 --input_height 1024 \
 --input_width 1280 \
---log_directory output/mp3d
+--log_directory ../output/mp3d
 
 # bts infer on raw mesh depth
 python init_depth_generator/bts/pytorch/init_depth_gen_infer.py \
@@ -20,7 +20,7 @@ python init_depth_generator/bts/pytorch/init_depth_gen_infer.py \
 --depth_shift 4000 \
 --input_height 1024 \
 --input_width 1280 \
---log_directory output/mp3d
+--log_directory ../output/mp3d
 
 
 # vnl infer on refined mesh depth
@@ -34,7 +34,7 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.
 --input_height 1024 \
 --input_width 1280 \
 --batch_size 4 \
---log_directory output/mp3d
+--log_directory ../output/mp3d
 
 # vnl infer on raw mesh depth
 python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.py \
@@ -47,7 +47,7 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.
 --input_height 1024 \
 --input_width 1280 \
 --batch_size 4 \
---log_directory output/mp3d
+--log_directory ../output/mp3d
 
 
 # saic infer on refined mesh depth
@@ -61,7 +61,7 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_infer.py \
 --input_height 1024 \
 --input_width 1280 \
 --batch_size 2 \
---log_directory output/mp3d
+--log_directory ../output/mp3d
 
 
 # saic infer on raw mesh depth
@@ -74,7 +74,7 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_infer.py \
 --depth_shift 4000 \
 --input_height 1024 \
 --input_width 1280 \
---log_directory output/mp3d
+--log_directory ../output/mp3d
 
 
 # planercnn on refined mesh depth
@@ -89,7 +89,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --input_height 1024 \
 --input_width 1280 \
 --anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
---log_directory output/mp3d
+--log_directory ../output/mp3d
 
 
 # planercnn on raw mesh depth
@@ -104,7 +104,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --input_height 1024 \
 --input_width 1280 \
 --anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
---log_directory output/mp3d
+--log_directory ../output/mp3d
 
 
 
@@ -120,7 +120,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --input_height 1024 \
 --input_width 1280 \
 --anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
---log_directory output/mp3d
+--log_directory ../output/mp3d
 
 
 # mirror3dnet on raw mesh depth 
@@ -135,7 +135,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --input_height 1024 \
 --input_width 1280 \
 --anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
---log_directory output/mp3d
+--log_directory ../output/mp3d
 
 # mirror3dnet only normal 10 anchor normal
 python mirror3dnet/run_mirror3dnet.py \
@@ -150,4 +150,4 @@ python mirror3dnet/run_mirror3dnet.py \
 --input_height 1024 \
 --input_width 1280 \
 --anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
---log_directory output/mp3d
+--log_directory ../output/mp3d

@@ -8,7 +8,7 @@ python init_depth_generator/bts/pytorch/init_depth_gen_infer.py \
 --depth_shift 1000 \
 --input_height 480 \
 --input_width 640 \
---log_directory output/nyu
+--log_directory ../output/nyu
 
 # vnl infer on refined sensor depth
 python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.py \
@@ -21,7 +21,7 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.
 --input_height 480 \
 --input_width 640 \
 --batch_size 4 \
---log_directory output/nyu
+--log_directory ../output/nyu
 
 
 # saic infer on refined sensor depth
@@ -35,7 +35,7 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_infer.py \
 --input_height 480 \
 --input_width 640 \
 --batch_size 2 \
---log_directory output/nyu
+--log_directory ../output/nyu
 
 
 # saic infer on raw sensor depth
@@ -47,7 +47,7 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_infer.py \
 --depth_shift 1000 \
 --input_height 480 \
 --input_width 640 \
---log_directory output/nyu
+--log_directory ../output/nyu
 
 
 # planercnn on refined sensor depth
@@ -62,7 +62,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --input_height 480 \
 --input_width 640 \
 --anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
---log_directory output/nyu
+--log_directory ../output/nyu
 
 
 # planercnn on raw sensor depth
@@ -77,7 +77,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --input_height 480 \
 --input_width 640 \
 --anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
---log_directory output/nyu
+--log_directory ../output/nyu
 
 
 
@@ -93,7 +93,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --input_height 480 \
 --input_width 640 \
 --anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
---log_directory output/nyu
+--log_directory ../output/nyu
 
 
 # mirror3dnet on raw sensor depth 
@@ -108,7 +108,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --input_height 480 \
 --input_width 640 \
 --anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
---log_directory output/nyu
+--log_directory ../output/nyu
 
 # mirror3dnet only normal 10 anchor normal
 python mirror3dnet/run_mirror3dnet.py \
@@ -123,4 +123,4 @@ python mirror3dnet/run_mirror3dnet.py \
 --input_height 480 \
 --input_width 640 \
 --anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
---log_directory output/nyu
+--log_directory ../output/nyu
