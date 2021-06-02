@@ -8,7 +8,7 @@ import time
 
 
 class Mirror3dEval:
-    def __init__(self, train_with_ref_d, logger=None, input_tag="Input_tag", method_tag="method_tag", width=640,
+    def __init__(self, train_with_ref_d, logger=None, input_tag="input_tag", method_tag="method_tag", width=640,
                  height=480, dataset="nyu", dataset_root=""):
         self.m_nm_all_refD = torch.zeros(27)
         self.m_nm_all_rawD = torch.zeros(27)
@@ -17,7 +17,7 @@ class Mirror3dEval:
         self.dataset_root = dataset_root
         self.train_with_refD = train_with_ref_d
         self.logger = logger
-        self.Input_tag = input_tag
+        self.input_tag = input_tag
         self.method_tag = method_tag
         self.width = width
         self.height = height
@@ -35,7 +35,7 @@ class Mirror3dEval:
         else:
             self.Train_tag = "*"
         self.main_output_folder = "output/{}_{}_{}_{}_{}".format(time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()),
-                                                                 self.Input_tag, self.Train_tag, self.method_tag,
+                                                                 self.input_tag, self.Train_tag, self.method_tag,
                                                                  self.dataset)
         self.main_output_folder = self.main_output_folder.replace("*", "a")
         os.makedirs(self.main_output_folder, exist_ok=True)
@@ -60,7 +60,7 @@ class Mirror3dEval:
     def set_method_logFile_json_save_folder(self, folder):
         self.method_logFile_json_save_folder = folder
 
-    def reset_setting(self, train_with_ref_d, logger=None, input_tag="Input_tag", method_tag="method_tag", width=640,
+    def reset_setting(self, train_with_ref_d, logger=None, input_tag="input_tag", method_tag="method_tag", width=640,
                       height=480):
         self.m_nm_all_refD = torch.zeros(27)
         self.m_nm_all_rawD = torch.zeros(27)
@@ -68,7 +68,7 @@ class Mirror3dEval:
         self.ref_cnt = 0
         self.train_with_refD = train_with_ref_d
         self.logger = logger
-        self.Input_tag = input_tag
+        self.input_tag = input_tag
         self.method_tag = method_tag
         self.width = width
         self.height = height
@@ -93,18 +93,18 @@ class Mirror3dEval:
         latex_method_tag.replace("saic", "saic~\cite{senushkin2020decoder}")
         latex_method_tag.replace("PlaneRCNN", "PlaneRCNN~\\cite{liu2019planercnn}")
 
-        tag = "{},{},{}".format(self.Input_tag, self.Train_tag, latex_method_tag)
+        tag = "{},{},{}".format(self.input_tag, self.Train_tag, latex_method_tag)
         table_one_line_result = dict()
         table_one_line_result[
             "RMSE,SSIM"] = "{:>5} & {:>10} & {:>45} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} \\".format(
-            self.Input_tag, self.Train_tag, latex_method_tag, eval_measures_cpu[0], eval_measures_cpu[9],
+            self.input_tag, self.Train_tag, latex_method_tag, eval_measures_cpu[0], eval_measures_cpu[9],
             eval_measures_cpu[18],
             eval_measures_cpu[3], eval_measures_cpu[12], eval_measures_cpu[21]
         )
         table_one_line_result[
             "RMSE,s-RMSE,Rel,SSIM"] = "{:>5} & {:>10} & {:>45} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} " \
                                       "& {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f}\\".format(
-            self.Input_tag, self.Train_tag, latex_method_tag, eval_measures_cpu[0], eval_measures_cpu[9],
+            self.input_tag, self.Train_tag, latex_method_tag, eval_measures_cpu[0], eval_measures_cpu[9],
             eval_measures_cpu[18],
             eval_measures_cpu[1], eval_measures_cpu[10], eval_measures_cpu[19],
             eval_measures_cpu[2], eval_measures_cpu[11], eval_measures_cpu[20],
@@ -113,14 +113,14 @@ class Mirror3dEval:
         table_one_line_result["$d_{1.05}$,$d_{1.10}$,$d_{1.25}$,$d_{1.25^2}$,$d_{1.25^3}$"] = \
             "{:>5} & {:>10} & {:>45} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} " \
             "& {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f} & {:.3f}\\".format(
-                self.Input_tag, self.Train_tag, latex_method_tag,
+                self.input_tag, self.Train_tag, latex_method_tag,
                 eval_measures_cpu[4], eval_measures_cpu[13], eval_measures_cpu[22],
                 eval_measures_cpu[5], eval_measures_cpu[14], eval_measures_cpu[23],
                 eval_measures_cpu[6], eval_measures_cpu[15], eval_measures_cpu[24],
                 eval_measures_cpu[7], eval_measures_cpu[16], eval_measures_cpu[25],
                 eval_measures_cpu[8], eval_measures_cpu[17], eval_measures_cpu[26]
             )
-        table_one_line_result["main_output_folder"] = "{}_{}_{} {}".format(self.Input_tag, self.Train_tag,
+        table_one_line_result["main_output_folder"] = "{}_{}_{} {}".format(self.input_tag, self.Train_tag,
                                                                            latex_method_tag,
                                                                            os.path.abspath(self.main_output_folder))
 
@@ -172,7 +172,7 @@ class Mirror3dEval:
                         '$d_{1.10}$', '$d_{1.25}$', '$d_{1.25^2}$', '$d_{1.25^3}$', "Count"))
 
             # print mirror area score
-            print_line = "{:>12}& {:>12}& {:>18}& {:>12}& ".format(self.Input_tag, self.Train_tag, self.method_tag,
+            print_line = "{:>12}& {:>12}& {:>18}& {:>12}& ".format(self.input_tag, self.Train_tag, self.method_tag,
                                                                    "mirror")
             for i in range(0, 9):
                 print_line += '{:>12.3f}& '.format(eval_measures_cpu[i])
@@ -182,7 +182,7 @@ class Mirror3dEval:
                 self.logger.info(print_line)
 
             # print non-mirror area score
-            print_line = "{:>12}& {:>12}& {:>18}& {:>12}& ".format(self.Input_tag, self.Train_tag, self.method_tag,
+            print_line = "{:>12}& {:>12}& {:>18}& {:>12}& ".format(self.input_tag, self.Train_tag, self.method_tag,
                                                                    "non-mirror")
             for i in range(9, 18):
                 print_line += '{:>12.3f}& '.format(eval_measures_cpu[i])
@@ -192,7 +192,7 @@ class Mirror3dEval:
                 self.logger.info(print_line)
 
             # print all area score
-            print_line = "{:>12}& {:>12}& {:>18}& {:>12}& ".format(self.Input_tag, self.Train_tag, self.method_tag,
+            print_line = "{:>12}& {:>12}& {:>18}& {:>12}& ".format(self.input_tag, self.Train_tag, self.method_tag,
                                                                    "all")
             for i in range(18, 27):
                 print_line += '{:>12.3f}& '.format(eval_measures_cpu[i])
@@ -356,7 +356,7 @@ class Mirror3dEval:
                 mirror_mask = cv2.resize(cv2.imread(mask_path, cv2.IMREAD_ANYDEPTH), (self.width, self.height), 0, 0,
                                          cv2.INTER_NEAREST)
                 mirror_error = compute_errors(ref_d_gt_depth, pred_depth, mirror_mask > 0)
-                non_mirror_error = compute_errors(ref_d_gt_depth, pred_depth, mirror_mask is False)
+                non_mirror_error = compute_errors(ref_d_gt_depth, pred_depth, mirror_mask == False)
                 all_image_error = compute_errors(ref_d_gt_depth, pred_depth, True)
 
             if not all_image_error or not mirror_error or not non_mirror_error:
