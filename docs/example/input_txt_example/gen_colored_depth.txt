@@ -1,2 +1,1 @@
- output/anno_result_clamped/686.png output/colored_refD/686.png
- output/anno_result_clamped/45.png output/colored_refD/45.png  
+output/anno_result_clamped/45.png output/colored_refD/45.png  

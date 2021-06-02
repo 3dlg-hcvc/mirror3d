@@ -1,2 +1,1 @@
- docs/example/nyu/mirror_color_images/686.jpg docs/example/nyu/raw_sensorD/686.png docs/example/nyu/mirror_instance_mask_precise/686.png output/anno_pcd output/mirror_plane/686.json output/border_vis 519
- docs/example/nyu/mirror_color_images/45.jpg docs/example/nyu/raw_sensorD/45.png docs/example/nyu/mirror_instance_mask_precise/45.png output/anno_pcd output/mirror_plane/45.json output/border_vis 519
+docs/example/nyu/mirror_color_images/45.jpg docs/example/nyu/raw_sensorD/45.png docs/example/nyu/mirror_instance_mask_precise/45.png output/anno_pcd output/mirror_plane/45.json output/border_vis 519

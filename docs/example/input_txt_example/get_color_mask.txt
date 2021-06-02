@@ -1,1 +1,1 @@
- docs/example/nyu/mirror_instance_mask_precise/45.png output/mirror_color_instance_mask_precise/45.png
+docs/example/nyu/mirror_instance_mask_precise/45.png output/mirror_color_instance_mask_precise/45.png

@@ -1,3 +1,1 @@
-686 docs/example/nyu/mirror_color_images/686.jpg output/colored_refD/686.png output/screenshot/686_idx_1/front_686_idx_1_.mp4 output/screenshot/686_idx_1/topdown_686_idx_1_.mp4
 45 docs/example/nyu/mirror_color_images/45.jpg output/colored_refD/45.png output/screenshot/45_idx_1/front_45_idx_1_.mp4 output/screenshot/45_idx_1/topdown_45_idx_1_.mp4
-686 docs/example/nyu/mirror_color_images/686.jpg output/colored_refD/686.png output/screenshot/686_idx_2/front_686_idx_2_.mp4 output/screenshot/686_idx_2/topdown_686_idx_2_.mp4
