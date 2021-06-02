@@ -1,4 +1,4 @@
-instance_id,sample_id,scene_id,split,semantic_label,has_mirror_plane,has_refined_depth,has_coarse_mask,has_precise_mask
+instance_id,sample_id,scene_id,split,semantic_label,has_mirror_plane,has_coarse_refined_depth,has_preciserefined_depth,has_coarse_mask,has_precise_mask
 1,1054,bedroom_0076,train,incomplete,1,1,1,1,1
 1,1419,dining_room_0029,train,incomplete,1,1,1,1,1
 1,1110,bedroom_0096,train,complete,1,1,1,1,1
