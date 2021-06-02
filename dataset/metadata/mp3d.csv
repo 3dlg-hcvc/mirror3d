@@ -1,4 +1,4 @@
-instance_id,sample_id,house_id,split,semantic_label,has_mirror_plane,has_precise_refined_depth,has_coarse_refined_depth,has_coarse_mask,has_precise_mask
+instance_id,sample_id,house_id,split,semantic_label,has_mirror_plane,has_coarse_refined_depth,has_precise_refined_depth,has_coarse_mask,has_precise_mask
 1,d604bbfa690d46e5b18b59fdbb0a2031_i1_0,EU6Fwq7SyZv,val,almost-complete,1,0,0,1,1
 1,27fdec10f8034decaba1d3cdb1fd8693_i1_4,EU6Fwq7SyZv,val,incomplete,1,0,0,1,1
 1,ea04c16205aa4ec3914a9ad71c710a2a_i1_4,EU6Fwq7SyZv,val,complete,1,0,0,1,1
