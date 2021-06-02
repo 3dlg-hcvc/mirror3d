@@ -268,6 +268,7 @@ class InputGenerator(PlaneAnnotationTool):
                 "refined_meshD_path": refined_mesh_d_path_abv,
                 "raw_sensorD_path": raw_sensor_d_path_abv,
                 "refined_sensorD_path": refined_sensor_d_path_abv,
+                "mirror_instance_mask_path": "",
             }
 
             if image not in images:

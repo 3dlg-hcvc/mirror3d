@@ -1,10 +1,10 @@
 # bts train on refined sensor depth
 python init_depth_generator/bts/pytorch/init_depth_gen_train.py \
 --refined_depth \
---coco_train ./network_input_json/nyu/train_10_precise_normal_all.json \
---coco_val ./network_input_json/nyu/test_10_precise_normal_mirror.json \
---coco_train_root ./dataset/nyu \
---coco_val_root ./dataset/nyu \
+--coco_train ../network_input_json/nyu/train_10_precise_normal_all.json \
+--coco_val ../network_input_json/nyu/test_10_precise_normal_mirror.json \
+--coco_train_root ../dataset/nyu \
+--coco_val_root ../dataset/nyu \
 --coco_focal_len 519 \
 --depth_shift 1000 \
 --input_height 480 \
@@ -17,10 +17,10 @@ python init_depth_generator/bts/pytorch/init_depth_gen_train.py \
 
 # bts train on raw sensor depth
 python init_depth_generator/bts/pytorch/init_depth_gen_train.py \
---coco_train ./network_input_json/nyu/train_10_precise_normal_all.json \
---coco_val ./network_input_json/nyu/test_10_precise_normal_mirror.json \
---coco_train_root ./dataset/nyu \
---coco_val_root ./dataset/nyu \
+--coco_train ../network_input_json/nyu/train_10_precise_normal_all.json \
+--coco_val ../network_input_json/nyu/test_10_precise_normal_mirror.json \
+--coco_train_root ../dataset/nyu \
+--coco_val_root ../dataset/nyu \
 --coco_focal_len 519 \
 --depth_shift 1000 \
 --input_height 480 \
@@ -34,10 +34,10 @@ python init_depth_generator/bts/pytorch/init_depth_gen_train.py \
 # vnl train on refined sensor depth
 python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.py \
 --refined_depth \
---coco_train ./network_input_json/nyu/train_10_precise_normal_all.json \
---coco_val ./network_input_json/nyu/test_10_precise_normal_mirror.json \
---coco_train_root ./dataset/nyu \
---coco_val_root ./dataset/nyu \
+--coco_train ../network_input_json/nyu/train_10_precise_normal_all.json \
+--coco_val ../network_input_json/nyu/test_10_precise_normal_mirror.json \
+--coco_train_root ../dataset/nyu \
+--coco_val_root ../dataset/nyu \
 --coco_focal_len 519 \
 --depth_shift 1000 \
 --input_height 480 \
@@ -51,10 +51,10 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.
 
 # vnl train on raw sensor depth
 python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.py \
---coco_train ./network_input_json/nyu/train_10_precise_normal_all.json \
---coco_val ./network_input_json/nyu/test_10_precise_normal_mirror.json \
---coco_train_root ./dataset/nyu \
---coco_val_root ./dataset/nyu \
+--coco_train ../network_input_json/nyu/train_10_precise_normal_all.json \
+--coco_val ../network_input_json/nyu/test_10_precise_normal_mirror.json \
+--coco_train_root ../dataset/nyu \
+--coco_val_root ../dataset/nyu \
 --coco_focal_len 519 \
 --depth_shift 1000 \
 --input_height 480 \
@@ -68,10 +68,10 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.
 # saic train on refined sensor depth
 python init_depth_generator/saic_depth_completion/init_depth_gen_train.py \
 --refined_depth \
---coco_train ./network_input_json/nyu/train_10_precise_normal_all.json \
---coco_val ./network_input_json/nyu/test_10_precise_normal_mirror.json \
---coco_train_root ./dataset/nyu \
---coco_val_root ./dataset/nyu \
+--coco_train ../network_input_json/nyu/train_10_precise_normal_all.json \
+--coco_val ../network_input_json/nyu/test_10_precise_normal_mirror.json \
+--coco_train_root ../dataset/nyu \
+--coco_val_root ../dataset/nyu \
 --coco_focal_len 519 \
 --depth_shift 1000 \
 --input_height 480 \
@@ -85,10 +85,10 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_train.py \
 
 # saic train on raw sensor depth
 python init_depth_generator/saic_depth_completion/init_depth_gen_train.py \
---coco_train ./network_input_json/nyu/train_10_precise_normal_all.json \
---coco_val ./network_input_json/nyu/test_10_precise_normal_mirror.json \
---coco_train_root ./dataset/nyu \
---coco_val_root ./dataset/nyu \
+--coco_train ../network_input_json/nyu/train_10_precise_normal_all.json \
+--coco_val ../network_input_json/nyu/test_10_precise_normal_mirror.json \
+--coco_train_root ../dataset/nyu \
+--coco_val_root ../dataset/nyu \
 --coco_focal_len 519 \
 --depth_shift 1000 \
 --input_height 480 \
