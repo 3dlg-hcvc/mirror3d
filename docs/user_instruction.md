@@ -37,7 +37,7 @@ You can find Martterport3d pre-trained checkpoint for the classifier on [checkpo
 
 ## STAGE 2: Mirror Mask Annotation 
 
-We use [cvat](https://github.com/dommorin/cvat) to annotate mirror masks manually. Please refer to [cvat user guide](https://github.com/dommorin/cvat/blob/master/cvat/apps/documentation/user_guide.md) for guidance on mask annotation. 
+We use [cvat](https://github.com/dommorin/cvat) to annotate mirror masks manually. Please refer to [cvat user guide](https://github.com/dommorin/cvat/blob/master/cvat/apps/documentation/user_guide.md) for guidance on how to do mask annotation. 
 ## STAGE 3: Plane Annotation
 
 We provide a simple plane annotation tool `annotation/plane_annotation/plane_annotation_tool.py` to annotate the mirror plane.
@@ -67,7 +67,7 @@ Please follow the [example](#jump) below to get familiar with our plane annotati
 
 This is an example of annotating mirror planes for several NYUv2 samples. 
 
-- **STEP 1:**  Get 8-bit integer masks from CVAT output, we need to dump the coco format segmentation file from CVAT:
+- **STEP 1:**  Get 8-bit integer masks from CVAT output. We are going to  use coco format annotation result from CVAT:
 
 ```python
 python annotation/plane_annotation/plane_annotation_tool.py \
@@ -76,9 +76,9 @@ python annotation/plane_annotation/plane_annotation_tool.py \
 --input_txt [path to the txt file] 
 ```
 
-Here, you should generate a txt file. Each line of the text file should have three components `[color image filename in coco json] [integer mask output path] [RGB mask output path]`
+You should generate a txt file. Each line of the text file should contain three components `[color image filename in coco json] [8-bit integer mask output path] [RGB mask output path]`
 
-- **STEP 2:**  Set up annotation environment: please run the following command to set up the environment:
+- **STEP 2:**  Set up annotation environment: please run the following command to set up the environment for annotation:
 
 ```python
 python annotation/plane_annotation/plane_annotation_tool.py \
@@ -88,7 +88,7 @@ python annotation/plane_annotation/plane_annotation_tool.py \
 --input_txt docs/example/input_txt_example/anno_env_setup.txt
 ```
 
-Each line of the input txt file should include the information: `[input color image path] [input depth image path] [input integer mask path] [point cloud output folder (point cloud's name will be color image name + instance id)] [plane parameter JSON output path] [folder to save the color image with mirror border mask] [focal length of this sample]` please refer to the example txt  `docs/example/input_txt_example/anno_env_setup.txt` for more detail. 
+Each line of the input txt file should include information: `[input color image path] [input depth image path] [input 8-bit integer mask path] [point cloud output folder (the output point cloud will be named by "[color image name]_idx_[instance id]")] [plane parameter JSON file output path] [folder to save the color image with mirror border mask] [focal length of the sample]` please refer to the example txt  `docs/example/input_txt_example/anno_env_setup.txt` for more detail. 
 
 
 - **STEP 3:**  Manually annotate the mirror plane: please run the following command to try out the mirror plane annotation tool:
@@ -100,7 +100,7 @@ python annotation/plane_annotation/plane_annotation_tool.py \
 --input_txt docs/example/input_txt_example/anno_update_plane.txt
 ```
 
-Each line of the input txt file should include the information: `[input color image path] [input depth image path] [input integer mask path] [instance point cloud path] [plane parameter JSON output path] [path to the color image with mirror border mask] [focal length of this sample]`, please refer to the example txt `docs/example/input_txt_example/anno_update_plane.txt` for more detail. 
+Each line of the input txt file should include information: `[input color image path] [input depth image path] [input 8-bit integer mask path] [instance point cloud path] [plane parameter JSON file output path] [path to the color image with mirror border mask] [focal length of this sample]`, please refer to the example txt `docs/example/input_txt_example/anno_update_plane.txt` for more detail. 
 
 
 ![pick point pic](figure/anno-tool-intro/anno-init.png)
@@ -109,7 +109,7 @@ The above command in STEP 3 will open the annotation tool interface and show a p
 ```shell
 ANNOTATION OPTION : 
 (1) t        : TRUE : initial plane parameter is correct
-(2) w        : WASTE : sample have error, can not be used (e.g. point cloud too noisy)
+(2) w        : WASTE : sample have error, can not be used (e.g., point cloud too noisy)
 (3) back n   : BACK : return n times (e.g., back 3 : give up the recent 3 annotated sample and go back)
 (4) goto n   : GOTO : goto the n the image (e.g., goto 3 : go to the third image
 (5) n        : NEXT : goto next image without annotation
@@ -164,7 +164,7 @@ python annotation/plane_annotation/plane_annotation_tool.py \
 --input_txt docs/example/input_txt_example/anno_get_refD.txt
 ```
 
-Each line of the input txt file should include the information: `[path to depth map to refine (rawD)] [input integer mask path] [plane parameter JSON output path] [path to save the refined depth map (refD)] [focal length of this sample]`, please refer to the example txt `docs/example/input_txt_example/anno_get_refD.txt` for more detail. 
+Each line of the input txt file should include the information: `[path to depth map to refine (rawD)] [input 8-bit integer mask path] [plane parameter JSON file output path] [path to save the refined depth map (refD)] [focal length of this sample]`, please refer to the example txt `docs/example/input_txt_example/anno_get_refD.txt` for more detail. 
 
 - **STEP 5:**  (Optional) Clamp the refined depth map gained from STEP 4:
 
@@ -175,9 +175,9 @@ python annotation/plane_annotation/plane_annotation_tool.py \
 --expand_range 100 --clamp_dis 100 --border_width 25
 ```
 
-Each line of the input txt file should include the information: `[path to depth map to the unclamped refine (rawD)] [input integer mask path] [plane parameter JSON output path] [path to save the clamped refined depth map (refD)] [focal length of this sample]`, please refer to the example txt `docs/example/input_txt_example/anno_clamp_refD.txt` for more detail. 
+Each line of the input txt file should include the information: `[path to depth map to the unclamped refine (rawD)] [input 8-bit integer mask path] [plane parameter JSON file output path] [path to save the clamped refined depth map (refD)] [focal length of this sample]`, please refer to the example txt `docs/example/input_txt_example/anno_clamp_refD.txt` for more detail. 
 
-- **STEP 6:**  Generate a video and colored depth map for verification: please run the following command to generate videos for verification. The videos contain the topdown view and front view of the refined point cloud. The output refined point cloud is generated based on the refined depth we get in STEP 4 and the source color image.
+- **STEP 6:**  Generate a video and colored depth map for verification: please run the following command to generate videos for verification. The videos contain the topdown view and front view of the point cloud. The output point cloud is generated based on the refined depth we get in STEP 4 and the source color image.
 
 To generate video, firstly, we need to generate the point cloud and 3D mesh plane:
 
@@ -187,7 +187,7 @@ python annotation/plane_annotation/plane_annotation_tool.py \
 --input_txt docs/example/input_txt_example/verification_gen_pcd_mesh.txt
 ```
 
-Each line of the input txt file should include the information: `[input color image path] [input depth image path] [input integer mask path] [plane parameter JSON path] [folder to save the output point cloud] [folder to save the output mesh plane] [focal length of this sample]`, please refer to the example txt `docs/example/input_txt_example/verification_gen_pcd_mesh.txt` for more detail. 
+Each line of the input txt file should include the information: `[input color image path] [input depth image path] [input 8-bit integer mask path] [plane parameter JSON path] [folder to save the output point cloud] [folder to save the output mesh plane] [focal length of this sample]`, please refer to the example txt `docs/example/input_txt_example/verification_gen_pcd_mesh.txt` for more detail. 
 
 
 Then, we are going to generate video from topdown view and front view of the 3D geometry:
@@ -230,4 +230,4 @@ Each line of the input txt file should include the information: `[sample id] [in
 
 ![verification](figure/anno-tool-intro/html-verify.png)
 
-You can see the color image, colored refined depth image, and point cloud videos on the verification web page. Please note down the sample id manually for reannotate.  
+You can see the color image, colored refined depth map, and point clouds' videos on the verification web page. Please note down the sample id manually for reannotation.  
