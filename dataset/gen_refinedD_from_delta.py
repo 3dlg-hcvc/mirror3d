@@ -2,7 +2,7 @@ import argparse
 import os
 import cv2
 import numpy as np
-from utils.general_utlis import *
+from utils.general_utils import *
 from tqdm import tqdm
 
 

@@ -200,17 +200,25 @@ class InputGenerator(PlaneAnnotationTool):
             }
 
             # COCO annotation[]
-            mask_img = cv2.imread(mirror_instance_mask_path)
-            for instance_index in np.unique(np.reshape(mask_img, (-1, 3)), axis=0):
-                if sum(instance_index) == 0:  # background
+            mask_img = cv2.imread(mirror_instance_mask_path, cv2.IMREAD_ANYDEPTH)
+            for instance_index in np.unique(mask_img):
+                if instance_index == 0: # background
                     continue
-                instance_tag = '%02x%02x%02x' % (instance_index[0], instance_index[1], instance_index[2])  # BGR
-                ground_truth_binary_mask = get_grayscale_instanceMask(mask_img, instance_index)
+                instance_tag = instance_index
+                ground_truth_binary_mask = (mask_img == instance_index).astype(np.uint8)
                 category_info = {'id': mirror_label, 'is_crowd': 0}
                 annotation = create_annotation_info(
                     annotation_id, annotation_unique_id, category_info, ground_truth_binary_mask,
                     (w, h), tolerance=2)
-                annotation["mirror_normal_camera"] = unit_vector(img_info[instance_tag]["mirror_normal"]).tolist()
+                try:
+                    annotation["mirror_normal_camera"] = unit_vector(img_info[instance_tag]["mirror_normal"]).tolist()
+                except:
+                    print("error int mask", mirror_instance_mask_path)
+                    print("error int info", img_info_path)
+                    print("error RGB mask", mirror_instance_mask_path.replace("/project/3dlg-hcvc/mirrors/www/dataset_0531_update_json/mp3d","/project/3dlg-hcvc/mirrors/www/dataset_final_test/mp3d"))
+                    print("error RGB info", img_info_path.replace("/project/3dlg-hcvc/mirrors/www/dataset_0531_update_json/mp3d","/project/3dlg-hcvc/mirrors/www/dataset_final_test/mp3d"))
+                    print("pixel num : ", ground_truth_binary_mask.sum())
+                    continue
                 anchor_normal_class, anchor_normal_residual = self.get_anchor_normal_info(
                     annotation["mirror_normal_camera"])
                 annotation["anchor_normal_class"] = anchor_normal_class
@@ -220,6 +228,7 @@ class InputGenerator(PlaneAnnotationTool):
                 annotation["raw_meshD_path"] = raw_mesh_d_path_abv
                 annotation["raw_sensorD_path"] = raw_sensor_d_path_abv
                 annotation["mirror_color_image_path"] = raw_img_path_abv
+                annotation["file_name"] = raw_img_path_abv
                 annotation["instance_tag"] = str(instance_tag)
                 annotation["mirror_instance_mask_path"] = mirror_instance_mask_path_abv
                 annotations.append(annotation)
