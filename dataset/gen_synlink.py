@@ -25,7 +25,7 @@ def generate_symlinks(unzipped_folder_path):
             continue
         command = "ln -s {} {}".format(src_path, to_link_path)
         os.system(command)
-    print("Finished generating symlinks!")
+    print("Symlink generation finished!")
 
 
 if __name__ == "__main__":

@@ -9,7 +9,7 @@ from utils.algorithm import *
 import shutil
 
 
-def get_fileList_uder_folder(folder_path):
+def get_fileList_under_folder(folder_path):
     command = "find -L {} -type f ".format(folder_path)
     file_path_list = [i.strip() for i in os.popen(command).readlines()]
     return file_path_list

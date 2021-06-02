@@ -344,7 +344,7 @@ class Mirror3DNet_Eval:
                 continue
             img = cv2.imread(img_path)
             v = Visualizer(img[:, :, ::-1], 
-                metadata=MetadataCatalog.get("test_10_normal_mirror"), 
+                metadata=MetadataCatalog.get("test_10_precise_normal_mirror"), 
                 scale=0.5, 
                 instance_mode=ColorMode.IMAGE_BW  
                 )

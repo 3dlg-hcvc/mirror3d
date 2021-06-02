@@ -1,7 +1,7 @@
 import argparse
 import os
 from utils.algorithm import *
-from utils.general_utlis import *
+from utils.general_utils import *
 from utils.plane_pcd_utils import *
 from annotation.plane_annotation.plane_annotation_tool import *
 

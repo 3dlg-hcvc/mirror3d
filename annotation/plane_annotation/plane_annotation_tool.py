@@ -110,6 +110,7 @@ class PlaneAnnotationTool:
                     one_info["normal"] = list(unit_vector(list(plane_parameter[:-1])))
                     one_info["mask_id"] = int(instance_index)
                     img_info.append(one_info)
+                os.makedirs(os.path.split(json_save_path)[0], exist_ok=True)
                 save_json(json_save_path, img_info)
 
     def anno_env_setup(self, input_txt, border_width=25):
@@ -660,7 +661,7 @@ class PlaneAnnotationTool:
         vis.get_view_control().convert_from_pinhole_camera_parameters(cam)
         vis.run()
 
-    def generate_video_screenshot_from_pcdMesh(self, input_txt, above_height=3000):
+    def generate_video_screenshot_from_3Dobject(self, input_txt, above_height=3000):
         """
         Generate "pcd + mesh"'s screenshots
 
@@ -935,13 +936,13 @@ if __name__ == "__main__":
     elif args.function == "9":
         print("input txt format: [path to pointcloud] [path to mesh plane] [screenshot output main folder]")
         plane_anno_tool.set_view_mode("topdown")
-        plane_anno_tool.generate_video_screenshot_from_pcdMesh(args.input_txt, args.above_height)
+        plane_anno_tool.generate_video_screenshot_from_3Dobject(args.input_txt, args.above_height)
         plane_anno_tool.set_view_mode("front")
-        plane_anno_tool.generate_video_screenshot_from_pcdMesh(args.input_txt, args.above_height)
+        plane_anno_tool.generate_video_screenshot_from_3Dobject(args.input_txt, args.above_height)
     elif args.function == "10":
         print("input txt format: [path to pointcloud] [path to mesh plane] [screenshot output main folder]")
         plane_anno_tool.set_view_mode(args.view_mode)
-        plane_anno_tool.generate_video_screenshot_from_pcdMesh(args.input_txt, args.above_height)
+        plane_anno_tool.generate_video_screenshot_from_3Dobject(args.input_txt, args.above_height)
     elif args.function == "11":
         print("input txt format: [input depth image path] [colored depth map saved path]")
         plane_anno_tool.gen_colored_grayscale_for_depth(args.input_txt)
