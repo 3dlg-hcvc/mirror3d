@@ -1,2 +1,1 @@
- output/anno_result/686.png  docs/example/nyu/mirror_instance_mask_precise/686.png output/mirror_plane/686.json output/anno_result_clamped/686.png 519
- output/anno_result/45.png  docs/example/nyu/mirror_instance_mask_precise/45.png  output/mirror_plane/45.json output/anno_result_clamped/45.png 519
+output/anno_result/45.png  docs/example/nyu/mirror_instance_mask_precise/45.png  output/mirror_plane/45.json output/anno_result_clamped/45.png 519
