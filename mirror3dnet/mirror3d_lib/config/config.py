@@ -50,7 +50,7 @@ def get_cfg() -> CfgNode:
     _C.EVAL_SAVE_MASKED_IMG = True
     # if only train depth branch save the output depth | if refine save the refinedD
     _C.EVAL_SAVE_DEPTH = True
-    _C.EVAL_SAVE_NORMAL_VIS = True
+    _C.EVAL_SAVE_NORMAL_VIS = False
     _C.MASK_ON_OTHER_SIZE = False
 
     # --------- refine depth -----------

@@ -13,7 +13,7 @@ python init_depth_generator/bts/pytorch/init_depth_gen_train.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100000 \
 --learning_rate 1e-4 \
---log_directory output/mp3d
+--log_directory ../output/mp3d
 
 # bts train on raw sensor depth
 python init_depth_generator/bts/pytorch/init_depth_gen_train.py \
@@ -29,7 +29,7 @@ python init_depth_generator/bts/pytorch/init_depth_gen_train.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100000 \
 --learning_rate 1e-4 \
---log_directory output/mp3d
+--log_directory ../output/mp3d
 
 # vnl train on refined sensor depth
 python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.py \
@@ -46,7 +46,7 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.
 --checkpoint_save_freq 1500 \
 --num_epochs 100000 \
 --learning_rate 1e-4 \
---log_directory output/mp3d
+--log_directory ../output/mp3d
 
 
 # vnl train on raw sensor depth
@@ -63,7 +63,7 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.
 --checkpoint_save_freq 1500 \
 --num_epochs 100000 \
 --learning_rate 1e-4 \
---log_directory output/mp3d
+--log_directory ../output/mp3d
 
 # saic train on refined sensor depth
 python init_depth_generator/saic_depth_completion/init_depth_gen_train.py \
@@ -80,7 +80,7 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_train.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100000 \
 --learning_rate 1e-4 \
---log_directory output/mp3d
+--log_directory ../output/mp3d
 
 
 # saic train on raw sensor depth
@@ -97,7 +97,7 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_train.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100000 \
 --learning_rate 1e-4 \
---log_directory output/mp3d
+--log_directory ../output/mp3d
 
 
 # planercnn on refined sensor depth
@@ -118,7 +118,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --num_epochs 100000 \
 --learning_rate 1e-4 \
 --anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
---log_directory output/mp3d
+--log_directory ../output/mp3d
 
 
 # planercnn on raw sensor depth
@@ -138,7 +138,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --num_epochs 100000 \
 --learning_rate 1e-4 \
 --anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
---log_directory output/mp3d
+--log_directory ../output/mp3d
 
 
 
@@ -160,7 +160,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --num_epochs 100000 \
 --learning_rate 1e-4 \
 --anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
---log_directory output/mp3d
+--log_directory ../output/mp3d
 
 
 # mirror3dnet on raw sensor depth 
@@ -180,7 +180,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --num_epochs 100000 \
 --learning_rate 1e-4 \
 --anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
---log_directory output/mp3d
+--log_directory ../output/mp3d
 
 # mirror3dnet only normal 10 anchor normal
 python mirror3dnet/run_mirror3dnet.py \
@@ -200,4 +200,4 @@ python mirror3dnet/run_mirror3dnet.py \
 --learning_rate 1e-4 \
 --resume_checkpoint_path ./checkpoint/R-50.pkl \
 --anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
---log_directory output/mp3d
+--log_directory ../output/mp3d

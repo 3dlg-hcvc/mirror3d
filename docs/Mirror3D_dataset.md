@@ -73,11 +73,11 @@ The sample's mirror 3D plane information is saved in a single JSON file. The dat
 
 To generate a refined depth map, please download the relevant source data and put it under the unzipped folder:
 
-- For Matterport3D dataset, please put the `matterport_render_depth`, `undistorted_color_images` and `undistorted_depth_images` folder under `mp3d` folder
+- For the Matterport3D dataset, please put the `matterport_render_depth`, `undistorted_color_images` and `undistorted_depth_images` folder under `mp3d` folder
 
-- For NYUv2-small dataset, please put the `color` and `depth` folder under `nyu` folder
+- For the NYUv2-small dataset, please put the `color` and `depth` folder under `nyu` folder. We use `mirror3d/utils/export_mat_image.py` to generate color and depth frames from the .mat file NYUv2 provides.
   
-- For ScanNet dataset, please put the `scannet_extracted` and `scannet_frames_25k` folder under `scannet` folder
+- For the ScanNet dataset, please put the `scannet_extracted` and `scannet_frames_25k` folder under `scannet` folder
 
 ### STEP 2: generate symlinks for mirror samples' RGBD images
 

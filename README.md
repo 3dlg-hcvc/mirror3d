@@ -54,6 +54,8 @@ Our network input are JSON files stored based on [coco annotation format](https:
 
 ## Training
 
+To train our models please run:
+
 ```shell
 ### Train on NYUv2 mirror data
 bash script/nyu_train.sh
@@ -61,14 +63,18 @@ bash script/nyu_train.sh
 bash script/mp3d_train.sh
 ```
 
+By default, we put the unzipped data and network input packages under ../dataset. Please change the relevant configuration if you store the data in different directories. Output checkpoints and tensorboard log files are saved under `--log_directory`.
+
 ## Inference
 
 ```shell
-### Run the inferece on NYUv2 mirror data
+### Inferece on NYUv2 mirror data
 script/nyu_infer.sh
-### Run the inferece on Matterport3D mirror data
+### Inferece on Matterport3D mirror data
 script/mp3d_infer.sh
 ```
+
+Output depth maps are saved under folder named `pred_depth`. If you want to view the inference result, please run all steps in (mirror3d/visualization/result_visualization.py)[https://github.com/3dlg-hcvc/mirror3d/blob/main/visualization/result_visualization.py].  
 
 
 ## Model Zoo

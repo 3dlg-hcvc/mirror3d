@@ -13,7 +13,7 @@ python init_depth_generator/bts/pytorch/init_depth_gen_train.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100000 \
 --learning_rate 1e-4 \
---log_directory output/nyu
+--log_directory ../output/nyu
 
 # bts train on raw sensor depth
 python init_depth_generator/bts/pytorch/init_depth_gen_train.py \
@@ -29,7 +29,7 @@ python init_depth_generator/bts/pytorch/init_depth_gen_train.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100000 \
 --learning_rate 1e-4 \
---log_directory output/nyu
+--log_directory ../output/nyu
 
 # vnl train on refined sensor depth
 python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.py \
@@ -46,7 +46,7 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.
 --checkpoint_save_freq 1500 \
 --num_epochs 100000 \
 --learning_rate 1e-4 \
---log_directory output/nyu
+--log_directory ../output/nyu
 
 
 # vnl train on raw sensor depth
@@ -63,7 +63,7 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.
 --checkpoint_save_freq 1500 \
 --num_epochs 100000 \
 --learning_rate 1e-4 \
---log_directory output/nyu
+--log_directory ../output/nyu
 
 # saic train on refined sensor depth
 python init_depth_generator/saic_depth_completion/init_depth_gen_train.py \
@@ -80,7 +80,7 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_train.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100000 \
 --learning_rate 1e-4 \
---log_directory output/nyu
+--log_directory ../output/nyu
 
 
 # saic train on raw sensor depth
@@ -97,4 +97,4 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_train.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100000 \
 --learning_rate 1e-4 \
---log_directory output/nyu
+--log_directory ../output/nyu
