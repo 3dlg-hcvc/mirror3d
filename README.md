@@ -74,10 +74,13 @@ script/nyu_infer.sh
 script/mp3d_infer.sh
 ```
 
-Output depth maps are saved under folder named `pred_depth`. If you want to view the inference result, please run all steps in (mirror3d/visualization/result_visualization.py)[https://github.com/3dlg-hcvc/mirror3d/blob/main/visualization/result_visualization.py].  
+Output depth maps are saved under folder named `pred_depth`. If you want to view the inference result, please run all steps in [mirror3d/visualization/result_visualization.py](https://github.com/3dlg-hcvc/mirror3d/blob/main/visualization/result_visualization.py).  
 
 
 ## Model Zoo
+
+
+
 | **Source Dataset** | **Input** | **Train**            | **Method**                                                                                              | **Model Download**                                                                                                      |
 |--------------------|-----------|----------------------|---------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
 | NYUv2              | RGBD      | raw sensor depth     | [saic](https://github.com/saic-vul/saic_depth_completion/tree/94bececdf12bb9867ce52c970bb2d11dee948d37) | [saic_rawD](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/checkpoint/nyu/saic_rawD.zip)                |
