@@ -31,11 +31,11 @@ class Mirror3DNet_Eval:
         logging.basicConfig(filename=log_file_save_path, filemode="w", format="%(asctime)s %(name)s:%(levelname)s:%(message)s", datefmt="%d-%m-%Y %H:%M:%S", level=logging.INFO)
         self.logger = logging
 
-        if self.cfg.TRAIN_COCO_JSON.find("nyu") > 0:
+        if self.cfg.TRAIN_COCO_JSON.find("nyu") or self.cfg.VAL_COCO_JSON.find("nyu") > 0:
             self.dataset_name = "nyu"
-        elif self.cfg.TRAIN_COCO_JSON.find("mp3d") > 0:
+        elif self.cfg.TRAIN_COCO_JSON.find("mp3d") or self.cfg.VAL_COCO_JSON.find("mp3d") > 0:
             self.dataset_name = "mp3d"
-        elif self.cfg.TRAIN_COCO_JSON.find("scannet") > 0:
+        elif self.cfg.TRAIN_COCO_JSON.find("scannet") or self.cfg.VAL_COCO_JSON.find("scannet") > 0:
             self.dataset_name = "scannet"
 
     def eval_main(self):
@@ -75,19 +75,19 @@ class Mirror3DNet_Eval:
         anchor_normal = np.load(self.cfg.ANCHOR_NORMAL_NYP)
         refine_depth_fun = RefineDepth(self.cfg.FOCAL_LENGTH, self.cfg.REF_BORDER_WIDTH, self.cfg.EVAL_WIDTH, self.cfg.EVAL_HEIGHT)
         if self.cfg.REF_DEPTH_TO_REFINE.find("SAIC") > 0:
-            Input_tag = "RGBD"
+            input_tag = "RGBD"
             method_tag = "saic + \mnet"
         elif self.cfg.REF_DEPTH_TO_REFINE.find("BTS") > 0:
-            Input_tag = "RGB"
+            input_tag = "RGB"
             method_tag = "BTS + \mnet"
         elif self.cfg.REF_DEPTH_TO_REFINE.find("VNL") > 0:
-            Input_tag = "RGB"
+            input_tag = "RGB"
             method_tag = "VNL + \mnet"
         elif not self.cfg.OBJECT_CLS:
-            Input_tag = "RGB"
+            input_tag = "RGB"
             method_tag = "PlaneRCNN"
         else:
-            Input_tag = "RGB"
+            input_tag = "RGB"
             method_tag = "\mnet"
         
         train_with_refD=None 
@@ -96,7 +96,7 @@ class Mirror3DNet_Eval:
         else:
             train_with_refD = False
 
-        mirror3d_eval = Mirror3dEval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_ref_d=train_with_refD, logger=self.logger,input_tag=Input_tag, method_tag=method_tag,width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
+        mirror3d_eval = Mirror3dEval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_ref_d=train_with_refD, logger=self.logger,input_tag=input_tag, method_tag=method_tag,width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
 
         input_txt = read_txt(self.cfg.REF_DEPTH_TO_REFINE)
 
@@ -240,10 +240,10 @@ class Mirror3DNet_Eval:
         refine_depth_fun = RefineDepth(self.cfg.FOCAL_LENGTH, self.cfg.REF_BORDER_WIDTH, self.cfg.EVAL_WIDTH, self.cfg.EVAL_HEIGHT)
 
         if not self.cfg.OBJECT_CLS:
-            Input_tag = "RGB"
+            input_tag = "RGB"
             method_tag = "PlaneRCNN-DE"
         else:
-            Input_tag = "RGB"
+            input_tag = "RGB"
             method_tag = "\mnet-DE"
         
         if self.cfg.REFINED_DEPTH:
@@ -251,7 +251,7 @@ class Mirror3DNet_Eval:
         else:
             train_with_refD = False
 
-        mirror3d_eval = Mirror3dEval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_ref_d=train_with_refD, logger=self.logger,input_tag=Input_tag, method_tag=method_tag,width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
+        mirror3d_eval = Mirror3dEval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_ref_d=train_with_refD, logger=self.logger,input_tag=input_tag, method_tag=method_tag,width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
 
         for one_output, one_input in output_list:
             pred_depth = one_output[1][0].detach().cpu().numpy()
@@ -274,10 +274,10 @@ class Mirror3DNet_Eval:
 
         refine_depth_fun = RefineDepth(self.cfg.FOCAL_LENGTH, self.cfg.REF_BORDER_WIDTH, self.cfg.EVAL_WIDTH, self.cfg.EVAL_HEIGHT)
         if not self.cfg.OBJECT_CLS:
-            Input_tag = "RGB"
+            input_tag = "RGB"
             method_tag = "PlaneRCNN"
         else:
-            Input_tag = "RGB"
+            input_tag = "RGB"
             method_tag = "\mnet"
 
         train_with_refD=None
@@ -285,7 +285,7 @@ class Mirror3DNet_Eval:
             train_with_refD = True
         else:
             train_with_refD = False
-        mirror3d_eval = Mirror3dEval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_ref_d=train_with_refD, logger=self.logger,input_tag=Input_tag, method_tag=method_tag,width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
+        mirror3d_eval = Mirror3dEval(dataset_root=self.cfg.VAL_IMG_ROOT,train_with_ref_d=train_with_refD, logger=self.logger,input_tag=input_tag, method_tag=method_tag,width=self.cfg.EVAL_WIDTH, height=self.cfg.EVAL_HEIGHT, dataset=self.dataset_name)
 
         for one_output, one_input in output_list:
             pred_depth = one_output[1][0].detach().cpu().numpy()
@@ -333,8 +333,7 @@ class Mirror3DNet_Eval:
         for one_output, one_input in output_list:
             instances = one_output[0][0]["instances"]
             img_path = one_input[0]["mirror_color_image_path"]
-          
-            color_img_folder = os.path.join(self.cfg.VAL_IMG_ROOT, color_img_folder.replace(self.dataset_root,"").split("/")[1])
+            color_img_folder = os.path.join(self.cfg.VAL_IMG_ROOT, img_path.replace(self.cfg.VAL_IMG_ROOT,"").split("/")[1])
             masked_img_save_path = img_path.replace(color_img_folder, masked_img_save_folder)
             masked_img_save_sub_folder = os.path.split(masked_img_save_path)[0]
             os.makedirs(masked_img_save_sub_folder, exist_ok=True)
