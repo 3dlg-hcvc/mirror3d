@@ -547,7 +547,6 @@ class PlaneAnnotationTool:
                 mirror_bbox = o3d.geometry.OrientedBoundingBox.create_from_points(
                     o3d.utility.Vector3dVector(np.stack(mirror_points, axis=0)))
                 mirror_plane = get_mirror_init_plane_from_mirrorbbox(plane_parameter, mirror_bbox)
-
                 o3d.io.write_point_cloud(pcd_save_path, pcd)
                 print("point cloud saved  to :", os.path.abspath(pcd_save_path))
 
