@@ -1,0 +1,105 @@
+_BASE_: "Mirror3d-R_50_FPN_1x.yaml"
+EVAL : False # TODO ---- eval ----
+
+
+TRAIN_COCO_JSON : [""]# TODO
+TRAIN_IMG_ROOT : [""]# TODO
+TRAIN_NAME : ["train"]
+VAL_COCO_JSON : [""]# TODO
+VAL_IMG_ROOT : [""]# TODO
+VAL_NAME : ["test"]
+OUTPUT_DIR : "output"
+
+
+############## network configure ##############
+
+MODEL:
+  WEIGHTS : "checkpoint/R-50.pkl" 
+  DEVICE : "cuda:0" 
+  ROI_HEADS:
+    BATCH_SIZE_PER_IMAGE : (128) 
+    NUM_CLASSES : 1 # one class for mirror
+  MASK_ON: True 
+  RESNETS: 
+    DEPTH: 50
+
+TEST:
+  EVAL_PERIOD: 100 # TODO
+  AUG:
+    ENABLED : False 
+    FLIP : False
+
+SOLVER:
+  STEPS : (7000, 8000) # TODO
+  MAX_ITER : (10000) # TODO
+  IMS_PER_BATCH : 1 # TODO max 16
+  BASE_LR : 1e-4 # TODO
+  CHECKPOINT_PERIOD : 2000
+
+DATALOADER:
+  NUM_WORKERS : 1
+  FILTER_EMPTY_ANNOTATIONS : True
+  
+INPUT:
+  MIN_SIZE_TRAIN : (480,)
+  MAX_SIZE_TRAIN : 640
+  MIN_SIZE_TEST : (480)
+  MAX_SIZE_TEST : 640
+  RANDOM_FLIP : "none"
+
+
+
+############## planeRCNN configure ##############
+DEPTH_EST : False  # TODO ori & new(optional)
+ANCHOR_REG : True  #! TODO ori & new
+ANCHOR_CLS : True  #! TODO ori & new eval
+OBJECT_SEG : True # TODO ori & new
+OBJECT_CLS : True # TODO new 
+OBJECT_BBOX_REG : True # TODO ori & new
+RGBD_INPUT : False # TODO ori & new(optional)
+
+# ---- DEPTH_EST -----
+FOCAL_LENGTH : 519 # TODO
+DEPTH_SHIFT : 1000.0 #! TODO eval
+INVERSE_DEPTH : False 
+REFINED_DEPTH : True #! TODO eval
+MESH_DEPTH : True  
+
+# ---- ANCHOR_REG -----
+ANCHOR_REG_METHOD : 1  # TODO # (1) loss with GT residual (2) loss with GT normal  
+UNIT_ANCHOR_NORMAL : True
+
+# ---- ANCHOR_CLS -----
+# during evaluation : evaluate img_size & f should be the same as MODEL.WEIGHTS's img_size & f
+ANCHOR_NORMAL_NYP : "mirror3dnet/config/mp3d_kmeans_normal_10.npy"  #! TODO 
+
+#! ############# eval configure ##############
+EVAL_ANCHOR_AP : True # TODO
+EVAL_CLS_AP : True # TODO
+EVAL_MASK_IOU : True
+EVAL_NORMAL : True  # TODO angle diff & normal l2 loss
+EVAL_BRANCH_ORI_DEPTH : False # TODO mirror3d_eval matrics
+EVAL_BRANCH_REF_DEPTH : False # TODO mirror3d_eval matrics
+EVAL_INPUT_REF_DEPTH : False # TODO REF_DEPTH_TO_REFINE
+EVAL_HEIGHT : 480
+EVAL_WIDTH : 640
+
+# ---- eval output ----
+EVAL_SAVE_MASKED_IMG : False # TODO 
+EVAL_SAVE_NORMAL_VIS : False # TODO
+EVAL_SAVE_DEPTH : True # TODO
+MASK_ON_OTHER_SIZE : True
+
+# --------- refine depth -----------
+REF_DEPTH_TO_REFINE : "" # TODO
+REF_MODE : "DE_border" # TODO # "none / rawD_mirror / rawD_border / DE_mirror / DE_border " 
+REF_BORDER_WIDTH : 70 # TODO
+
+
+
+
+
+
+
+
+

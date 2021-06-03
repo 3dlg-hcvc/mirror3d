@@ -1,0 +1,104 @@
+_BASE_: "Mirror3d-R_50_FPN_1x.yaml"
+EVAL : False 
+
+
+TRAIN_COCO_JSON : [""]
+TRAIN_IMG_ROOT : [""]
+TRAIN_NAME : ["train"]
+VAL_COCO_JSON : [""]
+VAL_IMG_ROOT : [""]
+VAL_NAME : ["test"]
+OUTPUT_DIR : "output"
+
+
+############## network configure ##############
+
+MODEL:
+  WEIGHTS : "checkpoint/R-50.pkl" 
+  DEVICE : "cuda:0" 
+  ROI_HEADS:
+    BATCH_SIZE_PER_IMAGE : (128) 
+    NUM_CLASSES : 1 # one class for mirror
+  MASK_ON: True 
+  RESNETS: 
+    DEPTH: 50
+
+TEST:
+  EVAL_PERIOD: 100 
+  AUG:
+    ENABLED : False 
+    FLIP : False
+
+SOLVER:
+  STEPS : (7000, 8000) 
+  MAX_ITER : (10000) 
+  IMS_PER_BATCH : 1 
+  BASE_LR : 1e-4 
+  CHECKPOINT_PERIOD : 2000
+
+DATALOADER:
+  NUM_WORKERS : 1
+  FILTER_EMPTY_ANNOTATIONS : True
+  
+INPUT:
+  MIN_SIZE_TRAIN : (480,)
+  MAX_SIZE_TRAIN : 640
+  MIN_SIZE_TEST : (480)
+  MAX_SIZE_TEST : 640
+  RANDOM_FLIP : "none"
+
+
+
+############## planeRCNN configure ##############
+DEPTH_EST : False  
+ANCHOR_REG : True  
+ANCHOR_CLS : True  
+OBJECT_SEG : True 
+OBJECT_CLS : True 
+OBJECT_BBOX_REG : True 
+RGBD_INPUT : False 
+
+# ---- DEPTH_EST -----
+FOCAL_LENGTH : 519 
+DEPTH_SHIFT : 1000.0 
+INVERSE_DEPTH : False 
+REFINED_DEPTH : True 
+MESH_DEPTH : True  
+
+# ---- ANCHOR_REG -----
+ANCHOR_REG_METHOD : 1  
+UNIT_ANCHOR_NORMAL : True
+
+# ---- ANCHOR_CLS -----
+# during evaluation : evaluate img_size & f should be the same as MODEL.WEIGHTS's img_size & f
+ANCHOR_NORMAL_NYP : "mirror3dnet/config/mp3d_kmeans_normal_10.npy"  
+
+#! ############# eval configure ##############
+EVAL_ANCHOR_AP : True 
+EVAL_CLS_AP : True 
+EVAL_MASK_IOU : True
+EVAL_NORMAL : True  
+EVAL_BRANCH_ORI_DEPTH : False 
+EVAL_BRANCH_REF_DEPTH : False 
+EVAL_INPUT_REF_DEPTH : False 
+EVAL_HEIGHT : 480
+EVAL_WIDTH : 640
+
+# ---- eval output ----
+EVAL_SAVE_MASKED_IMG : True 
+EVAL_SAVE_DEPTH : True 
+MASK_ON_OTHER_SIZE : True
+
+# --------- refine depth -----------
+REF_DEPTH_TO_REFINE : "" 
+REF_MODE : "DE_border" 
+REF_BORDER_WIDTH : 30 
+
+
+
+
+
+
+
+
+

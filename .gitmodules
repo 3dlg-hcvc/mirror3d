@@ -1,11 +1,11 @@
 [submodule "init_depth_generator/saic_depth_completion"]
-	path = init_depth_generator/saic_depth_completion
+	path = mirror3d/init_depth_generator/saic_depth_completion
 	url = https://github.com/ChristinaTan0704/saic_depth_completion.git
 [submodule "init_depth_generator/VNL_Monocular_Depth_Prediction"]
-	path = init_depth_generator/VNL_Monocular_Depth_Prediction
+	path = mirror3d/init_depth_generator/VNL_Monocular_Depth_Prediction
 	url = https://github.com/ChristinaTan0704/VNL_Monocular_Depth_Prediction.git
 [submodule "init_depth_generator/bts"]
-	path = init_depth_generator/bts
+	path = mirror3d/init_depth_generator/bts
 	url = https://github.com/ChristinaTan0704/bts.git
 [submodule "annotation/classifier/image-sorter2"]
 	path = annotation/classifier/image-sorter2
