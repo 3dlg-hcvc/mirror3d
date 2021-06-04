@@ -6,7 +6,7 @@
 - **STEP 1:**  Train a classifier 
 
     ```python
-    python annotation/classifier/classifier_train.py \
+    python mirror3d/annotation/classifier/classifier_train.py \
     --log_directory [checkpoint and .log file saved directory] \
     --train_pos_list [training positive_sample_path.txt] \
     --train_neg_list [training negative_sample_path.txt] \
@@ -18,7 +18,7 @@ You can find Martterport3d pre-trained checkpoint for the classifier on [checkpo
 - **STEP 2:**  Get sorted img_list with scores (saved in .json file)
 
     ```python
-    python annotation/classifier/classifier_train.py \
+    python mirror3d/annotation/classifier/classifier_train.py \
     --unsort_img_list [img_path_to_be_sorted.txt] \
     --resume_path [classifier_checkpoint_path] \
     --output_save_folder [output_folder_path to save the output .json file]
@@ -28,7 +28,7 @@ You can find Martterport3d pre-trained checkpoint for the classifier on [checkpo
  
     **Tip**: you can use `Mirror3D/annotation/classifier/classification_tool.py` to manually annotate mirror images
     ```python
-    python annotation/classifier/classification_tool.py \
+    python mirror3d/annotation/classifier/classification_tool.py \
     --data_root [root path of the dataset] \
     --json_file_path [path of the .json file output by STEP 2] \
     --anno_output_folder [annotation result output folder] 
@@ -70,7 +70,7 @@ This is an example of annotating mirror planes for several NYUv2 samples.
 - **STEP 1:**  Get 8-bit integer masks from CVAT output. We are going to  use coco format annotation result from CVAT:
 
 ```python
-python annotation/plane_annotation/plane_annotation_tool.py \
+python mirror3d/annotation/plane_annotation/plane_annotation_tool.py \
 --function 1 \
 --coco_json [path to the coco format JSON file dumped by CVAT] \
 --input_txt [path to the txt file] 
@@ -81,7 +81,7 @@ You should generate a txt file. Each line of the text file should contain three 
 - **STEP 2:**  Set up annotation environment: please run the following command to set up the environment for annotation:
 
 ```python
-python annotation/plane_annotation/plane_annotation_tool.py \
+python mirror3d/annotation/plane_annotation/plane_annotation_tool.py \
 --function 4 \
 --overwrite \
 --border_width 25 \
@@ -94,7 +94,7 @@ Each line of the input txt file should include information: `[input color image 
 - **STEP 3:**  Manually annotate the mirror plane: please run the following command to try out the mirror plane annotation tool:
 
 ```python
-python annotation/plane_annotation/plane_annotation_tool.py \
+python mirror3d/annotation/plane_annotation/plane_annotation_tool.py \
 --function 5 \
 --annotation_progress_save_folder annotation/plane_annotation/example/anno_progess \
 --input_txt docs/example/input_txt_example/anno_update_plane.txt
@@ -159,7 +159,7 @@ After adjustment, you can see the adjusted result. The yellow points are generat
 - **STEP 4:**   Generate refined depth map: please run the following command to generate a refined depth map from the original depth map
 
 ```shell
-python annotation/plane_annotation/plane_annotation_tool.py \
+python mirror3d/annotation/plane_annotation/plane_annotation_tool.py \
 --function 6 \
 --input_txt docs/example/input_txt_example/anno_get_refD.txt
 ```
@@ -169,7 +169,7 @@ Each line of the input txt file should include the information: `[path to depth 
 - **STEP 5:**  (Optional) Clamp the refined depth map gained from STEP 4:
 
 ```shell
-python annotation/plane_annotation/plane_annotation_tool.py \
+python mirror3d/annotation/plane_annotation/plane_annotation_tool.py \
 --function 7 \
 --input_txt docs/example/input_txt_example/anno_clamp_refD.txt \
 --expand_range 100 --clamp_dis 100 --border_width 25
@@ -182,7 +182,7 @@ Each line of the input txt file should include the information: `[path to depth 
 To generate video, firstly, we need to generate the point cloud and 3D mesh plane:
 
 ```shell
-python annotation/plane_annotation/plane_annotation_tool.py \
+python mirror3d/annotation/plane_annotation/plane_annotation_tool.py \
 --function 8 \
 --input_txt docs/example/input_txt_example/verification_gen_pcd_mesh.txt
 ```
@@ -193,7 +193,7 @@ Each line of the input txt file should include the information: `[input color im
 Then, we are going to generate video from topdown view and front view of the 3D geometry:
 
 ```shell
-python annotation/plane_annotation/plane_annotation_tool.py \
+python mirror3d/annotation/plane_annotation/plane_annotation_tool.py \
 --function 9 \
 --above_height 3000 \
 --input_txt docs/example/input_txt_example/verification_gen_video.txt
@@ -204,7 +204,7 @@ Each line of the input txt file should include the information: `[path to point 
 To better verify our annotation result, we also need to generate the colored refined depth map:
 
 ```shell
-python annotation/plane_annotation/plane_annotation_tool.py \
+python mirror3d/annotation/plane_annotation/plane_annotation_tool.py \
 --function 11 \
 --input_txt docs/example/input_txt_example/gen_colored_depth.txt
 ```
@@ -217,7 +217,7 @@ Each line of the input txt file should include the information: `[input depth im
 
 
 ```shell
-python annotation/plane_annotation/plane_annotation_tool.py \
+python mirror3d/annotation/plane_annotation/plane_annotation_tool.py \
 --function 12 \
 --input_txt docs/example/input_txt_example/verification_gen_html.txt \
 --video_num_per_page 10 \

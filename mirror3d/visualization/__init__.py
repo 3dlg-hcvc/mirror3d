@@ -1,3 +1,2 @@
-from visualization.dataset_visualization import *
-from visualization.other_visualization_tool import *
-from visualization.result_visualization import *
+from mirror3d.visualization.other_visualization_tool import *
+from mirror3d.visualization.result_visualization import *

@@ -1,9 +1,9 @@
 import argparse
 import os
-from utils.algorithm import *
-from utils.general_utils import *
-from utils.plane_pcd_utils import *
-from annotation.plane_annotation.plane_annotation_tool import *
+from mirror3d.utils.algorithm import *
+from mirror3d.utils.general_utils import *
+from mirror3d.utils.plane_pcd_utils import *
+from mirror3d.annotation.plane_annotation.plane_annotation_tool import *
 
 
 def gen_color_depth_mask(mask_main_folder ="", raw_d_main_folder ="", color_main_folder =""):

@@ -3,9 +3,9 @@
 import os
 import sys
 import torch
-from utils.mirror3d_metrics import *
-from utils.general_utils import *
-from utils.plane_pcd_utils import *
+from mirror3d.utils.mirror3d_metrics import *
+from mirror3d.utils.general_utils import *
+from mirror3d.utils.plane_pcd_utils import *
 
 from detectron2.data import (
     MetadataCatalog,

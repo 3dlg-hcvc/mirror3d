@@ -7,9 +7,9 @@ import random
 import time
 import bs4
 from skimage import io
-from utils.general_utils import *
-from utils.algorithm import *
-from utils.plane_pcd_utils import *
+from mirror3d.utils.general_utils import *
+from mirror3d.utils.algorithm import *
+from mirror3d.utils.plane_pcd_utils import *
 from PIL import ImageColor
 
 
@@ -544,9 +544,11 @@ class PlaneAnnotationTool:
                 mirror_points = get_points_in_mask(f, depth_img_path, mirror_mask=binary_instance_mask)
                 mirror_pcd = o3d.geometry.PointCloud()
                 mirror_pcd.points = o3d.utility.Vector3dVector(np.stack(mirror_points, axis=0))
-                mirror_bbox = o3d.geometry.OrientedBoundingBox.create_from_points(
+                mirror_bbox = o3d.geometry.AxisAlignedBoundingBox.create_from_points(
                     o3d.utility.Vector3dVector(np.stack(mirror_points, axis=0)))
+                mirror_bbox= o3d.geometry.OrientedBoundingBox.create_from_axis_aligned_bounding_box(mirror_bbox)
                 mirror_plane = get_mirror_init_plane_from_mirrorbbox(plane_parameter, mirror_bbox)
+                
                 o3d.io.write_point_cloud(pcd_save_path, pcd)
                 print("point cloud saved  to :", os.path.abspath(pcd_save_path))
 
@@ -732,7 +734,7 @@ class PlaneAnnotationTool:
 
     def gen_verification_html(self, input_txt, video_num_per_page, html_output_folder):
 
-        template_path = "visualization/template/veri_template.html"
+        template_path = "mirror3d/visualization/template/veri_template.html"
         os.makedirs(html_output_folder, exist_ok=True)
         process_list_temp = self.get_list_to_process(read_txt(input_txt))
         process_list = []

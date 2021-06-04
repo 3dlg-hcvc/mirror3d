@@ -1,5 +1,5 @@
 # bts train on refined sensor depth
-python init_depth_generator/bts/pytorch/init_depth_gen_train.py \
+python mirror3d/init_depth_generator/bts/pytorch/init_depth_gen_train.py \
 --refined_depth \
 --coco_train ../network_input_json/mp3d/train_10_precise_normal_all.json \
 --coco_val ../network_input_json/mp3d/val_10_precise_normal_mirror.json \
@@ -16,7 +16,7 @@ python init_depth_generator/bts/pytorch/init_depth_gen_train.py \
 --log_directory ../output/mp3d
 
 # bts train on raw sensor depth
-python init_depth_generator/bts/pytorch/init_depth_gen_train.py \
+python mirror3d/init_depth_generator/bts/pytorch/init_depth_gen_train.py \
 --coco_train ../network_input_json/mp3d/train_10_precise_normal_all.json \
 --coco_val ../network_input_json/mp3d/val_10_precise_normal_mirror.json \
 --coco_train_root ../dataset/mp3d \
@@ -32,7 +32,7 @@ python init_depth_generator/bts/pytorch/init_depth_gen_train.py \
 --log_directory ../output/mp3d
 
 # vnl train on refined sensor depth
-python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.py \
+python mirror3d/init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.py \
 --refined_depth \
 --coco_train ../network_input_json/mp3d/train_10_precise_normal_all.json \
 --coco_val ../network_input_json/mp3d/val_10_precise_normal_mirror.json \
@@ -50,7 +50,7 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.
 
 
 # vnl train on raw sensor depth
-python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.py \
+python mirror3d/init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.py \
 --coco_train ../network_input_json/mp3d/train_10_precise_normal_all.json \
 --coco_val ../network_input_json/mp3d/val_10_precise_normal_mirror.json \
 --coco_train_root ../dataset/mp3d \
@@ -66,7 +66,7 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_train.
 --log_directory ../output/mp3d
 
 # saic train on refined sensor depth
-python init_depth_generator/saic_depth_completion/init_depth_gen_train.py \
+python mirror3d/init_depth_generator/saic_depth_completion/init_depth_gen_train.py \
 --refined_depth \
 --coco_train ../network_input_json/mp3d/train_10_precise_normal_all.json \
 --coco_val ../network_input_json/mp3d/val_10_precise_normal_mirror.json \
@@ -84,7 +84,7 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_train.py \
 
 
 # saic train on raw sensor depth
-python init_depth_generator/saic_depth_completion/init_depth_gen_train.py \
+python mirror3d/init_depth_generator/saic_depth_completion/init_depth_gen_train.py \
 --coco_train ../network_input_json/mp3d/train_10_precise_normal_all.json \
 --coco_val ../network_input_json/mp3d/val_10_precise_normal_mirror.json \
 --coco_train_root ../dataset/mp3d \
@@ -101,7 +101,7 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_train.py \
 
 
 # planercnn on refined sensor depth
-python mirror3dnet/run_mirror3dnet.py \
+python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --resume_checkpoint_path ../checkpoint/R-50.pkl \
 --config mirror3dnet/config/planercnn_config.yml \
 --refined_depth \
@@ -122,7 +122,7 @@ python mirror3dnet/run_mirror3dnet.py \
 
 
 # planercnn on raw sensor depth
-python mirror3dnet/run_mirror3dnet.py \
+python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --resume_checkpoint_path ../checkpoint/R-50.pkl \
 --config mirror3dnet/config/planercnn_config.yml \
 --coco_train ../network_input_json/mp3d/train_10_precise_normal_mirror.json \
@@ -143,7 +143,7 @@ python mirror3dnet/run_mirror3dnet.py \
 
 
 # mirror3dnet on refined sensor depth 
-python mirror3dnet/run_mirror3dnet.py \
+python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --config mirror3dnet/config/mirror3dnet_config.yml \
 --refined_depth \
 --resume_checkpoint_path ../checkpoint/R-50.pkl \
@@ -164,7 +164,7 @@ python mirror3dnet/run_mirror3dnet.py \
 
 
 # mirror3dnet on raw sensor depth 
-python mirror3dnet/run_mirror3dnet.py \
+python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --config mirror3dnet/config/mirror3dnet_config.yml \
 --resume_checkpoint_path ../checkpoint/R-50.pkl \
 --coco_train ../network_input_json/mp3d/train_10_precise_normal_mirror.json \
@@ -183,7 +183,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --log_directory ../output/mp3d
 
 # mirror3dnet only normal 10 anchor normal
-python mirror3dnet/run_mirror3dnet.py \
+python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --config mirror3dnet/config/mirror3dnet_normal_config.yml \
 --coco_train ../network_input_json/mp3d/train_10_precise_normal_mirror.json \
 --coco_val ../network_input_json/mp3d/val_10_precise_normal_mirror.json \
