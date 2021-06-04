@@ -544,11 +544,12 @@ class PlaneAnnotationTool:
                 mirror_points = get_points_in_mask(f, depth_img_path, mirror_mask=binary_instance_mask)
                 mirror_pcd = o3d.geometry.PointCloud()
                 mirror_pcd.points = o3d.utility.Vector3dVector(np.stack(mirror_points, axis=0))
-                mirror_bbox = o3d.geometry.AxisAlignedBoundingBox.create_from_points(
+                mirror_bbox = o3d.geometry.OrientedBoundingBox.create_from_points(
                     o3d.utility.Vector3dVector(np.stack(mirror_points, axis=0)))
-                mirror_bbox= o3d.geometry.OrientedBoundingBox.create_from_axis_aligned_bounding_box(mirror_bbox)
+                # mirror_bbox= o3d.geometry.OrientedBoundingBox.create_from_axis_aligned_bounding_box(mirror_bbox)
                 mirror_plane = get_mirror_init_plane_from_mirrorbbox(plane_parameter, mirror_bbox)
-                
+                # mirror_plane =  get_mirror_init_plane_from_max_min(plane_parameter, mirror_bbox.get_max_bound(), mirror_bbox.get_min_bound())
+                o3d.visualization.draw_geometries([pcd, mirror_plane, mirror_bbox]) # TODO del
                 o3d.io.write_point_cloud(pcd_save_path, pcd)
                 print("point cloud saved  to :", os.path.abspath(pcd_save_path))
 
