@@ -3,8 +3,8 @@
 ## Environment Setup
 
 - python 3.7.4
-- [Detectron2](https://github.com/facebookresearch/detectron2): `python -m pip install 'git+https://github.com/facebookresearch/detectron2.git'`
-- pip install -e .
+- Setup [Detectron2](https://github.com/facebookresearch/detectron2): `python -m pip install 'git+https://github.com/facebookresearch/detectron2.git'`
+- Install packages `pip install -e` .
 - Pull submodules `git submodule update --init --recursive`
 
 
