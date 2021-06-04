@@ -15,7 +15,7 @@ import torchvision.transforms as transforms
 from mirror3d_resnet import resnet50
 import random
 from tensorboardX import SummaryWriter
-from annotation.classifier.classifier_Dataset import *
+from mirror3d.annotation.classifier.classifier_Dataset import *
 import logging
 import datetime as d
 

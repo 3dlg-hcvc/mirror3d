@@ -8,7 +8,7 @@ from pycocotools.cocoeval import COCOeval, maskUtils
 import copy
 import numpy as np
 import math
-from utils.algorithm import *
+from mirror3d.utils.algorithm import *
 
 class Mirror3dCOCOeval(COCOeval):
     # Interface for evaluating detection on the Microsoft COCO dataset.

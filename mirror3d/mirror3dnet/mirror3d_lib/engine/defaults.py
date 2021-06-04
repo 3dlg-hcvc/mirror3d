@@ -16,7 +16,7 @@ import itertools
 import torch.utils.data
 from collections import OrderedDict
 import os
-from utils.general_utils import check_converge
+from mirror3d.utils.general_utils import check_converge
 
 from detectron2.engine.defaults import DefaultTrainer
 from detectron2.evaluation import (

@@ -1,5 +1,5 @@
 # bts infer on refined mesh depth
-python init_depth_generator/bts/pytorch/init_depth_gen_infer.py \
+python mirror3d/init_depth_generator/bts/pytorch/init_depth_gen_infer.py \
 --resume_checkpoint_path ../checkpoint/mp3d/bts_refD \
 --refined_depth \
 --coco_val ../network_input_json/mp3d/val_10_precise_normal_mirror.json \
@@ -11,7 +11,7 @@ python init_depth_generator/bts/pytorch/init_depth_gen_infer.py \
 --output_save_folder ../output/mp3d
 
 # bts infer on raw mesh depth
-python init_depth_generator/bts/pytorch/init_depth_gen_infer.py \
+python mirror3d/init_depth_generator/bts/pytorch/init_depth_gen_infer.py \
 --resume_checkpoint_path ../checkpoint/mp3d/bts_rawD \
 --refined_depth \
 --coco_val ../network_input_json/mp3d/val_10_precise_normal_mirror.json \
@@ -24,7 +24,7 @@ python init_depth_generator/bts/pytorch/init_depth_gen_infer.py \
 
 
 # vnl infer on refined mesh depth
-python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.py \
+python mirror3d/init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.py \
 --resume_checkpoint_path ../checkpoint/mp3d/vnl_refD.pth \
 --refined_depth \
 --coco_val ../network_input_json/mp3d/val_10_precise_normal_mirror.json \
@@ -37,7 +37,7 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.
 --output_save_folder ../output/mp3d
 
 # vnl infer on raw mesh depth
-python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.py \
+python mirror3d/init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.py \
 --resume_checkpoint_path ../checkpoint/mp3d/vnl_rawD.pth \
 --refined_depth \
 --coco_val ../network_input_json/mp3d/val_10_precise_normal_mirror.json \
@@ -51,7 +51,7 @@ python init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.
 
 
 # saic infer on refined mesh depth
-python init_depth_generator/saic_depth_completion/init_depth_gen_infer.py \
+python mirror3d/init_depth_generator/saic_depth_completion/init_depth_gen_infer.py \
 --resume_checkpoint_path ../checkpoint/mp3d/saic_refD.pth \
 --refined_depth \
 --coco_val ../network_input_json/mp3d/val_10_precise_normal_mirror.json \
@@ -65,7 +65,7 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_infer.py \
 
 
 # saic infer on raw mesh depth
-python init_depth_generator/saic_depth_completion/init_depth_gen_infer.py \
+python mirror3d/init_depth_generator/saic_depth_completion/init_depth_gen_infer.py \
 --refined_depth \
 --resume_checkpoint_path ../checkpoint/mp3d/saic_rawD.pth \
 --coco_val ../network_input_json/mp3d/val_10_precise_normal_mirror.json \
@@ -78,7 +78,7 @@ python init_depth_generator/saic_depth_completion/init_depth_gen_infer.py \
 
 
 # planercnn on refined mesh depth
-python mirror3dnet/run_mirror3dnet.py \
+python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --eval \
 --resume_checkpoint_path ../checkpoint/mp3d/planercnn_refD.pth \
 --config mirror3dnet/config/planercnn_config.yml \
@@ -94,7 +94,7 @@ python mirror3dnet/run_mirror3dnet.py \
 
 
 # planercnn on raw mesh depth
-python mirror3dnet/run_mirror3dnet.py \
+python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --eval \
 --refined_depth \
 --resume_checkpoint_path ../checkpoint/mp3d/planercnn_rawD.pth \
@@ -111,7 +111,7 @@ python mirror3dnet/run_mirror3dnet.py \
 
 
 # mirror3dnet on refined mesh depth 
-python mirror3dnet/run_mirror3dnet.py \
+python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --eval \
 --config mirror3dnet/config/mirror3dnet_config.yml \
 --refined_depth \
@@ -127,7 +127,7 @@ python mirror3dnet/run_mirror3dnet.py \
 
 
 # mirror3dnet on raw mesh depth 
-python mirror3dnet/run_mirror3dnet.py \
+python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --eval \
 --refined_depth \
 --config mirror3dnet/config/mirror3dnet_config.yml \
@@ -142,7 +142,7 @@ python mirror3dnet/run_mirror3dnet.py \
 --log_directory ../output/mp3d
 
 # mirror3dnet only normal 10 anchor normal
-python mirror3dnet/run_mirror3dnet.py \
+python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --eval \
 --refined_depth \
 --resume_checkpoint_path ../checkpoint/mp3d/mirror3dnet_normal_10.pth \

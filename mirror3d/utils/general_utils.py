@@ -5,7 +5,7 @@ import cv2
 import math
 from PIL import Image
 import matplotlib.pyplot as plt
-from utils.algorithm import *
+from mirror3d.utils.algorithm import *
 import shutil
 
 

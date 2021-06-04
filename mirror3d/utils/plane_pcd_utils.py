@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
-from utils.algorithm import *
-from utils.general_utils import *
+from mirror3d.utils.algorithm import *
+from mirror3d.utils.general_utils import *
 from sympy import *
 from PIL import Image, ImageDraw
 

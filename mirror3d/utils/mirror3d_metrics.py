@@ -3,7 +3,7 @@ import cv2
 import os
 import numpy as np
 import math
-from utils.general_utils import *
+from mirror3d.utils.general_utils import *
 import time
 
 

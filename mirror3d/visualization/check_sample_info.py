@@ -3,10 +3,10 @@ import cv2
 import json
 import argparse
 import open3d as o3d
-from utils.algorithm import *
-from utils.general_utils import *
-from utils.plane_pcd_utils import *
-from annotation.plane_annotation.plane_annotation_tool import *
+from mirror3d.utils.algorithm import *
+from mirror3d.utils.general_utils import *
+from mirror3d.utils.plane_pcd_utils import *
+from mirror3d.annotation.plane_annotation.plane_annotation_tool import *
 
 
 def check_mirror_normal_in_one_json(color_img_path, mask_img_path, depth_img_path, json_path, f):

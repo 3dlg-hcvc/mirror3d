@@ -3,10 +3,10 @@ import cv2
 import argparse
 import os
 import bs4
-from utils.algorithm import *
-from utils.general_utils import *
-from utils.plane_pcd_utils import *
-from annotation.plane_annotation.plane_annotation_tool import *
+from mirror3d.utils.algorithm import *
+from mirror3d.utils.general_utils import *
+from mirror3d.utils.plane_pcd_utils import *
+from mirror3d.annotation.plane_annotation.plane_annotation_tool import *
 
 
 class ResultVisualization(PlaneAnnotationTool):

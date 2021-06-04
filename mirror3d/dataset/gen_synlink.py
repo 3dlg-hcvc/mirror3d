@@ -1,6 +1,6 @@
 import argparse
 import os
-from utils.general_utils import *
+from mirror3d.utils.general_utils import *
 from tqdm import tqdm
 
 

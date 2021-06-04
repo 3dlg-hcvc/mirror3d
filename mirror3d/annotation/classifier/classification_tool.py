@@ -4,7 +4,7 @@ import os
 import operator
 from shutil import copy
 from PIL import ImageTk, Image
-from utils.general_utils import *
+from mirror3d.utils.general_utils import *
 from tkinter import messagebox
 
 """

@@ -84,13 +84,13 @@ To generate a refined depth map, please download the relevant source data and pu
 Please run the following command to create symlinks to the mirror samples' original color image, sensor depth map and mesh depth map:
 
 ```python
-python dataset/gen_synlink.py --unzipped_folder_path [the path to the mp3d/ nyu/ scannet folder] 
+python mirror3d/dataset/gen_synlink.py --unzipped_folder_path [the path to the mp3d/ nyu/ scannet folder] 
 ```
 
 ### STEP 3 : generate refined depth map based on delta image
 
 ```python
-python dataset/gen_refinedD_from_delta.py \
+python mirror3d/dataset/gen_refinedD_from_delta.py \
 --unzipped_folder_path [the path to the mp3d/ nyu/ scannet folder] \
 --mask_version [mirror mask version: precise (default) / coarse]
 ```
@@ -163,7 +163,7 @@ scannet
 The mirror instances masks we provide in the zip files are 8-bit integer instance masks. If you want to generate RGB instance masks for visualization, you can run:
 
 ```shell
-python annotation/plane_annotation/plane_annotation_tool.py \
+python mirror3d/annotation/plane_annotation/plane_annotation_tool.py \
 --function 2 \
 --input_txt [path to txt file] # Each line of this txt file should include information in format "[input integer mask path] [RGB mask output path]"
 
@@ -171,7 +171,7 @@ python annotation/plane_annotation/plane_annotation_tool.py \
 
 Here's a quick example of generating an RGB segmentation mask based on an 8-bit integer instance mask for an NYUv2 sample:
 ```shell
-python annotation/plane_annotation/plane_annotation_tool.py \
+python mirror3d/annotation/plane_annotation/plane_annotation_tool.py \
 --function 2 \
 --input_txt docs/example/input_txt_example/get_color_mask.txt
 ```
@@ -180,7 +180,7 @@ python annotation/plane_annotation/plane_annotation_tool.py \
 To check and visualize one sample's data, you can run:
 
 ```python
-python visualization/check_sample_info.py \
+python mirror3d/visualization/check_sample_info.py \
 --color_img_path [path to the sample's color image] \
 --depth_img_path [path to the sample's depth image] \
 --mask_img_path [path to the sample's integer mask] \
@@ -192,7 +192,7 @@ python visualization/check_sample_info.py \
 For example, here's a screemshot of the 3D visulization after running:
 
 ```python
-python visualization/check_sample_info.py \
+python mirror3d/visualization/check_sample_info.py \
 --color_img_path annotation/plane_annotation/example/nyu/mirror_color_images/664.jpg \
 --depth_img_path annotation/plane_annotation/example/nyu/refined_sensorD_precise/664.png \
 --mask_img_path annotation/plane_annotation/example/nyu/mirror_instance_mask_precise/664.png \
