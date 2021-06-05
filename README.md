@@ -69,7 +69,7 @@ bash script/nyu_train.sh
 bash script/mp3d_train.sh
 ```
 
-By default, we put the unzipped data and network input packages under ../dataset. Please change the relevant configuration if you store the data in different directories. Output checkpoints and tensorboard log files are saved under `--log_directory`.
+By default, we put the unzipped data and network input packages under `../dataset`. Please change the relevant configuration if you store the data in different directories. Output checkpoints and tensorboard log files are saved under `--log_directory`.
 
 ## Inference
 
