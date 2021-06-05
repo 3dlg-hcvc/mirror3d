@@ -3,13 +3,19 @@
 Mirror3D is a large-scale 3D mirror plane annotation dataset based on three popular RGBD datasets ([Matterpot3D](https://niessner.github.io/Matterport/),[NYUv2](https://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html), and [ScanNet](http://www.scan-net.org/)) containing 7,011 mirror instance masks and 3D planes.
 
 Please visit our [project website](https://github.com/3dlg-hcvc/mirror3d) for updates and to browse the data.
-<!-- 
+
 ## Download
 
 - [mp3d.zip](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/mp3d.zip)
 - [scannet.zip](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/scannet.zip)
 - [nyu.zip](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/nyu.zip)
- -->
+
+
+Check out mirror data detail statistic: 
+- Matterport3D: [nyu.csv](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/metadata/mp3d.csv)
+- ScanNet: [nyu.csv](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/metadata/scannet.csv)
+- NYUv2-small: [nyu.csv](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/metadata/nyu.csv)
+
 
 ## Mirror3D Data Organization
 
@@ -66,12 +72,6 @@ The sample's mirror 3D plane information is saved in a single JSON file. The dat
     }
 ]
 ```
-
-Check out mirror data detail statistic: 
-- Matterport3D: [nyu.csv](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/metadata/mp3d.csv)
-- ScanNet: [nyu.csv](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/metadata/scannet.csv)
-- NYUv2-small: [nyu.csv](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/metadata/nyu.csv)
-
 
 ## Generate refined depth map
 ### STEP 1: download Mirror3D dataset
