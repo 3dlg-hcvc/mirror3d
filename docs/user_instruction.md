@@ -13,7 +13,7 @@
     --val_pos_list [validation positive_sample_path.txt] \
     --val_neg_list [validation negative_sample_path.txt]
     ```
-You can find Martterport3d pre-trained checkpoint for the classifier on [checkpoint.pth.tar](http://aspis.cmpt.sfu.ca/projects/mirrors/checkpoint/classifier_checkpoint/checkpoint.pth.tar)
+    You can find Martterport3d pre-trained checkpoint for the classifier on [checkpoint.pth.tar](http://aspis.cmpt.sfu.ca/projects/mirrors/checkpoint/classifier_checkpoint/checkpoint.pth.tar)
 
 - **STEP 2:**  Get sorted img_list with scores (saved in .json file)
 
@@ -40,25 +40,25 @@ You can find Martterport3d pre-trained checkpoint for the classifier on [checkpo
 We use [cvat](https://github.com/dommorin/cvat) to annotate mirror masks manually. Please refer to [cvat user guide](https://github.com/dommorin/cvat/blob/master/cvat/apps/documentation/user_guide.md) for guidance on how to do mask annotation. 
 ## STAGE 3: Plane Annotation
 
-We provide a simple plane annotation tool `annotation/plane_annotation/plane_annotation_tool.py` to annotate the mirror plane.
+    We provide a simple plane annotation tool `annotation/plane_annotation/plane_annotation_tool.py` to annotate the mirror plane.
 
-Overall, we provide 12 functions in the annotation tool:
+    Overall, we provide 12 functions in the annotation tool:
 
-- `--function 1`: generate integer mask and colorful masks from the coco format JSON file output by CVAT
-- `--function 2`: (optional) generate colorful mask from integer mask
-- `--function 3`: (optional) update mirror plane information based on the refined depth map
-- `--function 4`: set up the environment for annotation
-- `--function 5`: use the annotation tool to annotate the mirror plane
-- `--function 6`: update the depth at mirror region for uncorrected depth map
-- `--function 7`: clamp outliers at mirror border
-- `--function 8`: generate point cloud and 3D mesh plane from RGBD input and plane parameter
-- `--function 9`: generate screenshots and videos under topdown view and front view for the point cloud and 3D mesh plane generated in function 8 
-- `--function 10`: generate screenshots and videos under topdown view or front view for the point cloud and 3D mesh plane generated in function 8 
-- `--function 11`: generate the colored depth map
-- `--function 12`: generate HTML to view mirror color images, mirror colored depth images, and videos generated in function 9
+    - `--function 1`: generate integer mask and colorful masks from the coco format JSON file output by CVAT
+    - `--function 2`: (optional) generate colorful mask from integer mask
+    - `--function 3`: (optional) update mirror plane information based on the refined depth map
+    - `--function 4`: set up the environment for annotation
+    - `--function 5`: use the annotation tool to annotate the mirror plane
+    - `--function 6`: update the depth at mirror region for uncorrected depth map
+    - `--function 7`: clamp outliers at mirror border
+    - `--function 8`: generate point cloud and 3D mesh plane from RGBD input and plane parameter
+    - `--function 9`: generate screenshots and videos under topdown view and front view for the point cloud and 3D mesh plane generated in function 8 
+    - `--function 10`: generate screenshots and videos under topdown view or front view for the point cloud and 3D mesh plane generated in function 8 
+    - `--function 11`: generate the colored depth map
+    - `--function 12`: generate HTML to view mirror color images, mirror colored depth images, and videos generated in function 9
 
 
-Please follow the [example](#jump) below to get familiar with our plane annotation tool.
+    Please follow the [example](#jump) below to get familiar with our plane annotation tool.
 
 
 <span id="jump"></span>
