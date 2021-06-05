@@ -10,10 +10,12 @@ Please visit our [project website](https://github.com/3dlg-hcvc/mirror3d) for up
 - [scannet.zip](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/scannet.zip)
 - [nyu.zip](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/nyu.zip)
 
+
 Check out mirror data detail statistic: 
 - Matterport3D: [nyu.csv](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/metadata/mp3d.csv)
 - ScanNet: [nyu.csv](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/metadata/scannet.csv)
 - NYUv2-small: [nyu.csv](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/metadata/nyu.csv)
+
 
 ## Mirror3D Data Organization
 
@@ -71,26 +73,57 @@ The sample's mirror 3D plane information is saved in a single JSON file. The dat
 ]
 ```
 
-
 ## Generate refined depth map
+### STEP 1: download Mirror3D dataset
 
-### STEP 1: download the source data 
+```
+cd workspace/dataset
+### download NYUv2 mirror data 
+wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/nyu.zip 
+unzip nyu.zip 
+### download Matterport3D mirror data 
+wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/mp3d.zip 
+unzip mp3d.zip 
+### download NYUv2 mirror data 
+wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/scannet.zip 
+unzip scannet.zip 
+```
+
+### STEP 2: download the source data 
 
 To generate a refined depth map, please download the relevant source data and put it under the unzipped folder:
 
-- For the Matterport3D dataset, please put the `matterport_render_depth`, `undistorted_color_images` and `undistorted_depth_images` folder under `mp3d` folder. Please fill out the agreements for Matterport3D dataset on [Matterport3D official website](https://niessner.github.io/Matterport/) to get the `undistorted_color_images` and `undistorted_depth_images`. Please follow instructions on [DeepCompletionRelease](https://github.com/yindaz/DeepCompletionRelease) to get the generated Matterport3D mesh depth.
+- **Matterport3D**: 
+    -  Please fill out the agreements for Matterport3D dataset on [Matterport3D official website](https://niessner.github.io/Matterport/) to get the `undistorted_color_images` and `undistorted_depth_images`. 
+    -  Please follow instructions on [DeepCompletionRelease](https://github.com/yindaz/DeepCompletionRelease) to get the generated Matterport3D mesh depth. 
+    -  After getting the source data, please put the `matterport_render_depth`, `undistorted_color_images` and `undistorted_depth_images` folder under the unzipped `mp3d` folder. 
 
-- For the NYUv2-small dataset, please put the `color` and `depth` folder under `nyu` folder. Please download the `Labeled dataset (~2.8 GB)` on [NYUv2 official website](https://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html). To get the color and depth images from this .mat file, we provide a reference script `mirror3d/utils/export_mat_image.py`, you can extract the color and depth images from .mat file by running:
-
-    ```python
+- **NYUv2-small**:
+    Please run the following commands to get the NYUv2-small source data
+    
+    ```shell
+    cd workspace/dataset
+    ### Prepare NYUv2 source data
+    wget http://horatio.cs.nyu.edu/mit/silberman/nyu_depth_v2/nyu_depth_v2_labeled.mat
+    ### Extract center croppped color and depth image from .mat file
     python mirror3d/utils/export_mat_image.py \
-    --mat_path [path to the downloaded .mat file ] \
-    --output_dir [file output dir]
+    --mat_path nyu_depth_v2_labeled.mat \
+    --output_dir ./nyu
     ```
-  We center cropped the orginal images from NYUv2-small by 5% to avoid the invalid border.  
-- For the ScanNet dataset, please put the `scannet_extracted` and `scannet_frames_25k` folder under `scannet` folder. Please fill out the agreements on [ScanNet official website](http://www.scan-net.org/)) to get access to `scannet_extracted` and `scannet_frames_25k`. 
+<!--     - Please download the `Labeled dataset (~2.8 GB)` on [NYUv2 official website](https://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html). To get the color and depth images from this .mat file, we provide a reference script `mirror3d/utils/export_mat_image.py`. We center cropped the orginal images from NYUv2-small by 5% to avoid the invalid border. You can extract the color and depth images from .mat file by running:
 
-### STEP 2: generate symlinks for mirror samples' RGBD images
+        ```python
+        python mirror3d/utils/export_mat_image.py \
+        --mat_path [path to the downloaded .mat file ] \
+        --output_dir [file output dir]
+        ```
+    - After getting the source data, please put the `color` and `depth` folder under the unzipped `nyu` folder. -->
+  
+- **ScanNet**:  
+    - Please fill out the agreements on [ScanNet official website](http://www.scan-net.org/)) to get access to `scannet_extracted` and `scannet_frames_25k`. 
+    - After getting the source data, please the `scannet_extracted` and `scannet_frames_25k` folder under the unzipped `scannet` folder.
+
+### STEP 3: generate symlinks for mirror samples' RGBD images
 
 Please run the following command to create symlinks to the mirror samples' original color image, sensor depth map and mesh depth map:
 
@@ -98,7 +131,7 @@ Please run the following command to create symlinks to the mirror samples' origi
 python mirror3d/dataset/gen_synlink.py --unzipped_folder_path [the path to the mp3d/ nyu/ scannet folder] 
 ```
 
-### STEP 3 : generate refined depth map based on delta image
+### STEP 4 : generate refined depth map based on delta image
 
 ```python
 python mirror3d/dataset/gen_refinedD_from_delta.py \
@@ -200,7 +233,7 @@ python mirror3d/visualization/check_sample_info.py \
 
 ```
 
-For example, here's a screemshot of the 3D visulization after running:
+For example, here's a screenshot of the 3D visulization after running:
 
 ```python
 python mirror3d/visualization/check_sample_info.py \
