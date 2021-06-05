@@ -6,11 +6,11 @@ from tqdm import tqdm
 
 def generate_symlinks(unzipped_folder_path):
     if "nyu" in unzipped_folder_path:
-        symlink_info = read_txt("dataset/symlink_infer/nyu_symlink.txt")
+        symlink_info = read_txt("mirror3d/dataset/symlink_infer/nyu_symlink.txt")
     elif "mp3d" in unzipped_folder_path:
-        symlink_info = read_txt("dataset/symlink_infer/mp3d_symlink.txt")
+        symlink_info = read_txt("mirror3d/dataset/symlink_infer/mp3d_symlink.txt")
     elif "scannet" in unzipped_folder_path:
-        symlink_info = read_txt("dataset/symlink_infer/scannet_symlink.txt")
+        symlink_info = read_txt("mirror3d/dataset/symlink_infer/scannet_symlink.txt")
     else:
         print("Can't find nyu/ mp3d/ scannet in the unzip folder path, please input a valid --unzipped_folder_path")
 
