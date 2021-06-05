@@ -192,6 +192,10 @@ def get_colored_pcd(f=538, depth_img_path="", color_img_path="", mirror_mask=Non
     pcd.colors = o3d.utility.Vector3dVector(np.stack(colors, axis=0))
     return pcd
 
+def get_z_from_plane(plane_parameter, x, y):
+    [a, b, c, d] = plane_parameter
+    z = (-d - a * x - b * y) / c
+    return z
 
 # ---------------------------------------------------------------------------- #
 #                    get_mirror_init_plane based on 3 points                   #
@@ -199,10 +203,7 @@ def get_colored_pcd(f=538, depth_img_path="", color_img_path="", mirror_mask=Non
 def get_mirror_init_plane_from_3points(p1, p2, p3, plane_init_size=1000):
     import open3d as o3d
 
-    def get_z_from_plane(plane_parameter, x, y):
-        [a, b, c, d] = plane_parameter
-        z = (-d - a * x - b * y) / c
-        return z
+
 
     plane_parameter = get_planeParam_from_3_points(p1, p2, p3)
 
@@ -252,11 +253,14 @@ def get_mirror_init_plane_from_3points(p1, p2, p3, plane_init_size=1000):
     return camera_plane
 
 
+
+
 # ---------------------------------------------------------------------------- #
 #                     get_mirror_init_plane_from_mirrorbbox                    #
 # ---------------------------------------------------------------------------- #
 def get_mirror_init_plane_from_mirrorbbox(plane_parameter, mirror_bbox):
     import open3d as o3d
+    import itertools
 
     mirror_bbox_points = np.array(mirror_bbox.get_box_points()).tolist()
 
@@ -271,16 +275,31 @@ def get_mirror_init_plane_from_mirrorbbox(plane_parameter, mirror_bbox):
     mirror_bbox_points.remove(get_paired_point(mirror_bbox_points, p3))
     p4 = mirror_bbox_points[0]
 
+    x_max = max(p1[0], p2[0], p3[0], p4[0])
+    x_min = min(p1[0], p2[0], p3[0], p4[0])
+    y_max = max(p1[1], p2[1], p3[1], p4[1])
+    y_min = min(p1[1], p2[1], p3[1], p4[1])
+
+    # y_gap = (y_max - y_min)*0.1
+    # y_max += y_gap
+    # y_min -= y_gap
+
+    # plane_p1 = [x_max, y_max, get_z_from_plane(plane_parameter, x_max, y_max)]
+    # plane_p2 = [x_max, y_min, get_z_from_plane(plane_parameter, x_max, y_min)]
+    # plane_p3 = [x_min, y_min, get_z_from_plane(plane_parameter, x_min, y_max)]
+    # plane_p4 = [x_min, y_max, get_z_from_plane(plane_parameter, x_min, y_min)]
+
     plane_p1 = [p1[0], p1[1], get_z_from_plane(plane_parameter, p1[0], p1[1])]
     plane_p2 = [p2[0], p2[1], get_z_from_plane(plane_parameter, p2[0], p2[1])]
     plane_p3 = [p3[0], p3[1], get_z_from_plane(plane_parameter, p3[0], p3[1])]
     plane_p4 = [p4[0], p4[1], get_z_from_plane(plane_parameter, p4[0], p4[1])]
-
+    
     plane = o3d.geometry.TriangleMesh()
     plane.vertices = o3d.utility.Vector3dVector(np.array([plane_p1, plane_p2, plane_p3, plane_p4]))
     plane.triangles = o3d.utility.Vector3iVector(
-        np.array([[0, 1, 2], [0, 1, 3], [1, 2, 3], [2, 1, 0], [3, 1, 0], [3, 2, 1]]))
-    plane.paint_uniform_color([0.1, 1, 1])
+        np.array(list(itertools.permutations([0,1,2,3],3))))
+    plane.paint_uniform_color([0.5, 1, 1])
+    # plane = resize_plane(plane, 1.2)
     return plane
 
 
@@ -374,7 +393,6 @@ def get_picked_points(pcd):
             p1 = np.array(pcd.points)[points_index[0]]
             p2 = np.array(pcd.points)[points_index[1]]
             p3 = np.array(pcd.points)[points_index[2]]
-            # print("picked points : ", [p1, p2, p3])
             return [p1, p2, p3]
 
 
@@ -511,6 +529,27 @@ def get_pcd_from_rgb_depthMap(f, d, color_img_path, mirror_mask=None, color=None
     pcd.points = o3d.utility.Vector3dVector(np.stack(xyz, axis=0))
     pcd.colors = o3d.utility.Vector3dVector(np.stack(colors, axis=0))
     return pcd
+
+def get_3d_from_2d_array(points_2d, depth_img_path, f, plane_parameter):
+    points_3d = []
+    depth = cv2.imread(depth_img_path, cv2.IMREAD_ANYDEPTH)
+    img_h, img_w = depth.shape
+    for one_2d_point in points_2d:
+        one_2d_point = one_2d_point[0]
+        x = int(one_2d_point[0])
+        y = int(one_2d_point[1])
+
+        if x > 0 and x < img_w and y > 0 and y < img_h:
+            z = depth[x][y]
+            x = (int(one_2d_point[0]) - img_w / 2) * (depth[int(one_2d_point[1])][int(one_2d_point[0])] / f)
+            y = (int(one_2d_point[1]) - img_h / 2) * (depth[int(one_2d_point[1])][int(one_2d_point[0])] / f)
+            # points_3d.append([x, y, get_z_from_plane(plane_parameter, x, y)])
+            points_3d.append([x, y, z])
+        # z = depth[x][y]
+        # points_3d.append([(x - img_w / 2) * (depth[y][x] / f), (y - img_h / 2) * (depth[y][x] / f), depth[y][x]])
+
+    return points_3d
+
 
 
 # ---------------------------------------------------------------------------- #

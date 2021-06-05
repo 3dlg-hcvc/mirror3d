@@ -516,6 +516,8 @@ class PlaneAnnotationTool:
         """
 
         import open3d as o3d
+        import itertools
+
         # Pack as a function to better support Matterport3d ply generation
         def generate_and_save_ply(color_img_path, depth_img_path, mask_img_path, plane_parameter_json_path,
                                   pcd_save_folder, mesh_save_folder, f):
@@ -538,7 +540,7 @@ class PlaneAnnotationTool:
                     return
 
                 # Get pcd for the instance
-                pcd = get_pcd_from_rgbd_depthPath(f, depth_img_path, color_img_path, mirror_mask=binary_instance_mask)
+                pcd = get_pcd_from_rgbd_depthPath(f, depth_img_path, color_img_path, mirror_mask=binary_instance_mask, color=[0, 0.2, 0.6])
 
                 # Get mirror plane for the instance
                 mirror_points = get_points_in_mask(f, depth_img_path, mirror_mask=binary_instance_mask)
@@ -546,10 +548,26 @@ class PlaneAnnotationTool:
                 mirror_pcd.points = o3d.utility.Vector3dVector(np.stack(mirror_points, axis=0))
                 mirror_bbox = o3d.geometry.OrientedBoundingBox.create_from_points(
                     o3d.utility.Vector3dVector(np.stack(mirror_points, axis=0)))
-                # mirror_bbox= o3d.geometry.OrientedBoundingBox.create_from_axis_aligned_bounding_box(mirror_bbox)
                 mirror_plane = get_mirror_init_plane_from_mirrorbbox(plane_parameter, mirror_bbox)
-                # mirror_plane =  get_mirror_init_plane_from_max_min(plane_parameter, mirror_bbox.get_max_bound(), mirror_bbox.get_min_bound())
-                o3d.visualization.draw_geometries([pcd, mirror_plane, mirror_bbox]) # TODO del
+
+                # Get 3d countour mask
+                # contours_2d, _ = cv2.findContours(binary_instance_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+                # import pdb; pdb.set_trace()
+                # contours_3d = get_3d_from_2d_array(np.array(contours_2d)[0], depth_img_path, f, plane_parameter)
+                # contour_points = o3d.geometry.PointCloud()
+                # contour_points.points = o3d.utility.Vector3dVector(np.stack(contours_3d, axis=0))
+                # contour_bbox = o3d.geometry.OrientedBoundingBox.create_from_points(
+                #     o3d.utility.Vector3dVector(np.stack(contours_3d, axis=0)))
+                # contour3d_mesh = o3d.geometry.TriangleMesh()
+                # contour3d_mesh.vertices = o3d.utility.Vector3dVector(np.array(contours_3d))
+                # contour3d_mesh.triangles = o3d.utility.Vector3iVector(
+                #     np.array(list(itertools.combinations([i for i in range(len(contours_3d))],3))))
+                # contour3d_mesh.paint_uniform_color([0.5, 1, 1])
+                
+                o3d.visualization.draw_geometries([pcd, contour_bbox]) # TODO del
+                print("color_img_path", color_img_path)
+                
+                o3d.visualization.draw_geometries([pcd, mirror_plane, mirror_bbox])
                 o3d.io.write_point_cloud(pcd_save_path, pcd)
                 print("point cloud saved  to :", os.path.abspath(pcd_save_path))
 
@@ -569,6 +587,8 @@ class PlaneAnnotationTool:
                       "[plane parameter JSON path] [folder to save the output pointcloud] [folder to save the output "
                       "mesh plane] [focal length of this sample]")
                 continue
+            if "834865d0e74042d38b796ded2488d64c_i0_3" not in color_img_path:
+                continue # TODO del
             f = self.get_and_check_focal_length(f, item)
             generate_and_save_ply(color_img_path, depth_img_path, mask_img_path, plane_parameter_json_path,
                                   pcd_save_folder, mesh_save_folder, f)
@@ -717,9 +737,7 @@ class PlaneAnnotationTool:
             pcd_path, mesh_path, screenshot_output_folder = item.strip().split()
             if not os.path.exists(pcd_path) or not os.path.exists(mesh_path):
                 print("invalid line : ", item)
-                print("input txt format: [input color image path] [input depth image path] [input integer mask path] "
-                      "[plane parameter JSON path] [folder to save the output pointcloud] [folder to save the output "
-                      "mesh plane] [focal length of this sample]")
+                print("input txt format: [path to pointcloud] [path to mesh plane] [screenshot output main folder]")
                 continue
             generate_screenshot(pcd_path, mesh_path, screenshot_output_folder)
             if self.view_mode == "topdown":
