@@ -74,18 +74,26 @@ The sample's mirror 3D plane information is saved in a single JSON file. The dat
 ## Generate refined depth map
 ### STEP 1: download Mirror3D dataset
 
-```
-cd workspace/dataset
-### download Matterport3D mirror data 
-wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/mp3d.zip 
-unzip mp3d.zip 
-### download ScanNet mirror data 
-wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/scannet.zip 
-unzip scannet.zip 
-### download NYUv2 mirror data 
-wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/nyu.zip 
-unzip nyu.zip 
-```
+- Download Matterport3D mirror data 
+    ```shell
+    cd workspace/dataset
+    wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/mp3d.zip 
+    unzip mp3d.zip 
+    ```
+
+- Download ScanNet mirror data 
+    ```shell
+    cd workspace/dataset
+    wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/scannet.zip 
+    unzip scannet.zip 
+    ```
+- Download NYUv2 mirror data 
+    ```shell
+    cd workspace/dataset
+    wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/nyu.zip 
+    unzip nyu.zip 
+    ```
+
 
 ### STEP 2: download the source data 
 
@@ -111,7 +119,7 @@ To generate a refined depth map, please download the relevant source data and pu
     ### Extract center croppped color and depth image from .mat file
     python mirror3d/utils/export_mat_image.py \
     --mat_path nyu_depth_v2_labeled.mat \
-    --output_dir ./nyu
+    --output_dir ../dataset/nyu
     ```
 <!--     - Please download the `Labeled dataset (~2.8 GB)` on [NYUv2 official website](https://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html). To get the color and depth images from this .mat file, we provide a reference script `mirror3d/utils/export_mat_image.py`. We center cropped the orginal images from NYUv2-small by 5% to avoid the invalid border. You can extract the color and depth images from .mat file by running:
 
@@ -126,6 +134,21 @@ To generate a refined depth map, please download the relevant source data and pu
 ### STEP 3: generate symlinks for mirror samples' RGBD images
 
 Please run the following command to create symlinks to the mirror samples' original color image, sensor depth map and mesh depth map:
+
+-   Generate symlinks for Matterport3D mirror data
+    ```python
+    python mirror3d/dataset/gen_synlink.py --unzipped_folder_path ../dataset/mp3d
+    ```
+
+-   Generate symlinks for ScanNet mirror data
+    ```python
+    python mirror3d/dataset/gen_synlink.py --unzipped_folder_path ../dataset/scannet
+    ```
+
+-   Generate symlinks for  NYUv2-small mirror data
+    ```python
+    python mirror3d/dataset/gen_synlink.py --unzipped_folder_path ../dataset/nyu
+    ```
 
 ```python
 cd workspace/dataset
