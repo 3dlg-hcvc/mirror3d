@@ -91,11 +91,11 @@ To generate a refined depth map, please download the relevant source data and pu
         --mat_path [path to the downloaded .mat file ] \
         --output_dir [file output dir]
         ```
-    - After getting the source data, please put the `color` and `depth` folder under `nyu` folder.
+    - After getting the source data, please put the `color` and `depth` folder under the unzipped `nyu` folder.
   
 - **ScanNet**:  
     - Please fill out the agreements on [ScanNet official website](http://www.scan-net.org/)) to get access to `scannet_extracted` and `scannet_frames_25k`. 
-    - After getting the source data, please the `scannet_extracted` and `scannet_frames_25k` folder under `scannet` folder.
+    - After getting the source data, please the `scannet_extracted` and `scannet_frames_25k` folder under the unzipped `scannet` folder.
 
 ### STEP 2: generate symlinks for mirror samples' RGBD images
 
