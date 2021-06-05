@@ -207,7 +207,7 @@ python mirror3d/visualization/check_sample_info.py \
 
 ```
 
-For example, here's a screemshot of the 3D visulization after running:
+For example, here's a screenshot of the 3D visulization after running:
 
 ```python
 python mirror3d/visualization/check_sample_info.py \
