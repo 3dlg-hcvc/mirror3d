@@ -38,11 +38,13 @@
 ## STAGE 2: Mirror Mask Annotation 
 
 We use [cvat](https://github.com/dommorin/cvat) to annotate mirror masks manually. Please refer to [cvat user guide](https://github.com/dommorin/cvat/blob/master/cvat/apps/documentation/user_guide.md) for guidance on how to do mask annotation. 
+
 ## STAGE 3: Plane Annotation
+    
 
-    We provide a simple plane annotation tool `annotation/plane_annotation/plane_annotation_tool.py` to annotate the mirror plane.
+We provide a simple plane annotation tool `annotation/plane_annotation/plane_annotation_tool.py` to annotate the mirror plane.
 
-    Overall, we provide 12 functions in the annotation tool:
+Overall, we provide 12 functions in the annotation tool:
 
     - `--function 1`: generate integer mask and colorful masks from the coco format JSON file output by CVAT
     - `--function 2`: (optional) generate colorful mask from integer mask
@@ -58,7 +60,7 @@ We use [cvat](https://github.com/dommorin/cvat) to annotate mirror masks manuall
     - `--function 12`: generate HTML to view mirror color images, mirror colored depth images, and videos generated in function 9
 
 
-    Please follow the [example](#jump) below to get familiar with our plane annotation tool.
+Please follow the [example](#jump) below to get familiar with our plane annotation tool.
 
 
 <span id="jump"></span>
