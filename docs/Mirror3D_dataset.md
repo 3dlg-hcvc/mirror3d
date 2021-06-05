@@ -27,8 +27,8 @@ nyu/scannet/mp3d
 └── mirror_plane # mirror plane parameter information 
 ```
 
-- For NYUv2 mirror data is stored as [data type; e.g. mirror_plane/delta_depth_precise/...] / [sample id].extension
-- For Scannet and Matterport3D mirror data is stored as [data type; e.g. mirror_plane/delta_depth_precise/...] / [scene_id] / [sample id].extension
+- For NYUv2 mirror data is stored as `[data type; e.g. mirror_plane/delta_depth_precise/...] / [sample id].extension`
+- For Scannet and Matterport3D mirror data is stored as `[data type; e.g. mirror_plane/delta_depth_precise/...] / [scene_id] / [sample id].extension`
 
 The sample's mirror 3D plane information is saved in a single JSON file. The data is saved as:
 
