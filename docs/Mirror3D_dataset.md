@@ -73,8 +73,22 @@ The sample's mirror 3D plane information is saved in a single JSON file. The dat
 
 
 ## Generate refined depth map
+### STEP 1: download Mirror3D dataset
 
-### STEP 1: download the source data 
+```
+cd workspace/dataset
+### download NYUv2 mirror data 
+wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/nyu.zip 
+unzip nyu.zip 
+### download Matterport3D mirror data 
+wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/mp3d.zip 
+unzip mp3d.zip 
+### download NYUv2 mirror data 
+wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/scannet.zip 
+unzip scannet.zip 
+```
+
+### STEP 2: download the source data 
 
 To generate a refined depth map, please download the relevant source data and put it under the unzipped folder:
 
@@ -97,7 +111,7 @@ To generate a refined depth map, please download the relevant source data and pu
     - Please fill out the agreements on [ScanNet official website](http://www.scan-net.org/)) to get access to `scannet_extracted` and `scannet_frames_25k`. 
     - After getting the source data, please the `scannet_extracted` and `scannet_frames_25k` folder under the unzipped `scannet` folder.
 
-### STEP 2: generate symlinks for mirror samples' RGBD images
+### STEP 3: generate symlinks for mirror samples' RGBD images
 
 Please run the following command to create symlinks to the mirror samples' original color image, sensor depth map and mesh depth map:
 
@@ -105,7 +119,7 @@ Please run the following command to create symlinks to the mirror samples' origi
 python mirror3d/dataset/gen_synlink.py --unzipped_folder_path [the path to the mp3d/ nyu/ scannet folder] 
 ```
 
-### STEP 3 : generate refined depth map based on delta image
+### STEP 4 : generate refined depth map based on delta image
 
 ```python
 python mirror3d/dataset/gen_refinedD_from_delta.py \
