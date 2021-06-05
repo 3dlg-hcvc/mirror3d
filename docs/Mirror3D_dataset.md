@@ -2,7 +2,7 @@
 
 Mirror3D is a large-scale 3D mirror plane annotation dataset based on three popular RGBD datasets ([Matterpot3D](https://niessner.github.io/Matterport/),[NYUv2](https://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html), and [ScanNet](http://www.scan-net.org/)) containing 7,011 mirror instance masks and 3D planes.
 
-Please visit our [project website](file:///Users/tanjiaqi/Desktop/SFU/mirror3D/Mirror3D/docs/index.html) for updates and to browse the data.
+Please visit our [project website](https://github.com/3dlg-hcvc/mirror3d) for updates and to browse the data.
 
 ## Download
 
