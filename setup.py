@@ -11,6 +11,6 @@ setup(
     install_requires=["torchvision>=0.4", "fvcore", "matplotlib", \
         "pycocotools","tabulate","torch","colorlog","dill","easydict", \
         "efficientnet_pytorch","numpy","Pillow","PyYAML","scipy","six", \
-        "tensorboardX","torchvision","tqdm","opencv-python", \
+        "tensorboardX","torchvision","tqdm","opencv-python","h5py", \
         "scikit-image","sympy","beautifulsoup4","open3d==0.12.0"],
 )

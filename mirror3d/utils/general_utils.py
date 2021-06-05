@@ -9,6 +9,7 @@ from mirror3d.utils.algorithm import *
 import shutil
 
 
+
 def get_fileList_under_folder(folder_path):
     command = "find -L {} -type f ".format(folder_path)
     file_path_list = [i.strip() for i in os.popen(command).readlines()]
@@ -63,7 +64,6 @@ def center_crop_image(input_folder="", output_folder="", new_w=608, new_h=456, o
         input_folder : folder path; folder contains the image that needs to be cropped
         output_folder : folder path to saved the cropped result
     """
-    os.makedirs(output_folder, exist_ok=True)
     w_border = int((ori_w - new_w) / 2)
     h_border = int((ori_h - new_h) / 2)
     for one_img in os.listdir(input_folder):
