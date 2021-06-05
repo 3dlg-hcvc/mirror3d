@@ -10,6 +10,11 @@ Please visit our [project website](https://github.com/3dlg-hcvc/mirror3d) for up
 - [scannet.zip](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/scannet.zip)
 - [nyu.zip](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/nyu.zip)
 
+Check out mirror data detail statistic: 
+- Matterport3D: [nyu.csv](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/metadata/mp3d.csv)
+- ScanNet: [nyu.csv](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/metadata/scannet.csv)
+- NYUv2-small: [nyu.csv](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/metadata/nyu.csv)
+
 ## Mirror3D Data Organization
 
 The unzipped mirror data we provided are stored in the following structures:
