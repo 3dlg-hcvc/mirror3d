@@ -74,17 +74,22 @@ By default, we put the unzipped data and network input packages under `../datase
 ## Inference
 
 ```shell
+### Download all model zoo
+cd workspace
+mkdir checkpoint
+wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/all_checkpoint.zip
+unzip all_checkpoint.zip
+cd ../mirror3d
 ### Inferece on NYUv2 mirror data
-script/nyu_infer.sh
+bash script/nyu_infer.sh
 ### Inferece on Matterport3D mirror data
-script/mp3d_infer.sh
+bash script/mp3d_infer.sh
 ```
 
 Output depth maps are saved under folder named `pred_depth`. If you want to view the inference result, please run all steps in [mirror3d/visualization/result_visualization.py](https://github.com/3dlg-hcvc/mirror3d/blob/main/visualization/result_visualization.py).  
 
 
 ## Model Zoo
-
 
 | **Source Dataset** | **Input** | **Train**            | **Method**                                                                                              | **Model Download**                                                                                                        |
 |--------------------|-----------|----------------------|---------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
