@@ -98,7 +98,9 @@ To generate a refined depth map, please download the relevant source data and pu
     -  Please follow instructions on [DeepCompletionRelease](https://github.com/yindaz/DeepCompletionRelease) to get the generated Matterport3D mesh depth. 
     -  After getting the source data, please put the `matterport_render_depth`, `undistorted_color_images` and `undistorted_depth_images` folder under the unzipped `mp3d` folder. 
 
-- **NYUv2-small**: 
+- **NYUv2-small**:
+    Please run the following commands to get the NYUv2-small source data
+    
     ```shell
     cd workspace/dataset
     ### Prepare NYUv2 source data
