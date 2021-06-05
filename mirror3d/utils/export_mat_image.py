@@ -15,7 +15,7 @@ def export_img_from_mat(mat_path, output_dir):
 
     """
     h5_file = h5py.File(mat_path)
-    # center crop the NYUv2 image by 95%
+    # center crop the NYUv2 image by 5%
     new_w=608
     new_h=456
     ori_w=640
