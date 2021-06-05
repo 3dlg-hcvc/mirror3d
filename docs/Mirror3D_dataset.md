@@ -99,14 +99,23 @@ To generate a refined depth map, please download the relevant source data and pu
     -  After getting the source data, please put the `matterport_render_depth`, `undistorted_color_images` and `undistorted_depth_images` folder under the unzipped `mp3d` folder. 
 
 - **NYUv2-small**: 
-    - Please download the `Labeled dataset (~2.8 GB)` on [NYUv2 official website](https://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html). To get the color and depth images from this .mat file, we provide a reference script `mirror3d/utils/export_mat_image.py`. We center cropped the orginal images from NYUv2-small by 5% to avoid the invalid border. You can extract the color and depth images from .mat file by running:
+    ```shell
+    cd workspace/dataset
+    ### Prepare NYUv2 source data
+    wget http://horatio.cs.nyu.edu/mit/silberman/nyu_depth_v2/nyu_depth_v2_labeled.mat
+    ### Extract center croppped color and depth image from .mat file
+    python mirror3d/utils/export_mat_image.py \
+    --mat_path nyu_depth_v2_labeled.mat \
+    --output_dir ./nyu
+    ```
+<!--     - Please download the `Labeled dataset (~2.8 GB)` on [NYUv2 official website](https://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html). To get the color and depth images from this .mat file, we provide a reference script `mirror3d/utils/export_mat_image.py`. We center cropped the orginal images from NYUv2-small by 5% to avoid the invalid border. You can extract the color and depth images from .mat file by running:
 
         ```python
         python mirror3d/utils/export_mat_image.py \
         --mat_path [path to the downloaded .mat file ] \
         --output_dir [file output dir]
         ```
-    - After getting the source data, please put the `color` and `depth` folder under the unzipped `nyu` folder.
+    - After getting the source data, please put the `color` and `depth` folder under the unzipped `nyu` folder. -->
   
 - **ScanNet**:  
     - Please fill out the agreements on [ScanNet official website](http://www.scan-net.org/)) to get access to `scannet_extracted` and `scannet_frames_25k`. 
