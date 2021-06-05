@@ -23,7 +23,7 @@ $ git clone https://github.com/3dlg-hcvc/Mirror3D.git
 
 ## Dataset
 
-Please refer to [Mirror3D Dataset](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/Mirror3D_dataset.md) for instructions on how to prepare mirror data.
+Please refer to [Mirror3D Dataset](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/Mirror3D_dataset.md) for instructions on how to prepare mirror data. Please visit our [project website](https://github.com/3dlg-hcvc/mirror3d) for updates and to browse the data.
 
 ### Mirror annotation tool
 Please refer to [User Instruction](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/user_instruction.md) for instructions on how to annotate mirror data. 
