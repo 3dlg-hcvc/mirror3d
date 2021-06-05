@@ -62,10 +62,10 @@ Please follow the [example](#jump) below to get familiar with our plane annotati
 
 
 <span id="jump"></span>
-## Getting Started 
+# Getting Started 
 
 
-This is an example of annotating mirror planes for several NYUv2 samples. 
+This is an example for annotating an NYUv2 sample. 
 
 - **STEP 1:**  Get 8-bit integer masks from CVAT output. We are going to  use coco format annotation result from CVAT:
 
