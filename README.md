@@ -86,7 +86,7 @@ bash script/nyu_infer.sh
 bash script/mp3d_infer.sh
 ```
 
-Output depth maps are saved under folder named `pred_depth`. If you want to view the inference result, please run all steps in [mirror3d/visualization/result_visualization.py](https://github.com/3dlg-hcvc/mirror3d/blob/main/visualization/result_visualization.py).  
+Output depth maps are saved under folder named `pred_depth`. Optional: If you want to view all inference results on an html webpage, please run all steps in [mirror3d/visualization/result_visualization.py](https://github.com/3dlg-hcvc/mirror3d/blob/main/mirror3d/visualization/result_visualization.py).  
 
 
 ## Model Zoo
