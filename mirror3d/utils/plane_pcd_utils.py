@@ -299,7 +299,7 @@ def get_mirror_init_plane_from_mirrorbbox(plane_parameter, mirror_bbox):
     plane.triangles = o3d.utility.Vector3iVector(
         np.array(list(itertools.permutations([0,1,2,3],3))))
     plane.paint_uniform_color([0.5, 1, 1])
-    # plane = resize_plane(plane, 1.2)
+    plane = resize_plane(plane, 1.2)
     return plane
 
 
@@ -543,12 +543,22 @@ def get_3d_from_2d_array(points_2d, depth_img_path, f, plane_parameter):
             z = depth[x][y]
             x = (int(one_2d_point[0]) - img_w / 2) * (depth[int(one_2d_point[1])][int(one_2d_point[0])] / f)
             y = (int(one_2d_point[1]) - img_h / 2) * (depth[int(one_2d_point[1])][int(one_2d_point[0])] / f)
-            # points_3d.append([x, y, get_z_from_plane(plane_parameter, x, y)])
-            points_3d.append([x, y, z])
-        # z = depth[x][y]
-        # points_3d.append([(x - img_w / 2) * (depth[y][x] / f), (y - img_h / 2) * (depth[y][x] / f), depth[y][x]])
+            pz = get_z_from_plane(plane_parameter, x, y)
+            points_3d.append([x, y, pz])
 
     return points_3d
+
+
+def clamp_points_2_plane(ori_points_3d, plane_parameter):
+    points_3d = []
+    for one_3d_point in ori_points_3d:
+        x = one_3d_point[0]
+        y = one_3d_point[1]
+        pz = get_z_from_plane(plane_parameter, x, y)
+        points_3d.append([x, y, pz])
+
+    return points_3d
+
 
 
 
