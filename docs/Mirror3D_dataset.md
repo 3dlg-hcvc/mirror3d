@@ -281,6 +281,7 @@ python mirror3d/visualization/check_sample_info.py \
 **Example**: Run the following command then you can get a 3D visualization like the screenshot below:
 
 ```shell
+### Checking data for NYUV2 sample (smaple id : 664)
 python mirror3d/visualization/check_sample_info.py \
 --color_img_path annotation/plane_annotation/example/nyu/mirror_color_images/664.jpg \
 --depth_img_path annotation/plane_annotation/example/nyu/refined_sensorD_precise/664.png \
@@ -288,8 +289,6 @@ python mirror3d/visualization/check_sample_info.py \
 --json_path annotation/plane_annotation/example/nyu/mirror_plane/664.json \
 --f 519
 ```
-
-to check the NYUV2 sample (smaple id : 664):
 
 ![data-check](figure/check-demo.png)
 
