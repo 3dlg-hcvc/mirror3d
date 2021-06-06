@@ -10,8 +10,8 @@
 mkdir workspace && cd workspace
 ### Put data under dataset folder
 mkdir dataset
-### Clone this repo
-git clone https://github.com/3dlg-hcvc/mirror3d.git
+### Clone this repo and pull all submodules
+git clone --recursive https://github.com/3dlg-hcvc/mirror3d.git
 
 ```
 
@@ -24,8 +24,6 @@ git clone https://github.com/3dlg-hcvc/mirror3d.git
 cd mirror3d && pip install -e .
 ### Setup Detectron2
 python -m pip install git+https://github.com/facebookresearch/detectron2.git
-### Pull submodules
-git submodule update --init --recursive
 ```
 
 ## Dataset
