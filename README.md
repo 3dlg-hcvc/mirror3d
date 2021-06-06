@@ -44,7 +44,7 @@ Please refer to [Mirror3D Dataset](https://github.com/3dlg-hcvc/mirror3d/blob/ma
 </td>
 </tr>
 
-<tr>
+<tr style="background: white;">
 <td align="center" valign="center" style="width:30%;height: 300px;">
 <img style="height:100%;width:auto;object-fit:contain;" src="docs/img/readme_img/mp3d-data.gif" />
 </td>
