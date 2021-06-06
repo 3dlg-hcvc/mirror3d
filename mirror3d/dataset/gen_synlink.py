@@ -23,7 +23,7 @@ def generate_symlinks(unzipped_folder_path):
         if not os.path.exists(src_path):
             print("source path {} not exists!".format(src_path))
             continue
-        command = "ln -s {} {}".format(src_path, to_link_path)
+        command = "ln -s {} {}".format(os.path.abspath(src_path), os.path.abspath(to_link_path))
         os.system(command)
     print("Symlink generation finished!")
 
