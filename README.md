@@ -62,6 +62,11 @@ Our network input are JSON files stored based on [coco annotation format](https:
 To train our models please run:
 
 ```shell
+cd workspace
+### Download network input json
+get http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/network_input_json.zip
+unzip network_input_json.zip
+cd mirror3d
 ### Train on NYUv2 mirror data
 bash script/nyu_train.sh
 ### Train on Matterport3D mirror data
@@ -77,7 +82,10 @@ By default, we put the unzipped data and network input packages under `../datase
 cd workspace
 mkdir checkpoint
 wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/all_checkpoint.zip
-unzip all_checkpoint.zip
+unzip all_checkpoint.zip -d checkpoint
+### Download network input json
+wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/network_input_json.zip
+unzip network_input_json.zip
 cd mirror3d
 ### Inferece on NYUv2 mirror data
 bash script/nyu_infer.sh
