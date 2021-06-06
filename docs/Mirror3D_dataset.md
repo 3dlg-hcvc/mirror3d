@@ -155,26 +155,20 @@ Please run the following command to create symlinks to the mirror samples' origi
 
 -   Generate Generate refined depth map for Matterport3D mirror data
     ```shell
-    # Generate refined depth map based on precise mirror mask
-    python mirror3d/dataset/gen_refinedD_from_delta.py --unzipped_folder_path ../dataset/mp3d --mask_version precise
-    # Generate refined depth map based on coarse mirror mask
-    python mirror3d/dataset/gen_refinedD_from_delta.py --unzipped_folder_path ../dataset/mp3d --mask_version coarse
+    # Generate two versions of refined depth map (based on precise mirror mask and coarse mirror mask)
+    python mirror3d/dataset/gen_refinedD_from_delta.py --unzipped_folder_path ../dataset/mp3d --mask_version all
     ```
 
 -   Generate Generate refined depth map for ScanNet mirror data
     ```shell
-    # Generate refined depth map based on precise mirror mask
-    python mirror3d/dataset/gen_refinedD_from_delta.py --unzipped_folder_path ../dataset/scannet --mask_version precise
-    # Generate refined depth map based on coarse mirror mask
-    python mirror3d/dataset/gen_refinedD_from_delta.py --unzipped_folder_path ../dataset/scannet --mask_version coarse
+    # Generate two versions of refined depth map (based on precise mirror mask and coarse mirror mask)
+    python mirror3d/dataset/gen_refinedD_from_delta.py --unzipped_folder_path ../dataset/scannet --mask_version all
     ```
 
 -   Generate Generate refined depth map for NYUv2 mirror data
     ```shell
-    # Generate refined depth map based on precise mirror mask
-    python mirror3d/dataset/gen_refinedD_from_delta.py --unzipped_folder_path ../dataset/nyu --mask_version precise
-    # Generate refined depth map based on coarse mirror mask
-    python mirror3d/dataset/gen_refinedD_from_delta.py --unzipped_folder_path ../dataset/nyu --mask_version coarse
+    # Generate two versions of refined depth map (based on precise mirror mask and coarse mirror mask)
+    python mirror3d/dataset/gen_refinedD_from_delta.py --unzipped_folder_path ../dataset/nyu --mask_version all
     ```
 
 After STEP 1 ~ STEP 4, the data structure should be like:
