@@ -51,11 +51,11 @@ We test three methods on our dataset:
 - [VNL: Enforcing geometric constraints of virtual normal for depth prediction](https://github.com/YvanYin/VNL_Monocular_Depth_Prediction)
 - [saic : Decoder Modulation for Indoor Depth Completion](https://github.com/saic-vul/saic_depth_completion/tree/94bececdf12bb9867ce52c970bb2d11dee948d37)
 
-We updated the dataloader and the main train/test script in the orginal repository to support our input format. 
+We updated the dataloader and the main train/test script in the original repository to support our input format. 
 
 ## Network input
 
-Our network input are JSON files stored based on [coco annotation format](https://cocodataset.org/#home). Please download [network input json](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/network_input_json.zip) to train and test our models. 
+Our network inputs are JSON files stored based on [coco annotation format](https://cocodataset.org/#home). Please download [network input json](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/network_input_json.zip) to train and test our models. 
 
 ## Training
 
@@ -66,7 +66,7 @@ cd workspace
 ### Download network input json
 get http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/network_input_json.zip
 unzip network_input_json.zip
-### Get R-50.pkl to train Mirror3DNet and PlaneRCNN
+### Get R-50.pkl from detectron2 to train Mirror3DNet and PlaneRCNN
 mkdir checkpoint && cd checkpoint
 wget https://dl.fbaipublicfiles.com/detectron2/ImageNetPretrained/MSRA/R-50.pkl
 cd ../mirror3d
@@ -95,7 +95,7 @@ bash script/nyu_infer.sh
 bash script/mp3d_infer.sh
 ```
 
-Output depth maps are saved under folder named `pred_depth`. Optional: If you want to view all inference results on an html webpage, please run all steps in [mirror3d/visualization/result_visualization.py](https://github.com/3dlg-hcvc/mirror3d/blob/main/mirror3d/visualization/result_visualization.py).  
+Output depth maps are saved under a folder named `pred_depth`. Optional: If you want to view all inference results on an html webpage, please run all steps in [mirror3d/visualization/result_visualization.py](https://github.com/3dlg-hcvc/mirror3d/blob/main/mirror3d/visualization/result_visualization.py).  
 
 
 ## Model Zoo
