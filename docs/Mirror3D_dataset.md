@@ -170,6 +170,23 @@ Please run the following command to create symlinks to the mirror samples' origi
     # Generate two versions of refined depth map (based on precise mirror mask and coarse mirror mask)
     python mirror3d/dataset/gen_refinedD_from_delta.py --unzipped_folder_path ../dataset/nyu --mask_version all
     ```
+### Optional step : generate RGB instance mask
+
+The mirror instances masks we provide in the zip files are 8-bit integer instance masks. If you want to generate RGB instance masks for visualization, you can run:
+
+```shell
+python mirror3d/annotation/plane_annotation/plane_annotation_tool.py \
+--function 2 \
+--input_txt [path to txt file] # Each line of this txt file should include information in format "[input integer mask path] [RGB mask output path]"
+
+```
+
+**Example**: Generating an RGB segmentation mask based on an 8-bit integer instance mask for an NYUv2 sample:
+```shell
+python mirror3d/annotation/plane_annotation/plane_annotation_tool.py \
+--function 2 \
+--input_txt docs/example/input_txt_example/get_color_mask.txt
+```
 
 After STEP 1 ~ STEP 4, the data structure should be like:
 
@@ -230,25 +247,9 @@ scannet
 └── mirror_color_images # mirror samples' color image symlinks --- link to data under ./scannet_extracted
 ```
 
-### Optional : generate RGB instance mask
 
-The mirror instances masks we provide in the zip files are 8-bit integer instance masks. If you want to generate RGB instance masks for visualization, you can run:
 
-```shell
-python mirror3d/annotation/plane_annotation/plane_annotation_tool.py \
---function 2 \
---input_txt [path to txt file] # Each line of this txt file should include information in format "[input integer mask path] [RGB mask output path]"
-
-```
-
-**Example**: Generating an RGB segmentation mask based on an 8-bit integer instance mask for an NYUv2 sample:
-```shell
-python mirror3d/annotation/plane_annotation/plane_annotation_tool.py \
---function 2 \
---input_txt docs/example/input_txt_example/get_color_mask.txt
-```
-
-## Data visualization
+## Mirror Data Visualization
 To check and visualize one sample's data, you can run:
 
 ```shell
