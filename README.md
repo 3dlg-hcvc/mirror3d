@@ -62,6 +62,9 @@ Our network input are JSON files stored based on [coco annotation format](https:
 To train our models please run:
 
 ```shell
+cd workspace
+get http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/network_input_json.zip && unzip network_input_json.zip
+cd mirror3d
 ### Train on NYUv2 mirror data
 bash script/nyu_train.sh
 ### Train on Matterport3D mirror data
