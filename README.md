@@ -7,12 +7,11 @@
 ## Preparation for all implementations
 
 ```shell
-$ mkdir workspace
-$ cd workspace
+mkdir workspace && cd workspace
 ### Put data under dataset folder
-$ mkdir dataset
+mkdir dataset
 ### Clone this repo
-$ git clone https://github.com/3dlg-hcvc/mirror3d.git
+git clone https://github.com/3dlg-hcvc/mirror3d.git
 
 ```
 
