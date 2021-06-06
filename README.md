@@ -11,7 +11,7 @@ git clone https://github.com/3dlg-hcvc/mirror3d.git
 ### Install packages 
 cd mirror3d && pip install -e .
 ### Setup Detectron2
-python -m pip install 'git+https://github.com/facebookresearch/detectron2.git
+python -m pip install git+https://github.com/facebookresearch/detectron2.git
 ### Pull submodules
 git submodule update --init --recursive
 ```
