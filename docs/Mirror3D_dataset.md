@@ -266,10 +266,10 @@ python mirror3d/visualization/check_sample_info.py \
 ```shell
 ### Checking data for NYUV2 sample (smaple id : 664)
 python mirror3d/visualization/check_sample_info.py \
---color_img_path mirror3d/annotation/plane_annotation/example/nyu/mirror_color_images/664.jpg \
---depth_img_path mirror3d/annotation/plane_annotation/example/nyu/refined_sensorD_precise/664.png \
---mask_img_path mirror3d/annotation/plane_annotation/example/nyu/mirror_instance_mask_precise/664.png \
---json_path mirror3d/annotation/plane_annotation/example/nyu/mirror_plane/664.json \
+--color_img_path ../dataset/nyu/mirror_color_images/664.jpg \
+--depth_img_path ../dataset/nyu/refined_sensorD_precise/664.png \
+--mask_img_path ../dataset/nyu/mirror_instance_mask_precise/664.png \
+--json_path ../dataset/nyu/mirror_plane/664.json \
 --f 519
 ```
 
