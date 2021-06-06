@@ -12,8 +12,8 @@ Please visit our [project website](https://github.com/3dlg-hcvc/mirror3d) for up
 
 
 Check out mirror data detail statistic: 
-- Matterport3D: [nyu.csv](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/metadata/mp3d.csv)
-- ScanNet: [nyu.csv](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/metadata/scannet.csv)
+- Matterport3D: [mp3d.csv](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/metadata/mp3d.csv)
+- ScanNet: [scannet.csv](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/metadata/scannet.csv)
 - NYUv2-small: [nyu.csv](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/metadata/nyu.csv)
 
 
