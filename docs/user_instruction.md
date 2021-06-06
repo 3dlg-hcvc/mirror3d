@@ -13,7 +13,7 @@
     --val_pos_list [validation positive_sample_path.txt] \
     --val_neg_list [validation negative_sample_path.txt]
     ```
-    You can find Martterport3d pre-trained checkpoint for the classifier on [checkpoint.pth.tar](http://aspis.cmpt.sfu.ca/projects/mirrors/checkpoint/classifier_checkpoint/checkpoint.pth.tar)
+    You can find Martterport3d pre-trained checkpoint for the classifier on [checkpoint.pth.tar](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/classifier_checkpoint.pth.tar)
 
 - **STEP 2:**  Get sorted img_list with scores (saved in .json file)
 
