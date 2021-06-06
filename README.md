@@ -63,7 +63,9 @@ To train our models please run:
 
 ```shell
 cd workspace
-get http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/network_input_json.zip && unzip network_input_json.zip
+### Download network input json
+get http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/network_input_json.zip
+unzip network_input_json.zip
 cd mirror3d
 ### Train on NYUv2 mirror data
 bash script/nyu_train.sh
@@ -79,9 +81,11 @@ By default, we put the unzipped data and network input packages under `../datase
 ### Download all model zoo
 cd workspace
 mkdir checkpoint
-wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/all_checkpoint.zip && unzip all_checkpoint.zip -d checkpoint
+wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/all_checkpoint.zip
+unzip all_checkpoint.zip -d checkpoint
 ### Download network input json
-wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/network_input_json.zip && unzip network_input_json.zip
+wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/network_input_json.zip
+unzip network_input_json.zip
 cd mirror3d
 ### Inferece on NYUv2 mirror data
 bash script/nyu_infer.sh
