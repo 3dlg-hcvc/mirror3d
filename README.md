@@ -78,7 +78,7 @@ cd workspace
 mkdir checkpoint
 wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/all_checkpoint.zip
 unzip all_checkpoint.zip
-cd ../mirror3d
+cd mirror3d
 ### Inferece on NYUv2 mirror data
 bash script/nyu_infer.sh
 ### Inferece on Matterport3D mirror data
