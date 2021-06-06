@@ -10,9 +10,36 @@ python mirror3d/init_depth_generator/bts/pytorch/init_depth_gen_infer.py \
 --input_width 640 \
 --output_save_folder ../output/nyu
 
+# bts infer on raw sensor depth
+python mirror3d/init_depth_generator/bts/pytorch/init_depth_gen_infer.py \
+--resume_checkpoint_path ../checkpoint/nyu/bts_nyu_v2_pytorch_densenet161/model \
+--refined_depth \
+--coco_val ../network_input_json/nyu/test_10_precise_normal_mirror.json \
+--coco_val_root ../dataset/nyu \
+--coco_focal_len 519 \
+--depth_shift 1000 \
+--input_height 480 \
+--input_width 640 \
+--output_save_folder ../output/nyu
+
+
 # vnl infer on refined sensor depth
 python mirror3d/init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.py \
 --resume_checkpoint_path ../checkpoint/nyu/vnl_refD.pth \
+--refined_depth \
+--coco_val ../network_input_json/nyu/test_10_precise_normal_mirror.json \
+--coco_val_root ../dataset/nyu \
+--coco_focal_len 519 \
+--depth_shift 1000 \
+--input_height 480 \
+--input_width 640 \
+--batch_size 4 \
+--output_save_folder ../output/nyu
+
+
+# vnl infer on raw sensor depth
+python mirror3d/init_depth_generator/VNL_Monocular_Depth_Prediction/init_depth_gen_infer.py \
+--resume_checkpoint_path ../checkpoint/nyu/nyu_rawdata.pth \
 --refined_depth \
 --coco_val ../network_input_json/nyu/test_10_precise_normal_mirror.json \
 --coco_val_root ../dataset/nyu \
