@@ -121,7 +121,7 @@ To generate a refined depth map, please download the relevant source data and pu
     --mat_path ../dataset/nyu/nyu_depth_v2_labeled.mat \
     --output_dir ../dataset/nyu
     ```
-<!--     - Please download the `Labeled dataset (~2.8 GB)` on [NYUv2 official website](https://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html). To get the color and depth images from this .mat file, we provide a reference script `mirror3d/utils/export_mat_image.py`. We center cropped the orginal images from NYUv2-small by 5% to avoid the invalid border. You can extract the color and depth images from .mat file by running:
+<!--     - Please download the `Labeled dataset (~2.8 GB)` on [NYUv2 official website](https://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html). To get the color and depth images from this .mat file, we provide a reference script `mirror3d/utils/export_mat_image.py`. We center-cropped the original images from NYUv2-small by 5% to avoid the invalid border. You can extract the color and depth images from .mat file by running:
 
         ```python
         python mirror3d/utils/export_mat_image.py \
@@ -133,7 +133,7 @@ To generate a refined depth map, please download the relevant source data and pu
 
 ### STEP 3: generate symlinks for mirror samples' RGBD images
 
-Please run the following command to create symlinks to the mirror samples' original color image, sensor depth map and mesh depth map:
+Please run the following command to create symlinks to the mirror samples' original color image, sensor depth map, and mesh depth map:
 
 -   Generate symlinks for Matterport3D mirror data
     ```python
@@ -155,19 +155,19 @@ Please run the following command to create symlinks to the mirror samples' origi
 
 -   Generate Generate refined depth map for Matterport3D mirror data
     ```shell
-    # Generate two versions of refined depth map (based on precise mirror mask and coarse mirror mask)
+    # Generate two versions of refined depth maps (based on precise mirror mask and coarse mirror mask)
     python mirror3d/dataset/gen_refinedD_from_delta.py --unzipped_folder_path ../dataset/mp3d --mask_version all
     ```
 
 -   Generate Generate refined depth map for ScanNet mirror data
     ```shell
-    # Generate two versions of refined depth map (based on precise mirror mask and coarse mirror mask)
+    # Generate two versions of refined depth maps (based on precise mirror mask and coarse mirror mask)
     python mirror3d/dataset/gen_refinedD_from_delta.py --unzipped_folder_path ../dataset/scannet --mask_version all
     ```
 
 -   Generate Generate refined depth map for NYUv2 mirror data
     ```shell
-    # Generate two versions of refined depth map (based on precise mirror mask and coarse mirror mask)
+    # Generate two versions of refined depth maps (based on precise mirror mask and coarse mirror mask)
     python mirror3d/dataset/gen_refinedD_from_delta.py --unzipped_folder_path ../dataset/nyu --mask_version all
     ```
 ### (Optional) STEP 5 : generate RGB instance mask
