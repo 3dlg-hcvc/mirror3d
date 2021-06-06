@@ -237,10 +237,10 @@ For example, here's a screenshot of the 3D visulization after running:
 
 ```python
 python mirror3d/visualization/check_sample_info.py \
---color_img_path annotation/plane_annotation/example/nyu/mirror_color_images/664.jpg \
---depth_img_path annotation/plane_annotation/example/nyu/refined_sensorD_precise/664.png \
---mask_img_path annotation/plane_annotation/example/nyu/mirror_instance_mask_precise/664.png \
---json_path annotation/plane_annotation/example/nyu/mirror_plane/664.json \
+--color_img_path mirror3d/annotation/plane_annotation/example/nyu/mirror_color_images/664.jpg \
+--depth_img_path mirror3d/annotation/plane_annotation/example/nyu/refined_sensorD_precise/664.png \
+--mask_img_path mirror3d/annotation/plane_annotation/example/nyu/mirror_instance_mask_precise/664.png \
+--json_path mirror3d/annotation/plane_annotation/example/nyu/mirror_plane/664.json \
 --f 519
 ```
 
