@@ -66,7 +66,10 @@ cd workspace
 ### Download network input json
 get http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/network_input_json.zip
 unzip network_input_json.zip
-cd mirror3d
+### Get R-50.pkl to train Mirror3DNet and PlaneRCNN
+mkdir checkpoint && cd checkpoint
+wget https://dl.fbaipublicfiles.com/detectron2/ImageNetPretrained/MSRA/R-50.pkl
+cd ../mirror3d
 ### Train on NYUv2 mirror data
 bash script/nyu_train.sh
 ### Train on Matterport3D mirror data
@@ -80,9 +83,8 @@ By default, we put the unzipped data and network input packages under `../datase
 ```shell
 ### Download all model zoo
 cd workspace
-mkdir checkpoint
-wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/all_checkpoint.zip
-unzip all_checkpoint.zip -d checkpoint
+wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/checkpoint.zip
+unzip checkpoint.zip
 ### Download network input json
 wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/network_input_json.zip
 unzip network_input_json.zip
