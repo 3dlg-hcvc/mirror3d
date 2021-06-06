@@ -113,12 +113,12 @@ To generate a refined depth map, please download the relevant source data and pu
     Please run the following commands to get the NYUv2-small source data
     
     ```shell
-    cd workspace/dataset
+    cd workspace/dataset/nyu
     ### Prepare NYUv2 source data
     wget http://horatio.cs.nyu.edu/mit/silberman/nyu_depth_v2/nyu_depth_v2_labeled.mat
     ### Extract center croppped color and depth image from .mat file
     python mirror3d/utils/export_mat_image.py \
-    --mat_path nyu_depth_v2_labeled.mat \
+    --mat_path ../dataset/nyu/nyu_depth_v2_labeled.mat \
     --output_dir ../dataset/nyu
     ```
 <!--     - Please download the `Labeled dataset (~2.8 GB)` on [NYUv2 official website](https://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html). To get the color and depth images from this .mat file, we provide a reference script `mirror3d/utils/export_mat_image.py`. We center cropped the orginal images from NYUv2-small by 5% to avoid the invalid border. You can extract the color and depth images from .mat file by running:
