@@ -60,8 +60,15 @@ def gen_refinedD_from_deltaD(unzipped_folder_path, mask_version):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Get Setting :D')
     parser.add_argument(
-        '--mask_version', default="precise", help="2 mask version : precise/ coarse")
+        '--mask_version', default="all", help="mask version : precise/ coarse/ all")
     parser.add_argument(
         '--unzipped_folder_path', default="")
     args = parser.parse_args()
-    gen_refinedD_from_deltaD(args.unzipped_folder_path, args.mask_version)
+    if args.mask_version == "all":
+        gen_refinedD_from_deltaD(args.unzipped_folder_path, "precise")
+        gen_refinedD_from_deltaD(args.unzipped_folder_path, "coarse")
+    elif args.mask_version == "precise" or args.mask_version == "coarse":
+        gen_refinedD_from_deltaD(args.unzipped_folder_path, args.mask_version)
+    else:
+        print("invalid mask version: (1) all : precise and coarse (2) precise (3) coarse")
+
