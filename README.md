@@ -6,6 +6,8 @@
 - python 3.7.4
 
 ```
+### Clone Mirror3D repository 
+git clone https://github.com/3dlg-hcvc/mirror3d.git
 ### Install packages 
 pip install -e .
 ### Setup Detectron2
