@@ -149,16 +149,7 @@ Please run the following command to create symlinks to the mirror samples' origi
     ```python
     python mirror3d/dataset/gen_synlink.py --unzipped_folder_path ../dataset/nyu
     ```
-<!-- 
-```python
-cd workspace/dataset
-### Generate symlinks for Matterport3D mirror data
-python mirror3d/dataset/gen_synlink.py --unzipped_folder_path ./mp3d
-### Generate symlinks for ScanNet mirror data
-python mirror3d/dataset/gen_synlink.py --unzipped_folder_path ./scannet
-### Generate symlinks for NYUv2-small mirror data
-python mirror3d/dataset/gen_synlink.py --unzipped_folder_path ./nyu
-``` -->
+
 
 ### STEP 4 : generate refined depth map based on delta image
 
@@ -172,7 +163,6 @@ python mirror3d/dataset/gen_synlink.py --unzipped_folder_path ./nyu
 
 -   Generate Generate refined depth map for ScanNet mirror data
     ```shell
-    cd workspace/dataset
     # Generate refined depth map based on precise mirror mask
     python mirror3d/dataset/gen_refinedD_from_delta.py --unzipped_folder_path ../dataset/scannet --mask_version precise
     # Generate refined depth map based on coarse mirror mask
@@ -181,7 +171,6 @@ python mirror3d/dataset/gen_synlink.py --unzipped_folder_path ./nyu
 
 -   Generate Generate refined depth map for NYUv2 mirror data
     ```shell
-    cd workspace/dataset
     # Generate refined depth map based on precise mirror mask
     python mirror3d/dataset/gen_refinedD_from_delta.py --unzipped_folder_path ../dataset/nyu --mask_version precise
     # Generate refined depth map based on coarse mirror mask
