@@ -105,7 +105,10 @@ This is an example for annotating an NYUv2 sample.
     Each line of the input txt file should include information: `[input color image path] [input depth image path] [input 8-bit integer mask path] [instance point cloud path] [plane parameter JSON file output path] [path to the color image with mirror border mask] [focal length of this sample]`, please refer to the example txt `docs/example/input_txt_example/anno_update_plane.txt` for more detail. 
 
 
-    ![pick point pic](figure/anno-tool-intro/anno-init.png)
+    <p align="center">
+      <img src="figure/anno-tool-intro/anno-init.png" width=60%>
+    </p>
+
     The above command in STEP 3 will open the annotation tool interface and show a point cloud. (The red points in the point cloud are the mirror reconstruction based on the original depth map, the green points are the mirror reconstruction based on the initial refined depth based on the RANSAC algorithm.) After viewing the point cloud, you will get the following options:
 
     ```shell
@@ -131,11 +134,17 @@ This is an example for annotating an NYUv2 sample.
     (2) a        : ADJUST : adjust the plane parameter based on the current plane parameter
     (3) i        : INIT : pick 3 points to initialize the plane
     ```
-    ![pick point pic](figure/anno-tool-intro/anno-pick-point.png)
+    
+    <p align="center">
+      <img src="figure/anno-tool-intro/anno-pick-point.png" width=60%>
+    </p>
 
     This shows the user interface to pick 3 points to initialize the plane (option `i`). Press `shift + left click to select a point; press `shift + right-click to unselect; for more detail please refer to [Open3d instruction](http://www.open3d.org/docs/release/tutorial/visualization/interactive_visualization.html).
 
-    ![blue_plane](figure/anno-tool-intro/anno-mesh-plane.png)
+    <p align="center">
+      <img src="figure/anno-tool-intro/anno-mesh-plane.png" width=60%>
+    </p>
+    
     This shows the user interface to adjust the plane parameter based on the current plane parameter (option `a'). To adjust the light blue plane, please follow:
 
     ```shell
@@ -155,8 +164,11 @@ This is an example for annotating an NYUv2 sample.
     ```
 
     After adjustment, you can see the adjusted result. The yellow points are generated based on the adjusted mirror plane parameter. Input `f` to finish or input `a / i` to continue.
-    ![adjust-view](figure/anno-tool-intro/anno-adjust.png)
 
+
+    <p align="center">
+      <img src="figure/anno-tool-intro/anno-adjust.png" width=60%>
+    </p>
 
 - **STEP 4:**   Generate refined depth map: please run the following command to generate a refined depth map from the original depth map
 
@@ -226,6 +238,7 @@ This is an example for annotating an NYUv2 sample.
 
 
     Each line of the input txt file should include the information: `[sample id] [input color image path] [colored depth map saved path] [front view video path] [topdown view video path]`, please refer to the example txt `docs/example/input_txt_example/verification_gen_html.txt` for more detail. 
+
 
 
     ![verification](figure/anno-tool-intro/html-verify.png)
