@@ -170,7 +170,7 @@ Please run the following command to create symlinks to the mirror samples' origi
     # Generate two versions of refined depth map (based on precise mirror mask and coarse mirror mask)
     python mirror3d/dataset/gen_refinedD_from_delta.py --unzipped_folder_path ../dataset/nyu --mask_version all
     ```
-### Optional step : generate RGB instance mask
+### (Optional) STEP 5 : generate RGB instance mask
 
 The mirror instances masks we provide in the zip files are 8-bit integer instance masks. If you want to generate RGB instance masks for visualization, you can run:
 
