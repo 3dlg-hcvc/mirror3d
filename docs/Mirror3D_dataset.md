@@ -22,20 +22,18 @@ Check out mirror data detail statistic:
 The unzipped mirror data we provided are stored in the following structures:
 
 
-### NYUv2-small (nyu.zip) / ScanNet (scannet.zip) / Matterport3d (mp3d.zip)
-
+###  Matterport3d (mp3d.zip) / ScanNet (scannet.zip) / NYUv2-small (nyu.zip) 
 
 ```shell
-nyu/scannet/mp3d
+mp3d/scannet/nyu
 ├── mirror_instance_mask_coarse # 8-bit coarse instance-level mirror segmentation mask
 └── mirror_instance_mask_precise # 8-bit precise instance-level mirror segmentation mask
 └── delta_depth_coarse # delta image to generate the coarse refined depth map
 └── delta_depth_precise # delta image to generate the precise refined depth map
 └── mirror_plane # mirror plane parameter information 
 ```
-
+- For Matterport3D and ScanNet mirror data is stored as `[data type; e.g. mirror_plane/delta_depth_precise/...] / [scene_id] / [sample id].extension`
 - For NYUv2 mirror data is stored as `[data type; e.g. mirror_plane/delta_depth_precise/...] / [sample id].extension`
-- For Scannet and Matterport3D mirror data is stored as `[data type; e.g. mirror_plane/delta_depth_precise/...] / [scene_id] / [sample id].extension`
 
 The sample's mirror 3D plane information is saved in a single JSON file. The data is saved as:
 
@@ -76,18 +74,26 @@ The sample's mirror 3D plane information is saved in a single JSON file. The dat
 ## Generate refined depth map
 ### STEP 1: download Mirror3D dataset
 
-```
-cd workspace/dataset
-### download NYUv2 mirror data 
-wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/nyu.zip 
-unzip nyu.zip 
-### download Matterport3D mirror data 
-wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/mp3d.zip 
-unzip mp3d.zip 
-### download NYUv2 mirror data 
-wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/scannet.zip 
-unzip scannet.zip 
-```
+- Download Matterport3D mirror data 
+    ```shell
+    cd workspace/dataset
+    wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/mp3d.zip 
+    unzip mp3d.zip 
+    ```
+
+- Download ScanNet mirror data 
+    ```shell
+    cd workspace/dataset
+    wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/scannet.zip 
+    unzip scannet.zip 
+    ```
+- Download NYUv2 mirror data 
+    ```shell
+    cd workspace/dataset
+    wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/nyu.zip 
+    unzip nyu.zip 
+    ```
+
 
 ### STEP 2: download the source data 
 
@@ -97,6 +103,11 @@ To generate a refined depth map, please download the relevant source data and pu
     -  Please fill out the agreements for Matterport3D dataset on [Matterport3D official website](https://niessner.github.io/Matterport/) to get the `undistorted_color_images` and `undistorted_depth_images`. 
     -  Please follow instructions on [DeepCompletionRelease](https://github.com/yindaz/DeepCompletionRelease) to get the generated Matterport3D mesh depth. 
     -  After getting the source data, please put the `matterport_render_depth`, `undistorted_color_images` and `undistorted_depth_images` folder under the unzipped `mp3d` folder. 
+
+- **ScanNet**:  
+    - Please fill out the agreements on [ScanNet official website](http://www.scan-net.org/)) to get access to `scannet_extracted` and `scannet_frames_25k`. 
+    - After getting the source data, please put the `scannet_extracted` and `scannet_frames_25k` folder under the unzipped `scannet` folder.
+
 
 - **NYUv2-small**:
     Please run the following commands to get the NYUv2-small source data
@@ -108,7 +119,7 @@ To generate a refined depth map, please download the relevant source data and pu
     ### Extract center croppped color and depth image from .mat file
     python mirror3d/utils/export_mat_image.py \
     --mat_path nyu_depth_v2_labeled.mat \
-    --output_dir ./nyu
+    --output_dir ../dataset/nyu
     ```
 <!--     - Please download the `Labeled dataset (~2.8 GB)` on [NYUv2 official website](https://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html). To get the color and depth images from this .mat file, we provide a reference script `mirror3d/utils/export_mat_image.py`. We center cropped the orginal images from NYUv2-small by 5% to avoid the invalid border. You can extract the color and depth images from .mat file by running:
 
@@ -119,31 +130,65 @@ To generate a refined depth map, please download the relevant source data and pu
         ```
     - After getting the source data, please put the `color` and `depth` folder under the unzipped `nyu` folder. -->
   
-- **ScanNet**:  
-    - Please fill out the agreements on [ScanNet official website](http://www.scan-net.org/)) to get access to `scannet_extracted` and `scannet_frames_25k`. 
-    - After getting the source data, please the `scannet_extracted` and `scannet_frames_25k` folder under the unzipped `scannet` folder.
 
 ### STEP 3: generate symlinks for mirror samples' RGBD images
 
 Please run the following command to create symlinks to the mirror samples' original color image, sensor depth map and mesh depth map:
 
+-   Generate symlinks for Matterport3D mirror data
+    ```python
+    python mirror3d/dataset/gen_synlink.py --unzipped_folder_path ../dataset/mp3d
+    ```
+
+-   Generate symlinks for ScanNet mirror data
+    ```python
+    python mirror3d/dataset/gen_synlink.py --unzipped_folder_path ../dataset/scannet
+    ```
+
+-   Generate symlinks for  NYUv2-small mirror data
+    ```python
+    python mirror3d/dataset/gen_synlink.py --unzipped_folder_path ../dataset/nyu
+    ```
+<!-- 
 ```python
-python mirror3d/dataset/gen_synlink.py --unzipped_folder_path [the path to the mp3d/ nyu/ scannet folder] 
-```
+cd workspace/dataset
+### Generate symlinks for Matterport3D mirror data
+python mirror3d/dataset/gen_synlink.py --unzipped_folder_path ./mp3d
+### Generate symlinks for ScanNet mirror data
+python mirror3d/dataset/gen_synlink.py --unzipped_folder_path ./scannet
+### Generate symlinks for NYUv2-small mirror data
+python mirror3d/dataset/gen_synlink.py --unzipped_folder_path ./nyu
+``` -->
 
 ### STEP 4 : generate refined depth map based on delta image
 
-```python
-python mirror3d/dataset/gen_refinedD_from_delta.py \
---unzipped_folder_path [the path to the mp3d/ nyu/ scannet folder] \
---mask_version [mirror mask version: precise (default) / coarse]
-```
+-   Generate Generate refined depth map for Matterport3D mirror data
+    ```shell
+    # Generate refined depth map based on precise mirror mask
+    python mirror3d/dataset/gen_refinedD_from_delta.py --unzipped_folder_path ../dataset/mp3d --mask_version precise
+    # Generate refined depth map based on coarse mirror mask
+    python mirror3d/dataset/gen_refinedD_from_delta.py --unzipped_folder_path ../dataset/mp3d --mask_version coarse
+    ```
 
-The generated refined depth map will be saved under the [zip_folder]. 
+-   Generate Generate refined depth map for ScanNet mirror data
+    ```shell
+    cd workspace/dataset
+    # Generate refined depth map based on precise mirror mask
+    python mirror3d/dataset/gen_refinedD_from_delta.py --unzipped_folder_path ../dataset/scannet --mask_version precise
+    # Generate refined depth map based on coarse mirror mask
+    python mirror3d/dataset/gen_refinedD_from_delta.py --unzipped_folder_path ../dataset/scannet --mask_version coarse
+    ```
 
+-   Generate Generate refined depth map for NYUv2 mirror data
+    ```shell
+    cd workspace/dataset
+    # Generate refined depth map based on precise mirror mask
+    python mirror3d/dataset/gen_refinedD_from_delta.py --unzipped_folder_path ../dataset/nyu --mask_version precise
+    # Generate refined depth map based on coarse mirror mask
+    python mirror3d/dataset/gen_refinedD_from_delta.py --unzipped_folder_path ../dataset/nyu --mask_version coarse
+    ```
 
-
-After STEP 1 ~ STEP 3, the data structure should be like:
+After STEP 1 ~ STEP 4, the data structure should be like:
 
 - For **Matterport3D dataset**:
 
@@ -213,7 +258,7 @@ python mirror3d/annotation/plane_annotation/plane_annotation_tool.py \
 
 ```
 
-Here's a quick example of generating an RGB segmentation mask based on an 8-bit integer instance mask for an NYUv2 sample:
+**Example**: Generating an RGB segmentation mask based on an 8-bit integer instance mask for an NYUv2 sample:
 ```shell
 python mirror3d/annotation/plane_annotation/plane_annotation_tool.py \
 --function 2 \
@@ -223,7 +268,7 @@ python mirror3d/annotation/plane_annotation/plane_annotation_tool.py \
 ## Data visualization
 To check and visualize one sample's data, you can run:
 
-```python
+```shell
 python mirror3d/visualization/check_sample_info.py \
 --color_img_path [path to the sample's color image] \
 --depth_img_path [path to the sample's depth image] \
@@ -233,9 +278,10 @@ python mirror3d/visualization/check_sample_info.py \
 
 ```
 
-For example, here's a screenshot of the 3D visulization after running:
+**Example**: Run the following command then you can get a 3D visualization like the screenshot below:
 
-```python
+```shell
+### Checking data for NYUV2 sample (smaple id : 664)
 python mirror3d/visualization/check_sample_info.py \
 --color_img_path mirror3d/annotation/plane_annotation/example/nyu/mirror_color_images/664.jpg \
 --depth_img_path mirror3d/annotation/plane_annotation/example/nyu/refined_sensorD_precise/664.png \
@@ -243,8 +289,6 @@ python mirror3d/visualization/check_sample_info.py \
 --json_path mirror3d/annotation/plane_annotation/example/nyu/mirror_plane/664.json \
 --f 519
 ```
-
-to check the NYUV2 sample (smaple id : 664):
 
 ![data-check](figure/check-demo.png)
 
