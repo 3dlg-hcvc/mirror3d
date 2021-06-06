@@ -1,20 +1,7 @@
 # [Mirror3D](https://github.com/3dlg-hcvc/mirror3d): Depth Refinement for Mirror Surfaces
                             
 
-## Environment Setup
 
-- python 3.7.4
-
-```
-### Clone Mirror3D repository 
-git clone https://github.com/3dlg-hcvc/mirror3d.git
-### Install packages 
-cd mirror3d && pip install -e .
-### Setup Detectron2
-python -m pip install git+https://github.com/facebookresearch/detectron2.git
-### Pull submodules
-git submodule update --init --recursive
-```
 
 
 ## Preparation for all implementations
@@ -25,8 +12,21 @@ $ cd workspace
 ### Put data under dataset folder
 $ mkdir dataset
 ### Clone this repo
-$ git clone https://github.com/3dlg-hcvc/Mirror3D.git
+$ git clone https://github.com/3dlg-hcvc/mirror3d.git
 
+```
+
+## Environment Setup
+
+- python 3.7.4
+
+```
+### Install packages 
+cd mirror3d && pip install -e .
+### Setup Detectron2
+python -m pip install git+https://github.com/facebookresearch/detectron2.git
+### Pull submodules
+git submodule update --init --recursive
 ```
 
 ## Dataset
