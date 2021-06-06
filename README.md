@@ -28,33 +28,50 @@ python -m pip install git+https://github.com/facebookresearch/detectron2.git
 
 ## Dataset
 
-Please refer to [Mirror3D Dataset](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/Mirror3D_dataset.md) for instructions on how to prepare mirror data. Please visit our [project website](https://github.com/3dlg-hcvc/mirror3d) for updates and to browse the data.
+Please refer to [Mirror3D Dataset](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/Mirror3D_dataset.md) for instructions on how to prepare mirror data. Please visit our [project website](https://github.com/3dlg-hcvc/mirror3d) for updates and to browse more data.
 
 
-<table width="100%" border="0" cellpadding="5">
+<table width="80%" border="0" >
+
+
 <tr>
-<td align="center" valign="center" style="width:30%;height: 300px;">
-<img style="height:100%;width:auto;object-fit:contain;" src="docs/img/readme_img/mp3d-data.png" />
+<th>
+Matterport3D
+</th>
+<th>
+ScanNet
+</th>
+<th>
+NYUv2
+</th>
+</tr>
+
+<tr>
+<td align="center" valign="center" style="width:30%;height: 250px;">
+<img width=auto height="200" src="docs/img/readme_img/mp3d-data.png" />
 </td>
-<td align="center" valign="center" style="width:30%;height: 300px;">
-<img style="height:100%;width:auto;object-fit:contain;" src="docs/img/readme_img/scannet-data.png" />
+<td align="center" valign="center" style="width:30%;height: 250px;">
+<img width=auto height="200" src="docs/img/readme_img/scannet-data.png" />
 </td>
-<td align="center" valign="center" style="width:30%;height: 300px;">
-<img style="height:100%;width:auto;object-fit:contain;" src="docs/img/readme_img/nyu-data.png" />
+<td align="center" valign="center" style="width:30%;height: 250px;">
+<img width=auto height="200" src="docs/img/readme_img/nyu-data.png" />
 </td>
 </tr>
 
-<tr style="background: white;">
-<td align="center" valign="center" style="width:30%;height: 300px;">
-<img style="height:100%;width:auto;object-fit:contain;" src="docs/img/readme_img/mp3d-data.gif" />
+
+<tr color="white">
+<td align="center" valign="center" style="width:30%;height: 250px;">
+<img width=auto height="200" src="docs/img/readme_img/mp3d-data.gif" />
 </td>
-<td align="center" valign="center" style="width:30%;height: 300px;">
-<img style="height:100%;width:auto;object-fit:contain;" src="docs/img/readme_img/scannet-data.gif" />
+<td align="center" valign="center" style="width:30%;height: 250px;">
+<img width=auto height="200" src="docs/img/readme_img/scannet-data.gif" />
 </td>
-<td align="center" valign="center" style="width:30%;height: 300px;">
-<img style="height:100%;width:auto;object-fit:contain;" src="docs/img/readme_img/nyu-data.gif" />
+<td align="center" valign="center" style="width:30%;height: 250px;">
+<img width=auto height="200" src="docs/img/readme_img/nyu-data.gif" />
 </td>
 </tr>
+
+
 
 </table>
 
