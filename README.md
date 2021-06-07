@@ -1,4 +1,4 @@
-# [Mirror3D](https://3dlg-hcvc.github.io/mirror3d): Depth Refinement for Mirror Surfaces
+# [Mirror3D: Depth Refinement for Mirror Surfaces](https://3dlg-hcvc.github.io/mirror3d)
                             
 
 
