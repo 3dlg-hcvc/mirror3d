@@ -763,11 +763,10 @@ class PlaneAnnotationTool:
             soup.body.div.append(new_table)
 
             # add heading 
-            heading_tag = ["ID", "Color Image", "Depth Image", "Topdown View Pointcloud", "Front View Pointcloud"]
+            heading_tag = ["ID", "Color Image", "Depth Image", "Top-down View Pointcloud", "Front View Pointcloud"]
             heading = soup.new_tag("tr")
 
             for item_index, tag in enumerate(heading_tag):
-                heading["class"] = "one-item"
                 one_heading = soup.new_tag("td")
                 text = soup.new_tag("p")
                 text.string = tag
@@ -783,7 +782,7 @@ class PlaneAnnotationTool:
                 sample_id_box = soup.new_tag("td")
                 text = soup.new_tag("p")
                 text.string = sample_id
-                text["style"] = "text-align: center; font-size: 50px;"
+                text["style"] = "text-align: center; width:300px"
                 sample_id_box.append(text)
                 new_tr.append(sample_id_box)
 
@@ -807,6 +806,7 @@ class PlaneAnnotationTool:
                 video_td = soup.new_tag("td")
                 video_td["class"] = "one-item"
                 one_video = soup.new_tag("video")
+                one_video["style"] = "max-height: 220px; width:100%;"
                 one_video["class"] = "lazy-video"
                 one_video["controls"] = "True"
                 one_video["autoplay"] = "True"
@@ -823,6 +823,7 @@ class PlaneAnnotationTool:
                 video_td = soup.new_tag("td")
                 video_td["class"] = "one-item"
                 one_video = soup.new_tag("video")
+                one_video["style"] = "max-height: 220px; width:100%;"
                 one_video["class"] = "lazy-video"
                 one_video["controls"] = "True"
                 one_video["autoplay"] = "True"
