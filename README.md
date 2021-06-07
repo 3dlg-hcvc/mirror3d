@@ -48,26 +48,26 @@ NYUv2
 
 <tr>
 <td align="center" valign="center" style="width:30%;height: 250px;">
-<img width=auto height="200" src="docs/img/readme_img/mp3d-data.png" />
+<img width=auto height="200" src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/readme_img/mp3d-data.png" />
 </td>
 <td align="center" valign="center" style="width:30%;height: 250px;">
-<img width=auto height="200" src="docs/img/readme_img/scannet-data.png" />
+<img width=auto height="200" src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/readme_img/scannet-data.png" />
 </td>
 <td align="center" valign="center" style="width:30%;height: 250px;">
-<img width=auto height="200" src="docs/img/readme_img/nyu-data.png" />
+<img width=auto height="200" src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/readme_img/nyu-data.png" />
 </td>
 </tr>
 
 
 <tr color="white">
 <td align="center" valign="center" style="width:30%;height: 250px;">
-<img width=auto height="200" src="docs/img/readme_img/mp3d-data.gif" />
+<img width=auto height="200" src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/readme_img/mp3d-data.gif" />
 </td>
 <td align="center" valign="center" style="width:30%;height: 250px;">
-<img width=auto height="200" src="docs/img/readme_img/scannet-data.gif" />
+<img width=auto height="200" src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/readme_img/scannet-data.gif" />
 </td>
 <td align="center" valign="center" style="width:30%;height: 250px;">
-<img width=auto height="200" src="docs/img/readme_img/nyu-data.gif" />
+<img width=auto height="200" src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/readme_img/nyu-data.gif" />
 </td>
 </tr>
 
@@ -75,7 +75,7 @@ NYUv2
 
 </table>
 
-<!--![network-arch](docs/img/readme_img/mp3d-data.gif)-->
+<!--![network-arch](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/readme_img/mp3d-data.gif)-->
 
 ### Mirror annotation tool
 Please refer to [User Instruction](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/user_instruction.md) for instructions on how to annotate mirror data. 
