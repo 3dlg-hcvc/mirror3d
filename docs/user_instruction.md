@@ -242,7 +242,7 @@ This is an example for annotating an NYUv2 sample.
 
 
     <p align="center">
-      <img src="img/veri-html.gif">
+      <img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/veri-html.gif">
     </p>
 
     You can see the color image, colored refined depth map, and point clouds' videos on the verification web page. Please note down the sample id manually for reannotation.  
