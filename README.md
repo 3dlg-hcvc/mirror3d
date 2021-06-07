@@ -78,7 +78,7 @@ NYUv2
 
 
 ### Mirror annotation tool
-Please refer to [User Instruction](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/user_instruction.md) for instructions on how to annotate mirror data. 
+Please refer to [User Instruction](docs/user_instruction.md) for instructions on how to annotate mirror data. 
 
 
 ## Models
