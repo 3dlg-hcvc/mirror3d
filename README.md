@@ -111,7 +111,7 @@ To train our models please run:
 ```shell
 cd workspace
 ### Download network input json
-get http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/network_input_json.zip
+wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/network_input_json.zip
 unzip network_input_json.zip
 ### Get R-50.pkl from detectron2 to train Mirror3DNet and PlaneRCNN
 mkdir checkpoint && cd checkpoint
