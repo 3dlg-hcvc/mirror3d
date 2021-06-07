@@ -86,7 +86,11 @@ Please refer to [User Instruction](https://github.com/3dlg-hcvc/mirror3d/blob/ma
 ### Mirror3DNet PyTorch Implementation
 
 Mirror3DNet architecture can be used for either an RGB image or an RGBD image input. For an RGB input, we refine the depth of the predicted depth map D<sub>pred</sub> output by a depth estimation module. For RGBD input, we refine a noisy input depth D<sub>noisy</sub>.
-![network-arch](docs/http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/network-arch-cr-new.png)
+<!-- ![network-arch](docs/http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/network-arch-cr-new.png) -->
+
+<p align="center">
+    <img src="docs/http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/network-arch-cr-new.png">
+</p>
 
 Please check [Mirror3DNet](https://github.com/3dlg-hcvc/mirror3d/tree/main/mirror3dnet) for our network's pytorch implementation. 
 
@@ -103,6 +107,8 @@ We updated the dataloader and the main train/test script in the original reposit
 ## Network input
 
 Our network inputs are JSON files stored based on [coco annotation format](https://cocodataset.org/#home). Please download [network input json](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/network_input_json.zip) to train and test our models. 
+
+
 
 ## Training
 
