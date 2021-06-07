@@ -48,7 +48,7 @@ NYUv2
 
 <tr>
 <td align="center" valign="center" style="width:30%;height: 250px;">
-<img width=auto height="200" src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/readme_img/mp3d-data.png" />
+<img width=auto height="200" src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/m3d/1_1.png" />
 </td>
 <td align="center" valign="center" style="width:30%;height: 250px;">
 <img width=auto height="200" src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/readme_img/scannet-data.png" />
@@ -61,7 +61,7 @@ NYUv2
 
 <tr color="white">
 <td align="center" valign="center" style="width:30%;height: 250px;">
-<img width=auto height="200" src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/readme_img/mp3d-data.gif" />
+<img width=auto height="200" src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/m3d/1_2.gif" />
 </td>
 <td align="center" valign="center" style="width:30%;height: 250px;">
 <img width=auto height="200" src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/readme_img/scannet-data.gif" />
