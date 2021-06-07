@@ -89,7 +89,7 @@ Mirror3DNet architecture can be used for either an RGB image or an RGBD image in
 <!-- ![network-arch](docs/http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/network-arch-cr-new.png) -->
 
 <p align="center">
-    <img src="docs/http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/network-arch-cr-new.png">
+    <img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/network-arch-cr-new.png">
 </p>
 
 Please check [Mirror3DNet](https://github.com/3dlg-hcvc/mirror3d/tree/main/mirror3dnet) for our network's pytorch implementation. 
