@@ -106,7 +106,7 @@ This is an example for annotating an NYUv2 sample.
 
 
     <p align="center">
-      <img src="figure/anno-tool-intro/anno-init.png" width=60%>
+      <img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/step-3-new.gif" width=60%>
     </p>
 
     The above command in STEP 3 will open the annotation tool interface and show a point cloud. (The red points in the point cloud are the mirror reconstruction based on the original depth map, the green points are the mirror reconstruction based on the initial refined depth based on the RANSAC algorithm.) After viewing the point cloud, you will get the following options:
@@ -136,13 +136,13 @@ This is an example for annotating an NYUv2 sample.
     ```
     
     <p align="center">
-      <img src="figure/anno-tool-intro/anno-pick-point.png" width=60%>
+      <img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/pick-point-zoom.gif" width=60%>
     </p>
 
     This shows the user interface to pick 3 points to initialize the plane (option `i`). Press `shift + left click to select a point; press `shift + right-click to unselect; for more detail please refer to [Open3d instruction](http://www.open3d.org/docs/release/tutorial/visualization/interactive_visualization.html).
 
     <p align="center">
-      <img src="figure/anno-tool-intro/anno-mesh-plane.png" width=60%>
+      <img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/mesh-adjust.gif" width=60%>
     </p>
     
     This shows the user interface to adjust the plane parameter based on the current plane parameter (option `a'). To adjust the light blue plane, please follow:
@@ -167,7 +167,7 @@ This is an example for annotating an NYUv2 sample.
 
 
     <p align="center">
-      <img src="figure/anno-tool-intro/anno-adjust.png" width=60%>
+      <img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/refined-yellow-check.mov" width=60%>
     </p>
 
 - **STEP 4:**   Generate refined depth map: please run the following command to generate a refined depth map from the original depth map
