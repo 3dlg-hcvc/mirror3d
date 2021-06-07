@@ -167,7 +167,7 @@ This is an example for annotating an NYUv2 sample.
 
 
     <p align="center">
-      <img src="figure/anno-tool-intro/anno-adjust.png" width=60%>
+      <img src="figure/anno-tool-intro/anno-adjust.png" width=50%>
     </p>
 
 - **STEP 4:**   Generate refined depth map: please run the following command to generate a refined depth map from the original depth map
