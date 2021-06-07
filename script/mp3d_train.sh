@@ -103,7 +103,7 @@ python mirror3d/init_depth_generator/saic_depth_completion/init_depth_gen_train.
 # planercnn on refined sensor depth
 python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --resume_checkpoint_path ../checkpoint/R-50.pkl \
---config mirror3dnet/config/planercnn_config.yml \
+--config mirror3d/mirror3dnet/config/planercnn_config.yml \
 --refined_depth \
 --coco_train ../network_input_json/mp3d/train_10_precise_normal_mirror.json \
 --coco_val ../network_input_json/mp3d/val_10_precise_normal_mirror.json \
@@ -117,14 +117,14 @@ python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100000 \
 --learning_rate 1e-4 \
---anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
+--anchor_normal_npy mirror3d/mirror3dnet/config/mp3d_kmeans_normal_10.npy \
 --log_directory ../output/mp3d
 
 
 # planercnn on raw sensor depth
 python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --resume_checkpoint_path ../checkpoint/R-50.pkl \
---config mirror3dnet/config/planercnn_config.yml \
+--config mirror3d/mirror3dnet/config/planercnn_config.yml \
 --coco_train ../network_input_json/mp3d/train_10_precise_normal_mirror.json \
 --coco_val ../network_input_json/mp3d/val_10_precise_normal_mirror.json \
 --coco_train_root ../dataset/mp3d \
@@ -137,14 +137,14 @@ python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100000 \
 --learning_rate 1e-4 \
---anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
+--anchor_normal_npy mirror3d/mirror3dnet/config/mp3d_kmeans_normal_10.npy \
 --log_directory ../output/mp3d
 
 
 
 # mirror3dnet on refined sensor depth 
 python mirror3d/mirror3dnet/run_mirror3dnet.py \
---config mirror3dnet/config/mirror3dnet_config.yml \
+--config mirror3d/mirror3dnet/config/mirror3dnet_config.yml \
 --refined_depth \
 --resume_checkpoint_path ../checkpoint/R-50.pkl \
 --coco_train ../network_input_json/mp3d/train_10_precise_normal_mirror.json \
@@ -159,13 +159,13 @@ python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100000 \
 --learning_rate 1e-4 \
---anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
+--anchor_normal_npy mirror3d/mirror3dnet/config/mp3d_kmeans_normal_10.npy \
 --log_directory ../output/mp3d
 
 
 # mirror3dnet on raw sensor depth 
 python mirror3d/mirror3dnet/run_mirror3dnet.py \
---config mirror3dnet/config/mirror3dnet_config.yml \
+--config mirror3d/mirror3dnet/config/mirror3dnet_config.yml \
 --resume_checkpoint_path ../checkpoint/R-50.pkl \
 --coco_train ../network_input_json/mp3d/train_10_precise_normal_mirror.json \
 --coco_val ../network_input_json/mp3d/val_10_precise_normal_mirror.json \
@@ -179,12 +179,12 @@ python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --checkpoint_save_freq 1500 \
 --num_epochs 100000 \
 --learning_rate 1e-4 \
---anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
+--anchor_normal_npy mirror3d/mirror3dnet/config/mp3d_kmeans_normal_10.npy \
 --log_directory ../output/mp3d
 
 # mirror3dnet only normal 10 anchor normal
 python mirror3d/mirror3dnet/run_mirror3dnet.py \
---config mirror3dnet/config/mirror3dnet_normal_config.yml \
+--config mirror3d/mirror3dnet/config/mirror3dnet_normal_config.yml \
 --coco_train ../network_input_json/mp3d/train_10_precise_normal_mirror.json \
 --coco_val ../network_input_json/mp3d/val_10_precise_normal_mirror.json \
 --coco_train_root ../dataset/mp3d \
@@ -199,5 +199,5 @@ python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --num_epochs 100000 \
 --learning_rate 1e-4 \
 --resume_checkpoint_path ../checkpoint/R-50.pkl \
---anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
+--anchor_normal_npy mirror3d/mirror3dnet/config/mp3d_kmeans_normal_10.npy \
 --log_directory ../output/mp3d

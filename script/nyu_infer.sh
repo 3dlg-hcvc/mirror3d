@@ -81,7 +81,7 @@ python mirror3d/init_depth_generator/saic_depth_completion/init_depth_gen_infer.
 python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --eval \
 --resume_checkpoint_path ../checkpoint/mp3d/planercnn_refD.pth \
---config mirror3dnet/config/planercnn_config.yml \
+--config mirror3d/mirror3dnet/config/planercnn_config.yml \
 --refined_depth \
 --coco_val ../network_input_json/nyu/test_10_precise_normal_mirror.json \
 --coco_val_root ../dataset/nyu \
@@ -89,7 +89,7 @@ python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --depth_shift 1000 \
 --input_height 480 \
 --input_width 640 \
---anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
+--anchor_normal_npy mirror3d/mirror3dnet/config/mp3d_kmeans_normal_10.npy \
 --log_directory ../output/nyu
 
 
@@ -98,14 +98,14 @@ python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --eval \
 --refined_depth \
 --resume_checkpoint_path ../checkpoint/mp3d/planercnn_rawD.pth \
---config mirror3dnet/config/planercnn_config.yml \
+--config mirror3d/mirror3dnet/config/planercnn_config.yml \
 --coco_val ../network_input_json/nyu/test_10_precise_normal_mirror.json \
 --coco_val_root ../dataset/nyu \
 --coco_focal_len 519 \
 --depth_shift 1000 \
 --input_height 480 \
 --input_width 640 \
---anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
+--anchor_normal_npy mirror3d/mirror3dnet/config/mp3d_kmeans_normal_10.npy \
 --log_directory ../output/nyu
 
 
@@ -113,7 +113,7 @@ python mirror3d/mirror3dnet/run_mirror3dnet.py \
 # mirror3dnet on refined sensor depth 
 python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --eval \
---config mirror3dnet/config/mirror3dnet_config.yml \
+--config mirror3d/mirror3dnet/config/mirror3dnet_config.yml \
 --refined_depth \
 --resume_checkpoint_path ../checkpoint/mp3d/mirror3dnet_refD.pth \
 --coco_val ../network_input_json/nyu/test_10_precise_normal_mirror.json \
@@ -122,7 +122,7 @@ python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --depth_shift 1000 \
 --input_height 480 \
 --input_width 640 \
---anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
+--anchor_normal_npy mirror3d/mirror3dnet/config/mp3d_kmeans_normal_10.npy \
 --log_directory ../output/nyu
 
 
@@ -130,7 +130,7 @@ python mirror3d/mirror3dnet/run_mirror3dnet.py \
 python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --eval \
 --refined_depth \
---config mirror3dnet/config/mirror3dnet_config.yml \
+--config mirror3d/mirror3dnet/config/mirror3dnet_config.yml \
 --resume_checkpoint_path ../checkpoint/mp3d/mirror3dnet_rawD.pth \
 --coco_val ../network_input_json/nyu/test_10_precise_normal_mirror.json \
 --coco_val_root ../dataset/nyu \
@@ -138,7 +138,7 @@ python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --depth_shift 1000 \
 --input_height 480 \
 --input_width 640 \
---anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
+--anchor_normal_npy mirror3d/mirror3dnet/config/mp3d_kmeans_normal_10.npy \
 --log_directory ../output/nyu
 
 # mirror3dnet only normal 10 anchor normal
@@ -146,7 +146,7 @@ python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --eval \
 --refined_depth \
 --resume_checkpoint_path ../checkpoint/mp3d/mirror3dnet_normal_10.pth \
---config mirror3dnet/config/mirror3dnet_normal_config.yml \
+--config mirror3d/mirror3dnet/config/mirror3dnet_normal_config.yml \
 --coco_val ../network_input_json/nyu/test_10_precise_normal_mirror.json \
 --coco_val_root ../dataset/nyu \
 --coco_focal_len 519 \
@@ -154,5 +154,5 @@ python mirror3d/mirror3dnet/run_mirror3dnet.py \
 --depth_shift 1000 \
 --input_height 480 \
 --input_width 640 \
---anchor_normal_npy mirror3dnet/config/mp3d_kmeans_normal_10.npy \
+--anchor_normal_npy mirror3d/mirror3dnet/config/mp3d_kmeans_normal_10.npy \
 --log_directory ../output/nyu
