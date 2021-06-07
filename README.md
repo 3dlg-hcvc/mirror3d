@@ -1,4 +1,4 @@
-# [Mirror3D](https://github.com/3dlg-hcvc/mirror3d): Depth Refinement for Mirror Surfaces
+# [Mirror3D](https://3dlg-hcvc.github.io/mirror3d): Depth Refinement for Mirror Surfaces
                             
 
 
@@ -28,7 +28,7 @@ python -m pip install git+https://github.com/facebookresearch/detectron2.git
 
 ## Dataset
 
-Please refer to [Mirror3D Dataset](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/Mirror3D_dataset.md) for instructions on how to prepare mirror data. Please visit our [project website](https://github.com/3dlg-hcvc/mirror3d) for updates and to browse more data.
+Please refer to [Mirror3D Dataset](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/Mirror3D_dataset.md) for instructions on how to prepare mirror data. Please visit our [project website](https://3dlg-hcvc.github.io/mirror3d) for updates and to browse more data.
 
 
 <table width="80%" border="0" >
