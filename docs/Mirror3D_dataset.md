@@ -265,17 +265,17 @@ python mirror3d/visualization/check_sample_info.py \
 **Example**: Run the following command then you can get a 3D visualization like the screenshot below:
 
 ```shell
-### Checking data for NYUV2 sample (smaple id : 664)
+### Checking data for NYUV2 sample (smaple id : 1003)
 python mirror3d/visualization/check_sample_info.py \
---color_img_path ../dataset/nyu/mirror_color_images/664.jpg \
---depth_img_path ../dataset/nyu/refined_sensorD_precise/664.png \
---mask_img_path ../dataset/nyu/mirror_instance_mask_precise/664.png \
---json_path ../dataset/nyu/mirror_plane/664.json \
+--color_img_path ../dataset/nyu/mirror_color_images/1003.jpg \
+--depth_img_path ../dataset/nyu/refined_sensorD_precise/1003.png \
+--mask_img_path ../dataset/nyu/mirror_instance_mask_precise/1003.png \
+--json_path ../dataset/nyu/mirror_plane/1003.json \
 --f 519
 ```
 
 <p align="center">
-    <img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/check-demo.png">
+    <img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/dataset_check_anno.gif">
 </p>
 <!-- ![data-check](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/check-demo.png) -->
 
