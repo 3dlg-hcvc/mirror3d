@@ -48,26 +48,26 @@ NYUv2
 
 <tr>
 <td align="center" valign="center" style="width:30%;height: 250px;">
-<img width=auto height="200" src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/m3d/1_1.png" />
+<img width=auto height="200" src="docs/readme_img/mp3d-data.png" />
 </td>
 <td align="center" valign="center" style="width:30%;height: 250px;">
-<img width=auto height="200" src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/readme_img/scannet-data.png" />
+<img width=auto height="200" src="docs/readme_img/scannet-data.png" />
 </td>
 <td align="center" valign="center" style="width:30%;height: 250px;">
-<img width=auto height="200" src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/readme_img/nyu-data.png" />
+<img width=auto height="200" src="docs/readme_img/nyu-data.png" />
 </td>
 </tr>
 
 
 <tr color="white">
 <td align="center" valign="center" style="width:30%;height: 250px;">
-<img width=auto height="200" src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/m3d/1_2.gif" />
+<img width=auto height="200" src="docs/readme_img/mp3d-data.gif" />
 </td>
 <td align="center" valign="center" style="width:30%;height: 250px;">
-<img width=auto height="200" src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/readme_img/scannet-data.gif" />
+<img width=auto height="200" src="docs/readme_img/scannet-data.gif" />
 </td>
 <td align="center" valign="center" style="width:30%;height: 250px;">
-<img width=auto height="200" src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/readme_img/nyu-data.gif" />
+<img width=auto height="200" src="docs/readme_img/nyu-data.gif" />
 </td>
 </tr>
 
@@ -86,11 +86,7 @@ Please refer to [User Instruction](https://github.com/3dlg-hcvc/mirror3d/blob/ma
 ### Mirror3DNet PyTorch Implementation
 
 Mirror3DNet architecture can be used for either an RGB image or an RGBD image input. For an RGB input, we refine the depth of the predicted depth map D<sub>pred</sub> output by a depth estimation module. For RGBD input, we refine a noisy input depth D<sub>noisy</sub>.
-<!-- ![network-arch](docs/http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/network-arch-cr-new.png) -->
-
-<p align="center">
-    <img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/network-arch-cr-new.png">
-</p>
+![network-arch](docs/readme_img/network-arch-cr-new.png)
 
 Please check [Mirror3DNet](https://github.com/3dlg-hcvc/mirror3d/tree/main/mirror3dnet) for our network's pytorch implementation. 
 
@@ -107,8 +103,6 @@ We updated the dataloader and the main train/test script in the original reposit
 ## Network input
 
 Our network inputs are JSON files stored based on [coco annotation format](https://cocodataset.org/#home). Please download [network input json](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/network_input_json.zip) to train and test our models. 
-
-
 
 ## Training
 
