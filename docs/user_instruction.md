@@ -241,6 +241,8 @@ This is an example for annotating an NYUv2 sample.
 
 
 
-    ![verification](figure/anno-tool-intro/html-verify.png)
+    <p align="center">
+      <img src="img/veri-html.gif">
+    </p>
 
     You can see the color image, colored refined depth map, and point clouds' videos on the verification web page. Please note down the sample id manually for reannotation.  
