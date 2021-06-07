@@ -25,15 +25,12 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
-annotation/plane_annotation/example/nyu
 private
 # PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
-mirror3dnet/config/mirror3dnet_30normal_config.yml
-mirror3dnet/config/mirror3dnet_70normal_config.yml
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
