@@ -86,7 +86,7 @@ Please refer to [User Instruction](https://github.com/3dlg-hcvc/mirror3d/blob/ma
 ### Mirror3DNet PyTorch Implementation
 
 Mirror3DNet architecture can be used for either an RGB image or an RGBD image input. For an RGB input, we refine the depth of the predicted depth map D<sub>pred</sub> output by a depth estimation module. For RGBD input, we refine a noisy input depth D<sub>noisy</sub>.
-![network-arch](docs/figure/network-arch-cr-new.png)
+![network-arch](docs/http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/network-arch-cr-new.png)
 
 Please check [Mirror3DNet](https://github.com/3dlg-hcvc/mirror3d/tree/main/mirror3dnet) for our network's pytorch implementation. 
 
