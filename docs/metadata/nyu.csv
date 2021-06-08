@@ -97,7 +97,7 @@ instance_id,sample_id,scene_id,split,mirror_visibility,has_mirror_plane,has_coar
 1,1382,dining_room_0016,train,partial,1,1,1,1,1
 1,755,kitchen_0019,train,partial,1,1,1,1,1
 1,231,furniture_store_0001,train,partial,1,1,1,1,1
-1,410,office_kitchen_0001,test,almost-complete,1,1,1,1,1
+1,410,office_kitchen_0001,test,almost-whole,1,1,1,1,1
 1,660,bathroom_0013,train,partial,1,1,1,1,1
 1,959,bedroom_0043,test,partial,1,1,1,1,1
 1,655,bathroom_0011,test,partial,1,1,1,1,1
@@ -124,7 +124,7 @@ instance_id,sample_id,scene_id,split,mirror_visibility,has_mirror_plane,has_coar
 2,221,bedroom_0024,test,partial,1,1,1,1,1
 1,499,bathroom_0054,train,partial,1,1,1,1,1
 1,665,bathroom_0016,train,partial,1,1,1,1,1
-1,1425,dining_room_0031,train,almost-complete,1,1,1,1,1
+1,1425,dining_room_0031,train,almost-whole,1,1,1,1,1
 1,726,bathroom_0043,test,partial,1,1,1,1,1
 1,1176,bedroom_0119,train,whole,1,1,1,1,1
 1,441,playroom_0007,test,whole,1,1,1,1,1
