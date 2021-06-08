@@ -8,8 +8,10 @@
 
 ```shell
 mkdir workspace && cd workspace
+
 ### Put data under dataset folder
 mkdir dataset
+
 ### Clone this repo and pull all submodules
 git clone --recursive https://github.com/3dlg-hcvc/mirror3d.git
 
@@ -22,6 +24,7 @@ git clone --recursive https://github.com/3dlg-hcvc/mirror3d.git
 ```shell
 ### Install packages 
 cd mirror3d && pip install -e .
+
 ### Setup Detectron2
 python -m pip install git+https://github.com/facebookresearch/detectron2.git
 ```
@@ -113,15 +116,20 @@ To train our models please run:
 
 ```shell
 cd workspace
+
 ### Download network input json
 wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/network_input_json.zip
 unzip network_input_json.zip
+
 ### Get R-50.pkl from detectron2 to train Mirror3DNet and PlaneRCNN
 mkdir checkpoint && cd checkpoint
 wget https://dl.fbaipublicfiles.com/detectron2/ImageNetPretrained/MSRA/R-50.pkl
+
 cd ../mirror3d
+
 ### Train on NYUv2 mirror data
 bash script/nyu_train.sh
+
 ### Train on Matterport3D mirror data
 bash script/mp3d_train.sh
 ```
@@ -135,12 +143,15 @@ By default, we put the unzipped data and network input packages under `../datase
 cd workspace
 wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/checkpoint.zip
 unzip checkpoint.zip
+
 ### Download network input json
 wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/network_input_json.zip
 unzip network_input_json.zip
 cd mirror3d
+
 ### Inferece on NYUv2 mirror data
 bash script/nyu_infer.sh
+
 ### Inferece on Matterport3D mirror data
 bash script/mp3d_infer.sh
 ```
