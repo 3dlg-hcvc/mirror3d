@@ -1,4 +1,4 @@
-instance_id,sample_id,scene_id,split,mirror_visibility,has_mirror_plane,has_coarse_refined_depth,has_preciserefined_depth,has_coarse_mask,has_precise_mask
+instance_id,sample_id,scene_id,split,mirror_visibility,has_mirror_plane,has_coarse_refined_depth,has_precise_refined_depth,has_coarse_mask,has_precise_mask
 1,001300,scene0279_02,train,partial,0,0,0,1,1
 2,001300,scene0279_02,train,partial,0,0,0,1,1
 1,000800,scene0236_00,train,partial,1,1,1,1,1
