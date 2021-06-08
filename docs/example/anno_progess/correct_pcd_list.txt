@@ -1,3 +1,0 @@
- output/anno_pcd/686_idx_1.ply
- output/anno_pcd/45_idx_1.ply
- output/anno_pcd/686_idx_2.ply
