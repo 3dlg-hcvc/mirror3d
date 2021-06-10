@@ -112,6 +112,8 @@ Our network inputs are JSON files stored based on [coco annotation format](https
 
 ## Training
 
+Please remember to prepare the mirror data according to [Mirror3D Dataset](docs/Mirror3D_dataset.md) before training and inference.
+
 To train our models please run:
 
 ```shell
