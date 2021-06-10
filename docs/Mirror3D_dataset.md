@@ -118,6 +118,7 @@ To generate a refined depth map, please download the relevant source data and pu
     ### Prepare NYUv2 source data
     wget http://horatio.cs.nyu.edu/mit/silberman/nyu_depth_v2/nyu_depth_v2_labeled.mat
     
+    cd ../../mirror3d
     ### Extract center croppped color and depth image from .mat file
     python mirror3d/utils/export_mat_image.py \
     --mat_path ../dataset/nyu/nyu_depth_v2_labeled.mat \
