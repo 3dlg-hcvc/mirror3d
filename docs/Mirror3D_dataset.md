@@ -140,17 +140,17 @@ Please run the following command to create symlinks to the mirror samples' origi
 
 -   Generate symlinks for Matterport3D mirror data
     ```python
-    python mirror3d/dataset/gen_synlink.py --unzipped_folder_path ../dataset/mp3d
+    python mirror3d/dataset/gen_symlink.py --unzipped_folder_path ../dataset/mp3d
     ```
 
 -   Generate symlinks for ScanNet mirror data
     ```python
-    python mirror3d/dataset/gen_synlink.py --unzipped_folder_path ../dataset/scannet
+    python mirror3d/dataset/gen_symlink.py --unzipped_folder_path ../dataset/scannet
     ```
 
 -   Generate symlinks for  NYUv2-small mirror data
     ```python
-    python mirror3d/dataset/gen_synlink.py --unzipped_folder_path ../dataset/nyu
+    python mirror3d/dataset/gen_symlink.py --unzipped_folder_path ../dataset/nyu
     ```
 
 
