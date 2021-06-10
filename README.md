@@ -94,7 +94,7 @@ Mirror3DNet architecture can be used for either an RGB image or an RGBD image in
     <img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/readme_img/network-arch-cr-new.jpg">
 </p>
 
-Please check [Mirror3DNet](https://github.com/3dlg-hcvc/mirror3d/tree/main/mirror3dnet) for our network's pytorch implementation. 
+Please check [Mirror3DNet](https://github.com/3dlg-hcvc/mirror3d/tree/main/mirror3d/mirror3dnet) for our network's pytorch implementation. 
 
 ### Initial Depth Generator Implementation
 
@@ -102,7 +102,7 @@ We test three methods on our dataset:
 
 - [BTS: From Big to Small: Multi-Scale Local Planar Guidance for Monocular Depth Estimation](https://github.com/cogaplex-bts/bts)
 - [VNL: Enforcing geometric constraints of virtual normal for depth prediction](https://github.com/YvanYin/VNL_Monocular_Depth_Prediction)
-- [saic : Decoder Modulation for Indoor Depth Completion](https://github.com/saic-vul/saic_depth_completion/tree/94bececdf12bb9867ce52c970bb2d11dee948d37)
+- [saic : Decoder Modulation for Indoor Depth Completion](https://github.com/saic-vul/saic_depth_completion)
 
 We updated the dataloader and the main train/test script in the original repository to support our input format. 
 
@@ -149,10 +149,10 @@ wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/network_inpu
 unzip network_input_json.zip
 cd mirror3d
 
-### Inferece on NYUv2 mirror data
+### Inference on NYUv2 mirror data
 bash script/nyu_infer.sh
 
-### Inferece on Matterport3D mirror data
+### Inference on Matterport3D mirror data
 bash script/mp3d_infer.sh
 ```
 
