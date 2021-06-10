@@ -108,7 +108,7 @@ We updated the dataloader and the main train/test script in the original reposit
 
 ## Network input
 
-Our network inputs are JSON files stored based on [coco annotation format](https://cocodataset.org/#home). Please download [network input json](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/network_input_json.zip) to train and test our models. 
+Our network inputs are JSON files stored based on [coco annotation format](https://cocodataset.org/#home). Please download [network input json](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/mirror3d_input.zip) to train and test our models. 
 
 ## Training
 
@@ -118,8 +118,8 @@ To train our models please run:
 cd workspace
 
 ### Download network input json
-wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/network_input_json.zip
-unzip network_input_json.zip
+wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/mirror3d_input.zip
+unzip mirror3d_input.zip
 
 ### Get R-50.pkl from detectron2 to train Mirror3DNet and PlaneRCNN
 mkdir checkpoint && cd checkpoint
@@ -145,8 +145,8 @@ wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/checkpoint.z
 unzip checkpoint.zip
 
 ### Download network input json
-wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/network_input_json.zip
-unzip network_input_json.zip
+wget http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/mirror3d_input.zip
+unzip mirror3d_input.zip
 cd mirror3d
 
 ### Inference on NYUv2 mirror data
