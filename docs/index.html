@@ -53,13 +53,19 @@
                 </div>
 
                 <div class="flex-item flex-column">
-                    <img class="image center  add-top-margin-small" src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/overview.jpg">
+                    <img class="image center  add-top-margin-small"
+                         src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/overview.jpg">
                     <p class="text">
-                        We present the task of 3D mirror plane prediction and depth refinement. First, we annotate several popular RGBD datasets
-                        (Matterport3D, ScanNet, NYUv2) with 3D mirror planes. Our benchmarks show that both existing RGBD dataset 'ground truth'
-                        raw depth data and state-of-the-art depth estimation and depth completion methods exhibit dramatic errors on mirror
-                        surfaces. We propose an architecture for 3D mirror plane estimation that refines depth estimates and produces more
-                        reliable reconstructions (compare left and right depth and point cloud pairs from the NYUv2 dataset).
+                        We present the task of 3D mirror plane prediction and depth refinement. First, we annotate
+                        several popular RGBD datasets
+                        (Matterport3D, ScanNet, NYUv2) with 3D mirror planes. Our benchmarks show that both existing
+                        RGBD dataset 'ground truth'
+                        raw depth data and state-of-the-art depth estimation and depth completion methods exhibit
+                        dramatic errors on mirror
+                        surfaces. We propose an architecture for 3D mirror plane estimation that refines depth estimates
+                        and produces more
+                        reliable reconstructions (compare left and right depth and point cloud pairs from the NYUv2
+                        dataset).
                     </p>
                 </div>
 
@@ -68,13 +74,20 @@
                         <h2 class="add-top-margin">Abstract</h2>
                         <hr>
                         <p class="text">
-                            Despite recent progress in depth sensing and 3D reconstruction, mirror surfaces are a significant source of errors. To
-                            address this problem, we create the Mirror3D dataset: a 3D mirror plane dataset based on three RGBD
-                            datasets (Matterpot3D, NYUv2, and ScanNet) containing 7,011 mirror instance masks and 3D planes. We then develop
-                            Mirror3DNet: a module that refines raw sensor depth or estimated depth to correct errors on mirror surfaces. Our key
-                            idea is to estimate the 3D mirror plane based on RGB input and surrounding depth context and use this estimate to
-                            directly regress mirror surface depth. Our experiments show that Mirror3DNet significantly mitigates errors from a
-                            variety of input depth data, including raw sensor depth and depth estimation or completion methods.
+                            Despite recent progress in depth sensing and 3D reconstruction, mirror surfaces are a
+                            significant source of errors. To
+                            address this problem, we create the Mirror3D dataset: a 3D mirror plane dataset based on
+                            three RGBD
+                            datasets (Matterpot3D, NYUv2, and ScanNet) containing 7,011 mirror instance masks and 3D
+                            planes. We then develop
+                            Mirror3DNet: a module that refines raw sensor depth or estimated depth to correct errors on
+                            mirror surfaces. Our key
+                            idea is to estimate the 3D mirror plane based on RGB input and surrounding depth context and
+                            use this estimate to
+                            directly regress mirror surface depth. Our experiments show that Mirror3DNet significantly
+                            mitigates errors from a
+                            variety of input depth data, including raw sensor depth and depth estimation or completion
+                            methods.
                         </p>
                     </div>
                 </div>
@@ -94,15 +107,22 @@
                     <div class="flex-item flex-column">
                         <div class="flex-row add-top-margin" style="width: 100%; justify-content: space-between;">
                             <h2>Dataset Overview</h2>
-                            <button class="custom-button-flat add-top-margin" onclick="window.location.href='https://3dlg-hcvc.github.io/mirror3d/vis/'"><span>Browse More</span><img
+                            <button class="custom-button-flat add-top-margin"
+                                    onclick="window.location.href='https://3dlg-hcvc.github.io/mirror3d/vis/'"><span>Browse More</span><img
                                     src="img/next.png"></button>
                         </div>
                         <hr>
                         <p class="text">
-                            We provide 7,011 mirror instance masks and 3D plane annotation based on three popular RGBD datasets. To obtain the original datasets, please follow the instructions on their official website (link: <a href="https://niessner.github.io/Matterport/">Matterpot3D</a>, <a href="https://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html">NYUv2</a>, <a href="http://www.scan-net.org/">ScanNet</a>).
+                            We provide 7,011 mirror instance masks and 3D plane annotation based on three popular RGBD
+                            datasets. To obtain the original datasets, please follow the instructions on their official
+                            website (link: <a href="https://niessner.github.io/Matterport/">Matterpot3D</a>, <a
+                                href="https://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html">NYUv2</a>, <a
+                                href="http://www.scan-net.org/">ScanNet</a>).
                             <br>
-                            Here are the visualizations of our Mirror3D dataset.  In each image pair, the mirror mask is shown as a transparent red on the RGB image,
-                            the mirror plane is in light blue on the point cloud, and erroneous depth points that are incorrectly behind the mirror plane in the raw depth are shaded in orange.
+                            Here are the visualizations of our Mirror3D dataset. In each image pair, the mirror mask is
+                            shown as a transparent red on the RGB image,
+                            the mirror plane is in light blue on the point cloud, and erroneous depth points that are
+                            incorrectly behind the mirror plane in the raw depth are shaded in orange.
                         </p>
                     </div>
                 </div>
@@ -115,60 +135,84 @@
                 </div>
 
                 <div class="gallery">
-                    <a href="javascript:void(0)" class="flex-column"><img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/nyu/1_1.png"></a>
-                    <a href="javascript:void(0)" class="flex-column"><img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/nyu/1_2.gif"></a>
-                    <a href="javascript:void(0)" class="flex-column"><img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/nyu/2_1.png"></a>
-                    <a href="javascript:void(0)" class="flex-column"><img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/nyu/2_2.gif"></a>
+                    <a href="javascript:void(0)" class="flex-column"><img
+                            src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/nyu/1_1.png"></a>
+                    <a href="javascript:void(0)" class="flex-column"><img
+                            src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/nyu/1_2.gif"></a>
+                    <a href="javascript:void(0)" class="flex-column"><img
+                            src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/nyu/2_1.png"></a>
+                    <a href="javascript:void(0)" class="flex-column"><img
+                            src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/nyu/2_2.gif"></a>
                 </div>
 
                 <div class="gallery">
-                    <a href="javascript:void(0)" class="flex-column"><img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/nyu/3_1.png"></a>
-                    <a href="javascript:void(0)" class="flex-column"><img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/nyu/3_2.gif"></a>
-                    <a href="javascript:void(0)" class="flex-column"><img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/nyu/4_1.png"></a>
-                    <a href="javascript:void(0)" class="flex-column"><img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/nyu/4_2.gif"></a>
+                    <a href="javascript:void(0)" class="flex-column"><img
+                            src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/nyu/3_1.png"></a>
+                    <a href="javascript:void(0)" class="flex-column"><img
+                            src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/nyu/3_2.gif"></a>
+                    <a href="javascript:void(0)" class="flex-column"><img
+                            src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/nyu/4_1.png"></a>
+                    <a href="javascript:void(0)" class="flex-column"><img
+                            src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/nyu/4_2.gif"></a>
                 </div>
 
 
                 <div class="flex-row flex-item flex-column" style="width: 100%;justify-content: space-between;">
                     <h3 class="dataset-h3">Matterport3d Mirror</h3>
-<!--                    <button class="custom-button-flat" onclick="readySoon()"><span>Browse More </span><img-->
-<!--                            src="img/next.png"></button>-->
+                    <!--                    <button class="custom-button-flat" onclick="readySoon()"><span>Browse More </span><img-->
+                    <!--                            src="img/next.png"></button>-->
 
                 </div>
 
                 <div class="gallery">
-                    <a href="javascript:void(0)" class="flex-column"><img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/m3d/1_1.png"></a>
-                    <a href="javascript:void(0)" class="flex-column"><img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/m3d/1_2.gif"></a>
-                    <a href="javascript:void(0)" class="flex-column"><img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/m3d/2_1.png"></a>
-                    <a href="javascript:void(0)" class="flex-column"><img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/m3d/2_2.gif"></a>
+                    <a href="javascript:void(0)" class="flex-column"><img
+                            src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/m3d/1_1.png"></a>
+                    <a href="javascript:void(0)" class="flex-column"><img
+                            src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/m3d/1_2.gif"></a>
+                    <a href="javascript:void(0)" class="flex-column"><img
+                            src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/m3d/2_1.png"></a>
+                    <a href="javascript:void(0)" class="flex-column"><img
+                            src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/m3d/2_2.gif"></a>
                 </div>
 
                 <div class="gallery">
-                    <a href="javascript:void(0)" class="flex-column"><img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/m3d/3_1.png"></a>
-                    <a href="javascript:void(0)" class="flex-column"><img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/m3d/3_2.gif"></a>
-                    <a href="javascript:void(0)" class="flex-column"><img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/m3d/4_1.png"></a>
-                    <a href="javascript:void(0)" class="flex-column"><img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/m3d/4_2.gif"></a>
+                    <a href="javascript:void(0)" class="flex-column"><img
+                            src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/m3d/3_1.png"></a>
+                    <a href="javascript:void(0)" class="flex-column"><img
+                            src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/m3d/3_2.gif"></a>
+                    <a href="javascript:void(0)" class="flex-column"><img
+                            src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/m3d/4_1.png"></a>
+                    <a href="javascript:void(0)" class="flex-column"><img
+                            src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/m3d/4_2.gif"></a>
                 </div>
 
 
                 <div class="flex-row flex-item flex-column" style="width: 100%;justify-content: space-between;">
                     <h3 class="dataset-h3">Scannet Mirror</h3>
-<!--                    <button class="custom-button-flat" onclick="readySoon()"><span>Browse More </span><img-->
-<!--                            src="img/next.png"></button>-->
+                    <!--                    <button class="custom-button-flat" onclick="readySoon()"><span>Browse More </span><img-->
+                    <!--                            src="img/next.png"></button>-->
                 </div>
 
                 <div class="gallery">
-                    <a href="javascript:void(0)" class="flex-column"><img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/scannet/1_1.png"></a>
-                    <a href="javascript:void(0)" class="flex-column"><img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/scannet/1_2.gif"></a>
-                    <a href="javascript:void(0)" class="flex-column"><img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/scannet/2_1.png"></a>
-                    <a href="javascript:void(0)" class="flex-column"><img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/scannet/2_2.gif"></a>
+                    <a href="javascript:void(0)" class="flex-column"><img
+                            src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/scannet/1_1.png"></a>
+                    <a href="javascript:void(0)" class="flex-column"><img
+                            src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/scannet/1_2.gif"></a>
+                    <a href="javascript:void(0)" class="flex-column"><img
+                            src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/scannet/2_1.png"></a>
+                    <a href="javascript:void(0)" class="flex-column"><img
+                            src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/scannet/2_2.gif"></a>
                 </div>
 
                 <div class="gallery">
-                    <a href="javascript:void(0)" class="flex-column"><img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/scannet/3_1.png"></a>
-                    <a href="javascript:void(0)" class="flex-column"><img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/scannet/3_2.gif"></a>
-                    <a href="javascript:void(0)" class="flex-column"><img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/scannet/4_1.png"></a>
-                    <a href="javascript:void(0)" class="flex-column"><img src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/scannet/4_2.gif"></a>
+                    <a href="javascript:void(0)" class="flex-column"><img
+                            src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/scannet/3_1.png"></a>
+                    <a href="javascript:void(0)" class="flex-column"><img
+                            src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/scannet/3_2.gif"></a>
+                    <a href="javascript:void(0)" class="flex-column"><img
+                            src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/scannet/4_1.png"></a>
+                    <a href="javascript:void(0)" class="flex-column"><img
+                            src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/scannet/4_2.gif"></a>
                 </div>
 
                 <!-- <div class="flex-row" style="width: 100%;">
@@ -199,7 +243,9 @@
 
                 <div class="source-link">
                     <p class="one-source"><a href="https://github.com/3dlg-hcvc/mirror3d">[Source Code]</a></p>
-                    <p class="one-source"><a href="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/MirrorRefine_CVPR2021.pdf">[Paper]</a></p>
+                    <p class="one-source"><a
+                            href="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/MirrorRefine_CVPR2021.pdf">[Paper]</a>
+                    </p>
                     <p class="one-source"><a
                             href="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/nyu.zip">[NYUv2
                         Mirror]</a></p>
@@ -225,54 +271,85 @@
                 </div> -->
 
 
-                 <div class="flex-row" style="width: 100%;">
-                  <div class="flex-item flex-column full-width" style="width: 100%;">
-                    <h2 class="add-top-margin">Paper and Bibtex</h2>
-                    <hr>
-                  </div>
+                <div class="flex-row" style="width: 100%;">
+                    <div class="flex-item flex-column full-width" style="width: 100%;">
+                        <h2 class="add-top-margin">Paper and Bibtex</h2>
+                        <hr>
+                    </div>
                 </div>
-                <div class="flex-row">
-                  <div class="flex-item flex-item-stretch flex-column">
-                    <img class="image max-width-400" src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/blank.png">
-                  </div>
-                  <div class="flex-item flex-item-stretch-4 flex-column">
-                    <p class="text">
-                      <a class="highlight-text" onclick="myFunction()">Bibtex</a><br>
-                      <blockquote cite="https://www.huxley.net/bnw/four.html" >
-                      <pre class="bibtex" style="font-size: 14px;line-height: 0.7;margin: 0;">
-                        <br>@inproceedings
-                        <br>{mirror3d2021tan,
-                        <br>author = {Tan, Jiaqi and Lin, Weijie and Chang, Angel X and Savva, Manolis},
-                        <br>title = {{Mirror3D}: Depth Refinement for Mirror Surfaces},
-                        <br>booktitle = {Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
-                        <br>month = {June},
-                        <br>year = {2021}，
-                        <br>}
-                        </pre>
-                       </blockquote>
+                <div style="margin-left: 20px; margin-right: 20px">
+                    <img class="image" style="float: left; width: 25%"
+                         src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/blank.png">
+                    <div style="float: right; width: 72%">
+                        <p class="text">
+                            <a class="highlight-text" onclick="myFunction()">Bibtex</a><br>
+                        <blockquote cite="https://www.huxley.net/bnw/four.html" >
+                          <pre style="font-size: 12px; line-height: 0.7; margin: 0;">
+                            <br>@inproceedings
+                            <br>{mirror3d2021tan,
+                            <br>author = {Tan, Jiaqi and Lin, Weijie and Chang, Angel X and Savva, Manolis},
+                            <br>title = {{Mirror3D}: Depth Refinement for Mirror Surfaces},
+                            <br>booktitle = {Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+                            <br>month = {June},
+                            <br>year = {2021}，
+                            <br>}
+                          </pre>
+                        </blockquote>
 
-                    <p class="text">
-                      <a class="highlight-text">Citation</a><br>
-                      Jiaqi Tan, Weijie Lin, Angel X. Chang, Manolis Savva <b>Mirror3D: Depth Refinement for Mirror Surfaces</b> CVPR 2021.
-                    </p>
-                  </div>
-
+                        <p class="text">
+                            <a class="highlight-text">Citation</a><br>
+                            Jiaqi Tan, Weijie Lin, Angel X. Chang, Manolis Savva <b>Mirror3D: Depth Refinement for
+                            Mirror Surfaces</b> CVPR 2021.
+                        </p>
+                    </div>
                 </div>
+                <!--                <div class="flex-row">-->
+                <!--                  <div class="flex-item flex-item-stretch flex-column">-->
+                <!--                    <img class="image max-width-400" src="http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/img/figure/blank.png">-->
+                <!--                  </div>-->
+                <!--                  <div class="flex-item flex-item-stretch-4 flex-column">-->
+                <!--                    <p class="text">-->
+                <!--                      <a class="highlight-text" onclick="myFunction()">Bibtex</a><br>-->
+                <!--                      <blockquote cite="https://www.huxley.net/bnw/four.html" >-->
+                <!--                      <pre class="bibtex" style="font-size: 14px;line-height: 0.7;margin: 0;">-->
+                <!--                        <br>@inproceedings-->
+                <!--                        <br>{mirror3d2021tan,-->
+                <!--                        <br>author = {Tan, Jiaqi and Lin, Weijie and Chang, Angel X and Savva, Manolis},-->
+                <!--                        <br>title = {{Mirror3D}: Depth Refinement for Mirror Surfaces},-->
+                <!--                        <br>booktitle = {Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},-->
+                <!--                        <br>month = {June},-->
+                <!--                        <br>year = {2021}，-->
+                <!--                        <br>}-->
+                <!--                        </pre>-->
+                <!--                       </blockquote>-->
+
+                <!--                    <p class="text">-->
+                <!--                      <a class="highlight-text">Citation</a><br>-->
+                <!--                      Jiaqi Tan, Weijie Lin, Angel X. Chang, Manolis Savva <b>Mirror3D: Depth Refinement for Mirror Surfaces</b> CVPR 2021.-->
+                <!--                    </p>-->
+                <!--                  </div>-->
+
+                <!--                </div>-->
 
 
                 <div class="flex-row">
                     <div class="flex-item flex-column">
                         <h2 class="add-top-margin">Acknowledgements</h2>
                         <hr>
-                        
+
                         <p class="text">
-                            Many thanks to Yiming Zhang for help in developing annotation verification and visualization tools and the dataset
+                            Many thanks to Yiming Zhang for help in developing annotation verification and visualization
+                            tools and the dataset
                             website.
-                            We also thank Hanxiao Jiang, Yongsen Mao and Yiming Zhang for their help with dataset annotation.
-                            We thank Shitao Tang for helpful early conversations on the Mirror3DNet neural architecture used in our work.
+                            We also thank Hanxiao Jiang, Yongsen Mao and Yiming Zhang for their help with dataset
+                            annotation.
+                            We thank Shitao Tang for helpful early conversations on the Mirror3DNet neural architecture
+                            used in our work.
                             We are grateful to the anonymous reviewers for their helpful suggestions.
-                            This research was enabled in part by support provided provided by <a href="https://www.westgrid.ca/">WestGrid</a> and <a
-                                href="https://www.computecanada.ca/">Compute Canada</a>. Angel X. Chang is supported by a Canada CIFAR AI Chair, and Manolis
+                            This research was enabled in part by support provided provided by <a
+                                href="https://www.westgrid.ca/">WestGrid</a> and <a
+                                href="https://www.computecanada.ca/">Compute Canada</a>. Angel X. Chang is supported by
+                            a Canada CIFAR AI Chair, and Manolis
                             Savva by a Canada Research Chair and
                             NSERC Discovery Grant.
                         </p>
@@ -293,7 +370,6 @@
         </div>
     </div>
 </div>
-
 
 
 </body>
