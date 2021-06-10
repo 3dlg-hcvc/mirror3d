@@ -10,7 +10,7 @@ def export_img_from_mat(mat_path, output_dir):
     """Export rgb/depth image from mat file.
     Args:
         mat_path (str): the path of .mat file.
-                        Assume the depth info is in the "depth" field, the rgb info is in the "color" field.
+                        Assume the depth info is in the "depths" field, the rgb info is in the "images" field.
         output_dir (str): the path to save the output image.
 
     """
@@ -33,7 +33,7 @@ def export_img_from_mat(mat_path, output_dir):
     for i, single_img_np in enumerate(img_np):
         single_img_np = single_img_np[h_border:h_border+new_h, w_border:w_border+new_w]
         img_pil = Image.fromarray(single_img_np)
-        save_path = os.path.join(color_output_dir, '{}.jpg'.format(str(i)))
+        save_path = os.path.join(color_output_dir, '{}.jpg'.format(str(i+1)))
         img_pil.save(save_path)
     print("color images saved under : ", color_output_dir)
 
@@ -49,10 +49,10 @@ def export_img_from_mat(mat_path, output_dir):
     for i, single_img_np in enumerate(img_np):
         single_img_np = single_img_np[h_border:h_border+new_h, w_border:w_border+new_w]
         img_pil = Image.fromarray(single_img_np)
-        save_path = os.path.join(depth_output_dir, '{}.png'.format(str(i)))
+        save_path = os.path.join(depth_output_dir, '{}.png'.format(str(i+1)))
         img_pil.save(save_path)
 
-    print("color images saved under : ", depth_output_dir)
+    print("depth images saved under : ", depth_output_dir)
     
 
 
