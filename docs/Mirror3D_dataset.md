@@ -11,11 +11,21 @@ Please visit our [project website](https://github.com/3dlg-hcvc/mirror3d) for up
 - [nyu.zip](http://aspis.cmpt.sfu.ca/projects/mirrors/mirror3d_zip_release/nyu.zip)
 
 
-Check out mirror data detail statistic: 
+Check out more details about our mirror data: 
 - Matterport3D: [mp3d.csv](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/metadata/mp3d.csv)
 - ScanNet: [scannet.csv](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/metadata/scannet.csv)
 - NYUv2-small: [nyu.csv](https://github.com/3dlg-hcvc/mirror3d/blob/main/docs/metadata/nyu.csv)
 
+    - instance_id: id of an instance in the 8-bit sematic mask
+    - sample_id: image id (image name without extension) of a sample 
+    - scene_id: scene id of the image 
+    - split : train / val / test 
+    - mirror_visibility : partial / almost whole / whole
+    - has_mirror_plane: whether the sample contains mirror plane annotation (0 / 1)
+    - has_coarse_refined_depth: whether the sample has a refined depth map based on coarse mirror mask (0 / 1)
+    - has_precise_refined_depth: whether the sample has a refined depth map based on precise mirror mask (0 / 1)
+    - has_coarse_mask: whether the sample has a coarse mirror mask (0 / 1)
+    - has_precise_mask: whether the sample has a precise mirror mask (0 / 1)
 
 ## Mirror3D Data Organization
 
