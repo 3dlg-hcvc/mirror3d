@@ -1,7 +1,8 @@
 # [Mirror3D: Depth Refinement for Mirror Surfaces](https://3dlg-hcvc.github.io/mirror3d)
                             
 
-
+[Jiaqi Tan](https://christinatan0704.github.io/mysite/), [Weijie Lin](https://lewislinn.github.io/), [Angel X. Chang](https://github.com/angelxuanchang)
+, [Manolis Savva](https://github.com/msavva)
 
 
 ## Preparation for all implementations
