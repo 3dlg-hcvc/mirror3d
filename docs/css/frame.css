@@ -683,6 +683,9 @@ ol.nested>li:before {
 
 .highlight-text {
   font-weight: bold;
+  font-size: 20px;
+  text-decoration: none;
+  color: #005cbf;
 }
 
 .custom-text-info,

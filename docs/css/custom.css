@@ -32,9 +32,16 @@
   display: none;
   color: #007bff;
 }
-
+/* 
 blockquote {
   margin: 0;
+} */
+
+
+.bibtex {
+  padding: 15px;
+  background: #eee;
+  border-radius: 5px;
 }
 
 blockquote {
@@ -42,11 +49,11 @@ blockquote {
   background: #eee;
   border-radius: 5px;
 }
-
+/* 
 blockquote p::before {
   content: '\201C';
 }
 
 blockquote p::after {
   content: '\201D';
-}
+} */
