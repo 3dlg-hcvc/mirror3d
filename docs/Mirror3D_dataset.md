@@ -18,7 +18,7 @@ Check out more details about our mirror data:
 
     - instance_id: id of an instance in the 8-bit sematic mask
     - sample_id: image id (image name without extension) of a sample 
-    - scene_id / house_id: scene / house id of the image 
+    - scene_id / house_id: scene / house id of the sample 
     - split : train / val / test 
     - mirror_visibility : partial / almost whole / whole
     - has_mirror_plane: whether the sample contains mirror plane annotation (0 / 1)
