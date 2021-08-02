@@ -72,11 +72,11 @@ def mirror3d_fast_rcnn_inference(boxes, scores, anchor_scores, residuals,image_s
     """
     result_per_image = [
         mirror3d_fast_rcnn_inference_single_image(
-            boxes_per_image, scores_per_image,anchor_score_per_image, residual_per_image, image_shape, score_thresh, nms_thresh, topk_per_image, OBJECT_CLS # changed !! add anchor info here (3)
+            boxes_per_image, scores_per_image,anchor_score_per_image, residual_per_image, image_shape, score_thresh, nms_thresh, topk_per_image, OBJECT_CLS 
         )
         for scores_per_image, boxes_per_image, anchor_score_per_image, residual_per_image,image_shape in zip(scores, boxes, anchor_scores, residuals,image_shapes)
     ]
-    return [x[0] for x in result_per_image], [x[1] for x in result_per_image] # 2 , 3 anchor_cls_ce_loss ,ANCHOR_REGidual_mse_loss
+    return [x[0] for x in result_per_image], [x[1] for x in result_per_image] 
 
 
 
@@ -169,7 +169,6 @@ class Mirror3d_FastRCNNOutputs(object):
     A class that stores information about outputs of a Fast R-CNN head.
     It provides methods that are used to decode the outputs of a Fast R-CNN head.
     """
-    # changed 
     def __init__(
         self,
         box2box_transform,
@@ -217,14 +216,12 @@ class Mirror3d_FastRCNNOutputs(object):
         self.smooth_l1_beta = smooth_l1_beta
         self.image_shapes = [x.image_size for x in proposals]
 
-        # changed !!!
         self.anchor_normal_score = anchor_normal_score
         self.anchor_residual_pred = anchor_residual_pred
         self.is_training = is_training
         self.anchor_cls = anchor_cls
         self.ANCHOR_REG = ANCHOR_REG
 
-        # changed !!! : add gt *** to self. here (4)
         if len(proposals):
             box_type = type(proposals[0].proposal_boxes)
             # cat(..., dim=0) concatenates over all images in the batch
@@ -561,8 +558,8 @@ class Mirror3d_FastRCNNOutputLayers(nn.Module):
         num_bbox_reg_classes = 1 if cls_agnostic_bbox_reg else num_classes
         box_dim = len(box2box_transform.weights)
         self.bbox_pred = Linear(input_size, num_bbox_reg_classes * box_dim)
-        self.anchor_normal_score = nn.Linear(input_size, anchor_normal_class_num) #  changed !!! 
-        self.anchor_parameter = nn.Linear(input_size, anchor_normal_class_num * 3 ) #  changed !!!
+        self.anchor_normal_score = nn.Linear(input_size, anchor_normal_class_num)
+        self.anchor_parameter = nn.Linear(input_size, anchor_normal_class_num * 3 )
 
         nn.init.normal_(self.cls_score.weight, std=0.01)
         nn.init.normal_(self.bbox_pred.weight, std=0.001)
@@ -615,7 +612,7 @@ class Mirror3d_FastRCNNOutputLayers(nn.Module):
         anchor_residual_pred = self.anchor_parameter(x)
         return scores, proposal_deltas , anchor_normal_score , anchor_residual_pred
 
-    def losses(self, predictions, proposals): # changed !!! : add gt *** here (3)
+    def losses(self, predictions, proposals): 
         """
         Args:
             predictions: return values of :meth:`forward()`.
@@ -624,7 +621,7 @@ class Mirror3d_FastRCNNOutputLayers(nn.Module):
         """
         scores, proposal_deltas ,anchor_normal_score , anchor_residual_pred=predictions
         return Mirror3d_FastRCNNOutputs(
-            self.box2box_transform, scores, proposal_deltas, proposals, self.smooth_l1_beta,anchor_normal_score , anchor_residual_pred, self.anchor_normals,self.ANCHOR_REG_method , self.anchor_cls, self.ANCHOR_REG, self.training # changed !!! add gt *** here (3.2)
+            self.box2box_transform, scores, proposal_deltas, proposals, self.smooth_l1_beta,anchor_normal_score , anchor_residual_pred, self.anchor_normals,self.ANCHOR_REG_method , self.anchor_cls, self.ANCHOR_REG, self.training 
         ).losses()
 
     def inference(self, predictions, proposals ): 
@@ -640,7 +637,6 @@ class Mirror3d_FastRCNNOutputLayers(nn.Module):
         residual = self.predict_residual(predictions, proposals)
         image_shapes = [x.image_size for x in proposals]
 
-        #  get top score output changed
         return mirror3d_fast_rcnn_inference( 
             boxes,
             scores,

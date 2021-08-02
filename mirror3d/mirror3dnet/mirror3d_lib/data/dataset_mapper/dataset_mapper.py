@@ -91,7 +91,7 @@ class Mirror3d_DatasetMapper:
         """
         dataset_dict = copy.deepcopy(dataset_dict)  # it will be modified by code below
         # USER: Write your own image loading if it's not from a file
-        image = utils.read_image(dataset_dict["mirror_color_image_path"], format=self.img_format) # changed : read depth image here
+        image = utils.read_image(dataset_dict["mirror_color_image_path"], format=self.img_format)
 
         if self.mesh_depth:
             if "refined_meshD_path" in dataset_dict and self.REFINED_DEPTH:
@@ -145,7 +145,7 @@ class Mirror3d_DatasetMapper:
         dataset_dict["depth_image"] = torch.as_tensor(depth_image.astype(np.float32))
         if self.RGBD_INPUT:
             noisy_depth_image[noisy_depth_image<0] = 0
-            dataset_dict["noisy_depth_image"] = torch.as_tensor(noisy_depth_image.astype(np.float32)) # changed !!!
+            dataset_dict["noisy_depth_image"] = torch.as_tensor(noisy_depth_image.astype(np.float32)) 
         # USER: Remove if you don't use pre-computed proposals.
         # Most users would not need this feature.
         if self.load_proposals: 

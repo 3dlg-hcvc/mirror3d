@@ -120,7 +120,6 @@ def load_mirror3d_coco_json(json_file, image_root, dataset_name=None, extra_anno
     num_instances_without_valid_segmentation = 0
     for (img_dict, anno_dict_list) in imgs_anns:
         record = {}
-        # changed !!!
         if image_root:
             record["mirror_color_image_path"] = os.path.join(image_root, img_dict["mirror_color_image_path"]) 
         else:

@@ -138,7 +138,7 @@ class Mirror3d_GeneralizedRCNN(nn.Module):
         losses = {}
 
         if self.DEPTH_EST:
-            depth_estimate_loss = self.depth_predictor(features, gt_depths, self.training) # changed 
+            depth_estimate_loss = self.depth_predictor(features, gt_depths, self.training)
             losses.update(depth_estimate_loss) 
     
         if self.proposal_generator: #! get 1000/ 2000 proposals + use 256 proposals among thousands of proposals for rpn_loss;
@@ -147,7 +147,7 @@ class Mirror3d_GeneralizedRCNN(nn.Module):
             assert "proposals" in batched_inputs[0]
             proposals = [x["proposals"].to(self.device) for x in batched_inputs]
             proposal_losses = {}
-        _, detector_losses = self.roi_heads(images, features, proposals, gt_instances, self.anchor_normal_class_num)#  changed !!! proposals : 16*1000 , self.anchor_normal_class_num 
+        _, detector_losses = self.roi_heads(images, features, proposals, gt_instances, self.anchor_normal_class_num)
         if not self.ANCHOR_CLS:
             detector_losses.pop("anchor_cls")
         if not self.ANCHOR_REG:
@@ -202,7 +202,7 @@ class Mirror3d_GeneralizedRCNN(nn.Module):
             gt_depths = [torch.clamp(x["depth_image"], min=1e-4).to(self.device) for x in batched_inputs]
             
         if self.DEPTH_EST:
-            pred_depth_list = self.depth_predictor(features, gt_depths, self.training) # changed 
+            pred_depth_list = self.depth_predictor(features, gt_depths, self.training) 
             if self.inverse_depth:
                 pred_depth_list = [(1.0/pred_depth)*self.depth_shift for pred_depth in pred_depth_list]
             else:
@@ -220,7 +220,7 @@ class Mirror3d_GeneralizedRCNN(nn.Module):
             else:
                 assert "proposals" in batched_inputs[0]
                 proposals = [x["proposals"].to(self.device) for x in batched_inputs]
-            results = self.roi_heads(images, features, proposals, None) #  get inferenced result # changed !! add gt here (1)
+            results = self.roi_heads(images, features, proposals, None) 
         else:
             detected_instances = [x.to(self.device) for x in detected_instances]
             results = self.roi_heads.forward_with_given_boxes(features, detected_instances)

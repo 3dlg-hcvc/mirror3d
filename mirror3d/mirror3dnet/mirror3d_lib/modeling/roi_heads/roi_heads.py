@@ -55,14 +55,14 @@ class Mirror3d_StandardROIHeads(StandardROIHeads):
         See :class:`ROIHeads.forward`.
         """
         del images
-        self.anchor_normal_class_num = anchor_normal_class_num #   changed
+        self.anchor_normal_class_num = anchor_normal_class_num 
         if self.training:
             assert targets # add gt_anchor_normal_class gt_anchor_normal_residual to Instance in Proposal
             proposals = self.label_and_sample_proposals(proposals, targets) # proposals[0]._fields["gt_classes"] : [0, num_classes) or the background (num_classes).
         del targets 
 
         if self.training:
-            losses = self._forward_box(features, proposals) # changed !!! add gt_acnhor *** here (1)
+            losses = self._forward_box(features, proposals) 
             # Usually the original proposals used by the box head are used by the mask, keypoint
             # heads. But when `self.train_on_pred_boxes is True`, proposals will contain boxes
             # predicted by the box head.
@@ -70,7 +70,7 @@ class Mirror3d_StandardROIHeads(StandardROIHeads):
             losses.update(self._forward_keypoint(features, proposals))
             return proposals, losses
         else: 
-            pred_instances = self._forward_box(features, proposals) # changed !!! add gt_acnhor *** here (1.2)
+            pred_instances = self._forward_box(features, proposals) 
             
             # During inference cascaded prediction is used: the mask and keypoints heads are only
             # applied to the top scoring box detections.
@@ -117,7 +117,7 @@ class Mirror3d_StandardROIHeads(StandardROIHeads):
 
     def _forward_box(
         self, features: Dict[str, torch.Tensor], proposals: List[Instances],
-    ) -> Union[Dict[str, torch.Tensor], List[Instances]]: #changed !!! add gt_anchor & anchor_prodiction here (2.1)
+    ) -> Union[Dict[str, torch.Tensor], List[Instances]]:
         """
         Forward logic of the box prediction branch. If `self.train_on_pred_boxes is True`,
             the function puts predicted boxes in the `proposal_boxes` field of `proposals` argument.
